@@ -82,7 +82,17 @@ function HeroShowcase() {
 					<div className="relative aspect-[16/10] overflow-hidden bg-slate-100 p-1.5 md:p-2">
 						{showcaseProjects.map((project, index) => (
 							<div key={project.slug} className="hero-showcase-slide absolute inset-1.5 md:inset-2" style={{ animationDelay: `${index * 4}s` }}>
-								<Image src={project.screenshots.desktop} alt="" fill priority={index === 0} sizes="(min-width: 1024px) 44vw, 90vw" className="rounded-xl object-contain object-top shadow-sm" />
+								<Image
+									src={project.screenshots.desktop}
+									alt=""
+									fill
+									priority={index === 0}
+									loading={index === 0 ? undefined : "lazy"}
+									fetchPriority={index === 0 ? "high" : "low"}
+									decoding={index === 0 ? "sync" : "async"}
+									sizes="(min-width: 1024px) min(640px, 44vw), (min-width: 768px) min(640px, 48vw), min(640px, 90vw)"
+									className="rounded-xl object-contain object-top shadow-sm"
+								/>
 								<div className="absolute left-4 top-4 rounded-full border border-white/70 bg-white/90 px-3 py-1.5 text-xs font-semibold text-ink shadow-card backdrop-blur">{project.industry}</div>
 							</div>
 						))}
@@ -95,7 +105,17 @@ function HeroShowcase() {
 							<span className="absolute left-1/2 top-1.5 z-20 h-1 w-8 -translate-x-1/2 rounded-full bg-slate-950/45" />
 							{showcaseProjects.map((project, index) => (
 								<div key={project.slug} className="hero-showcase-slide absolute inset-1" style={{ animationDelay: `${index * 4}s` }}>
-									<Image src={project.screenshots.mobile} alt="" fill priority={index === 0} sizes="190px" className="rounded-[1rem] object-contain object-top" />
+									<Image
+										src={project.screenshots.mobile}
+										alt=""
+										fill
+										priority={index === 0}
+										loading={index === 0 ? undefined : "lazy"}
+										fetchPriority={index === 0 ? "high" : "low"}
+										decoding={index === 0 ? "sync" : "async"}
+										sizes="158px"
+										className="rounded-[1rem] object-contain object-top"
+									/>
 								</div>
 							))}
 						</div>
