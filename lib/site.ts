@@ -189,8 +189,8 @@ export const projects: Project[] = [
     palette: "slate",
     siteUrl: "https://removals.webm8agency.com/",
     screenshots: {
-      desktop: "/work/removals-desktop.png",
-      mobile: "/work/removals-mobile.png",
+      desktop: "/work/removals-desktop.webp",
+      mobile: "/work/removals-mobile.webp",
     },
     outcomes: [
       "Fast quote positioning",
@@ -208,8 +208,8 @@ export const projects: Project[] = [
     palette: "green",
     siteUrl: "https://cleaning.webm8agency.com/",
     screenshots: {
-      desktop: "/work/cleaning-desktop.png",
-      mobile: "/work/cleaning-mobile.png",
+      desktop: "/work/cleaning-desktop.webp",
+      mobile: "/work/cleaning-mobile.webp",
     },
     outcomes: [
       "Quote-first service flow",
@@ -227,8 +227,8 @@ export const projects: Project[] = [
     palette: "amber",
     siteUrl: "https://restaurant.webm8agency.com/",
     screenshots: {
-      desktop: "/work/restaurant-desktop.png",
-      mobile: "/work/restaurant-mobile.png",
+      desktop: "/work/restaurant-desktop.webp",
+      mobile: "/work/restaurant-mobile.webp",
     },
     outcomes: [
       "Visual-first dining experience",
@@ -246,8 +246,8 @@ export const projects: Project[] = [
     palette: "blue",
     siteUrl: "https://car-rental.webm8agency.com/",
     screenshots: {
-      desktop: "/work/car-rental-desktop.png",
-      mobile: "/work/car-rental-mobile.png",
+      desktop: "/work/car-rental-desktop.webp",
+      mobile: "/work/car-rental-mobile.webp",
     },
     outcomes: [
       "Fleet-focused layout",
@@ -265,8 +265,8 @@ export const projects: Project[] = [
     palette: "violet",
     siteUrl: "https://travel.webm8agency.com/",
     screenshots: {
-      desktop: "/work/travel-desktop.png",
-      mobile: "/work/travel-mobile.png",
+      desktop: "/work/travel-desktop.webp",
+      mobile: "/work/travel-mobile.webp",
     },
     outcomes: [
       "Destination-first visuals",
