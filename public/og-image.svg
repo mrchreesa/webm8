@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#EFF6FF"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.15" cy="0.2" r="0.5">
+      <stop offset="0" stop-color="#2563EB" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#2563EB" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.9" cy="0.8" r="0.5">
+      <stop offset="0" stop-color="#10B981" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+
+  <g transform="translate(72,72)">
+    <rect width="60" height="60" rx="14" fill="#0F172A"/>
+    <text x="30" y="41" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="26" font-weight="900" letter-spacing="-1.5" fill="#FFFFFF">W8</text>
+    <circle cx="48" cy="12" r="6" fill="#10B981" stroke="#0F172A" stroke-width="2"/>
+    <text x="80" y="42" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="800" fill="#0F172A">WebM8</text>
+  </g>
+
+  <text x="72" y="310" font-family="Inter, system-ui, sans-serif" font-size="68" font-weight="800" fill="#0F172A" letter-spacing="-2">Websites for local businesses</text>
+  <text x="72" y="390" font-family="Inter, system-ui, sans-serif" font-size="68" font-weight="800" fill="#0F172A" letter-spacing="-2">that want more </text>
+  <text x="568" y="390" font-family="Inter, system-ui, sans-serif" font-size="68" font-weight="800" fill="#2563EB" letter-spacing="-2">customers</text>
+  <text x="1026" y="390" font-family="Inter, system-ui, sans-serif" font-size="68" font-weight="800" fill="#0F172A" letter-spacing="-2">.</text>
+
+  <rect x="72" y="460" width="260" height="58" rx="29" fill="url(#accent)"/>
+  <text x="202" y="498" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="700" fill="#FFFFFF">Get a free audit</text>
+
+  <text x="72" y="570" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="600" fill="#475569">More calls · More bookings · More customers · From $197/mo</text>
+</svg>
