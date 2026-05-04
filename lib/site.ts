@@ -25,6 +25,7 @@ export const trustBar: { label: string; icon: string }[] = [
   { label: "Mobile-first websites", icon: "device" },
   { label: "Built for more leads", icon: "leads" },
   { label: "Local SEO ready", icon: "map" },
+  { label: "AI search ready", icon: "spark" },
   { label: "Fast-loading pages", icon: "bolt" },
   { label: "Monthly support included", icon: "support" },
 ];
@@ -109,7 +110,7 @@ export const plans: Plan[] = [
     period: "month",
     tagline: "Grow with Growth",
     summary:
-      "Best for businesses that want a website plus an ongoing growth service — more leads, better visibility, and customer follow-up handled for you.",
+      "Best for businesses that want a website plus an ongoing growth service: more leads, better visibility, and customer follow-up handled for you.",
     features: [
       "Everything in Standard",
       "Advanced SEO (service & location pages, FAQ + Service + Review schema)",
@@ -162,6 +163,7 @@ export const auditChecklist: string[] = [
   "Call-to-action review",
   "Trust / review section review",
   "Local SEO structure review",
+  "AI search visibility review (ChatGPT, Claude, Gemini)",
   "Lead-generation recommendations",
 ];
 

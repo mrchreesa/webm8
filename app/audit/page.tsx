@@ -8,7 +8,7 @@ import { auditChecklist } from "@/lib/site";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Free Website Audit — See what's costing you calls",
+  title: "Free Website Audit: See what's costing you calls",
   description:
     "Request a free website audit. We review mobile experience, clarity of services, trust signals, visibility, and lead tracking, then send a short action plan.",
   path: "/audit/",
@@ -51,7 +51,7 @@ export default function AuditPage() {
           <Reveal>
             <Eyebrow>What you&apos;ll get</Eyebrow>
             <h2 className="mt-4 text-3xl font-bold text-ink md:text-4xl">
-              A clear, owner-friendly audit — no tech jargon
+              A clear, owner-friendly audit, no tech jargon
             </h2>
             <p className="mt-4 text-lg text-muted">
               We look at your site the way a customer would, then point out the

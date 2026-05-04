@@ -9,7 +9,7 @@ import { valueProps } from "@/lib/site";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "About — Websites built for local business growth",
+  title: "About: Websites built for local business growth",
   description:
     "WebM8 is a web design agency focused on US local businesses. We build professional, conversion-focused websites that help owners win more calls, bookings, and customers.",
   path: "/about/",
@@ -43,7 +43,7 @@ export default function AboutPage() {
       <Section
         tone="surface"
         eyebrow="Our focus"
-        title="A better website is a business asset — not a brochure."
+        title="A better website is a business asset, not a brochure."
       >
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {valueProps.map((v, i) => (

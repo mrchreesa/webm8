@@ -8,7 +8,7 @@ import { intakeEmail } from "@/lib/site";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Contact — Start a website project",
+  title: "Contact: Start a website project",
   description:
     "Get in touch to start a new website, switch plans, or ask a question. We reply within one business day.",
   path: "/contact/",
@@ -61,19 +61,13 @@ export default function ContactPage() {
                   label="Response time"
                   value="Within 1 business day"
                 />
-                <InfoRow
-                  icon="map"
-                  tone="ink"
-                  label="Where we work"
-                  value="United States · Remote-first"
-                />
               </ul>
 
               <div className="mt-8 rounded-2xl bg-bg p-5 text-sm leading-relaxed text-muted">
                 <p className="font-semibold text-ink">What happens next</p>
                 <p className="mt-2">
                   We review your info, send a short reply with next steps, and
-                  — if it&apos;s a fit — book a quick call to plan the build.
+                  if it&apos;s a fit, book a quick call to plan the build.
                 </p>
               </div>
             </aside>

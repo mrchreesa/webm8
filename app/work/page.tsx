@@ -12,7 +12,7 @@ import { projects } from "@/lib/site";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Our Work — Websites Built for Local Businesses",
+  title: "Our Work: Websites Built for Local Businesses",
   description:
     "Browse live website examples built by WebM8 for restaurants, cleaning companies, removals businesses, car rental brands, and travel agencies.",
   path: "/work/",

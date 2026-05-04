@@ -10,7 +10,7 @@ import { cn } from "@/lib/cn";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Pricing — Simple monthly website plans",
+  title: "Pricing: Simple monthly website plans",
   description:
     "Simple monthly plans for US local businesses. Standard $197/month for a professional site. Growth $297/month for lead generation and performance tracking.",
   path: "/pricing/",
@@ -68,6 +68,10 @@ const faqs = [
     a: "No large upfront website cost. You pay the monthly plan price and we start the build.",
   },
   {
+    q: "What is GEO / LLM optimization?",
+    a: "Customers are starting to ask ChatGPT, Claude, Gemini, and Perplexity for local recommendations instead of Googling. GEO (Generative Engine Optimization) is how we make sure your business is named in those answers: we structure your site so AI tools can read it, publish an AI-readable business summary, and run a quarterly check to confirm you're showing up.",
+  },
+  {
     q: "Can I switch from Standard to Growth later?",
     a: "Yes. Most businesses start on Standard and move to Growth once they want service & location pages, a lead CRM, and automated review follow-ups.",
   },
@@ -92,9 +96,9 @@ export default function PricingPage() {
         eyebrow="Pricing"
         title={
           <>
-            Simple Monthly Website Plans
+            Simple Monthly Plans
             <br />
-            <span className="text-brand">from $197/month</span>
+            <span className="text-brand">Built for Local Business Growth</span>
           </>
         }
         subtitle="Get a professional website without a large upfront cost. Choose the plan that fits your business goals."
@@ -213,5 +217,5 @@ function Cell({
       </span>
     );
   }
-  return <span className="inline-block text-muted/40">—</span>;
+  return <span className="inline-block text-muted/40">–</span>;
 }

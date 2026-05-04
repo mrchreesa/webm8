@@ -13,8 +13,8 @@ import { buildMailtoHref } from "@/lib/mailto";
 import { intakeEmail } from "@/lib/site";
 
 const planOptions = [
-  { value: "standard", label: "Standard — $197/month" },
-  { value: "growth", label: "Growth — $297/month" },
+  { value: "standard", label: "Standard: $197/month" },
+  { value: "growth", label: "Growth: $297/month" },
   { value: "unsure", label: "Not sure yet" },
 ];
 
@@ -47,12 +47,14 @@ export function ContactForm() {
     const business = get("business");
     const name = get("name");
     const email = get("email");
+    const phone = get("phone");
     const plan = get("plan");
 
-    if (!business || !name || !email) {
+    if (!business || !name || !email || !phone) {
       setStatus({
         tone: "error",
-        message: "Add business name, your name, and email before sending.",
+        message:
+          "Add business name, your name, email, and phone before sending.",
       });
       return;
     }
@@ -64,7 +66,7 @@ export function ContactForm() {
         Business: business,
         Name: name,
         Email: email,
-        Phone: get("phone"),
+        Phone: phone,
         "Interested plan": plan,
         "Current website": get("website"),
         Message: get("message"),
@@ -106,9 +108,10 @@ export function ContactForm() {
           autoComplete="email"
         />
         <TextField
-          label="Phone (optional)"
+          label="Phone"
           name="phone"
           type="tel"
+          required
           autoComplete="tel"
         />
         <SelectField
