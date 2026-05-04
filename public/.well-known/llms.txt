@@ -1,0 +1,9 @@
+# WebM8 LLM Context
+
+The canonical AI-readable index for WebM8 is available at:
+
+- https://www.webm8agency.com/llms.txt
+
+The full AI-readable context file is available at:
+
+- https://www.webm8agency.com/llms-full.txt

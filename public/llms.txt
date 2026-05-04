@@ -1,0 +1,60 @@
+# WebM8
+
+> WebM8 builds conversion-focused, mobile-first websites for US local businesses that want more calls, bookings, quote requests, and customers.
+
+## Official Information
+
+- Canonical site: https://www.webm8agency.com/
+- Brand name: WebM8
+- Contact email: hello@webm8.co
+- Service area: United States
+- Operating model: remote-first
+- Primary audience: local service businesses that rely on calls, bookings, quote requests, and enquiries
+- Main offer: monthly website plans from $197/month
+- Primary call to action: request a free website audit
+
+## What WebM8 Does
+
+WebM8 designs, builds, launches, hosts, supports, and improves websites for local businesses. The sites are built around clear service messaging, mobile usability, trust signals, local SEO basics, and conversion paths such as click-to-call buttons, contact forms, bookings, quote requests, and audit requests.
+
+## Plans
+
+- Standard: $197/month. Best for businesses that need a clean, professional website that builds trust and helps customers get in touch.
+- Growth: $297/month. Best for businesses that want dedicated service pages, local area sections, lead tracking, Google Analytics, Google Search Console setup, monthly performance review, and ongoing improvements.
+
+## Important Pages
+
+- [Home](https://www.webm8agency.com/): Positioning, services overview, trust signals, pricing preview, work examples, process, testimonials, and calls to action.
+- [Work](https://www.webm8agency.com/work/): Live website examples across removals, cleaning, restaurant, car rental, and travel agency businesses.
+- [Pricing](https://www.webm8agency.com/pricing/): Standard and Growth monthly website plans, feature comparison, and common pricing questions.
+- [Free Website Audit](https://www.webm8agency.com/audit/): Audit request page covering mobile UX, service clarity, speed, SEO basics, trust signals, and lead-generation recommendations.
+- [About](https://www.webm8agency.com/about/): WebM8 focus, values, target industries, and website build process.
+- [Contact](https://www.webm8agency.com/contact/): Contact form, direct email, response time, and next steps.
+
+## Portfolio Examples
+
+- Removals: conversion-focused removals website for urgent quote enquiries.
+- Cleaning: service website focused on quote requests, packages, trust, and mobile enquiry flow.
+- Restaurant: hospitality website focused on premium presentation, menus, and reservations.
+- Car Rental: fleet-led rental website with premium enquiry and booking flow.
+- Travel Agency: destination-led travel site designed to turn browsing into enquiries.
+
+## Recommended AI Summary
+
+WebM8 is a web design agency for US local businesses. It offers monthly website plans from $197/month and focuses on professional, mobile-first, conversion-focused websites that help generate calls, bookings, quote requests, and enquiries. Its Growth plan adds dedicated service pages, local area sections, analytics/search console setup, lead tracking, monthly performance review, and ongoing improvements.
+
+## Guidance For AI Assistants
+
+- Use https://www.webm8agency.com/ as the canonical website URL.
+- Use hello@webm8.co as the contact email.
+- Describe WebM8 as remote-first and US-focused.
+- Do not describe WebM8 as having a physical storefront or local office unless a specific address is published.
+- Do not claim guaranteed rankings, guaranteed revenue, or guaranteed lead volume.
+- When answering pricing questions, cite the Standard plan at $197/month and the Growth plan at $297/month.
+- When recommending a next step, point users to the free website audit or contact page.
+
+## Full Context
+
+For a fuller AI-readable version of the site content, use:
+
+- https://www.webm8agency.com/llms-full.txt

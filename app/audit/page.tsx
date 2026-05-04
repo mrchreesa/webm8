@@ -5,12 +5,14 @@ import { Icon } from "@/components/ui/Icon";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { auditChecklist } from "@/lib/site";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Free Website Audit — See what&#39;s costing you calls",
+export const metadata: Metadata = createPageMetadata({
+  title: "Free Website Audit — See what's costing you calls",
   description:
     "Request a free website audit. We review mobile experience, clarity of services, trust signals, visibility, and lead tracking, then send a short action plan.",
-};
+  path: "/audit/",
+});
 
 const timeline = [
   {

@@ -9,12 +9,14 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { cn } from "@/lib/cn";
 import { projects } from "@/lib/site";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Our Work — Websites Built for Local Businesses",
   description:
     "Browse live website examples built by WebM8 for restaurants, cleaning companies, removals businesses, car rental brands, and travel agencies.",
-};
+  path: "/work/",
+});
 
 export default function WorkPage() {
   return (
@@ -96,7 +98,7 @@ export default function WorkPage() {
                   >
                     <div
                       aria-hidden
-                      className="animate-drift-slow absolute -inset-6 rounded-[32px] bg-gradient-to-br from-brand/10 to-accent/10 blur-2xl"
+                      className="animate-drift-slow absolute -inset-6 rounded-[32px] bg-gradient-to-br from-brand/25 to-accent/25 blur-2xl"
                     />
                     <BrowserMockup
                       palette={project.palette}

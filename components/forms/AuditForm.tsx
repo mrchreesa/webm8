@@ -17,7 +17,7 @@ type Status = {
 
 const initial: Status = {
   tone: "neutral",
-  message: "This opens a prefilled email draft using your default mail client.",
+  message: "",
 };
 
 export function AuditForm() {
@@ -127,7 +127,9 @@ export function AuditForm() {
         <Button type="submit" size="lg">
           Request Free Audit
         </Button>
-        <FormStatus tone={status.tone}>{status.message}</FormStatus>
+        {status.message && (
+          <FormStatus tone={status.tone}>{status.message}</FormStatus>
+        )}
       </div>
     </form>
   );

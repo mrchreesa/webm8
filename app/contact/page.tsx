@@ -5,12 +5,14 @@ import { ContactForm } from "@/components/forms/ContactForm";
 import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
 import { intakeEmail } from "@/lib/site";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Contact — Start a website project",
   description:
     "Get in touch to start a new website, switch plans, or ask a question. We reply within one business day.",
-};
+  path: "/contact/",
+});
 
 export default function ContactPage() {
   return (

@@ -75,7 +75,6 @@ export function BrowserMockup({
           compact ? "pb-8" : "pb-12",
           className,
         )}
-        aria-hidden="true"
       >
         <div className="overflow-hidden rounded-[22px] border border-white/75 bg-white shadow-card-hover ring-1 ring-ink/10">
           <div className="flex items-center gap-1.5 border-b border-border bg-slate-100 px-3 py-2 md:gap-2 md:px-4">
@@ -97,7 +96,7 @@ export function BrowserMockup({
           >
             <Image
               src={screenshots.desktop}
-              alt=""
+              alt={`${title} desktop website screenshot`}
               fill
               sizes={
                 compact
@@ -122,7 +121,7 @@ export function BrowserMockup({
               <span className="absolute left-1/2 top-1.5 z-10 h-1 w-8 -translate-x-1/2 rounded-full bg-slate-950/45" />
               <Image
                 src={screenshots.mobile}
-                alt=""
+                alt={`${title} mobile website screenshot`}
                 fill
                 sizes={compact ? "112px" : "180px"}
                 className="object-cover object-top"
@@ -159,7 +158,7 @@ export function BrowserMockup({
         <span className="h-3 w-3 rounded-full bg-emerald-400/80" />
         <div className="ml-3 flex-1">
           <div className="mx-auto h-5 max-w-xs rounded-md border border-border bg-white px-3 font-mono text-[10px] leading-5 text-slate-400">
-            webm8.co / {industry.toLowerCase().replace(/\s+/g, "-")}
+            webm8agency.com / {industry.toLowerCase().replace(/\s+/g, "-")}
           </div>
         </div>
       </div>
@@ -233,7 +232,7 @@ export function BrowserMockup({
 
 function formatDisplayUrl(siteUrl: string | undefined, industry: string) {
   if (!siteUrl) {
-    return `webm8.co / ${industry.toLowerCase().replace(/\s+/g, "-")}`;
+    return `webm8agency.com / ${industry.toLowerCase().replace(/\s+/g, "-")}`;
   }
 
   try {

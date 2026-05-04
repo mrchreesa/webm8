@@ -47,7 +47,7 @@ export function WhatYouGet() {
           <div className="relative">
             <div
               aria-hidden
-              className="animate-drift-slow-alt absolute -inset-6 rounded-[32px] bg-gradient-to-br from-accent/10 to-brand/15 blur-2xl"
+              className="animate-drift-slow-alt absolute -inset-6 rounded-[32px] bg-gradient-to-br from-accent/30 to-brand/35 blur-2xl"
             />
             <div className="relative rotate-1">
               <BrowserMockup

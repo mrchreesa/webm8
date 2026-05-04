@@ -7,12 +7,14 @@ import { Icon } from "@/components/ui/Icon";
 import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { cn } from "@/lib/cn";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Pricing — Simple monthly website plans",
   description:
     "Simple monthly plans for US local businesses. Standard $197/month for a professional site. Growth $297/month for lead generation and performance tracking.",
-};
+  path: "/pricing/",
+});
 
 const compare: {
   label: string;
@@ -23,14 +25,41 @@ const compare: {
   { label: "Mobile-friendly layout", standard: true, growth: true },
   { label: "Homepage, services, about, contact", standard: true, growth: true },
   { label: "Contact form + click-to-call", standard: true, growth: true },
-  { label: "Basic SEO setup", standard: true, growth: true },
   { label: "Hosting & support included", standard: true, growth: true },
-  { label: "Dedicated service pages", standard: false, growth: true },
-  { label: "Review / testimonial sections", standard: false, growth: true },
-  { label: "Local area / service location pages", standard: false, growth: true },
-  { label: "Google Analytics + Search Console", standard: false, growth: true },
-  { label: "Lead tracking setup", standard: false, growth: true },
-  { label: "Monthly performance review", standard: false, growth: true },
+  { label: "Domain name included", standard: true, growth: true },
+  {
+    label: "Basic SEO (titles, meta, LocalBusiness schema)",
+    standard: true,
+    growth: true,
+  },
+  { label: "Google Business Profile setup", standard: false, growth: true },
+  {
+    label: "Advanced SEO (service & location pages, FAQ schema)",
+    standard: false,
+    growth: true,
+  },
+  {
+    label:
+      "GEO / LLM optimization (ChatGPT, Claude, Gemini, Perplexity etc. visibility)",
+    standard: false,
+    growth: true,
+  },
+  {
+    label: "Google Analytics + monthly performance report",
+    standard: false,
+    growth: true,
+  },
+  {
+    label: "Lead CRM (forms & customers in one place)",
+    standard: false,
+    growth: true,
+  },
+  {
+    label: "Automated email + post-job review requests",
+    standard: false,
+    growth: true,
+  },
+  { label: "Conversion-focused page structure", standard: false, growth: true },
 ];
 
 const faqs = [
@@ -40,7 +69,7 @@ const faqs = [
   },
   {
     q: "Can I switch from Standard to Growth later?",
-    a: "Yes. Most businesses start on Standard and move to Growth once they want dedicated service pages, local area pages, and lead tracking.",
+    a: "Yes. Most businesses start on Standard and move to Growth once they want service & location pages, a lead CRM, and automated review follow-ups.",
   },
   {
     q: "Do you own the website or do I?",

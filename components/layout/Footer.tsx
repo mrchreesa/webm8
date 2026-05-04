@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { brand, intakeEmail, primaryNav } from "@/lib/site";
+import { brand, intakeEmail } from "@/lib/site";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -22,11 +22,18 @@ export function Footer() {
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-muted">
               High-converting websites for US local businesses. More calls,
-              more bookings, more customers. Monthly plans from $197.
+              more bookings, more customers.
             </p>
           </div>
 
-          <FooterCol title="Site" links={primaryNav.slice(0, 4)} />
+          <FooterCol
+            title="Site"
+            links={[
+              { label: "Home", href: "/" },
+              { label: "Work", href: "/work" },
+              { label: "Audit", href: "/audit" },
+            ]}
+          />
           <FooterCol
             title="Company"
             links={[
@@ -49,7 +56,6 @@ export function Footer() {
                   {intakeEmail}
                 </a>
               </li>
-              <li>United States · Remote-first</li>
               <li>Reply within 1 business day</li>
             </ul>
           </div>

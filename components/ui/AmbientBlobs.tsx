@@ -21,20 +21,20 @@ export function AmbientBlobs({
     >
       {variant === "light" && (
         <>
-          <div className="animate-drift-slow absolute -left-40 top-0 h-[420px] w-[420px] rounded-full bg-brand/10 blur-3xl" />
-          <div className="animate-drift-slow-alt absolute -right-20 top-40 h-[380px] w-[380px] rounded-full bg-accent/10 blur-3xl" />
+          <div className="animate-drift-slow absolute -left-40 top-0 h-[560px] w-[560px] rounded-full bg-brand/25 blur-3xl" />
+          <div className="animate-drift-slow-alt absolute -right-20 top-40 h-[500px] w-[500px] rounded-full bg-accent/25 blur-3xl" />
         </>
       )}
       {variant === "brand" && (
         <>
           <div className="absolute inset-0 bg-gradient-to-br from-brand via-brand to-[#1e3a8a]" />
-          <div className="animate-drift-slow absolute -left-24 top-0 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
-          <div className="animate-drift-slow-alt absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-accent/30 blur-3xl" />
+          <div className="animate-drift-slow absolute -left-24 top-0 h-96 w-96 rounded-full bg-white/15 blur-3xl" />
+          <div className="animate-drift-slow-alt absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-accent/50 blur-3xl" />
         </>
       )}
       {variant === "dark" && (
         <>
-          <div className="animate-drift-slow absolute left-1/2 top-0 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-brand/40 blur-3xl" />
+          <div className="animate-drift-slow absolute left-1/2 top-0 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-brand/55 blur-3xl" />
         </>
       )}
 

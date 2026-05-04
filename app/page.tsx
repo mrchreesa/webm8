@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Hero } from "@/components/home/Hero";
 import { TrustBar } from "@/components/home/TrustBar";
 import { ValueCards } from "@/components/home/ValueCards";
@@ -8,6 +9,18 @@ import { Process } from "@/components/home/Process";
 import { AuditTeaser } from "@/components/home/AuditTeaser";
 import { Testimonials } from "@/components/home/Testimonials";
 import { FinalCta } from "@/components/home/FinalCta";
+import {
+  createPageMetadata,
+  defaultDescription,
+  defaultTitle,
+} from "@/lib/seo";
+
+export const metadata: Metadata = createPageMetadata({
+  title: defaultTitle,
+  description: defaultDescription,
+  path: "/",
+  absoluteTitle: true,
+});
 
 export default function HomePage() {
   return (

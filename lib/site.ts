@@ -1,4 +1,4 @@
-export const intakeEmail = "hello@webm8.co";
+export const intakeEmail = "info@webm8agency.com";
 
 export const brand = {
   name: "WebM8",
@@ -61,6 +61,7 @@ export const whatYouGet: string[] = [
   "Click-to-call buttons",
   "Review sections",
   "Local SEO setup",
+  "GEO / LLM optimization",
   "Fast page speed",
   "Lead tracking",
   "Ongoing support",
@@ -94,9 +95,10 @@ export const plans: Plan[] = [
       "Homepage, services, about & contact sections",
       "Contact form",
       "Click-to-call buttons",
-      "Basic SEO setup",
+      "Basic SEO (titles, meta, LocalBusiness schema)",
+      "Domain name included",
       "Hosting & support included",
-      "Basic website updates",
+      "Small monthly content edits",
     ],
     ctaLabel: "Choose Standard",
   },
@@ -107,17 +109,15 @@ export const plans: Plan[] = [
     period: "month",
     tagline: "Grow with Growth",
     summary:
-      "Best for businesses that want a stronger website designed to generate more leads and track performance.",
+      "Best for businesses that want a website plus an ongoing growth service — more leads, better visibility, and customer follow-up handled for you.",
     features: [
       "Everything in Standard",
-      "Dedicated service pages",
-      "Review / testimonial sections",
-      "Local area & service location sections",
-      "Conversion-focused layout",
-      "Google Analytics setup",
-      "Google Search Console setup",
-      "Lead tracking setup",
-      "Monthly performance review",
+      "Advanced SEO (service & location pages, FAQ + Service + Review schema)",
+      "GEO / LLM optimization (ChatGPT, Claude, Gemini, Perplexity etc. visibility)",
+      "Google Analytics + monthly performance report",
+      "Lead CRM (every form submission and customer in one place)",
+      "Automated email follow-up + post-job review requests",
+      "Conversion-focused page structure",
       "Ongoing website improvements",
     ],
     ctaLabel: "Choose Growth",

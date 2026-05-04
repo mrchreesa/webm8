@@ -6,12 +6,14 @@ import { Process } from "@/components/home/Process";
 import { FinalCta } from "@/components/home/FinalCta";
 import { Reveal } from "@/components/ui/Reveal";
 import { valueProps } from "@/lib/site";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "About — Websites built for local business growth",
   description:
     "WebM8 is a web design agency focused on US local businesses. We build professional, conversion-focused websites that help owners win more calls, bookings, and customers.",
-};
+  path: "/about/",
+});
 
 const industries = [
   "Contractors",
