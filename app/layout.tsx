@@ -136,9 +136,7 @@ function StructuredData() {
           "@type": "Offer",
           name: `${plan.name} website plan`,
           description: plan.summary,
-          price: String(plan.price),
-          priceCurrency: "USD",
-          url: `${siteUrl}/pricing/`,
+          url: `${siteUrl}/contact/`,
           itemOffered: {
             "@type": "Service",
             name: plan.name,

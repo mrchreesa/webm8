@@ -8,10 +8,10 @@ export const defaultTitle =
   "WebM8 | Websites for Local Businesses That Want More Customers";
 
 export const defaultDescription =
-  "WebM8 builds high-converting websites for US local businesses. Professional, mobile-first, conversion-focused sites that turn visitors into calls, bookings, and paying customers. Plans from $197/month.";
+  "WebM8 builds high-converting websites for US local businesses. Professional, mobile-first, conversion-focused sites that turn visitors into calls, bookings, and paying customers. Get a fast estimate in one business day.";
 
 export const socialDescription =
-  "High-converting websites for US local businesses. More calls, more bookings, more customers. Monthly plans from $197.";
+  "High-converting websites for US local businesses. More calls, more bookings, more customers. Get a fast estimate in one business day.";
 
 export const ogImage = {
   url: "/og-image.svg",
@@ -36,9 +36,9 @@ export const indexableRoutes = [
   },
   {
     path: "/pricing/",
-    title: "Pricing - Simple monthly website plans",
+    title: "Pricing - Get a fast estimate",
     description:
-      "Simple monthly plans for US local businesses. Standard $197/month for a professional site. Growth $297/month for lead generation and performance tracking.",
+      "Every WebM8 project is quoted to the business. Tell us what you need and we'll send a straight number within one business day. No large upfront website cost.",
     priority: 0.9,
   },
   {
@@ -59,7 +59,7 @@ export const indexableRoutes = [
     path: "/contact/",
     title: "Contact - Start a website project",
     description:
-      "Get in touch to start a new website, switch plans, or ask a question. We reply within one business day.",
+      "Get in touch for a fast estimate on a new website, switch plans, or ask a question. We reply within one business day.",
     priority: 0.8,
   },
 ] as const;

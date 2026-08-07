@@ -13,8 +13,8 @@ import { buildMailtoHref } from "@/lib/mailto";
 import { intakeEmail } from "@/lib/site";
 
 const planOptions = [
-  { value: "standard", label: "Standard: $197/month" },
-  { value: "growth", label: "Growth: $297/month" },
+  { value: "standard", label: "Standard" },
+  { value: "growth", label: "Growth" },
   { value: "unsure", label: "Not sure yet" },
 ];
 

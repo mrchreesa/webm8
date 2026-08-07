@@ -35,8 +35,8 @@ export function Hero() {
 							Get a Free Website Audit
 							<Icon name="arrow" size={18} />
 						</LinkButton>
-						<LinkButton href="/pricing" size="lg" variant="ghost">
-							View Pricing
+						<LinkButton href="/contact/" size="lg" variant="ghost">
+							Get a Fast Estimate
 							<Icon name="arrow" size={18} />
 						</LinkButton>
 					</div>

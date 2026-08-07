@@ -71,8 +71,6 @@ export const whatYouGet: string[] = [
 export type Plan = {
   id: "standard" | "growth";
   name: string;
-  price: number;
-  period: "month";
   tagline: string;
   summary: string;
   features: string[];
@@ -85,8 +83,6 @@ export const plans: Plan[] = [
   {
     id: "standard",
     name: "Standard",
-    price: 197,
-    period: "month",
     tagline: "Start with Standard",
     summary:
       "Best for businesses that need a clean, professional website that builds trust and helps customers get in touch.",
@@ -101,13 +97,11 @@ export const plans: Plan[] = [
       "Hosting & support included",
       "Small monthly content edits",
     ],
-    ctaLabel: "Choose Standard",
+    ctaLabel: "Get a Fast Estimate",
   },
   {
     id: "growth",
     name: "Growth",
-    price: 297,
-    period: "month",
     tagline: "Grow with Growth",
     summary:
       "Best for businesses that want a website plus an ongoing growth service: more leads, better visibility, and customer follow-up handled for you.",
@@ -121,7 +115,7 @@ export const plans: Plan[] = [
       "Conversion-focused page structure",
       "Ongoing website improvements",
     ],
-    ctaLabel: "Choose Growth",
+    ctaLabel: "Get a Fast Estimate",
     highlighted: true,
     badge: "Best Value",
   },

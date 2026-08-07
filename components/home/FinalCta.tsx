@@ -21,17 +21,16 @@ export function FinalCta() {
             Ready to Turn Your Website Into a Better Sales Tool?
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-white/70">
-            Choose a monthly website plan or request a free audit to see how
-            your business website can bring in more calls, bookings, and
-            customers.
+            Get a fast estimate or request a free audit to see how your business
+            website can bring in more calls, bookings, and customers.
           </p>
           <div className="mt-9 flex flex-wrap justify-center gap-3">
             <LinkButton href="/audit" size="lg" variant="dark">
               Get a Free Website Audit
               <Icon name="arrow" size={18} />
             </LinkButton>
-            <LinkButton href="/pricing" size="lg" variant="outline-invert">
-              View Pricing
+            <LinkButton href="/contact/" size="lg" variant="outline-invert">
+              Get a Fast Estimate
               <Icon name="arrow" size={18} />
             </LinkButton>
           </div>

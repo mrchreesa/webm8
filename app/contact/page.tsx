@@ -10,7 +10,7 @@ import { createPageMetadata } from "@/lib/seo";
 export const metadata: Metadata = createPageMetadata({
   title: "Contact: Start a website project",
   description:
-    "Get in touch to start a new website, switch plans, or ask a question. We reply within one business day.",
+    "Get in touch for a fast estimate on a new website, switch plans, or ask a question. We reply within one business day.",
   path: "/contact/",
 });
 
@@ -27,7 +27,7 @@ export default function ContactPage() {
             </span>
           </>
         }
-        subtitle="Choose a plan, ask a question, or send us details about what you want your website to do."
+        subtitle="Send us a few details about what you want your website to do and we'll come back with a straight estimate."
       />
 
       <section className="py-16 md:py-20">

@@ -5,17 +5,16 @@ import { Reveal } from "@/components/ui/Reveal";
 import { cn } from "@/lib/cn";
 import { plans } from "@/lib/site";
 
-type PricingProps = {
-  variant?: "section" | "bare";
-  showReassurance?: boolean;
-};
-
-export function Pricing({
-  variant = "section",
-  showReassurance = true,
-}: PricingProps) {
-  const body = (
-    <>
+export function Pricing() {
+  return (
+    <Section
+      id="plans"
+      eyebrow="Plans"
+      title="Plans Built Around Your Business"
+      subtitle="Every project is quoted to the business, so you only pay for what you actually need. Pick the plan that fits and we'll send a number."
+      align="center"
+      tone="tint"
+    >
       <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-2 md:gap-8">
         {plans.map((plan, i) => (
           <Reveal key={plan.id} delay={i * 100}>
@@ -36,12 +35,10 @@ export function Pricing({
               <div className="flex items-baseline justify-between gap-2">
                 <h3 className="text-2xl font-bold text-ink">{plan.name}</h3>
               </div>
-              <div className="mt-3 flex items-end gap-1">
-                <span className="text-5xl font-black tracking-tight text-ink">
-                  ${plan.price}
-                </span>
-                <span className="pb-2 font-mono text-sm font-medium text-muted">
-                  /{plan.period}
+              <div className="mt-3">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-brand">
+                  <Icon name="spark" size={12} />
+                  Custom quote
                 </span>
               </div>
               <p className="mt-4 text-base leading-relaxed text-muted">
@@ -64,7 +61,7 @@ export function Pricing({
 
               <div className="mt-8">
                 <LinkButton
-                  href={`/contact?plan=${plan.id}`}
+                  href={`/contact/?plan=${plan.id}`}
                   size="lg"
                   variant={plan.highlighted ? "primary" : "ghost"}
                   className="w-full"
@@ -77,31 +74,12 @@ export function Pricing({
         ))}
       </div>
 
-      {showReassurance && (
-        <Reveal delay={200}>
-          <p className="mt-10 text-center text-sm text-muted">
-            No large upfront website cost. Monthly support included. Cancel
-            anytime.
-          </p>
-        </Reveal>
-      )}
-    </>
-  );
-
-  if (variant === "bare") {
-    return body;
-  }
-
-  return (
-    <Section
-      id="pricing"
-      eyebrow="Pricing"
-      title="Simple Monthly Website Plans"
-      subtitle="Get a professional website without a large upfront cost. Choose the plan that fits your business goals."
-      align="center"
-      tone="tint"
-    >
-      {body}
+      <Reveal delay={200}>
+        <p className="mt-10 text-center text-sm text-muted">
+          No large upfront website cost. Monthly support included. Cancel
+          anytime.
+        </p>
+      </Reveal>
     </Section>
   );
 }
