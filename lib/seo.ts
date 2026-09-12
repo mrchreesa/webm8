@@ -43,9 +43,9 @@ export const indexableRoutes = [
   },
   {
     path: "/movers/",
-    title: "Moving Company Websites That Bring In Estimate Requests",
+    title: "Moving Company Websites, Built and Managed From $197/month",
     description:
-      "Websites for US moving companies that make it easy to ask for an estimate, send new requests straight to you, and keep improving every month.",
+      "Websites for US moving companies that make requesting an estimate simple. Two plans, $0 setup, no minimum contract term. Book a free 10-minute website review.",
     priority: 0.9,
   },
   {

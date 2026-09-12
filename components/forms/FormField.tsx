@@ -1,13 +1,16 @@
 import type { ReactNode } from "react";
+import { useId } from "react";
 import { cn } from "@/lib/cn";
 
 const fieldBase = cn(
-  "w-full rounded-xl border border-border bg-white px-4 py-3 text-sm text-ink",
+  "w-full rounded-xl border border-border bg-white px-4 py-3 text-base text-ink",
   "shadow-[0_1px_2px_rgb(15_23_42/0.03)] transition-colors placeholder:text-slate-400",
   "focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20",
+  "disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400",
 );
 
-const labelCls = "font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted";
+const labelCls =
+  "font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted";
 
 type FieldProps = {
   label: string;
@@ -18,6 +21,13 @@ type FieldProps = {
   wide?: boolean;
   defaultValue?: string;
   autoComplete?: string;
+  /** Validation message. Shown below the field and linked with aria-describedby. */
+  error?: string;
+  /** Extra guidance shown below the field when there is no error. */
+  hint?: string;
+  disabled?: boolean;
+  inputMode?: "text" | "email" | "tel" | "url";
+  labelClassName?: string;
 };
 
 export function TextField({
@@ -29,23 +39,49 @@ export function TextField({
   wide,
   defaultValue,
   autoComplete,
+  error,
+  hint,
+  disabled,
+  inputMode,
+  labelClassName,
 }: FieldProps) {
+  const id = useId();
+  const messageId = `${id}-message`;
+  const message = error || hint;
+
   return (
-    <label className={cn("flex flex-col gap-1.5", wide && "sm:col-span-2")}>
-      <span className={labelCls}>
+    <div className={cn("flex flex-col gap-1.5", wide && "sm:col-span-2")}>
+      <label htmlFor={id} className={cn(labelCls, labelClassName)}>
         {label}
-        {required && <span className="ml-1 text-brand">*</span>}
-      </span>
+        {required && (
+          <span className="ml-1 text-brand" aria-hidden="true">
+            *
+          </span>
+        )}
+      </label>
       <input
+        id={id}
         type={type}
         name={name}
         required={required}
         placeholder={placeholder}
         defaultValue={defaultValue}
         autoComplete={autoComplete}
-        className={fieldBase}
+        inputMode={inputMode}
+        disabled={disabled}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={message ? messageId : undefined}
+        className={cn(fieldBase, error && "border-rose-400 focus:border-rose-500")}
       />
-    </label>
+      {message && (
+        <p
+          id={messageId}
+          className={cn("text-xs leading-relaxed", error ? "text-rose-600" : "text-muted")}
+        >
+          {message}
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -62,20 +98,27 @@ export function TextAreaField({
   required?: boolean;
   rows?: number;
 }) {
+  const id = useId();
+
   return (
-    <label className="flex flex-col gap-1.5 sm:col-span-2">
-      <span className={labelCls}>
+    <div className="flex flex-col gap-1.5 sm:col-span-2">
+      <label htmlFor={id} className={labelCls}>
         {label}
-        {required && <span className="ml-1 text-brand">*</span>}
-      </span>
+        {required && (
+          <span className="ml-1 text-brand" aria-hidden="true">
+            *
+          </span>
+        )}
+      </label>
       <textarea
+        id={id}
         name={name}
         rows={rows}
         required={required}
         placeholder={placeholder}
         className={cn(fieldBase, "resize-y")}
       />
-    </label>
+    </div>
   );
 }
 
@@ -94,13 +137,20 @@ export function SelectField({
   defaultValue?: string;
   wide?: boolean;
 }) {
+  const id = useId();
+
   return (
-    <label className={cn("flex flex-col gap-1.5", wide && "sm:col-span-2")}>
-      <span className={labelCls}>
+    <div className={cn("flex flex-col gap-1.5", wide && "sm:col-span-2")}>
+      <label htmlFor={id} className={labelCls}>
         {label}
-        {required && <span className="ml-1 text-brand">*</span>}
-      </span>
+        {required && (
+          <span className="ml-1 text-brand" aria-hidden="true">
+            *
+          </span>
+        )}
+      </label>
       <select
+        id={id}
         name={name}
         required={required}
         defaultValue={defaultValue}
@@ -112,7 +162,7 @@ export function SelectField({
           </option>
         ))}
       </select>
-    </label>
+    </div>
   );
 }
 
@@ -126,7 +176,7 @@ export function FormStatus({
   return (
     <p
       className={cn(
-        "text-xs transition-colors",
+        "text-sm transition-colors",
         tone === "error" && "text-rose-600",
         tone === "success" && "text-emerald-600",
         tone === "neutral" && "text-muted",
