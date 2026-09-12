@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useState } from "react";
 
 type CalApi = ((...args: unknown[]) => void) & {
   ns?: Record<string, (...args: unknown[]) => void>;
@@ -18,11 +18,60 @@ const EMBED_SCRIPT = "https://app.cal.com/embed/embed.js";
 const NAMESPACE = "review";
 
 /**
+ * Cal.com's official loader, transcribed from their embed snippet.
+ *
+ * It has to be this shape: embed.js reads `Cal.ns` and `Cal.q` off the global
+ * it finds and throws if they are missing, so a simpler stub breaks the embed.
+ */
+function installCalLoader() {
+  if (window.Cal) return window.Cal;
+
+  const queue = (api: CalApi, args: IArguments | unknown[]) => {
+    (api.q ||= []).push(args);
+  };
+
+  const cal = function (...args: unknown[]) {
+    const self = window.Cal as CalApi;
+
+    if (!self.loaded) {
+      self.ns = {};
+      self.q = self.q || [];
+      const script = document.createElement("script");
+      script.src = EMBED_SCRIPT;
+      document.head.appendChild(script);
+      self.loaded = true;
+    }
+
+    if (args[0] === "init") {
+      const namespace = args[1];
+      if (typeof namespace === "string") {
+        const api = function (...inner: unknown[]) {
+          queue(api as CalApi, inner);
+        } as CalApi;
+        api.q = api.q || [];
+        self.ns![namespace] = self.ns![namespace] || api;
+        queue(self.ns![namespace] as CalApi, args);
+        queue(self, ["initNamespace", namespace]);
+      } else {
+        queue(self, args);
+      }
+      return;
+    }
+
+    queue(self, args);
+  } as CalApi;
+
+  window.Cal = cal;
+  return cal;
+}
+
+/**
  * Inline Cal.com booking calendar.
  *
  * The caller always renders a plain booking link as well, so a visitor whose
  * browser blocks this script — Meta's in-app browser, an ad blocker — still has
- * a working way to book. This component only ever adds the richer option.
+ * a working way to book. This component only ever adds the richer option, and
+ * removes itself if the calendar never renders.
  */
 export function CalEmbed({
   calLink,
@@ -35,92 +84,54 @@ export function CalEmbed({
   email?: string;
   onBookingConfirmed?: () => void;
 }) {
-  const containerId = useId().replace(/:/g, "");
-  const [failed, setFailed] = useState(false);
-  const confirmed = useRef(false);
+  const containerId = `cal-${useId().replace(/:/g, "")}`;
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
+    const Cal = installCalLoader();
 
-    function loadScript() {
-      return new Promise<void>((resolve, reject) => {
-        if (window.Cal) return resolve();
+    Cal("init", NAMESPACE, { origin: "https://app.cal.com" });
+    const ns = Cal.ns?.[NAMESPACE];
+    if (!ns) {
+      setHidden(true);
+      return;
+    }
 
-        const existing = document.querySelector<HTMLScriptElement>(
-          `script[src="${EMBED_SCRIPT}"]`,
-        );
-        if (existing) {
-          existing.addEventListener("load", () => resolve(), { once: true });
-          existing.addEventListener("error", () => reject(), { once: true });
-          return;
-        }
+    ns("inline", {
+      elementOrSelector: `#${containerId}`,
+      calLink,
+      config: {
+        layout: "month_view",
+        ...(name ? { name } : {}),
+        ...(email ? { email } : {}),
+      },
+    });
 
-        // Minimal stand-in for Cal's own loader: queue calls until the real
-        // script replaces it.
-        const api = function (...args: unknown[]) {
-          (api.q ||= []).push(args);
-        } as CalApi;
-        api.q = [];
-        window.Cal = api;
+    ns("ui", { hideEventTypeDetails: false, layout: "month_view" });
 
-        const script = document.createElement("script");
-        script.src = EMBED_SCRIPT;
-        script.async = true;
-        script.addEventListener("load", () => resolve(), { once: true });
-        script.addEventListener("error", () => reject(), { once: true });
-        document.head.appendChild(script);
+    if (onBookingConfirmed) {
+      let confirmed = false;
+      ns("on", {
+        action: "bookingSuccessful",
+        callback: () => {
+          if (confirmed) return;
+          confirmed = true;
+          onBookingConfirmed();
+        },
       });
     }
 
-    loadScript()
-      .then(() => {
-        if (cancelled) return;
-        const Cal = window.Cal;
-        if (!Cal) {
-          setFailed(true);
-          return;
-        }
+    // If the script is blocked the container stays empty. Rather than leave a
+    // blank panel under the booking link, take it away.
+    const timer = window.setTimeout(() => {
+      const container = document.getElementById(containerId);
+      if (container && container.childElementCount === 0) setHidden(true);
+    }, 6000);
 
-        Cal("init", NAMESPACE, { origin: "https://app.cal.com" });
-        const ns = Cal.ns?.[NAMESPACE];
-        if (!ns) {
-          setFailed(true);
-          return;
-        }
-
-        ns("inline", {
-          elementOrSelector: `#${containerId}`,
-          calLink,
-          config: {
-            layout: "month_view",
-            ...(name ? { name } : {}),
-            ...(email ? { email } : {}),
-          },
-        });
-
-        ns("ui", { hideEventTypeDetails: false, layout: "month_view" });
-
-        if (onBookingConfirmed) {
-          ns("on", {
-            action: "bookingSuccessful",
-            callback: () => {
-              if (confirmed.current) return;
-              confirmed.current = true;
-              onBookingConfirmed();
-            },
-          });
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setFailed(true);
-      });
-
-    return () => {
-      cancelled = true;
-    };
+    return () => window.clearTimeout(timer);
   }, [calLink, containerId, email, name, onBookingConfirmed]);
 
-  if (failed) return null;
+  if (hidden) return null;
 
   return (
     <div

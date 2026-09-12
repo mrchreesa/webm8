@@ -15,15 +15,13 @@ export function Header() {
   const isMoversPage = pathname?.startsWith("/movers") ?? false;
   const navItems = isMoversPage
     ? [
-        { label: "Example", href: "#example" },
-        { label: "Included", href: "#included" },
-        { label: "Process", href: "#process" },
+        { label: "How it works", href: "#how-it-works" },
         { label: "Pricing", href: "#pricing" },
         { label: "FAQ", href: "#faq" },
       ]
     : primaryNav;
-  const ctaHref = isMoversPage ? "#preview" : "/audit";
-  const ctaLabel = isMoversPage ? "Get a Free Preview" : "Get a Free Review";
+  const ctaHref = isMoversPage ? "#review-request" : "/audit";
+  const ctaLabel = isMoversPage ? "Book my free review" : "Get a Free Review";
 
   useEffect(() => {
     let raf = 0;

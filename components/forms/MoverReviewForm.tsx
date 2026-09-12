@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { FormStatus, TextField } from "@/components/forms/FormField";
 import { Icon } from "@/components/ui/Icon";
@@ -267,6 +267,12 @@ function BookingPanel({ accepted }: { accepted: Accepted }) {
   const [timeZone, setTimeZone] = useState("");
   const [booked, setBooked] = useState(false);
 
+  // Stable identity: the embed effect re-runs if this callback changes.
+  const onBookingConfirmed = useCallback(() => {
+    setBooked(true);
+    trackEvent("mover_booking_confirmed", { location: "review_success" });
+  }, []);
+
   useEffect(() => {
     try {
       setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -332,12 +338,7 @@ function BookingPanel({ accepted }: { accepted: Accepted }) {
               calLink={reviewCalendarLink}
               name={accepted.name}
               email={accepted.email}
-              onBookingConfirmed={() => {
-                setBooked(true);
-                trackEvent("mover_booking_confirmed", {
-                  location: "review_success",
-                });
-              }}
+              onBookingConfirmed={onBookingConfirmed}
             />
           </div>
         </>

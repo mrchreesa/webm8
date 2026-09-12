@@ -76,8 +76,8 @@ export function MoverHero() {
         >
           <PhoneFrame>
             <Image
-              src="/work/removals-mobile.webp"
-              alt="A moving company website on a phone, with the estimate form in view"
+              src="/movers/demo-1-open.webp"
+              alt="A moving company website on a phone, showing the headline and an estimate form on the first screen"
               width={390}
               height={844}
               priority

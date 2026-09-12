@@ -21,10 +21,10 @@ export function MoverProof() {
 
             <div className="mt-8 flex items-center gap-4">
               <span
-                className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand/10 text-xl font-bold text-brand"
+                className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand/10 text-2xl font-bold text-brand"
                 aria-hidden
               >
-                KG
+                K
               </span>
               <div>
                 <p className="font-bold text-ink">Kristian</p>
