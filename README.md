@@ -6,12 +6,16 @@ Businesses That Want More Calls, Bookings, and Customers."**
 
 Plans:
 
-- **Standard — $197/month** · Professional website, trust signals, contact.
-- **Growth — $297/month** · Lead-generation focused with tracking + ongoing
+- **Standard — $197/month** or $1,970/year · Professional website, trust signals, contact.
+- **Growth — $297/month** or $2,970/year · Lead-generation focused with tracking + ongoing
   improvements.
 
-Built with **Next.js 15 (App Router) + TypeScript + Tailwind v4**, exported
-as static HTML/CSS/JS. No backend required.
+Annual billing is ten months paid for twelve months of service. `lib/movers.ts`
+is the single source of truth for these numbers on `/movers/`.
+
+Built with **Next.js 15 (App Router) + TypeScript + Tailwind v4**, deployed on
+Vercel. Every page prerenders at build time except `/api/mover-review`, the
+server route behind the movers campaign form.
 
 ## Stack
 
@@ -19,12 +23,11 @@ as static HTML/CSS/JS. No backend required.
 - React 19
 - TypeScript 5.7
 - Tailwind CSS v4 (via `@tailwindcss/postcss`)
-- `next/font/google` — Inter (variable, display swap)
+- `next/font/google` — Geist and Geist Mono (variable, display swap)
 
-All content is rendered statically at build time. Forms submit via
-`mailto:` links (same pattern as the legacy `website1/site.js`), so the
-whole site can be hosted on any static host (Vercel, Netlify, Cloudflare
-Pages, S3, GitHub Pages) with no server.
+Content is rendered statically at build time. The audit and contact forms
+still submit via `mailto:` links; the `/movers/` review form POSTs to a server
+route that records the request in Supabase before reporting success.
 
 ## Getting started
 
@@ -42,6 +45,7 @@ npm run build     # production build + static export to ./out
 npm run start     # serve the built app (only meaningful without `output: export`)
 npm run lint      # next/eslint
 npm run typecheck # tsc --noEmit
+npm test          # node --test over lib/**/*.test.ts
 ```
 
 ## Deploying
