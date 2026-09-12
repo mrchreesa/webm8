@@ -164,22 +164,29 @@ swap in real project screenshots:
    (Static export already sets `images.unoptimized: true` in
    `next.config.ts`.)
 
-## Adding analytics
+## Website measurement
 
-The site ships with zero tracking. To add analytics, drop the snippet
-into `app/layout.tsx`. For Google Analytics (GA4):
+The site has an optional Mixpanel integration in
+`components/analytics/MixpanelAnalytics.tsx`. It stays disabled until
+`NEXT_PUBLIC_MIXPANEL_TOKEN` is set. The default API address is the EU endpoint;
+change `NEXT_PUBLIC_MIXPANEL_API_HOST` only when the Mixpanel project is stored
+in another region.
 
-```tsx
-import Script from "next/script";
-// Inside <html> ...
-<Script src="https://www.googletagmanager.com/gtag/js?id=G-XXXXX" strategy="afterInteractive" />
-<Script id="ga" strategy="afterInteractive">{`
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-XXXXX');
-`}</Script>
-```
+The `/movers` page records a deliberately small funnel:
+
+- main call-to-action clicked
+- mover demo clicked
+- pricing reached
+- preview form reached and started
+- form submission attempted, completed, or failed
+- calendar or email clicked
+
+`lib/analytics.ts` is the single event adapter. It sends the same meaningful
+events to Mixpanel and, only if they are separately configured, GA4 and Meta.
+Never pass form values or other personal information to this helper.
+
+Mixpanel reporting and customer-report setup live in
+`../ops-dashboard/backend/README.md`.
 
 ## What's intentionally out of scope
 
@@ -187,7 +194,7 @@ import Script from "next/script";
 - Backend form submission / CRM integration.
 - Blog, Case Studies, Industries pages (listed as "Optional later" in the
   original brief).
-- Third-party analytics (trivial to add — see above).
+- Paid ad conversion tags (add only when a campaign needs them).
 - Content management — all copy is code-first in `lib/site.ts`.
 
 ## Routes

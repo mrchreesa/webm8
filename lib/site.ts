@@ -4,7 +4,7 @@ export const brand = {
   name: "WebM8",
   tagline: "Websites for Local Businesses",
   positioning:
-    "Websites for Local Businesses That Want More Calls, Bookings, and Customers",
+    "Websites that help local businesses get more calls, bookings, and customers",
 } as const;
 
 export type NavItem = {
@@ -16,18 +16,18 @@ export const primaryNav: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Work", href: "/work" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Audit", href: "/audit" },
+  { label: "Free Review", href: "/audit" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
 
 export const trustBar: { label: string; icon: string }[] = [
-  { label: "Mobile-first websites", icon: "device" },
-  { label: "Built for more leads", icon: "leads" },
-  { label: "Local SEO ready", icon: "map" },
-  { label: "AI search ready", icon: "spark" },
-  { label: "Fast-loading pages", icon: "bolt" },
-  { label: "Monthly support included", icon: "support" },
+  { label: "Works well on phones", icon: "device" },
+  { label: "Makes it easy to contact you", icon: "leads" },
+  { label: "Built to help Google find you", icon: "map" },
+  { label: "Clear business information", icon: "spark" },
+  { label: "Pages load quickly", icon: "bolt" },
+  { label: "Help included every month", icon: "support" },
 ];
 
 export type ValueCard = {
@@ -56,16 +56,16 @@ export const valueCards: ValueCard[] = [
 
 export const whatYouGet: string[] = [
   "Professional design",
-  "Mobile-friendly layout",
-  "Clear service sections",
-  "Contact form",
-  "Click-to-call buttons",
-  "Review sections",
-  "Local SEO setup",
-  "GEO / LLM optimization",
-  "Fast page speed",
-  "Lead tracking",
-  "Ongoing support",
+  "Easy to use on phones",
+  "Clear service pages",
+  "Simple contact form",
+  "Tap-to-call buttons",
+  "Customer reviews in the right places",
+  "Help appearing in nearby Google searches",
+  "Information that search and AI tools can read",
+  "Fast-loading pages",
+  "See where calls and forms come from",
+  "Help whenever you need a change",
 ];
 
 export type Plan = {
@@ -88,14 +88,14 @@ export const plans: Plan[] = [
       "Best for businesses that need a clean, professional website that builds trust and helps customers get in touch.",
     features: [
       "Professional website design",
-      "Mobile-friendly layout",
+      "Easy to use on phones",
       "Homepage, services, about & contact sections",
       "Contact form",
-      "Click-to-call buttons",
-      "Basic SEO (titles, meta, LocalBusiness schema)",
+      "Tap-to-call buttons",
+      "Page names and business details set up for Google",
       "Domain name included",
       "Hosting & support included",
-      "Small monthly content edits",
+      "Small changes included each month",
     ],
     ctaLabel: "Get a Fast Estimate",
   },
@@ -104,15 +104,15 @@ export const plans: Plan[] = [
     name: "Growth",
     tagline: "Grow with Growth",
     summary:
-      "Best for businesses that want a website plus an ongoing growth service: more leads, better visibility, and customer follow-up handled for you.",
+      "Best for businesses that want us to keep adding useful pages, show where calls come from, and help follow up with customers.",
     features: [
       "Everything in Standard",
-      "Advanced SEO (service & location pages, FAQ + Service + Review schema)",
-      "GEO / LLM optimization (ChatGPT, Claude, Gemini, Perplexity etc. visibility)",
-      "Google Analytics + monthly performance report",
-      "Lead CRM (every form submission and customer in one place)",
-      "Automated email follow-up + post-job review requests",
-      "Conversion-focused page structure",
+      "Pages for your services and the towns you cover",
+      "Business information formatted for Google and AI search tools",
+      "Monthly report showing visits, calls, and forms",
+      "Every form and customer kept in one place",
+      "Automatic email follow-up and review requests",
+      "Pages arranged to make contacting you easy",
       "Ongoing website improvements",
     ],
     ctaLabel: "Get a Fast Estimate",
@@ -141,7 +141,7 @@ export const processSteps: ProcessStep[] = [
   {
     number: 3,
     title: "Design & Build",
-    body: "We design and build a professional, mobile-first website focused on trust and clear next steps.",
+    body: "We write and build a professional website that works well on phones and makes the next step clear.",
   },
   {
     number: 4,
@@ -152,13 +152,13 @@ export const processSteps: ProcessStep[] = [
 
 export const auditChecklist: string[] = [
   "Homepage review",
-  "Mobile review",
-  "Speed review",
-  "Call-to-action review",
-  "Trust / review section review",
-  "Local SEO structure review",
-  "AI search visibility review (ChatGPT, Claude, Gemini)",
-  "Lead-generation recommendations",
+  "How well it works on phones",
+  "How quickly pages load",
+  "How easy it is to call or contact you",
+  "Where reviews and other proof appear",
+  "How clearly Google can read the site",
+  "How clearly AI search tools can read the site",
+  "Simple ideas for getting more calls and forms",
 ];
 
 export type Project = {
@@ -181,7 +181,7 @@ export const projects: Project[] = [
     industry: "Removals",
     title: "Removals site designed for urgent quote enquiries",
     description:
-      "A direct, conversion-focused removals website with strong service clarity, quote prompts, and reassuring proof points.",
+      "A clear removals website that explains the services, makes quotes easy, and gives customers reasons to trust the company.",
     palette: "slate",
     siteUrl: "https://removals.webm8agency.com/",
     screenshots: {
@@ -192,7 +192,7 @@ export const projects: Project[] = [
       "Fast quote positioning",
       "Service-area clarity",
       "Moving day reassurance",
-      "Prominent call CTAs",
+      "Call buttons that are easy to find",
     ],
   },
   {
@@ -208,7 +208,7 @@ export const projects: Project[] = [
       mobile: "/work/cleaning-mobile.webp",
     },
     outcomes: [
-      "Quote-first service flow",
+      "A simple path to request a quote",
       "Clear cleaning packages",
       "Trust and review sections",
       "Fast mobile enquiry path",
@@ -228,7 +228,7 @@ export const projects: Project[] = [
     },
     outcomes: [
       "Visual-first dining experience",
-      "Menu and reservation CTAs",
+      "Easy-to-find menu and booking buttons",
       "Mobile location access",
       "Premium brand presentation",
     ],
@@ -247,15 +247,15 @@ export const projects: Project[] = [
     },
     outcomes: [
       "Fleet-focused layout",
-      "Premium visual direction",
-      "Booking-focused CTAs",
+      "A premium look",
+      "Booking buttons that are easy to find",
       "Mobile-first browsing",
     ],
   },
   {
     slug: "travel-agency",
     industry: "Travel Agency",
-    title: "Destination-led travel site for high-intent enquiries",
+    title: "Travel website made for people ready to plan a trip",
     description:
       "A polished travel agency site that uses destination imagery, clear packages, and enquiry prompts to turn browsing into leads.",
     palette: "violet",
@@ -321,7 +321,7 @@ export const valueProps: Feature[] = [
   },
   {
     title: "Easy to call, book, or quote",
-    body: "Click-to-call buttons, simple forms, and clear CTAs on every page so contacting you is effortless.",
+    body: "Tap-to-call buttons and simple forms on every page make it easy for customers to contact you.",
   },
   {
     title: "Builds trust with proof",
@@ -329,10 +329,10 @@ export const valueProps: Feature[] = [
   },
   {
     title: "Works properly on mobile",
-    body: "Most local searches happen on phones. Your site is built mobile-first so nothing breaks on the device that matters most.",
+    body: "Your site is made to work properly on phones, where many local customers will first find it.",
   },
   {
-    title: "Improves local search visibility",
-    body: "Clean structure, proper tags, and local SEO basics so you show up when people search for your services nearby.",
+    title: "Helps nearby customers find you",
+    body: "Clear pages and business details help Google understand what you do and which areas you serve.",
   },
 ];

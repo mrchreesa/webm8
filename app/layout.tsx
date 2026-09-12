@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { MixpanelAnalytics } from "@/components/analytics/MixpanelAnalytics";
 import { brand, intakeEmail, plans, projects } from "@/lib/site";
 import {
   defaultDescription,
@@ -62,6 +63,7 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="flex min-h-screen flex-col antialiased">
         <StructuredData />
+        <MixpanelAnalytics />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

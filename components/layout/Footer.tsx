@@ -21,8 +21,8 @@ export function Footer() {
               {brand.name}
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-muted">
-              High-converting websites for US local businesses. More calls,
-              more bookings, more customers.
+              Clear, professional websites that help US local businesses get
+              more calls, bookings, and customers.
             </p>
           </div>
 
@@ -30,8 +30,9 @@ export function Footer() {
             title="Site"
             links={[
               { label: "Home", href: "/" },
+              { label: "Websites for Movers", href: "/movers/" },
               { label: "Work", href: "/work" },
-              { label: "Audit", href: "/audit" },
+              { label: "Free Review", href: "/audit" },
             ]}
           />
           <FooterCol
@@ -39,7 +40,8 @@ export function Footer() {
             links={[
               { label: "About", href: "/about" },
               { label: "Contact", href: "/contact" },
-              { label: "Free Website Audit", href: "/audit" },
+              { label: "Free Website Review", href: "/audit" },
+              { label: "Privacy", href: "/privacy/" },
             ]}
           />
 

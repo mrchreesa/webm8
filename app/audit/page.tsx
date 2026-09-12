@@ -8,9 +8,9 @@ import { auditChecklist } from "@/lib/site";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Free Website Audit: See what's costing you calls",
+  title: "Free Website Review: See What's Costing You Calls",
   description:
-    "Request a free website audit. We review mobile experience, clarity of services, trust signals, visibility, and lead tracking, then send a short action plan.",
+    "Ask for a free website review. We check how well it works on phones, how clearly it explains your services, and how easy it is to contact you.",
   path: "/audit/",
 });
 
@@ -23,7 +23,7 @@ const timeline = [
   {
     number: "02",
     title: "Review",
-    body: "We check mobile UX, clarity, speed, SEO basics, and trust.",
+    body: "We check how it works on phones, how clear it is, how quickly it loads, and whether it builds trust.",
   },
   {
     number: "03",
@@ -36,14 +36,14 @@ export default function AuditPage() {
   return (
     <>
       <PageHero
-        eyebrow="Free website audit"
+        eyebrow="Free website review"
         title={
           <>
             See What&apos;s Costing You{" "}
             <span className="text-brand">Calls &amp; Bookings</span>
           </>
         }
-        subtitle="Get a free website audit showing how your current website can be improved to bring in more real customers."
+        subtitle="We’ll show you what is making the website harder to use and which changes could help bring in more customers."
       />
 
       <section className="py-16 md:py-20">
@@ -51,12 +51,12 @@ export default function AuditPage() {
           <Reveal>
             <Eyebrow>What you&apos;ll get</Eyebrow>
             <h2 className="mt-4 text-3xl font-bold text-ink md:text-4xl">
-              A clear, owner-friendly audit, no tech jargon
+              A clear review written for a business owner
             </h2>
             <p className="mt-4 text-lg text-muted">
-              We look at your site the way a customer would, then point out the
-              small changes that usually produce the biggest jump in calls,
-              bookings, and enquiries.
+              We look at the site the way a customer would, then explain the
+              changes most likely to make calling, booking, or asking for a
+              quote easier.
             </p>
 
             <ul className="mt-8 grid gap-3">

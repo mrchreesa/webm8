@@ -13,18 +13,18 @@ export function AuditTeaser() {
       <div className="container-page grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:gap-16">
         <Reveal className="text-white">
           <Eyebrow tone="invert" className="rounded-full bg-white/15 px-4 py-1.5 backdrop-blur">
-            Free website audit
+            Free website review
           </Eyebrow>
           <h2 className="mt-5 text-3xl font-bold leading-tight tracking-tight md:text-5xl">
             Want to Know What Your Website Could Be Doing Better?
           </h2>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/80">
-            Get a free website audit showing how your current website can be
-            improved to generate more calls, bookings, and enquiries.
+            We’ll review your current website and show you the clearest ways to
+            get more calls, bookings, and messages.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <LinkButton href="/audit" size="lg" variant="dark">
-              Request Free Website Audit
+              Request a Free Website Review
               <Icon name="arrow" size={18} />
             </LinkButton>
           </div>
@@ -33,7 +33,7 @@ export function AuditTeaser() {
         <Reveal variant="slide-right" delay={120}>
           <div className="rounded-3xl border border-white/15 bg-white/10 p-6 backdrop-blur md:p-8">
             <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
-              Audit includes
+              What we check
             </p>
             <ul className="mt-4 space-y-3">
               {auditChecklist.map((item) => (

@@ -29,7 +29,7 @@ export default function WorkPage() {
             <span className="text-brand">Local Businesses</span>
           </>
         }
-        subtitle="Live examples across restaurants, cleaning, removals, car rental, and travel, shown with real desktop and mobile previews."
+        subtitle="See examples for restaurants, cleaners, movers, car rental companies, and travel businesses on both computers and phones."
       />
 
       <section className="py-16 md:py-24">
@@ -85,7 +85,7 @@ export default function WorkPage() {
                         href="/audit"
                         className="btn-arrow inline-flex items-center gap-2 text-sm font-semibold text-brand transition-colors hover:text-brand-hover"
                       >
-                        Request similar site
+                        Ask for a similar website
                         <Icon name="arrow" size={14} />
                       </Link>
                     </div>

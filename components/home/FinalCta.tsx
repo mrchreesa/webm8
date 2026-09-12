@@ -18,15 +18,15 @@ export function FinalCta() {
             Ready when you are
           </Eyebrow>
           <h2 className="mx-auto mt-5 max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">
-            Ready to Turn Your Website Into a Better Sales Tool?
+            Ready for a Website That Brings In More Business?
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-white/70">
-            Get a fast estimate or request a free audit to see how your business
-            website can bring in more calls, bookings, and customers.
+            Ask for a price or get a free website review. We’ll explain what
+            would help in plain language and without pressure.
           </p>
           <div className="mt-9 flex flex-wrap justify-center gap-3">
             <LinkButton href="/audit" size="lg" variant="dark">
-              Get a Free Website Audit
+              Get a Free Website Review
               <Icon name="arrow" size={18} />
             </LinkButton>
             <LinkButton href="/contact/" size="lg" variant="outline-invert">

@@ -6,8 +6,8 @@ export function Process() {
   return (
     <Section
       eyebrow="How it works"
-      title="From Audit to Launch to Ongoing Growth"
-      subtitle="A clear, repeatable process that takes the guesswork out of getting a website that actually brings you customers."
+      title="From First Review to a Finished Website"
+      subtitle="A simple process that shows what happens, what we need from you, and what we do after the website goes live."
       tone="surface"
     >
       <ol className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

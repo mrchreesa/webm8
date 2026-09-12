@@ -15,11 +15,11 @@ export function WhatYouGet() {
         <Reveal>
           <Eyebrow>Everything included</Eyebrow>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-ink md:text-5xl">
-            Everything Your Local Business Website Needs to Convert
+            Everything Your Website Needs to Bring In Business
           </h2>
           <p className="mt-5 text-lg text-muted">
-            A complete, conversion-focused website system built for the way
-            local customers actually search, compare, and decide.
+            A complete website built around how local customers search,
+            compare businesses, and decide who to contact.
           </p>
 
           <div className="mt-8 grid gap-x-8 gap-y-3 sm:grid-cols-2">

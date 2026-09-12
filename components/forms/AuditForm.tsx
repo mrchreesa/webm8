@@ -38,14 +38,14 @@ export function AuditForm() {
       setStatus({
         tone: "error",
         message:
-          "Add business name, your name, email, and website URL to request the audit.",
+          "Add your business name, name, email, and website address before sending.",
       });
       return;
     }
 
     const href = buildMailtoHref(
       intakeEmail,
-      `Website audit request from ${business}`,
+      `Website review request from ${business}`,
       {
         Business: business,
         Name: name,
@@ -60,7 +60,7 @@ export function AuditForm() {
 
     setStatus({
       tone: "success",
-      message: "Opening your default mail client with the audit request…",
+      message: "Opening your email app with the website review request…",
     });
     window.location.href = href;
   }
@@ -125,7 +125,7 @@ export function AuditForm() {
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Button type="submit" size="lg">
-          Request Free Audit
+          Request a Free Website Review
         </Button>
         {status.message && (
           <FormStatus tone={status.tone}>{status.message}</FormStatus>

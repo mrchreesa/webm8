@@ -27,7 +27,7 @@ export default function ContactPage() {
             </span>
           </>
         }
-        subtitle="Send us a few details about what you want your website to do and we'll come back with a straight estimate."
+        subtitle="Tell us what you want the website to do and we’ll send a clear reply with the next step."
       />
 
       <section className="py-16 md:py-20">

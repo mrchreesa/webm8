@@ -47,7 +47,7 @@ export function Portfolio({ limit, variant = "section" }: PortfolioProps) {
     <Section
       eyebrow="Recent work"
       title="Live Websites Built to Look Good on Every Screen"
-      subtitle="A sample of live sites presented with real desktop and mobile screenshots, so visitors can see the responsive experience before they click through."
+      subtitle="See how each example looks on a computer and a phone, then open the live site and try it yourself."
     >
       {grid}
     </Section>

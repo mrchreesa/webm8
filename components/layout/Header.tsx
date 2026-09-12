@@ -12,6 +12,18 @@ export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const isMoversPage = pathname?.startsWith("/movers") ?? false;
+  const navItems = isMoversPage
+    ? [
+        { label: "Example", href: "#example" },
+        { label: "Included", href: "#included" },
+        { label: "Process", href: "#process" },
+        { label: "Pricing", href: "#pricing" },
+        { label: "FAQ", href: "#faq" },
+      ]
+    : primaryNav;
+  const ctaHref = isMoversPage ? "#preview" : "/audit";
+  const ctaLabel = isMoversPage ? "Get a Free Preview" : "Get a Free Review";
 
   useEffect(() => {
     let raf = 0;
@@ -65,7 +77,7 @@ export function Header() {
         </Link>
 
         <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
-          {primaryNav.map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -82,8 +94,8 @@ export function Header() {
         </nav>
 
         <div className="hidden md:block">
-          <LinkButton href="/audit" size="md">
-            Get a Free Audit
+          <LinkButton href={ctaHref} size="md">
+            {ctaLabel}
           </LinkButton>
         </div>
 
@@ -108,10 +120,11 @@ export function Header() {
           aria-label="Mobile"
           className="container-page flex flex-col gap-1 py-5"
         >
-          {primaryNav.map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setOpen(false)}
               className={cn(
                 "rounded-xl px-4 py-3 text-base font-semibold transition-colors",
                 isActive(item.href)
@@ -122,8 +135,13 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <LinkButton href="/audit" size="lg" className="mt-3 justify-center">
-            Get a Free Audit
+          <LinkButton
+            href={ctaHref}
+            size="lg"
+            className="mt-3 justify-center"
+            onClick={() => setOpen(false)}
+          >
+            {ctaLabel}
           </LinkButton>
         </nav>
       </div>

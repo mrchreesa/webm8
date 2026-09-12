@@ -16,12 +16,12 @@ export const metadata: Metadata = createPageMetadata({
 
 const reasons = [
   {
-    title: "Scope is never the same twice",
-    body: "A four-page site for a mobile detailer and a multi-location HVAC company with service pages for every town are different jobs. A single sticker price would overcharge one and underbuild the other.",
+    title: "Every business needs something different",
+    body: "A simple four-page website and a large website with a page for every service and town are very different jobs. One fixed price would be unfair to at least one of them.",
   },
   {
-    title: "You only pay for what moves the needle",
-    body: "Some businesses need the lead CRM and automated review requests on day one. Others just need a clean, fast site that makes the phone ring. We quote the work you'll actually use.",
+    title: "You only pay for what you need",
+    body: "Some businesses need customer follow-up and automatic review requests. Others only need a clear, fast website that makes calling easy. We price the work you will actually use.",
   },
   {
     title: "No large upfront website cost",
@@ -41,11 +41,11 @@ export default function PricingPage() {
             <span className="text-brand">Quoted To The Business</span>
           </>
         }
-        subtitle="Tell us what you need and we'll send a number within one business day. No sales call required, no obligation."
+        subtitle="Tell us what you need and we’ll send a clear price within one business day. You do not need to book a sales call."
       />
 
       <Section
-        eyebrow="Why there's no sticker price"
+        eyebrow="Why there is no fixed price"
         title="Because a fair number depends on what you actually need."
         align="center"
       >

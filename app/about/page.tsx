@@ -12,14 +12,14 @@ import { createPageMetadata } from "@/lib/seo";
 export const metadata: Metadata = createPageMetadata({
   title: "About: Websites built for local business growth",
   description:
-    "WebM8 is a web design agency focused on US local businesses. We build professional, conversion-focused websites that help owners win more calls, bookings, and customers.",
+    "WebM8 builds and looks after professional websites that help US local businesses get more calls, bookings, and customers.",
   path: "/about/",
 });
 
 const faqs = [
   {
-    q: "What is GEO / LLM optimization?",
-    a: "Customers are starting to ask ChatGPT, Claude, Gemini, and Perplexity for local recommendations instead of Googling. GEO (Generative Engine Optimization) is how we make sure your business is named in those answers: we structure your site so AI tools can read it, publish an AI-readable business summary, and run a quarterly check to confirm you're showing up.",
+    q: "Can you help AI search tools understand my business?",
+    a: "Yes. People now ask tools such as ChatGPT, Gemini, and Perplexity for local recommendations. We write clear business information and arrange the website so these tools can understand your services and the places you cover. We cannot promise that any tool will recommend a particular business.",
   },
   {
     q: "Do you own the website or do I?",
@@ -31,7 +31,7 @@ const faqs = [
   },
   {
     q: "How long does a build take?",
-    a: "Most sites launch inside 2–3 weeks from the first strategy session, depending on how quickly we get content and photos.",
+    a: "Most sites launch within 2–3 weeks of the first planning call. The timing also depends on how quickly we receive the words, photos, and business details we need.",
   },
 ];
 
@@ -57,13 +57,13 @@ export default function AboutPage() {
             <span className="text-brand">make more money</span>.
           </>
         }
-        subtitle="We don't sell beautiful websites. We sell websites that bring in calls, bookings, quote requests, and paying customers for US local businesses."
+        subtitle="We build websites that look professional, explain the business clearly, and make it easy for customers to call, book, or ask for a quote."
       />
 
       <Section
         tone="surface"
         eyebrow="Our focus"
-        title="A better website is a business asset, not a brochure."
+        title="A better website should do more than look good."
       >
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {valueProps.map((v, i) => (
@@ -84,7 +84,7 @@ export default function AboutPage() {
 
       <Section
         eyebrow="Who we build for"
-        title="Local service businesses that rely on their website to generate real enquiries."
+        title="Local businesses that use their website to bring in real customer requests."
       >
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
           {industries.map((industry, i) => (

@@ -27,12 +27,12 @@ export function Hero() {
 					</h1>
 
 					<p className="animate-rise mt-6 max-w-xl text-lg leading-relaxed text-muted md:text-xl" style={{ animationDelay: "160ms" }}>
-						We build professional, conversion-focused websites for US local businesses, designed to turn visitors into real enquiries, bookings, and paying customers.
+						We build and look after professional websites for US local businesses. Every page is made to help people understand your services, trust you, and get in touch.
 					</p>
 
 					<div className="animate-rise mt-8 flex flex-wrap items-center gap-3" style={{ animationDelay: "240ms" }}>
 						<LinkButton href="/audit" size="lg">
-							Get a Free Website Audit
+							Get a Free Website Review
 							<Icon name="arrow" size={18} />
 						</LinkButton>
 						<LinkButton href="/contact/" size="lg" variant="ghost">
@@ -42,7 +42,7 @@ export function Hero() {
 					</div>
 
 					<p className="animate-rise mt-6 text-sm text-muted" style={{ animationDelay: "320ms" }}>
-						Built for local service businesses, contractors, restaurants, salons, cleaners, and more.
+						For contractors, movers, restaurants, salons, cleaners, and other local businesses.
 					</p>
 				</div>
 
@@ -122,7 +122,7 @@ function HeroShowcase() {
 					</div>
 				</div>
 
-				<HeroSignal className="left-2 bottom-7 -translate-x-2 md:left-0 md:-translate-x-5" icon="mail" label="New enquiry" value="Website audit requested" tone="brand" />
+				<HeroSignal className="left-2 bottom-7 -translate-x-2 md:left-0 md:-translate-x-5" icon="mail" label="New request" value="Website review requested" tone="brand" />
 				<HeroSignal className="right-2 top-7 translate-x-2 md:right-0 md:translate-x-4" icon="device" label="Responsive" value="Desktop + mobile" tone="accent" />
 
 				<div className="absolute bottom-4 left-4 hidden items-center gap-1.5 rounded-full border border-white/70 bg-white/85 px-3 py-2 shadow-card backdrop-blur md:flex">

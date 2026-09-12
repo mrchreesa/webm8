@@ -8,10 +8,10 @@ export const defaultTitle =
   "WebM8 | Websites for Local Businesses That Want More Customers";
 
 export const defaultDescription =
-  "WebM8 builds high-converting websites for US local businesses. Professional, mobile-first, conversion-focused sites that turn visitors into calls, bookings, and paying customers. Get a fast estimate in one business day.";
+  "WebM8 builds professional websites for US local businesses. We make it easy for visitors to understand your services, trust your company, and contact you. Get a price within one business day.";
 
 export const socialDescription =
-  "High-converting websites for US local businesses. More calls, more bookings, more customers. Get a fast estimate in one business day.";
+  "Professional websites for US local businesses. More calls, more bookings, and more customers. Get a price within one business day.";
 
 export const ogImage = {
   url: "/og-image.svg",
@@ -42,17 +42,24 @@ export const indexableRoutes = [
     priority: 0.9,
   },
   {
+    path: "/movers/",
+    title: "Moving Company Websites That Bring In Estimate Requests",
+    description:
+      "Websites for US moving companies that make it easy to ask for an estimate, send new requests straight to you, and keep improving every month.",
+    priority: 0.9,
+  },
+  {
     path: "/audit/",
     title: "Free Website Audit - See what's costing you calls",
     description:
-      "Request a free website audit. We review mobile experience, clarity of services, trust signals, visibility, and lead tracking, then send a short action plan.",
+      "Ask for a free website review. We check how well it works on phones, how clearly it explains your services, and how easy it is to contact you.",
     priority: 0.9,
   },
   {
     path: "/about/",
     title: "About - Websites built for local business growth",
     description:
-      "WebM8 is a web design agency focused on US local businesses. We build professional, conversion-focused websites that help owners win more calls, bookings, and customers.",
+      "WebM8 builds and looks after professional websites that help US local businesses get more calls, bookings, and customers.",
     priority: 0.7,
   },
   {
@@ -61,6 +68,13 @@ export const indexableRoutes = [
     description:
       "Get in touch for a fast estimate on a new website, switch plans, or ask a question. We reply within one business day.",
     priority: 0.8,
+  },
+  {
+    path: "/privacy/",
+    title: "Privacy notice",
+    description:
+      "How WebM8 collects, uses, stores, and protects information submitted through this website.",
+    priority: 0.3,
   },
 ] as const;
 

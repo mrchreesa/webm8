@@ -8,7 +8,7 @@ export function ValueCards() {
     <Section
       eyebrow="Why your website matters"
       title="Your Website Should Help You Get More Customers"
-      subtitle="A strong website helps local customers trust your business, understand your services, and take action faster. We design websites around the actions that matter most: calls, bookings, quote requests, and enquiries."
+      subtitle="A strong website helps people trust your business, understand your services, and contact you without confusion. We focus on calls, bookings, and quote requests."
     >
       <div className="grid gap-6 md:grid-cols-3">
         {valueCards.map((card, i) => (
