@@ -93,3 +93,6 @@ Desktop.ini
 *.pid
 *.seed
 *.pid.lock
+
+# Playwright MCP capture output (screenshots are committed under public/)
+.playwright-mcp/
