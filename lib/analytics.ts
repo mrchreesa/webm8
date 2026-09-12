@@ -45,14 +45,32 @@ export function trackEvent(name: string, details: AnalyticsDetails = {}) {
   }
   window.gtag?.("event", safeName, safeDetails);
 
-  if (safeName === "mover_preview_submitted") {
-    window.fbq?.("track", "Lead", {
-      content_name: "Mover homepage preview",
-    });
-  } else {
-    window.fbq?.("trackCustom", safeName, safeDetails);
-  }
+  window.fbq?.("trackCustom", safeName, safeDetails);
 }
+
+/**
+ * Fire the Meta standard `Lead` event for one accepted review request.
+ *
+ * Only a request the server has accepted and recorded reaches this function,
+ * and the request id guarantees it counts once even if the success panel
+ * re-renders. A calendar click is not a booking and a click-to-call is not a
+ * completed call, so neither of those ever reaches this path.
+ */
+export function trackAcceptedReviewRequest(
+  requestId: string,
+  details: AnalyticsDetails = {},
+) {
+  if (typeof window === "undefined" || !requestId) return;
+  if (firedLeadRequestIds.has(requestId)) return;
+  firedLeadRequestIds.add(requestId);
+
+  trackEvent("mover_review_request_accepted", details);
+  window.fbq?.("track", "Lead", {
+    content_name: "Mover free 10-minute review",
+  });
+}
+
+const firedLeadRequestIds = new Set<string>();
 
 export function flushAnalyticsQueue() {
   if (typeof window === "undefined" || !window.mixpanel) return;
