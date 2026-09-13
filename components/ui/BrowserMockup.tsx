@@ -225,18 +225,18 @@ export function BrowserMockup({
 
       <div className={compact ? "space-y-3 p-5" : "space-y-4 p-6 md:p-8"}>
         <div className="grid grid-cols-3 gap-3">
-          <div className="h-16 rounded-xl bg-slate-100" />
-          <div className="h-16 rounded-xl bg-slate-100" />
-          <div className="h-16 rounded-xl bg-slate-100" />
+          <div className="h-16 rounded-xl bg-bg-alt" />
+          <div className="h-16 rounded-xl bg-bg-alt" />
+          <div className="h-16 rounded-xl bg-bg-alt" />
         </div>
         <div className="space-y-2">
-          <div className="h-2.5 w-3/5 rounded-full bg-slate-200" />
-          <div className="h-2.5 w-4/5 rounded-full bg-slate-200" />
-          <div className="h-2.5 w-2/5 rounded-full bg-slate-200" />
+          <div className="h-2.5 w-3/5 rounded-full bg-border" />
+          <div className="h-2.5 w-4/5 rounded-full bg-border" />
+          <div className="h-2.5 w-2/5 rounded-full bg-border" />
         </div>
         <div className="flex items-center gap-2 pt-2">
           <div className={cn("h-9 w-28 rounded-full", p.accent)} />
-          <div className="h-9 w-24 rounded-full border border-slate-200" />
+          <div className="h-9 w-24 rounded-full border border-border" />
         </div>
       </div>
     </div>

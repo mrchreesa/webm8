@@ -71,12 +71,12 @@ export function TextField({
         disabled={disabled}
         aria-invalid={error ? true : undefined}
         aria-describedby={message ? messageId : undefined}
-        className={cn(fieldBase, error && "border-rose-400 focus:border-rose-500")}
+        className={cn(fieldBase, error && "border-error focus:border-error")}
       />
       {message && (
         <p
           id={messageId}
-          className={cn("text-xs leading-relaxed", error ? "text-rose-600" : "text-muted")}
+          className={cn("text-xs leading-relaxed", error ? "text-error" : "text-muted")}
         >
           {message}
         </p>

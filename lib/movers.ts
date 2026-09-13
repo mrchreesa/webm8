@@ -10,6 +10,26 @@ export type BillingCycle = "monthly" | "annual";
 
 export type MoverPlanId = "standard" | "growth";
 
+export const moverServiceValues = [
+  "local-moving",
+  "long-distance-moving",
+  "packing",
+  "commercial-moving",
+  "labor-only",
+  "other",
+] as const;
+
+export type MoverService = (typeof moverServiceValues)[number];
+
+export const moverServiceOptions: { value: MoverService; label: string }[] = [
+  { value: "local-moving", label: "Local moving" },
+  { value: "long-distance-moving", label: "Long-distance moving" },
+  { value: "packing", label: "Packing" },
+  { value: "commercial-moving", label: "Commercial moving" },
+  { value: "labor-only", label: "Labor-only" },
+  { value: "other", label: "Other" },
+];
+
 export type MoverPlan = {
   id: MoverPlanId;
   name: string;
@@ -63,11 +83,16 @@ export const moverPlans: MoverPlan[] = [
   },
 ];
 
-/** The public Cal.com page for the free 10-minute review. */
+/** The public Cal.com page for the free 15-minute website-preview call. */
 export const reviewCalendarUrl = "https://cal.com/webm8/review";
 
 /** Cal.com namespace used by the inline embed on the success panel. */
 export const reviewCalendarLink = "webm8/review";
+
+export const previewCallMinutes = 15;
+export const previewCalendarEventTypeId = 7042719;
+export const previewCalendarProvider = "Cal.com";
+export const previewCallFormat = "Cal.com video call";
 
 export function getMoverPlan(id: MoverPlanId): MoverPlan {
   const plan = moverPlans.find((item) => item.id === id);

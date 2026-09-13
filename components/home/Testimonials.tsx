@@ -14,7 +14,7 @@ export function Testimonials() {
         {testimonials.map((t, i) => (
           <Reveal key={t.name} delay={i * 90}>
             <article className="shadow-card hover:shadow-card-hover flex h-full flex-col rounded-2xl border border-border bg-white p-7 transition-all duration-300 hover:-translate-y-1">
-              <div className="flex gap-0.5 text-amber-400">
+              <div className="flex gap-0.5 text-highlight">
                 {Array.from({ length: 5 }).map((_, j) => (
                   <Icon key={j} name="star-filled" size={16} />
                 ))}
