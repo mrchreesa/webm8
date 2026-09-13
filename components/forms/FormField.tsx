@@ -4,9 +4,9 @@ import { cn } from "@/lib/cn";
 
 const fieldBase = cn(
   "w-full rounded-xl border border-border bg-white px-4 py-3 text-base text-ink",
-  "shadow-[0_1px_2px_rgb(15_23_42/0.03)] transition-colors placeholder:text-slate-400",
+  "shadow-[0_1px_2px_rgb(7_26_51/0.03)] transition-colors placeholder:text-muted/70",
   "focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20",
-  "disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400",
+  "disabled:cursor-not-allowed disabled:bg-bg-alt disabled:text-muted/60",
 );
 
 const labelCls =
@@ -177,8 +177,8 @@ export function FormStatus({
     <p
       className={cn(
         "text-sm transition-colors",
-        tone === "error" && "text-rose-600",
-        tone === "success" && "text-emerald-600",
+        tone === "error" && "text-error",
+        tone === "success" && "text-accent",
         tone === "neutral" && "text-muted",
       )}
     >

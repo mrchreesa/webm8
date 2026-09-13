@@ -51,7 +51,7 @@ export function WhatYouGet() {
             />
             <div className="relative rotate-1">
               <BrowserMockup
-                palette="green"
+                palette="house"
                 industry="Services"
                 title="Clear services, clear next step."
               />

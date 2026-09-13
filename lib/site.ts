@@ -5,6 +5,13 @@ export const brand = {
   tagline: "Websites for Local Businesses",
   positioning:
     "Websites that help local businesses get more calls, bookings, and customers",
+  /**
+   * Shown in the header and the hero when set. Every competitor selling to
+   * this market puts a number above the fold; leave this empty and both
+   * places simply omit it. Use the dialable form, e.g. "+18885550147".
+   */
+  phone: "",
+  phoneLabel: "",
 } as const;
 
 export type NavItem = {

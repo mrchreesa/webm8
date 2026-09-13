@@ -93,7 +93,7 @@ export function MoverHero() {
 
 export function PhoneFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mx-auto w-full max-w-[280px] rounded-[2rem] border border-slate-300 bg-slate-900 p-2 shadow-card-hover">
+    <div className="mx-auto w-full max-w-[280px] rounded-[2rem] border border-ink-raised bg-ink-deep p-2 shadow-card-hover">
       <div className="relative aspect-[390/760] w-full overflow-hidden rounded-[1.5rem] bg-white">
         {children}
       </div>

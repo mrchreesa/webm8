@@ -93,7 +93,7 @@ function BillingToggle({
             "ml-2 rounded-full px-2 py-0.5 text-xs font-semibold",
             billing === "annual"
               ? "bg-white/20 text-white"
-              : "bg-accent/15 text-emerald-700",
+              : "bg-accent/15 text-accent",
           )}
         >
           2 months free

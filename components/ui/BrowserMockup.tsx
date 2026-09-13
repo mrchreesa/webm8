@@ -2,8 +2,10 @@ import Image from "next/image";
 import type { Project } from "@/lib/site";
 import { cn } from "@/lib/cn";
 
+type MockupPalette = Project["palette"] | "house";
+
 type BrowserMockupProps = {
-  palette?: Project["palette"];
+  palette?: MockupPalette;
   title?: string;
   industry?: string;
   siteUrl?: string;
@@ -12,10 +14,21 @@ type BrowserMockupProps = {
   className?: string;
 };
 
+/**
+ * The per-project palettes below stand in for real client brands, so they stay
+ * varied and off-system on purpose. `house` is the exception: it is WebM8's own
+ * palette, for mockups that illustrate our offering rather than a client's.
+ */
 const palettes: Record<
-  NonNullable<BrowserMockupProps["palette"]>,
+  NonNullable<MockupPalette>,
   { from: string; to: string; accent: string; tag: string }
 > = {
+  house: {
+    from: "from-[color:var(--color-ink-raised)]",
+    to: "to-[color:var(--color-ink-deep)]",
+    accent: "bg-[color:var(--color-signal)]",
+    tag: "text-[color:var(--color-info-ink)] bg-[color:var(--color-bg-alt)]",
+  },
   blue: {
     from: "from-blue-500/90",
     to: "to-blue-700",
@@ -77,12 +90,12 @@ export function BrowserMockup({
         )}
       >
         <div className="overflow-hidden rounded-[22px] border border-white/75 bg-white shadow-card-hover ring-1 ring-ink/10">
-          <div className="flex items-center gap-1.5 border-b border-border bg-slate-100 px-3 py-2 md:gap-2 md:px-4">
-            <span className="h-2.5 w-2.5 rounded-full bg-rose-400/90" />
-            <span className="h-2.5 w-2.5 rounded-full bg-amber-400/90" />
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/90" />
+          <div className="flex items-center gap-1.5 border-b border-border bg-bg-alt px-3 py-2 md:gap-2 md:px-4">
+            <span className="h-2.5 w-2.5 rounded-full bg-error/70" />
+            <span className="h-2.5 w-2.5 rounded-full bg-highlight" />
+            <span className="h-2.5 w-2.5 rounded-full bg-accent/70" />
             <div className="ml-2 min-w-0 flex-1">
-              <div className="mx-auto h-6 max-w-sm truncate rounded-md border border-border bg-white px-3 font-mono text-[10px] leading-6 text-slate-500">
+              <div className="mx-auto h-6 max-w-sm truncate rounded-md border border-border bg-white px-3 font-mono text-[10px] leading-6 text-muted">
                 {displayUrl}
               </div>
             </div>
@@ -116,9 +129,9 @@ export function BrowserMockup({
               : "-bottom-1 right-4 w-[24%] min-w-24 max-w-40 md:right-8",
           )}
         >
-          <div className="rounded-[1.65rem] border border-white/15 bg-slate-950 p-1.5 shadow-[0_24px_60px_-22px_rgb(15_23_42_/_0.72)] ring-1 ring-ink/20">
+          <div className="rounded-[1.65rem] border border-ink-raised bg-ink-deep p-1.5 shadow-[0_24px_60px_-22px_rgb(7_26_51_/_0.72)]">
             <div className="relative aspect-[9/19] overflow-hidden rounded-[1.2rem] bg-white">
-              <span className="absolute left-1/2 top-1.5 z-10 h-1 w-8 -translate-x-1/2 rounded-full bg-slate-950/45" />
+              <span className="absolute left-1/2 top-1.5 z-10 h-1 w-8 -translate-x-1/2 rounded-full bg-ink/40" />
               <Image
                 src={screenshots.mobile}
                 alt={`${title} mobile website screenshot`}
@@ -152,12 +165,12 @@ export function BrowserMockup({
       )}
       aria-hidden="true"
     >
-      <div className="flex items-center gap-2 border-b border-border bg-slate-50/80 px-4 py-3">
-        <span className="h-3 w-3 rounded-full bg-rose-400/80" />
-        <span className="h-3 w-3 rounded-full bg-amber-400/80" />
-        <span className="h-3 w-3 rounded-full bg-emerald-400/80" />
+      <div className="flex items-center gap-2 border-b border-border bg-bg-alt px-4 py-3">
+        <span className="h-3 w-3 rounded-full bg-error/70" />
+        <span className="h-3 w-3 rounded-full bg-highlight" />
+        <span className="h-3 w-3 rounded-full bg-accent/70" />
         <div className="ml-3 flex-1">
-          <div className="mx-auto h-5 max-w-xs rounded-md border border-border bg-white px-3 font-mono text-[10px] leading-5 text-slate-400">
+          <div className="mx-auto h-5 max-w-xs rounded-md border border-border bg-white px-3 font-mono text-[10px] leading-5 text-muted">
             webm8agency.com / {industry.toLowerCase().replace(/\s+/g, "-")}
           </div>
         </div>

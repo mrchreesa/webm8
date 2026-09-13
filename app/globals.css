@@ -1,20 +1,39 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #f8fafc;
+  /* Grounds — warm paper against three navies. */
+  --color-bg: #f8f5f0;
+  --color-bg-alt: #efeae1;
   --color-surface: #ffffff;
-  --color-ink: #0f172a;
-  --color-muted: #475569;
-  --color-brand: #2563eb;
-  --color-brand-hover: #1d4ed8;
-  --color-accent: #10b981;
-  --color-border: #e2e8f0;
+  --color-ink: #0e2f56;
+  --color-ink-deep: #071a33;
+  --color-ink-raised: #1b4a80;
+  --color-muted: #5b6b7e;
+  --color-muted-invert: #9db4cd;
+  --color-border: #ddd6ca;
+
+  /* Action — orange, reserved for things that act.
+     --color-brand carries white text only (4.56:1); the warm paper
+     fails on it at 4.19:1. --color-signal is the bright safety orange
+     and is approved for rules, icons and large type, never body text. */
+  --color-brand: #c8500f;
+  --color-brand-hover: #a84208;
+  --color-signal: #f4681f;
+
+  /* Highlight and information. */
+  --color-highlight: #ffb92e;
+  --color-info: #2bc4bd;
+  --color-info-ink: #0a7d7a;
+
+  /* Semantic — outcomes only. */
+  --color-accent: #11823b;
+  --color-error: #db2424;
 
   --radius-card: 1rem;
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04),
-    0 8px 24px -12px rgb(15 23 42 / 0.12);
-  --shadow-card-hover: 0 24px 56px -24px rgb(15 23 42 / 0.28);
-  --shadow-cta: 0 10px 28px -12px rgb(37 99 235 / 0.55);
+  --shadow-card: 0 1px 2px rgb(7 26 51 / 0.04),
+    0 8px 24px -12px rgb(7 26 51 / 0.12);
+  --shadow-card-hover: 0 24px 56px -24px rgb(7 26 51 / 0.28);
+  --shadow-cta: 0 10px 28px -12px rgb(200 80 15 / 0.45);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -139,13 +158,13 @@
 @keyframes heroShowcaseDot {
   23%,
   100% {
-    background-color: rgb(203 213 225);
-    opacity: 0.55;
+    background-color: var(--color-muted-invert);
+    opacity: 0.45;
   }
   0%,
   4%,
   18% {
-    background-color: var(--color-brand);
+    background-color: var(--color-highlight);
     opacity: 1;
   }
 }
@@ -281,7 +300,7 @@
   }
 
   .hero-showcase-dot:first-child {
-    background-color: var(--color-brand);
+    background-color: var(--color-highlight);
     opacity: 1;
   }
 }

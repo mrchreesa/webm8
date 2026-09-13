@@ -55,6 +55,10 @@ export function Header() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname?.startsWith(href) ?? false;
 
+  // The homepage hero is a navy field that runs up behind the header, so
+  // until the page scrolls the header has to read light-on-dark.
+  const overDarkHero = (pathname === "/") && !scrolled;
+
   return (
     <header
       className={cn(
@@ -67,10 +71,13 @@ export function Header() {
       <div className="container-page flex h-16 items-center justify-between gap-4 md:h-20">
         <Link
           href="/"
-          className="flex items-center gap-2 text-lg font-bold tracking-tight text-ink"
+          className={cn(
+            "flex items-center gap-2 text-lg font-bold tracking-tight",
+            overDarkHero ? "text-bg" : "text-ink",
+          )}
           aria-label={`${brand.name} home`}
         >
-          <LogoMark />
+          <LogoMark invert={overDarkHero} />
           <span>{brand.name}</span>
         </Link>
 
@@ -81,9 +88,13 @@ export function Header() {
               href={item.href}
               className={cn(
                 "rounded-full px-3 py-2 text-sm font-medium transition-colors",
-                isActive(item.href)
-                  ? "bg-ink/5 text-ink"
-                  : "text-muted hover:bg-ink/5 hover:text-ink",
+                overDarkHero
+                  ? isActive(item.href)
+                    ? "bg-white/10 text-bg"
+                    : "text-muted-invert hover:bg-white/10 hover:text-bg"
+                  : isActive(item.href)
+                    ? "bg-ink/5 text-ink"
+                    : "text-muted hover:bg-ink/5 hover:text-ink",
               )}
             >
               {item.label}
@@ -91,7 +102,20 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden items-center gap-4 md:flex">
+          {brand.phone ? (
+            <a
+              href={`tel:${brand.phone}`}
+              className={cn(
+                "text-base font-bold tracking-tight transition-colors",
+                overDarkHero
+                  ? "text-highlight hover:text-white"
+                  : "text-ink hover:text-brand",
+              )}
+            >
+              {brand.phoneLabel || brand.phone}
+            </a>
+          ) : null}
           <LinkButton href={ctaHref} size="md">
             {ctaLabel}
           </LinkButton>
@@ -99,7 +123,12 @@ export function Header() {
 
         <button
           type="button"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-white text-ink transition-colors hover:bg-ink/5 md:hidden"
+          className={cn(
+            "inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors md:hidden",
+            overDarkHero
+              ? "border-white/25 bg-white/10 text-bg hover:bg-white/20"
+              : "border-border bg-white text-ink hover:bg-ink/5",
+          )}
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
           aria-expanded={open}
@@ -141,20 +170,37 @@ export function Header() {
           >
             {ctaLabel}
           </LinkButton>
+          {brand.phone ? (
+            <a
+              href={`tel:${brand.phone}`}
+              onClick={() => setOpen(false)}
+              className="mt-2 rounded-xl px-4 py-3 text-center text-base font-bold tracking-tight text-ink hover:bg-ink/5"
+            >
+              {brand.phoneLabel || brand.phone}
+            </a>
+          ) : null}
         </nav>
       </div>
     </header>
   );
 }
 
-function LogoMark() {
+function LogoMark({ invert = false }: { invert?: boolean }) {
   return (
     <span
       aria-hidden
-      className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl bg-ink text-white shadow-sm"
+      className={cn(
+        "relative inline-flex h-9 w-9 items-center justify-center rounded-xl shadow-sm",
+        invert ? "bg-bg text-ink" : "bg-ink text-white",
+      )}
     >
       <span className="font-mono text-sm font-black tracking-tighter">W8</span>
-      <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-accent ring-2 ring-white" />
+      <span
+        className={cn(
+          "absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-signal ring-2",
+          invert ? "ring-ink" : "ring-white",
+        )}
+      />
     </span>
   );
 }
