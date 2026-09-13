@@ -55,9 +55,10 @@ export function Header() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname?.startsWith(href) ?? false;
 
-  // The homepage hero is a navy field that runs up behind the header, so
-  // until the page scrolls the header has to read light-on-dark.
-  const overDarkHero = (pathname === "/") && !scrolled;
+  // These heroes are navy fields that run up behind the header, so until the
+  // page scrolls the header has to read light-on-dark.
+  const hasDarkHero = pathname === "/" || isMoversPage;
+  const overDarkHero = hasDarkHero && !scrolled;
 
   return (
     <header

@@ -1,4 +1,4 @@
-import { reviewCalendarEventTypeId } from "@/lib/movers";
+import { previewCalendarEventTypeId } from "@/lib/movers";
 import { supabaseTableRequest } from "@/lib/supabaseAdmin";
 
 export type ConfirmedBooking = {
@@ -68,7 +68,7 @@ export async function verifyAndSaveCalBooking({
   }
 
   const eventTypeId = booking.eventType?.id ?? booking.eventTypeId;
-  if (eventTypeId !== reviewCalendarEventTypeId) {
+  if (eventTypeId !== previewCalendarEventTypeId) {
     throw new Error("The booking belongs to another event type");
   }
   if (booking.status?.toLowerCase() !== "accepted") {

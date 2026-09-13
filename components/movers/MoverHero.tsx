@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { AmbientBlobs } from "@/components/ui/AmbientBlobs";
 import { LinkButton } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 
@@ -11,23 +10,22 @@ const reassurance = [
 
 export function MoverHero() {
   return (
-    <section className="relative overflow-hidden pb-16 pt-10 md:pb-24 md:pt-16">
-      <AmbientBlobs variant="light" />
+    <section className="relative -mt-16 overflow-hidden bg-ink pb-16 pt-26 text-bg md:-mt-20 md:pb-24 md:pt-36">
       <div className="container-page relative grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
         <div>
-          <p className="animate-rise text-sm font-semibold text-brand">
+          <p className="animate-rise font-mono text-xs uppercase tracking-wider text-highlight">
             Websites for US moving companies
           </p>
 
           <h1
-            className="animate-rise mt-5 max-w-[16ch] text-4xl font-bold leading-[1.05] tracking-tight text-ink sm:text-5xl lg:text-6xl"
+            className="animate-rise mt-5 max-w-[16ch] text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl"
             style={{ animationDelay: "80ms" }}
           >
             Your hands are full. Your website can take the details.
           </h1>
 
           <p
-            className="animate-rise mt-6 max-w-xl text-lg leading-relaxed text-muted md:text-xl"
+            className="animate-rise mt-6 max-w-xl text-lg leading-relaxed text-muted-invert md:text-xl"
             style={{ animationDelay: "160ms" }}
           >
             We build and manage moving-company websites that make requesting an
@@ -51,19 +49,19 @@ export function MoverHero() {
               href="#how-it-works"
               data-funnel-event="mover_demo_clicked"
               data-funnel-location="hero"
-              className="inline-flex min-h-11 items-center gap-1.5 self-start font-semibold text-ink underline decoration-brand/40 underline-offset-4 transition-colors hover:text-brand hover:decoration-brand"
+              className="inline-flex min-h-11 items-center gap-1.5 self-start font-semibold text-bg underline decoration-signal/60 underline-offset-4 transition-colors hover:decoration-signal"
             >
               See how it works
             </a>
           </div>
 
           <ul
-            className="animate-rise mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted"
+            className="animate-rise mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-invert"
             style={{ animationDelay: "320ms" }}
           >
             {reassurance.map((item) => (
               <li key={item} className="flex items-center gap-1.5">
-                <Icon name="check" size={15} className="text-accent" aria-hidden />
+                <Icon name="check" size={15} className="text-info" aria-hidden />
                 {item}
               </li>
             ))}

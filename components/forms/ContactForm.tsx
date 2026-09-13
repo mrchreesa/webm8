@@ -137,7 +137,7 @@ export function ContactForm() {
       </div>
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <Button type="submit" size="lg">
+        <Button type="submit" size="lg" className="shrink-0 whitespace-nowrap">
           Send enquiry
         </Button>
         <FormStatus tone={status.tone}>{status.message}</FormStatus>

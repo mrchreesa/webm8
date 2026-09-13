@@ -21,10 +21,12 @@ export function AmbientBlobs({
     >
       {/* Orange is reserved for things that act, so it never fills a field
           here — the saturated panels are navy and the glows are teal. */}
+      {/* Warm family only on paper — a navy haze here greys out the warm
+          ground, which is the whole reason the paper is not blue-white. */}
       {variant === "light" && (
         <>
-          <div className="animate-drift-slow absolute -left-40 top-0 h-[560px] w-[560px] rounded-full bg-ink/10 blur-3xl" />
-          <div className="animate-drift-slow-alt absolute -right-20 top-40 h-[500px] w-[500px] rounded-full bg-info/20 blur-3xl" />
+          <div className="animate-drift-slow absolute -left-40 top-0 h-[560px] w-[560px] rounded-full bg-highlight/25 blur-3xl" />
+          <div className="animate-drift-slow-alt absolute -right-20 top-40 h-[500px] w-[500px] rounded-full bg-info/12 blur-3xl" />
         </>
       )}
       {variant === "brand" && (

@@ -4,7 +4,7 @@ import {
   markBookingCancelled,
   verifyAndSaveCalBooking,
 } from "@/lib/calBooking";
-import { reviewCalendarEventTypeId } from "@/lib/movers";
+import { previewCalendarEventTypeId } from "@/lib/movers";
 import { isUuid } from "@/lib/previewAccess";
 import { supabaseTableRequest } from "@/lib/supabaseAdmin";
 
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
   }
 
   const payload = event.payload;
-  if (!payload?.uid || payload.eventTypeId !== reviewCalendarEventTypeId) {
+  if (!payload?.uid || payload.eventTypeId !== previewCalendarEventTypeId) {
     return NextResponse.json({ ok: true });
   }
 
