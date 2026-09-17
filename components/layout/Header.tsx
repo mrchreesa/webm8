@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { primaryNav, brand } from "@/lib/site";
 import { LinkButton } from "@/components/ui/Button";
+import { BrandLogo } from "@/components/ui/BrandLogo";
 import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
 
@@ -73,13 +74,42 @@ export function Header() {
         <Link
           href="/"
           className={cn(
-            "flex items-center gap-2 text-lg font-bold tracking-tight",
+            "flex items-center gap-1 md:gap-1.5",
             overDarkHero ? "text-bg" : "text-ink",
           )}
           aria-label={`${brand.name} home`}
         >
-          <LogoMark invert={overDarkHero} />
-          <span>{brand.name}</span>
+          <span
+            className={cn(
+              "inline-flex h-14 w-14 items-center justify-center rounded-full transition-colors md:h-16 md:w-16",
+              overDarkHero ? "bg-ink" : "bg-transparent",
+            )}
+          >
+            <BrandLogo
+              size={60}
+              className="h-[3.25rem] w-[3.25rem] md:h-[3.75rem] md:w-[3.75rem]"
+            />
+          </span>
+          <span
+            aria-hidden="true"
+            className={cn(
+              "inline-flex items-center text-[1.4rem] font-black leading-none tracking-[-0.065em] transition-colors sm:text-2xl",
+              overDarkHero &&
+                "drop-shadow-[0_2px_12px_rgb(7_26_51_/_0.4)]",
+            )}
+          >
+            <span>Web</span>
+            <span
+              className={cn(
+                "ml-1 inline-flex items-center rounded-[0.45rem] bg-neon px-1.5 py-1 text-[0.72em] tracking-[-0.04em] text-ink-deep ring-1 transition-all",
+                overDarkHero
+                  ? "shadow-[0_4px_14px_-5px_rgb(212_255_53_/_0.75)] ring-white/15"
+                  : "shadow-[0_4px_12px_-6px_rgb(7_26_51_/_0.45)] ring-ink/15",
+              )}
+            >
+              M8
+            </span>
+          </span>
         </Link>
 
         <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
@@ -183,25 +213,5 @@ export function Header() {
         </nav>
       </div>
     </header>
-  );
-}
-
-function LogoMark({ invert = false }: { invert?: boolean }) {
-  return (
-    <span
-      aria-hidden
-      className={cn(
-        "relative inline-flex h-9 w-9 items-center justify-center rounded-xl shadow-sm",
-        invert ? "bg-bg text-ink" : "bg-ink text-white",
-      )}
-    >
-      <span className="font-mono text-sm font-black tracking-tighter">W8</span>
-      <span
-        className={cn(
-          "absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-signal ring-2",
-          invert ? "ring-ink" : "ring-white",
-        )}
-      />
-    </span>
   );
 }

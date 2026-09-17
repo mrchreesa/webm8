@@ -22,6 +22,8 @@
 
   /* Highlight and information. */
   --color-highlight: #ffb92e;
+  --color-neon: #d4ff35;
+  --color-neon-soft: #e2ff75;
   --color-info: #2bc4bd;
   --color-info-ink: #0a7d7a;
 
@@ -169,6 +171,15 @@
   }
 }
 
+@keyframes moverFeatureScroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
 @keyframes shineSweep {
   0% {
     transform: translateX(-120%);
@@ -201,6 +212,25 @@
 
 .hero-showcase-dot {
   animation: heroShowcaseDot 20s ease-in-out infinite;
+}
+
+.mover-feature-marquee {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 6%,
+    black 94%,
+    transparent
+  );
+}
+
+.mover-feature-track {
+  animation: moverFeatureScroll 72s linear infinite;
+  will-change: transform;
+}
+
+.mover-feature-marquee:hover .mover-feature-track {
+  animation-play-state: paused;
 }
 
 /* ---------- Scroll-triggered reveals ---------- */
@@ -290,8 +320,18 @@
   }
 
   .hero-showcase-slide,
-  .hero-showcase-dot {
+  .hero-showcase-dot,
+  .mover-feature-track {
     animation: none !important;
+  }
+
+  .mover-feature-marquee {
+    overflow-x: auto;
+    mask-image: none;
+  }
+
+  .mover-feature-track > [aria-hidden="true"] {
+    display: none;
   }
 
   .hero-showcase-slide:first-child {

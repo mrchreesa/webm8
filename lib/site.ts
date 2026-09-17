@@ -61,18 +61,63 @@ export const valueCards: ValueCard[] = [
   },
 ];
 
-export const whatYouGet: string[] = [
-  "Professional design",
-  "Easy to use on phones",
-  "Clear service pages",
-  "Simple contact form",
-  "Tap-to-call buttons",
-  "Customer reviews in the right places",
-  "Help appearing in nearby Google searches",
-  "Information that search and AI tools can read",
-  "Fast-loading pages",
-  "See where calls and forms come from",
-  "Help whenever you need a change",
+export type WebsiteFeatureGroup = {
+  id: "design" | "visibility" | "enquiries" | "care";
+  label: string;
+  title: string;
+  highlight: string;
+  features: string[];
+};
+
+export const whatYouGet: WebsiteFeatureGroup[] = [
+  {
+    id: "design",
+    label: "Design & credibility",
+    title: "Win trust before",
+    highlight: "the first call.",
+    features: [
+      "Professional design",
+      "Easy to use on phones",
+      "Clear service pages",
+      "Customer reviews in the right places",
+    ],
+  },
+  {
+    id: "visibility",
+    label: "Search & visibility",
+    title: "Get found by",
+    highlight: "the right people.",
+    features: [
+      "Help appearing in nearby Google searches",
+      "Optimization for AI search (ChatGPT, Gemini, Claude, etc.)",
+      "Fast-loading pages",
+      "Monthly traffic reports",
+    ],
+  },
+  {
+    id: "enquiries",
+    label: "Calls & enquiries",
+    title: "Turn interest into",
+    highlight: "a conversation.",
+    features: [
+      "Contact form",
+      "Tap-to-call buttons",
+      "Email and message booking confirmations",
+      "See where calls and forms come from",
+    ],
+  },
+  {
+    id: "care",
+    label: "Hosting & ongoing care",
+    title: "Your time back.",
+    highlight: "Your site covered.",
+    features: [
+      "Hosting included",
+      "Website security",
+      "Ongoing website maintenance",
+      "Help whenever you need a change",
+    ],
+  },
 ];
 
 export type Plan = {

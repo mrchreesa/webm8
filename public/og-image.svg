@@ -22,9 +22,7 @@
   <rect width="1200" height="630" fill="url(#glow2)"/>
 
   <g transform="translate(72,72)">
-    <rect width="60" height="60" rx="14" fill="#0F172A"/>
-    <text x="30" y="41" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="26" font-weight="900" letter-spacing="-1.5" fill="#FFFFFF">W8</text>
-    <circle cx="48" cy="12" r="6" fill="#10B981" stroke="#0F172A" stroke-width="2"/>
+    <image href="mascot-icon.png" width="60" height="60"/>
     <text x="80" y="42" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="800" fill="#0F172A">WebM8</text>
   </g>
 
@@ -36,5 +34,5 @@
   <rect x="72" y="460" width="260" height="58" rx="29" fill="url(#accent)"/>
   <text x="202" y="498" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="700" fill="#FFFFFF">Get a free audit</text>
 
-  <text x="72" y="570" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="600" fill="#475569">More calls · More bookings · More customers · From $197/mo</text>
+  <text x="72" y="570" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="600" fill="#475569">More calls Â· More bookings Â· More customers Â· From $197/mo</text>
 </svg>

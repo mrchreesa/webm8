@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Caveat, DM_Sans, Geist, Geist_Mono, Manrope } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -27,6 +27,27 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
 });
 
+const manrope = Manrope({
+  subsets: ["latin"],
+  display: "swap",
+  preload: false,
+  variable: "--font-manrope",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  preload: false,
+  variable: "--font-dm-sans",
+});
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  display: "swap",
+  preload: false,
+  variable: "--font-caveat",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -49,9 +70,21 @@ export const metadata: Metadata = {
     images: [ogImage.url],
   },
   icons: {
-    icon: "/favicon.svg",
-    apple: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: [
+      {
+        url: "/mascot-icon.png",
+        type: "image/png",
+        sizes: "64x64",
+      },
+    ],
+    apple: [
+      {
+        url: "/mascot-apple-touch-icon.png",
+        type: "image/png",
+        sizes: "180x180",
+      },
+    ],
+    shortcut: "/mascot-icon.png",
   },
 };
 
@@ -61,7 +94,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${manrope.variable} ${dmSans.variable} ${caveat.variable}`}
+    >
       <body className="flex min-h-screen flex-col antialiased">
         <StructuredData />
         <MixpanelAnalytics />
@@ -82,7 +118,7 @@ function StructuredData() {
       "@id": `${siteUrl}/#organization`,
       name: siteName,
       url: siteUrl,
-      logo: `${siteUrl}/favicon.svg`,
+      logo: `${siteUrl}/mascot.png`,
       email: intakeEmail,
       description: defaultDescription,
       slogan: brand.positioning,

@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/home/Hero";
-import { TrustBar } from "@/components/home/TrustBar";
-import { ValueCards } from "@/components/home/ValueCards";
 import { WhatYouGet } from "@/components/home/WhatYouGet";
 import { Pricing } from "@/components/home/Pricing";
 import { Portfolio } from "@/components/home/Portfolio";
@@ -26,8 +24,6 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <TrustBar />
-      <ValueCards />
       <WhatYouGet />
       <Pricing />
       <Portfolio limit={3} />

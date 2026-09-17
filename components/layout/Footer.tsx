@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/ui/BrandLogo";
 import { brand, intakeEmail } from "@/lib/site";
 
 export function Footer() {
@@ -12,12 +13,9 @@ export function Footer() {
             <Link
               href="/"
               className="flex items-center gap-2 text-lg font-bold tracking-tight text-ink"
+              aria-label={`${brand.name} home`}
             >
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-ink text-white">
-                <span className="font-mono text-sm font-black tracking-tighter">
-                  W8
-                </span>
-              </span>
+              <BrandLogo />
               {brand.name}
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-muted">

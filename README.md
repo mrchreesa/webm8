@@ -95,7 +95,7 @@ Almost all copy is in **`lib/site.ts`**:
 - `primaryNav` — header/footer navigation.
 - `plans` — Standard & Growth bullets, prices, CTA labels.
 - `valueCards` — "More Trust / More Leads / More Revenue" cards.
-- `whatYouGet` — two-column checkmark list on the homepage.
+- `whatYouGet` — benefit headlines and visible feature checklists for the homepage’s “What’s included” cards. The supporting visuals live in `components/home/IncludedVisuals.tsx`.
 - `processSteps` — "How it works" 4 steps.
 - `auditChecklist` — items shown on `/audit` and in the home audit teaser.
 - `projects` — 6 portfolio entries rendered with the pure-CSS browser
