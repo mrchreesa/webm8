@@ -25,8 +25,8 @@ export default function HomePage() {
     <>
       <Hero />
       <WhatYouGet />
-      <Pricing />
       <Portfolio limit={3} />
+      <Pricing />
       <Process />
       <AuditTeaser />
       <Testimonials />

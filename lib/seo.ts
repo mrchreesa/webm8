@@ -43,9 +43,9 @@ export const indexableRoutes = [
   },
   {
     path: "/movers/",
-    title: "Moving Company Websites, Built and Managed From $197/month",
+    title: "Moving Company Websites, Built and Managed From $147/month",
     description:
-      "Websites for US moving companies that make requesting an estimate simple. Two plans, $0 setup, no minimum contract term. Book a free 10-minute website review.",
+      "Websites for US moving companies that make requesting an estimate simple. Two plans, $0 setup, no minimum contract term. Book a free 10-minute custom demo.",
     priority: 0.9,
   },
   {

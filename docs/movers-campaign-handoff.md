@@ -1,13 +1,13 @@
 # `/movers/` campaign — handoff notes
 
-Date: 2026-09-12
+Date: 2026-09-20
 
 Internal. Nothing in this file appears on the public page.
 
 ## What is live in the code
 
-- `/movers/` rebuilt around one offer: a free 10-minute review.
-- Standard $197/month or $1,970/year; Growth $297/month or $2,970/year. Annual is
+- `/movers/` rebuilt around one offer: a free 10-minute custom demo.
+- Standard $147/month or $1,470/year; Growth $247/month or $2,470/year. Annual is
   ten months paid for twelve months of service. Billing selector defaults to
   Monthly; the annual option is labelled "2 months free".
 - Review requests POST to `/api/mover-review/`, are validated server-side, and are
@@ -67,12 +67,7 @@ Lead event has had nowhere to go. A loader is now in place gated on
 `NEXT_PUBLIC_META_PIXEL_ID`. Set that in Vercel and the Lead event starts firing
 once per accepted request. Until then, Meta gets nothing.
 
-### 6. Founder photo
-
-`components/movers/MoverProof.tsx` renders a single-initial avatar. Drop a
-portrait at `public/team/founder.webp` and swap the `<span>` for an `<Image>`.
-
-### 7. Name spelling — visible inconsistency
+### 6. Name spelling — visible inconsistency
 
 The site says **Kristian** (matching the git author). The Cal.com account says
 **Christian**, and a visitor sees that name on the booking page seconds after
@@ -99,10 +94,13 @@ NEXT_PUBLIC_META_PIXEL_ID=<pixel id>   # required for the Meta Lead event
 static export. If the project has an explicit output directory of `out`, clear it
 or the deploy will keep serving a stale export and the API route will 404.
 
-The migration is at
+The original table migration is at
 `webm8-platform/supabase/migrations/202609120001_agency_review_requests.sql`.
-It has already been applied to the live project. Note that `webm8-platform` is
-not a git repository, so that file is not under version control.
+The custom-demo fields are added by
+`webm8-platform/supabase/migrations/202609200001_mover_preview_preferences.sql`.
+It has been applied to the live project, so `site_feel` and `additional_notes`
+can be saved when this form change deploys. Note that `webm8-platform` is not a
+git repository, so those files are not under version control.
 
 ## Findings from inspecting what was already live
 
@@ -160,7 +158,7 @@ not a git repository, so that file is not under version control.
 
 ## What was verified, and how
 
-- `npm test` — 20 tests covering the pricing arithmetic and the request validator.
+- `npm test` — 21 tests covering the pricing arithmetic and the request validator.
 - `npm run typecheck`, `npm run lint`, `npm run build` all clean. 12 of 13 routes
   still prerender; only `/api/mover-review` is server-rendered.
 - A real submission through the rendered form at 390px wide reached Supabase, with
@@ -174,8 +172,7 @@ not a git repository, so that file is not under version control.
   errors, alongside a plain booking link that works if the script is blocked.
 - The mobile sticky CTA hides itself (`opacity: 0`, `pointer-events: none`,
   `aria-hidden`) whenever the request form is on screen.
-- Tab order through the form is name → company → email → phone → website →
-  checkbox → submit. The "no website yet" checkbox disables and clears the URL
-  field and swaps its hint text.
-- Every required figure renders on the page: $197, $1,970, $297, $2,970, $164.17,
-  $247.50, $394, $594, "2 months free", "$0 setup fee", "No minimum contract term".
+- Tab order through the form is name → company → email → phone → Google Business
+  Profile/social page → six site-feel checkboxes → optional notes → submit.
+- Every required figure renders on the page: $147, $1,470, $247, $2,470, $122.50,
+  $205.83, $294, $494, "2 months free", "$0 setup fee", "No minimum contract term".

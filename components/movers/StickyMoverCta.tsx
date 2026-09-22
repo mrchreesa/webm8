@@ -73,7 +73,7 @@ export function StickyMoverCta() {
         data-funnel-location="mobile_sticky"
         className="flex min-h-12 items-center justify-center rounded-full bg-brand px-5 text-sm font-bold text-white shadow-cta"
       >
-        Book my free 10-minute review
+        Book my free 10-minute demo
       </Link>
     </div>
   );

@@ -66,7 +66,7 @@ export function trackAcceptedReviewRequest(
 
   trackEvent("mover_review_request_accepted", details);
   window.fbq?.("track", "Lead", {
-    content_name: "Mover free 10-minute review",
+    content_name: "Mover free 10-minute custom demo",
   });
 }
 

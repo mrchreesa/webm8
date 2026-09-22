@@ -6,8 +6,8 @@ Businesses That Want More Calls, Bookings, and Customers."**
 
 Plans:
 
-- **Standard — $197/month** or $1,970/year · Professional website, trust signals, contact.
-- **Growth — $297/month** or $2,970/year · Lead-generation focused with tracking + ongoing
+- **Standard — $147/month** or $1,470/year · Professional website, trust signals, contact.
+- **Growth — $247/month** or $2,470/year · Lead-generation focused with tracking + ongoing
   improvements.
 
 Annual billing is ten months paid for twelve months of service. `lib/movers.ts`

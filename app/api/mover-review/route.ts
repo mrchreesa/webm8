@@ -106,6 +106,8 @@ export async function POST(request: Request) {
         ),
         main_city_state: fields.mainCityState,
         services: fields.services,
+        site_feel: fields.siteFeel,
+        additional_notes: fields.additionalNotes,
         submission_key: fields.submissionKey,
         request_type: "preview",
         plan: fields.plan,

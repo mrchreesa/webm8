@@ -7,46 +7,80 @@ const valid = {
   companyName: "Example Moving Co.",
   email: "jamie@example.com",
   phone: "(555) 123-4567",
-  hasWebsite: true,
-  websiteUrl: "example.com",
+  businessLink: "facebook.com/examplemoving",
+  siteFeel: ["clean-professional", "warm-friendly"],
+  additionalNotes: "Family-owned and no stock photos, please.",
+  submissionKey: "11111111-1111-4111-8111-111111111111",
 };
 
-test("accepts a complete request and normalizes the website address", () => {
+test("accepts a complete request and normalizes the business link", () => {
   const result = validateReviewRequest(valid);
   assert.ok(result.ok);
-  assert.equal(result.value.websiteUrl, "https://example.com");
-  assert.equal(result.value.contactName, "Jamie Smith");
-  assert.equal(result.value.companyName, "Example Moving Co.");
-  assert.equal(result.value.hasWebsite, true);
+  assert.equal(
+    result.value.businessLink,
+    "https://facebook.com/examplemoving",
+  );
+  assert.deepEqual(result.value.siteFeel, [
+    "clean-professional",
+    "warm-friendly",
+  ]);
+  assert.equal(
+    result.value.additionalNotes,
+    "Family-owned and no stock photos, please.",
+  );
 });
 
-test("keeps an address that already has a scheme", () => {
+test("requires a Google Business or social-media link", () => {
+  const missing = validateReviewRequest({ ...valid, businessLink: "" });
+  assert.equal(missing.ok, false);
+  if (!missing.ok) assert.ok(missing.errors.businessLink);
+
+  const malformed = validateReviewRequest({ ...valid, businessLink: "not-a-link" });
+  assert.equal(malformed.ok, false);
+  if (!malformed.ok) assert.ok(malformed.errors.businessLink);
+});
+
+test("accepts common business and social links", () => {
+  for (const businessLink of [
+    "https://maps.app.goo.gl/example",
+    "facebook.com/examplemoving",
+    "instagram.com/examplemoving",
+  ]) {
+    const result = validateReviewRequest({ ...valid, businessLink });
+    assert.ok(result.ok, `expected ${businessLink} to be accepted`);
+  }
+});
+
+test("requires at least one recognized site feel", () => {
+  const empty = validateReviewRequest({ ...valid, siteFeel: [] });
+  assert.equal(empty.ok, false);
+  if (!empty.ok) assert.ok(empty.errors.siteFeel);
+
   const result = validateReviewRequest({
     ...valid,
-    websiteUrl: "http://example.com/moving",
+    siteFeel: ["bold-energetic", "unknown", "bold-energetic"],
   });
   assert.ok(result.ok);
-  assert.equal(result.value.websiteUrl, "http://example.com/moving");
+  assert.deepEqual(result.value.siteFeel, ["bold-energetic"]);
 });
 
-test("accepts a company with no website yet", () => {
+test("allows the additional note to be left blank", () => {
+  const result = validateReviewRequest({ ...valid, additionalNotes: "   " });
+  assert.ok(result.ok);
+  assert.equal(result.value.additionalNotes, null);
+});
+
+test("caps a long additional note", () => {
   const result = validateReviewRequest({
     ...valid,
-    hasWebsite: false,
-    websiteUrl: "ignored.example.com",
+    additionalNotes: "x".repeat(5000),
   });
   assert.ok(result.ok);
-  assert.equal(result.value.hasWebsite, false);
-  assert.equal(result.value.websiteUrl, null);
+  assert.ok(result.value.additionalNotes);
+  assert.equal(result.value.additionalNotes.length, 1200);
 });
 
-test("treats a blank website as no website supplied, not an error", () => {
-  const result = validateReviewRequest({ ...valid, websiteUrl: "   " });
-  assert.ok(result.ok);
-  assert.equal(result.value.websiteUrl, null);
-});
-
-test("reports every missing or malformed field at once", () => {
+test("reports every missing or malformed contact field at once", () => {
   const result = validateReviewRequest({
     ...valid,
     contactName: "  ",
@@ -62,14 +96,19 @@ test("reports every missing or malformed field at once", () => {
   assert.ok(result.errors.phone);
 });
 
-test("accepts a phone number written any reasonable way", () => {
-  for (const phone of ["5551234567", "(555) 123-4567", "+1 555 123 4567"]) {
+test("accepts an optional phone number written any reasonable way", () => {
+  for (const phone of [
+    "",
+    "5551234567",
+    "(555) 123-4567",
+    "+1 555 123 4567",
+  ]) {
     const result = validateReviewRequest({ ...valid, phone });
-    assert.ok(result.ok, `expected ${phone} to be accepted`);
+    assert.ok(result.ok, `expected ${phone || "blank"} to be accepted`);
   }
 });
 
-test("keeps recognized plan and billing context and drops anything else", () => {
+test("keeps recognized plan and billing context and defaults invalid values", () => {
   const good = validateReviewRequest({
     ...valid,
     plan: "growth",
@@ -79,14 +118,14 @@ test("keeps recognized plan and billing context and drops anything else", () => 
   assert.equal(good.value.plan, "growth");
   assert.equal(good.value.billing, "annual");
 
-  const junk = validateReviewRequest({
+  const fallback = validateReviewRequest({
     ...valid,
     plan: "enterprise",
     billing: "weekly",
   });
-  assert.ok(junk.ok);
-  assert.equal(junk.value.plan, null);
-  assert.equal(junk.value.billing, null);
+  assert.ok(fallback.ok);
+  assert.equal(fallback.value.plan, null);
+  assert.equal(fallback.value.billing, "monthly");
 });
 
 test("carries campaign attribution through", () => {
@@ -104,23 +143,14 @@ test("carries campaign attribution through", () => {
   assert.equal(result.value.pagePath, "/movers/");
 });
 
-test("caps absurd input lengths instead of rejecting them", () => {
-  const result = validateReviewRequest({
-    ...valid,
-    companyName: "x".repeat(5000),
-  });
-  assert.ok(result.ok);
-  assert.ok(result.value.companyName.length <= 200);
-});
+test("rejects a bad submission key, a filled honeypot, and a fast submission", () => {
+  const badKey = validateReviewRequest({ ...valid, submissionKey: "not-a-uuid" });
+  assert.equal(badKey.ok, false);
 
-test("rejects a filled honeypot and a submission faster than a human", () => {
   const trap = validateReviewRequest({ ...valid, companyWebsiteHp: "spam" });
   assert.equal(trap.ok, false);
 
-  const tooFast = validateReviewRequest({
-    ...valid,
-    elapsedMs: 400,
-  });
+  const tooFast = validateReviewRequest({ ...valid, elapsedMs: 400 });
   assert.equal(tooFast.ok, false);
 });
 

@@ -12,14 +12,14 @@ import {
 const standard = moverPlans.find((plan) => plan.id === "standard")!;
 const growth = moverPlans.find((plan) => plan.id === "growth")!;
 
-test("standard is $197 monthly or $1,970 annually", () => {
-  assert.equal(standard.monthlyPrice, 197);
-  assert.equal(standard.annualPrice, 1970);
+test("standard is $147 monthly or $1,470 annually", () => {
+  assert.equal(standard.monthlyPrice, 147);
+  assert.equal(standard.annualPrice, 1470);
 });
 
-test("growth is $297 monthly or $2,970 annually", () => {
-  assert.equal(growth.monthlyPrice, 297);
-  assert.equal(growth.annualPrice, 2970);
+test("growth is $247 monthly or $2,470 annually", () => {
+  assert.equal(growth.monthlyPrice, 247);
+  assert.equal(growth.annualPrice, 2470);
 });
 
 test("annual payment covers ten months for twelve months of service", () => {
@@ -29,16 +29,16 @@ test("annual payment covers ten months for twelve months of service", () => {
 });
 
 test("annual saving equals two months of the monthly price", () => {
-  assert.equal(annualSaving(standard), 394);
-  assert.equal(annualSaving(growth), 594);
+  assert.equal(annualSaving(standard), 294);
+  assert.equal(annualSaving(growth), 494);
   for (const plan of moverPlans) {
     assert.equal(annualSaving(plan), plan.monthlyPrice * 2);
   }
 });
 
 test("monthly equivalent divides the annual charge across twelve months", () => {
-  assert.equal(annualEquivalentMonthly(standard), 164.17);
-  assert.equal(annualEquivalentMonthly(growth), 247.5);
+  assert.equal(annualEquivalentMonthly(standard), 122.5);
+  assert.equal(annualEquivalentMonthly(growth), 205.83);
 });
 
 test("the monthly equivalent is always lower than the monthly price", () => {
@@ -48,11 +48,11 @@ test("the monthly equivalent is always lower than the monthly price", () => {
 });
 
 test("currency formatting", () => {
-  assert.equal(formatUsd(197), "$197");
-  assert.equal(formatUsd(1970), "$1,970");
-  assert.equal(formatUsd(2970), "$2,970");
-  assert.equal(formatUsdPrecise(annualEquivalentMonthly(standard)), "$164.17");
-  assert.equal(formatUsdPrecise(annualEquivalentMonthly(growth)), "$247.50");
+  assert.equal(formatUsd(147), "$147");
+  assert.equal(formatUsd(1470), "$1,470");
+  assert.equal(formatUsd(2470), "$2,470");
+  assert.equal(formatUsdPrecise(annualEquivalentMonthly(standard)), "$122.50");
+  assert.equal(formatUsdPrecise(annualEquivalentMonthly(growth)), "$205.83");
 });
 
 test("no plan advertises a minimum contract term", () => {

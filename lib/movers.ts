@@ -30,6 +30,26 @@ export const moverServiceOptions: { value: MoverService; label: string }[] = [
   { value: "other", label: "Other" },
 ];
 
+export const moverSiteFeelValues = [
+  "clean-professional",
+  "warm-friendly",
+  "bold-energetic",
+  "calm-minimal",
+  "premium-polished",
+  "fun-playful",
+] as const;
+
+export type MoverSiteFeel = (typeof moverSiteFeelValues)[number];
+
+export const moverSiteFeelOptions: { value: MoverSiteFeel; label: string }[] = [
+  { value: "clean-professional", label: "Clean and professional" },
+  { value: "warm-friendly", label: "Warm and friendly" },
+  { value: "bold-energetic", label: "Bold and energetic" },
+  { value: "calm-minimal", label: "Calm and minimal" },
+  { value: "premium-polished", label: "Premium and polished" },
+  { value: "fun-playful", label: "Fun and playful" },
+];
+
 export type MoverPlan = {
   id: MoverPlanId;
   name: string;
@@ -49,8 +69,8 @@ export const moverPlans: MoverPlan[] = [
     label: "Managed website",
     summary:
       "A professional moving-company website, built and looked after for you, with quote requests arriving in your inbox.",
-    monthlyPrice: 197,
-    annualPrice: 1970,
+    monthlyPrice: 147,
+    annualPrice: 1470,
     features: [
       "Website design and copy written for your company, services and real service area",
       "Responsive layout with visible phone buttons and a straightforward estimate form",
@@ -69,8 +89,8 @@ export const moverPlans: MoverPlan[] = [
     label: "Ongoing growth support",
     summary:
       "Everything in Standard, plus month-by-month work on local visibility, new pages, follow-up and conversion.",
-    monthlyPrice: 297,
-    annualPrice: 2970,
+    monthlyPrice: 247,
+    annualPrice: 2470,
     features: [
       "Everything in Standard, plus:",
       "Google Business Profile support and optimization, with your access and approval",

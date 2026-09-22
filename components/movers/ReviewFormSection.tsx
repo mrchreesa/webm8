@@ -5,8 +5,8 @@ import { intakeEmail } from "@/lib/site";
 
 const afterYouSend = [
   "You pick a time straight away, or leave it and we'll email you within one business day.",
-  "Before the call we look at your website and your local search results.",
-  "The call is 10 minutes. If it's useful we'll talk about what a site would involve; if it isn't, we'll say so.",
+  "Before the call we use your business page and preferences to prepare your custom demo.",
+  "The call is 10 minutes. If you like the demo, we can discuss a plan; if not, there is no obligation.",
 ];
 
 export function ReviewFormSection() {
@@ -19,10 +19,10 @@ export function ReviewFormSection() {
       <div className="container-page relative grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-16">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-ink md:text-5xl">
-            Book your free 10-minute review.
+            Book your free 10-minute demo.
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-muted">
-            Five short questions. No project brief, no budget questions, and
+            A few short questions. No project brief, no budget questions, and
             nothing to pay.
           </p>
 
@@ -60,7 +60,7 @@ export function ReviewFormSection() {
               className="mt-0.5 shrink-0 text-accent"
               aria-hidden
             />
-            We use your details to contact you about this review and nothing
+            We use your details to contact you about this demo and nothing
             else. No newsletter, no list, no reselling.
           </p>
         </div>

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { MoverBenefits } from "@/components/movers/MoverBenefits";
+import { WhatYouGet } from "@/components/home/WhatYouGet";
+import { Testimonials } from "@/components/home/Testimonials";
 import { MoverDemo } from "@/components/movers/MoverDemo";
 import { MoverFaq, moverFaqs } from "@/components/movers/MoverFaq";
 import { MoverFunnelTracking } from "@/components/movers/MoverFunnelTracking";
 import { MoverHero } from "@/components/movers/MoverHero";
 import { MoverPricing } from "@/components/movers/MoverPricing";
-import { MoverProof } from "@/components/movers/MoverProof";
 import { PlanSelectionProvider } from "@/components/movers/PlanSelection";
 import { ReviewExpectations } from "@/components/movers/ReviewExpectations";
 import { ReviewFormSection } from "@/components/movers/ReviewFormSection";
@@ -13,9 +13,9 @@ import { StickyMoverCta } from "@/components/movers/StickyMoverCta";
 import { moverPlans } from "@/lib/movers";
 import { absoluteUrl, createPageMetadata, siteName } from "@/lib/seo";
 
-const pageTitle = "Moving Company Websites, Built and Managed From $197/month";
+const pageTitle = "Moving Company Websites, Built and Managed From $147/month";
 const pageDescription =
-  "WebM8 builds and manages websites for US moving companies that make requesting an estimate simple. Two plans, $0 setup, no minimum contract term. Book a free 10-minute website review.";
+  "WebM8 builds and manages websites for US moving companies that make requesting an estimate simple. Two plans, $0 setup, no minimum contract term. Book a free 10-minute custom demo.";
 
 export const metadata: Metadata = createPageMetadata({
   title: pageTitle,
@@ -89,12 +89,12 @@ export default function MoversPage() {
       <PlanSelectionProvider>
         <MoverHero />
         <MoverDemo />
-        <MoverBenefits />
+        <WhatYouGet />
         <MoverPricing />
-        <MoverProof />
         <ReviewExpectations />
         <MoverFaq />
         <ReviewFormSection />
+        <Testimonials />
         <StickyMoverCta />
       </PlanSelectionProvider>
     </>

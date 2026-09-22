@@ -2,9 +2,6 @@ import Image from "next/image";
 import { Icon } from "@/components/ui/Icon";
 import { PhoneFrame } from "@/components/movers/MoverHero";
 import { Reveal } from "@/components/ui/Reveal";
-import { projects } from "@/lib/site";
-
-const demoProject = projects.find((project) => project.slug === "removals");
 
 const steps = [
   {
@@ -82,32 +79,9 @@ export function MoverDemo() {
           </ol>
         </Reveal>
 
-        <div className="mt-12 grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-start">
+        <Reveal className="mx-auto mt-16 max-w-5xl">
           <OwnerIllustration />
-
-          <div className="rounded-2xl border border-border bg-bg p-6">
-            <h3 className="font-bold text-ink">About this example</h3>
-            <p className="mt-2 leading-relaxed text-muted">
-              This is a WebM8 demonstration site, not a paying client&rsquo;s
-              work, and the moving details in the screens are made up for the
-              walkthrough. Everything shown is real, working functionality — you
-              can open it and try the estimate yourself.
-            </p>
-            {demoProject && (
-              <a
-                href={demoProject.siteUrl}
-                target="_blank"
-                rel="noreferrer"
-                data-funnel-event="mover_demo_clicked"
-                data-funnel-location="demo_section"
-                className="mt-4 inline-flex min-h-11 items-center gap-2 font-semibold text-brand underline underline-offset-4 hover:text-brand-hover"
-              >
-                Open the demonstration site
-                <Icon name="arrow" size={16} aria-hidden />
-              </a>
-            )}
-          </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -116,47 +90,110 @@ export function MoverDemo() {
 /**
  * The owner's side of the same request.
  *
- * Drawn rather than screenshotted, and labelled as a drawing, because sending
- * a real request into the demonstration site's database to photograph the
- * result would put invented data in front of the next person who opens it.
+ * Drawn rather than screenshotted because sending a real request into the
+ * demonstration site's database to photograph the result would put invented
+ * data in front of the next person who opens it.
  */
 function OwnerIllustration() {
-  const lines = [
-    ["Move", "Chicago, IL to Milwaukee, WI"],
-    ["Date", "Saturday 3 October, morning"],
-    ["Crew", "3 movers, 4 hours"],
-    ["Notes", "2nd floor, no elevator, piano"],
-    ["Contact", "Phone and email"],
+  const details = [
+    ["Date", "Sat 3 October · Morning"],
+    ["Crew", "3 movers · 4 hours"],
+    ["Access", "2nd floor · No elevator"],
+    ["Special item", "Piano"],
   ];
 
   return (
-    <div className="rounded-2xl border border-border bg-bg p-6">
-      <div className="flex items-start gap-3">
-        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand">
-          <Icon name="mail" size={18} aria-hidden />
-        </span>
+    <div className="relative overflow-hidden rounded-[2rem] bg-ink-deep p-5 shadow-card-hover sm:p-8 lg:p-10">
+      <div
+        className="pointer-events-none absolute -left-24 -top-28 h-72 w-72 rounded-full bg-info/10 blur-3xl"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -bottom-32 right-0 h-72 w-72 rounded-full bg-brand/20 blur-3xl"
+        aria-hidden="true"
+      />
+
+      <div className="relative grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-12">
         <div>
-          <h3 className="font-bold text-ink">And this is what reaches you</h3>
-          <p className="mt-1 text-sm text-muted">
-            A drawing of the summary, not a screenshot &mdash; the details are
-            from the walkthrough above.
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-white">
+            <span className="h-2 w-2 rounded-full bg-info" aria-hidden="true" />
+            Quote delivered
+          </span>
+          <h3 className="mt-5 max-w-md text-3xl font-bold leading-tight text-white sm:text-4xl">
+            And this is what reaches you
+          </h3>
+          <p className="mt-4 max-w-md leading-relaxed text-muted-invert">
+            Every useful detail arrives in one clear summary, ready for you to
+            call back without asking the same questions again.
           </p>
+
+          <div className="mt-7 flex items-center gap-3 border-t border-white/10 pt-6">
+            <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-info">
+              <Icon name="mail" size={20} aria-hidden />
+            </span>
+            <div>
+              <p className="text-sm font-semibold text-white">Straight to your inbox</p>
+              <p className="mt-0.5 text-xs text-muted-invert">The moment they send the request</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-3xl border border-white/70 bg-white p-2 shadow-card-hover">
+          <div className="rounded-[1.15rem] border border-border/70 bg-bg p-4 sm:p-6">
+            <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand text-white shadow-cta">
+                  <Icon name="mail" size={20} aria-hidden />
+                </span>
+                <div>
+                  <p className="font-bold text-ink">New quote request</p>
+                  <p className="mt-0.5 text-xs text-muted">Website enquiry</p>
+                </div>
+              </div>
+              <span className="rounded-full bg-accent/10 px-2.5 py-1 text-xs font-bold text-accent">
+                New
+              </span>
+            </div>
+
+            <div className="my-4 rounded-2xl border border-border bg-white p-4 sm:p-5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted">
+                Moving from
+              </p>
+              <p className="mt-1 font-bold text-ink">Chicago, IL</p>
+              <div className="my-2 flex items-center gap-2" aria-hidden="true">
+                <span className="h-2 w-2 rounded-full bg-brand" />
+                <span className="h-px flex-1 border-t border-dashed border-brand/40" />
+                <Icon name="arrow" size={15} className="text-brand" />
+              </div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted">
+                Moving to
+              </p>
+              <p className="mt-1 font-bold text-ink">Milwaukee, WI</p>
+            </div>
+
+            <dl className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {details.map(([term, value]) => (
+                <div key={term} className="rounded-xl bg-white px-4 py-3">
+                  <dt className="text-[10px] font-bold uppercase tracking-[0.13em] text-muted">
+                    {term}
+                  </dt>
+                  <dd className="mt-1 text-sm font-semibold text-ink">{value}</dd>
+                </div>
+              ))}
+            </dl>
+
+            <div className="mt-2 flex items-center gap-3 rounded-xl bg-ink px-4 py-3 text-white">
+              <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-info/15 text-info">
+                <Icon name="check" size={16} strokeWidth={2.5} aria-hidden />
+              </span>
+              <div>
+                <p className="text-xs text-muted-invert">Contact details included</p>
+                <p className="text-sm font-semibold">Phone number and email</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <dl className="mt-5 divide-y divide-border rounded-xl border border-border bg-white">
-        {lines.map(([term, value]) => (
-          <div key={term} className="flex gap-4 px-4 py-3 text-sm">
-            <dt className="w-20 shrink-0 font-semibold text-muted">{term}</dt>
-            <dd className="text-ink">{value}</dd>
-          </div>
-        ))}
-      </dl>
-
-      <p className="mt-4 text-sm leading-relaxed text-muted">
-        It lands in your email, so you can call back with the details in front
-        of you instead of asking for them again.
-      </p>
     </div>
   );
 }

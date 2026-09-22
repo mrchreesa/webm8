@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, LinkButton } from "@/components/ui/Button";
-import { FormStatus, TextField } from "@/components/forms/FormField";
+import {
+  FormStatus,
+  TextAreaField,
+  TextField,
+} from "@/components/forms/FormField";
 import { Icon } from "@/components/ui/Icon";
 import { CalEmbed } from "@/components/movers/CalEmbed";
 import { usePlanSelection } from "@/components/movers/PlanSelection";
@@ -11,7 +15,11 @@ import {
   trackAcceptedReviewRequest,
   trackEvent,
 } from "@/lib/analytics";
-import { reviewCalendarLink, reviewCalendarUrl } from "@/lib/movers";
+import {
+  moverSiteFeelOptions,
+  reviewCalendarLink,
+  reviewCalendarUrl,
+} from "@/lib/movers";
 
 type Attribution = {
   utmSource: string;
@@ -35,15 +43,21 @@ const emptyAttribution: Attribution = {
 
 type Accepted = { id: string; name: string; email: string };
 
+type AcceptedResponse = {
+  ok: true;
+  request: { id: string; name: string; email: string };
+  token: string;
+};
+
 export function MoverReviewForm() {
   const { plan, billing } = usePlanSelection();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [accepted, setAccepted] = useState<Accepted | null>(null);
-  const [hasWebsite, setHasWebsite] = useState(true);
   const [attribution, setAttribution] = useState<Attribution>(emptyAttribution);
   const openedAt = useRef(Date.now());
   const started = useRef(false);
+  const submissionKey = useRef("");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -78,13 +92,19 @@ export function MoverReviewForm() {
     setSubmitting(true);
     setErrors({});
 
+    if (!submissionKey.current) {
+      submissionKey.current = window.crypto.randomUUID();
+    }
+
     const payload = {
       contactName: String(data.get("contactName") ?? ""),
       companyName: String(data.get("companyName") ?? ""),
       email: String(data.get("email") ?? ""),
       phone: String(data.get("phone") ?? ""),
-      websiteUrl: String(data.get("websiteUrl") ?? ""),
-      hasWebsite,
+      businessLink: String(data.get("businessLink") ?? ""),
+      siteFeel: data.getAll("siteFeel").map(String),
+      additionalNotes: String(data.get("additionalNotes") ?? ""),
+      submissionKey: submissionKey.current,
       companyWebsiteHp: String(data.get("companyWebsiteHp") ?? ""),
       elapsedMs: Date.now() - openedAt.current,
       plan,
@@ -102,7 +122,7 @@ export function MoverReviewForm() {
       });
 
       const result = (await response.json().catch(() => null)) as
-        | { ok: true; id: string }
+        | AcceptedResponse
         | { ok: false; errors?: Record<string, string> }
         | null;
 
@@ -119,7 +139,7 @@ export function MoverReviewForm() {
       }
 
       // Success is claimed only now, with a recorded request behind it.
-      trackAcceptedReviewRequest(result.id, {
+      trackAcceptedReviewRequest(result.request.id, {
         utm_source: attribution.utmSource || "direct",
         utm_medium: attribution.utmMedium,
         utm_campaign: attribution.utmCampaign,
@@ -128,9 +148,9 @@ export function MoverReviewForm() {
       });
 
       setAccepted({
-        id: result.id,
-        name: payload.contactName,
-        email: payload.email,
+        id: result.request.id,
+        name: result.request.name,
+        email: result.request.email,
       });
     } catch {
       setErrors({
@@ -189,33 +209,61 @@ export function MoverReviewForm() {
           error={errors.phone}
         />
 
-        <div className="sm:col-span-2">
-          <TextField
-            label="Current website"
-            name="websiteUrl"
-            type="url"
-            inputMode="url"
-            placeholder="example.com"
-            autoComplete="url"
-            disabled={!hasWebsite}
-            error={errors.websiteUrl}
-            hint={
-              hasWebsite
-                ? "We'll look at it before the call."
-                : "No problem — we'll talk through your services and show a relevant example instead."
-            }
-            wide
-          />
-          <label className="mt-3 flex min-h-11 cursor-pointer items-center gap-3 text-sm text-ink">
-            <input
-              type="checkbox"
-              checked={!hasWebsite}
-              onChange={(event) => setHasWebsite(!event.target.checked)}
-              className="h-5 w-5 rounded border-border text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-            />
-            I don&rsquo;t have a website yet
-          </label>
-        </div>
+        <TextField
+          label="Google Business Page / social media"
+          name="businessLink"
+          type="url"
+          inputMode="url"
+          required
+          placeholder="google.com/maps/... or facebook.com/..."
+          autoComplete="url"
+          error={errors.businessLink}
+          hint="Paste a link to your Google Business Profile, Facebook, Instagram, or another active page."
+          wide
+        />
+
+        <fieldset
+          className="sm:col-span-2"
+          aria-describedby={errors.siteFeel ? "site-feel-error" : undefined}
+          aria-invalid={errors.siteFeel ? true : undefined}
+        >
+          <legend className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
+            How should the site feel? (pick any that fit)
+            <span className="ml-1 text-brand" aria-hidden="true">
+              *
+            </span>
+          </legend>
+          <div className="mt-2 grid gap-2 sm:grid-cols-2">
+            {moverSiteFeelOptions.map((option) => (
+              <label
+                key={option.value}
+                className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-border bg-bg px-4 py-3 text-sm font-medium text-ink transition-colors hover:border-ink/25 hover:bg-bg-alt"
+              >
+                <input
+                  type="checkbox"
+                  name="siteFeel"
+                  value={option.value}
+                  className="h-5 w-5 shrink-0 rounded border-border text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                />
+                {option.label}
+              </label>
+            ))}
+          </div>
+          {errors.siteFeel && (
+            <p id="site-feel-error" className="mt-2 text-xs text-error">
+              {errors.siteFeel}
+            </p>
+          )}
+        </fieldset>
+
+        <TextAreaField
+          label="Anything else I should know?"
+          name="additionalNotes"
+          rows={4}
+          placeholder="Tell us anything useful for your custom demo."
+          error={errors.additionalNotes}
+          hint="Something that makes you different, a pet hate, or a must-have. Optional."
+        />
 
         <div className="absolute -left-[9999px]" aria-hidden="true">
           <label>
@@ -232,7 +280,7 @@ export function MoverReviewForm() {
 
       <div className="mt-7">
         <Button type="submit" size="lg" className="w-full" disabled={submitting}>
-          {submitting ? "Sending your request…" : "Book my free 10-minute review"}
+          {submitting ? "Sending your request…" : "Book my free 10-minute demo"}
         </Button>
       </div>
 
@@ -252,8 +300,8 @@ export function MoverReviewForm() {
       </div>
 
       <p className="mt-4 text-sm leading-relaxed text-muted">
-        By sending this, you agree that WebM8 may contact you about your review
-        request by email or phone. We don&rsquo;t sell your details. Read the{" "}
+        By sending this, you agree that WebM8 may contact you about your custom
+        demo request by email or phone. We don&rsquo;t sell your details. Read the{" "}
         <Link href="/privacy/" className="font-medium text-brand underline hover:text-brand-hover">
           privacy notice
         </Link>
@@ -290,7 +338,7 @@ function BookingPanel({ accepted }: { accepted: Accepted }) {
       <h3 className="mt-5 text-2xl font-bold text-ink">
         {booked
           ? "Your call is confirmed."
-          : "Your review request is received. Choose a time to confirm your call."}
+          : "Your demo request is received. Choose a time to confirm your call."}
       </h3>
 
       <p className="mt-3 leading-relaxed text-muted">

@@ -91,14 +91,20 @@ export function TextAreaField({
   placeholder,
   required,
   rows = 4,
+  error,
+  hint,
 }: {
   label: string;
   name: string;
   placeholder?: string;
   required?: boolean;
   rows?: number;
+  error?: string;
+  hint?: string;
 }) {
   const id = useId();
+  const messageId = `${id}-message`;
+  const message = error || hint;
 
   return (
     <div className="flex flex-col gap-1.5 sm:col-span-2">
@@ -116,8 +122,25 @@ export function TextAreaField({
         rows={rows}
         required={required}
         placeholder={placeholder}
-        className={cn(fieldBase, "resize-y")}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={message ? messageId : undefined}
+        className={cn(
+          fieldBase,
+          "resize-y",
+          error && "border-error focus:border-error",
+        )}
       />
+      {message && (
+        <p
+          id={messageId}
+          className={cn(
+            "text-xs leading-relaxed",
+            error ? "text-error" : "text-muted",
+          )}
+        >
+          {message}
+        </p>
+      )}
     </div>
   );
 }

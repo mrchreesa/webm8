@@ -50,21 +50,6 @@ export const moverFaqs: { question: string; answer: string }[] = [
     answer:
       "The domain is registered in your name and stays yours. Your logo, your photos, the text about your business and every enquiry a customer sends you are yours. The website itself is built and hosted by WebM8 as part of the service, which is what keeps the upfront cost at zero. If you ever want to take the site somewhere else, we'll agree the handover and any cost in writing first. We don't make promises about the site staying online after the service ends until that's been agreed with you.",
   },
-  {
-    question: "Can enquiries go into software we already use?",
-    answer:
-      "Often, yes. Every plan sends quote requests to your email, which works regardless. Beyond that we check your specific software before promising anything — some tools have an open connection, some charge for access, and some have none at all. On Growth, review-request and follow-up workflows use integrations we've confirmed will work for your setup. We'll tell you what's possible before you sign up, not after.",
-  },
-  {
-    question: "What costs extra?",
-    answer:
-      "Advertising spend, paid software from other companies, and phone or text message usage are separate where they apply, and you pay those providers directly or we bill them on at cost. Domain registration renews annually and is yours. A large piece of extra work — a whole new section of the site, or something outside the monthly scope — is quoted and approved before it starts. Nothing gets added to your bill without you agreeing to it first.",
-  },
-  {
-    question: "Do you guarantee leads or Google rankings?",
-    answer:
-      "No. Any company that guarantees a Google position or a number of jobs is guessing or lying. What you get is the agreed work delivered, clear reporting on where enquiries come from, and someone who'll tell you honestly what's working. Results also depend on your market, your reviews, your prices, and how quickly you call people back.",
-  },
 ];
 
 export function MoverFaq() {

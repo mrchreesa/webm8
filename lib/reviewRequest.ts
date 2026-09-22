@@ -4,9 +4,11 @@ import {
   isBillingCycle,
   isMoverPlanId,
   moverServiceValues,
+  moverSiteFeelValues,
   type BillingCycle,
   type MoverPlanId,
   type MoverService,
+  type MoverSiteFeel,
 } from "./movers.ts";
 
 export type PreviewRequestFields = {
@@ -14,9 +16,11 @@ export type PreviewRequestFields = {
   companyName: string;
   email: string;
   phone: string | null;
-  mainCityState: string;
+  mainCityState: string | null;
   services: MoverService[];
-  businessLink: string | null;
+  businessLink: string;
+  siteFeel: MoverSiteFeel[];
+  additionalNotes: string | null;
   submissionKey: string;
   plan: MoverPlanId | null;
   billing: BillingCycle;
@@ -42,6 +46,7 @@ const MAX_LENGTHS = {
   phone: 40,
   mainCityState: 160,
   businessLink: 500,
+  additionalNotes: 1200,
   attribution: 300,
 } as const;
 
@@ -78,25 +83,36 @@ export function validateReviewRequest(input: unknown): ValidationResult {
     text(raw.mainCityState),
     MAX_LENGTHS.mainCityState,
   );
-  if (!mainCityState) errors.mainCityState = "Enter your main city and state.";
-
   const services = uniqueStrings(raw.services).filter(
     (service): service is MoverService =>
       moverServiceValues.includes(service as MoverService),
   );
-  if (services.length === 0) {
-    errors.services = "Select at least one service.";
-  }
-
   const rawBusinessLink = cap(
     text(raw.businessLink),
     MAX_LENGTHS.businessLink,
   );
   const businessLink = normalizeBusinessLink(rawBusinessLink);
-  if (rawBusinessLink && !businessLink) {
+  if (!rawBusinessLink) {
+    errors.businessLink =
+      "Enter your Google Business Profile or social media link.";
+  } else if (!businessLink) {
     errors.businessLink =
       "Enter a valid website, Google Maps, Facebook, or Instagram link.";
   }
+
+  const siteFeel = uniqueStrings(raw.siteFeel).filter(
+    (value): value is MoverSiteFeel =>
+      moverSiteFeelValues.includes(value as MoverSiteFeel),
+  );
+  if (siteFeel.length === 0) {
+    errors.siteFeel = "Choose at least one option.";
+  }
+
+  const additionalNotesValue = cap(
+    text(raw.additionalNotes),
+    MAX_LENGTHS.additionalNotes,
+  );
+  const additionalNotes = additionalNotesValue || null;
 
   const submissionKey = text(raw.submissionKey).toLowerCase();
   if (!isUuid(submissionKey)) {
@@ -112,9 +128,11 @@ export function validateReviewRequest(input: unknown): ValidationResult {
       companyName,
       email,
       phone,
-      mainCityState,
+      mainCityState: mainCityState || null,
       services,
-      businessLink,
+      businessLink: businessLink!,
+      siteFeel,
+      additionalNotes,
       submissionKey,
       plan: isMoverPlanId(raw.plan) ? raw.plan : null,
       billing: isBillingCycle(raw.billing) ? raw.billing : "monthly",

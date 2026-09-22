@@ -4,7 +4,7 @@ import { Icon } from "@/components/ui/Icon";
 import { MoverFeatureCarousel } from "@/components/movers/MoverFeatureCarousel";
 
 const reassurance = [
-  "From $197 a month",
+  "From $147 a month",
   "$0 setup fee",
   "No minimum contract term",
 ];
@@ -49,7 +49,7 @@ export function MoverHero() {
               data-funnel-event="mover_cta_clicked"
               data-funnel-location="hero"
             >
-              Book my free 10-minute review
+              Book my free 10-minute demo
               <Icon name="arrow" size={18} />
             </LinkButton>
             <LinkButton
