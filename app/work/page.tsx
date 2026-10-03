@@ -25,7 +25,7 @@ export default function WorkPage() {
         subtitle="Each one is a working website, built around how that business's customers search, decide and get in touch. See it on a computer and on a phone."
       />
 
-      <section className="py-16 md:py-24">
+      <section className="overflow-x-clip py-16 md:py-24">
         <div className="container-page">
           <div className="grid gap-16 lg:gap-24">
             {projects.map((project, index) => (
