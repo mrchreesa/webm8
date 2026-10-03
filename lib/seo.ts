@@ -49,10 +49,10 @@ export const indexableRoutes = [
     priority: 0.9,
   },
   {
-    path: "/audit/",
-    title: "Free Website Audit - See what's costing you calls",
+    path: "/demo/",
+    title: "Free Personalised Website Demo",
     description:
-      "Ask for a free website review. We check how well it works on phones, how clearly it explains your services, and how easy it is to contact you.",
+      "Tell us about your business and we'll design a homepage for you, with your name and services on it, and show it to you on a short call. Free, no obligation.",
     priority: 0.9,
   },
   {

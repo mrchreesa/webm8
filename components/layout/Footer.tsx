@@ -30,7 +30,7 @@ export function Footer() {
               { label: "Home", href: "/" },
               { label: "Websites for Movers", href: "/movers/" },
               { label: "Work", href: "/work" },
-              { label: "Free Review", href: "/audit" },
+              { label: "Free Demo", href: "/demo/" },
             ]}
           />
           <FooterCol
@@ -38,7 +38,7 @@ export function Footer() {
             links={[
               { label: "About", href: "/about" },
               { label: "Contact", href: "/contact" },
-              { label: "Free Website Review", href: "/audit" },
+              { label: "Pricing", href: "/pricing/" },
               { label: "Privacy", href: "/privacy/" },
             ]}
           />

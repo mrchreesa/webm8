@@ -23,7 +23,7 @@ export const primaryNav: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Work", href: "/work" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Free Review", href: "/audit" },
+  { label: "Free Demo", href: "/demo" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
@@ -199,6 +199,24 @@ export const processSteps: ProcessStep[] = [
     number: 4,
     title: "Launch & Improve",
     body: "We launch the site, support it, and keep improving it over time so it keeps generating leads.",
+  },
+];
+
+export type DemoStep = { title: string; body: string };
+
+/** What the Free Personalised Website Demo involves, on /demo/ and in DemoClosing. */
+export const demoSteps: DemoStep[] = [
+  {
+    title: "Tell us about your business",
+    body: "Your trade, your area and what you want more of. It takes about two minutes.",
+  },
+  {
+    title: "We design your homepage",
+    body: "With your name, your services and your area on it.",
+  },
+  {
+    title: "We show it to you",
+    body: "On a short video call, at a time that suits you.",
   },
 ];
 

@@ -145,22 +145,32 @@ export function TextAreaField({
   );
 }
 
+type SelectOption = { label: string; value: string };
+
 export function SelectField({
   label,
   name,
-  options,
+  options = [],
+  groups,
   required,
   defaultValue,
   wide,
+  error,
+  placeholder,
 }: {
   label: string;
   name: string;
-  options: { label: string; value: string }[];
+  options?: SelectOption[];
+  groups?: { label: string; options: SelectOption[] }[];
   required?: boolean;
   defaultValue?: string;
   wide?: boolean;
+  error?: string;
+  /** Shown as a disabled first option until something is chosen. */
+  placeholder?: string;
 }) {
   const id = useId();
+  const messageId = `${id}-message`;
 
   return (
     <div className={cn("flex flex-col gap-1.5", wide && "sm:col-span-2")}>
@@ -176,15 +186,36 @@ export function SelectField({
         id={id}
         name={name}
         required={required}
-        defaultValue={defaultValue}
-        className={fieldBase}
+        defaultValue={defaultValue ?? (placeholder ? "" : undefined)}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? messageId : undefined}
+        className={cn(fieldBase, error && "border-error focus:border-error")}
       >
+        {placeholder && (
+          <option value="" disabled>
+            {placeholder}
+          </option>
+        )}
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>
         ))}
+        {groups?.map((group) => (
+          <optgroup key={group.label} label={group.label}>
+            {group.options.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </optgroup>
+        ))}
       </select>
+      {error && (
+        <p id={messageId} className="text-xs leading-relaxed text-error">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

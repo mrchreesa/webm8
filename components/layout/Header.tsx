@@ -8,6 +8,7 @@ import { LinkButton } from "@/components/ui/Button";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
+import { DemoCtaButton } from "@/components/demo/DemoPrefill";
 
 export function Header() {
   const pathname = usePathname();
@@ -21,8 +22,6 @@ export function Header() {
         { label: "FAQ", href: "#faq" },
       ]
     : primaryNav;
-  const ctaHref = isMoversPage ? "#review-request" : "/audit";
-  const ctaLabel = isMoversPage ? "Book my free review" : "Get a Free Review";
 
   useEffect(() => {
     let raf = 0;
@@ -147,9 +146,15 @@ export function Header() {
               {brand.phoneLabel || brand.phone}
             </a>
           ) : null}
-          <LinkButton href={ctaHref} size="md">
-            {ctaLabel}
-          </LinkButton>
+          {isMoversPage ? (
+            <LinkButton href="#review-request" size="md">
+              Book my free review
+            </LinkButton>
+          ) : (
+            <DemoCtaButton placement="header" size="md">
+              Get my free demo
+            </DemoCtaButton>
+          )}
         </div>
 
         <button
@@ -193,14 +198,25 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <LinkButton
-            href={ctaHref}
-            size="lg"
-            className="mt-3 justify-center"
-            onClick={() => setOpen(false)}
-          >
-            {ctaLabel}
-          </LinkButton>
+          {isMoversPage ? (
+            <LinkButton
+              href="#review-request"
+              size="lg"
+              className="mt-3 justify-center"
+              onClick={() => setOpen(false)}
+            >
+              Book my free review
+            </LinkButton>
+          ) : (
+            <DemoCtaButton
+              placement="header"
+              size="lg"
+              className="mt-3 justify-center"
+              onClick={() => setOpen(false)}
+            >
+              Get my free demo
+            </DemoCtaButton>
+          )}
           {brand.phone ? (
             <a
               href={`tel:${brand.phone}`}
