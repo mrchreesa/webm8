@@ -5,7 +5,7 @@ import { cn } from "@/lib/cn";
 const fieldBase = cn(
   "w-full rounded-xl border border-border bg-white px-4 py-3 text-base text-ink",
   "shadow-[0_1px_2px_rgb(7_26_51/0.03)] transition-colors placeholder:text-muted/70",
-  "focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20",
+  "focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/15",
   "disabled:cursor-not-allowed disabled:bg-bg-alt disabled:text-muted/60",
 );
 
@@ -54,7 +54,7 @@ export function TextField({
       <label htmlFor={id} className={cn(labelCls, labelClassName)}>
         {label}
         {required && (
-          <span className="ml-1 text-brand" aria-hidden="true">
+          <span className="ml-1 text-link" aria-hidden="true">
             *
           </span>
         )}
@@ -111,7 +111,7 @@ export function TextAreaField({
       <label htmlFor={id} className={labelCls}>
         {label}
         {required && (
-          <span className="ml-1 text-brand" aria-hidden="true">
+          <span className="ml-1 text-link" aria-hidden="true">
             *
           </span>
         )}
@@ -167,7 +167,7 @@ export function SelectField({
       <label htmlFor={id} className={labelCls}>
         {label}
         {required && (
-          <span className="ml-1 text-brand" aria-hidden="true">
+          <span className="ml-1 text-link" aria-hidden="true">
             *
           </span>
         )}

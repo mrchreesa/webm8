@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-type Variant = "primary" | "ghost" | "dark" | "outline-invert";
+type Variant = "primary" | "ghost" | "dark" | "outline-invert" | "ghost-invert";
 type Size = "md" | "lg";
 
 type BaseProps = {
@@ -12,10 +12,11 @@ type BaseProps = {
   className?: string;
 };
 
+// Focus rings come from the global :focus-visible rule: ink on light grounds,
+// neon inside a .surface-dark section.
 const base = cn(
   "relative inline-flex items-center justify-center gap-2 rounded-full font-semibold tracking-tight",
   "transition-all duration-200 select-none",
-  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand",
   "disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-60",
 );
 
@@ -25,10 +26,11 @@ const sizes: Record<Size, string> = {
 };
 
 const variants: Record<Variant, string> = {
+  // A neon fill always carries brand-ink text.
   primary: cn(
-    "bg-brand text-white shadow-cta",
-    "btn-shine btn-arrow",
-    "hover:bg-brand-hover hover:-translate-y-0.5 active:translate-y-0",
+    "bg-brand text-brand-ink",
+    "btn-arrow",
+    "hover:bg-brand-hover hover:-translate-y-0.5 hover:shadow-cta active:translate-y-0",
   ),
   ghost: cn(
     "border border-border bg-white text-ink",
@@ -41,6 +43,11 @@ const variants: Record<Variant, string> = {
     "hover:bg-white/10 hover:border-white/40",
     "btn-arrow",
   ),
+  "ghost-invert": cn(
+    "bg-white/6 text-white ring-1 ring-inset ring-white/15",
+    "hover:bg-white/10",
+    "btn-arrow",
+  ),
 };
 
 function classes({
@@ -51,7 +58,7 @@ function classes({
   return cn(base, sizes[size], variants[variant], className);
 }
 
-type LinkButtonProps = BaseProps & {
+export type LinkButtonProps = BaseProps & {
   href: string;
 } & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">;
 

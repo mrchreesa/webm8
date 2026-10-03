@@ -1,33 +1,44 @@
 @import "tailwindcss";
 
 @theme {
-  /* Grounds — warm paper against three navies. */
+  /* Grounds: warm paper against navies. */
   --color-bg: #f8f5f0;
   --color-bg-alt: #efeae1;
   --color-surface: #ffffff;
   --color-ink: #0e2f56;
   --color-ink-deep: #071a33;
   --color-ink-raised: #1b4a80;
+  --color-night: #061429;
   --color-muted: #5b6b7e;
   --color-muted-invert: #9db4cd;
   --color-border: #ddd6ca;
 
-  /* Action — orange, reserved for things that act.
-     --color-brand carries white text only (4.56:1); the warm paper
-     fails on it at 4.19:1. --color-signal is the bright safety orange
-     and is approved for rules, icons and large type, never body text. */
-  --color-brand: #c8500f;
-  --color-brand-hover: #a84208;
+  /* Action: neon, reserved for things that act. A neon fill always carries
+     brand-ink text (about 15:1). Neon is never text on paper or white
+     (about 1.1:1); on navy grounds it may be text, rules and icons. */
+  --color-brand: #d4ff35;
+  --color-brand-hover: #e2ff75;
+  --color-brand-ink: #071a33;
+
+  /* Links and inline actions: link on light grounds, link-invert on navy. */
+  --color-link: #1b4a80;
+  --color-link-invert: #d4ff35;
+
+  /* The mascot's blue: glows, illustration and story UI. Never body text. */
+  --color-electric: #2b6cfc;
+
+  /* Retired with the orange palette. Removed in Task 5 (signal) and Task 8
+     (neon), once nothing uses them. */
   --color-signal: #f4681f;
+  --color-neon: #d4ff35;
+  --color-neon-soft: #e2ff75;
 
   /* Highlight and information. */
   --color-highlight: #ffb92e;
-  --color-neon: #d4ff35;
-  --color-neon-soft: #e2ff75;
   --color-info: #2bc4bd;
   --color-info-ink: #0a7d7a;
 
-  /* Semantic — outcomes only. */
+  /* Semantic: outcomes only. */
   --color-accent: #11823b;
   --color-error: #db2424;
 
@@ -35,14 +46,17 @@
   --shadow-card: 0 1px 2px rgb(7 26 51 / 0.04),
     0 8px 24px -12px rgb(7 26 51 / 0.12);
   --shadow-card-hover: 0 24px 56px -24px rgb(7 26 51 / 0.28);
-  --shadow-cta: 0 10px 28px -12px rgb(200 80 15 / 0.45);
+  --shadow-cta: 0 14px 40px -12px rgb(212 255 53 / 0.55);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo,
     Monaco, "Cascadia Code", monospace;
+  --font-display: var(--font-funnel-display), var(--font-geist-sans),
+    ui-sans-serif, system-ui, sans-serif;
 
-  --tracking-display: -0.025em;
+  --tracking-display: -0.035em;
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @layer base {
@@ -60,20 +74,29 @@
   }
 
   h1,
-  h2,
-  h3 {
+  h2 {
+    font-family: var(--font-display);
     letter-spacing: var(--tracking-display);
   }
 
-  ::selection {
-    background-color: color-mix(in srgb, var(--color-brand) 25%, transparent);
-    color: var(--color-ink);
+  h3 {
+    letter-spacing: -0.025em;
   }
 
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-brand) 75%, transparent);
+    color: var(--color-brand-ink);
+  }
+
+  /* Focus: ink on light grounds, neon inside a navy section. */
   :focus-visible {
-    outline: 2px solid var(--color-brand);
+    outline: 2px solid var(--color-ink);
     outline-offset: 2px;
     border-radius: 4px;
+  }
+
+  .surface-dark :focus-visible {
+    outline-color: var(--color-brand);
   }
 }
 
@@ -180,15 +203,6 @@
   }
 }
 
-@keyframes shineSweep {
-  0% {
-    transform: translateX(-120%);
-  }
-  100% {
-    transform: translateX(120%);
-  }
-}
-
 @utility animate-rise {
   animation: riseIn 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -266,32 +280,6 @@
 }
 
 /* ---------- Button polish ---------- */
-
-.btn-shine {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.btn-shine::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    100deg,
-    transparent 30%,
-    rgb(255 255 255 / 0.22) 50%,
-    transparent 70%
-  );
-  transform: translateX(-120%);
-  transition: transform 700ms ease;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.btn-shine:hover::after {
-  transform: translateX(120%);
-}
 
 .btn-arrow svg {
   transition: transform 220ms ease;

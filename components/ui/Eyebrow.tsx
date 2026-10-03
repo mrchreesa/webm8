@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 type Tone = "brand" | "accent" | "ink" | "invert";
 
 const tones: Record<Tone, string> = {
-  brand: "text-brand",
+  brand: "text-link",
   accent: "text-accent",
   ink: "text-ink",
   invert: "text-white/80",
@@ -34,7 +34,7 @@ export function Eyebrow({
       <span
         className={cn(
           "h-px w-6",
-          tone === "brand" && "bg-brand/40",
+          tone === "brand" && "bg-link/40",
           tone === "accent" && "bg-accent/50",
           tone === "ink" && "bg-ink/30",
           tone === "invert" && "bg-white/40",

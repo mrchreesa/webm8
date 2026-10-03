@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Caveat, DM_Sans, Geist, Geist_Mono, Manrope } from "next/font/google";
+import { Caveat, DM_Sans, Funnel_Display, Geist, Geist_Mono, Manrope } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -25,6 +25,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-geist-mono",
+});
+
+const funnelDisplay = Funnel_Display({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-funnel-display",
 });
 
 const manrope = Manrope({
@@ -96,7 +102,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${manrope.variable} ${dmSans.variable} ${caveat.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} ${funnelDisplay.variable} ${manrope.variable} ${dmSans.variable} ${caveat.variable}`}
     >
       <body className="flex min-h-screen flex-col antialiased">
         <StructuredData />
