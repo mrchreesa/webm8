@@ -64,7 +64,6 @@ export function Header() {
     <header
       className={cn(
         "sticky top-0 z-50 w-full transition-all",
-        overDarkHero && "surface-dark",
         isHome
           ? scrolled
             ? "border-b border-white/5 bg-night/72 backdrop-blur-lg"
@@ -74,7 +73,14 @@ export function Header() {
             : "bg-transparent",
       )}
     >
-      <div className="container-page flex h-16 items-center justify-between gap-4 md:h-20">
+      {/* Only the top bar is dark. The mobile menu below it is white, so its
+          focus rings must stay navy. */}
+      <div
+        className={cn(
+          "container-page flex h-16 items-center justify-between gap-4 md:h-20",
+          overDarkHero && "surface-dark",
+        )}
+      >
         <Link
           href="/"
           className={cn(

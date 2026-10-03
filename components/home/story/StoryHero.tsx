@@ -32,6 +32,9 @@ const RAIL: { chapter: StoryStep; label: string }[] = [
   { chapter: 4, label: "Call" },
 ];
 
+/** Below this height the story is not pinned (see story.module.css). */
+const SHORT_SCREEN = "(max-height: 560px)";
+
 const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function paletteStyle(trade: Trade): CSSProperties {
@@ -92,17 +95,40 @@ export function StoryHero() {
     const reduce = prefersReducedMotion();
     const find = (name: string) => section.querySelector<HTMLElement>(`[data-story="${name}"]`);
     const flag = (element: Element | null, name: string, on: boolean) => element?.toggleAttribute(`data-${name}`, on);
+    // Too short to pin the story (a phone held sideways): CSS lays out the
+    // first chapter as a normal hero, and the story stays on it.
+    const shortScreen = window.matchMedia(SHORT_SCREEN);
     let raf = 0;
+    let completeTimer = 0;
+    // Jumping past the story ("See our work") also lands on the last chapter,
+    // so it counts as completed only once that chapter has stayed on screen.
+    const atEnd = () => {
+      const box = section.getBoundingClientRect();
+      return chapterRef.current === 4 && box.top <= 0 && box.bottom >= window.innerHeight * 0.5;
+    };
 
     const frame = () => {
       raf = 0;
       const box = section.getBoundingClientRect();
-      const p = storyProgress(box.top, section.offsetHeight, window.innerHeight);
+      const p = shortScreen.matches ? 0 : storyProgress(box.top, section.offsetHeight, window.innerHeight);
       const current = chapterAt(p);
       section.style.setProperty("--p", p.toFixed(4));
       if (current !== chapterRef.current) {
         chapterRef.current = current;
         setChapter(current);
+      }
+      if (atEnd()) {
+        if (!completedRef.current && !completeTimer) {
+          completeTimer = window.setTimeout(() => {
+            completeTimer = 0;
+            if (!atEnd()) return;
+            completedRef.current = true;
+            trackEvent("home_story_completed", { trade: tradeRef.current.key });
+          }, 1500);
+        }
+      } else if (completeTimer) {
+        window.clearTimeout(completeTimer);
+        completeTimer = 0;
       }
       section.querySelectorAll<HTMLElement>("[data-rail-step]").forEach((element, index) => {
         element.style.setProperty("--f", chapterProgress(p, (index + 1) as StoryStep).toFixed(3));
@@ -182,6 +208,7 @@ export function StoryHero() {
       window.removeEventListener("resize", schedule);
       if (onPointer) window.removeEventListener("pointermove", onPointer);
       window.cancelAnimationFrame(raf);
+      window.clearTimeout(completeTimer);
     };
   }, []);
 
@@ -224,13 +251,6 @@ export function StoryHero() {
     return () => window.removeEventListener("resize", place);
   }, [chapter]);
 
-  useEffect(() => {
-    if (chapter === 4 && !completedRef.current) {
-      completedRef.current = true;
-      trackEvent("home_story_completed", { trade: tradeRef.current.key });
-    }
-  }, [chapter]);
-
   const goTo = (target: StoryStep) => {
     const section = sectionRef.current;
     if (!section) return;
@@ -254,7 +274,7 @@ export function StoryHero() {
         <div className={cn("container-page", styles.grid)}>
           <div ref={chaptersRef} className={styles.chapters}>
             <Chapter index={0} current={chapter}>
-              <h1 className="text-[clamp(2.3rem,6vw,5.1rem)] leading-[0.96] font-bold text-balance">
+              <h1 className={styles.heroTitle}>
                 Websites that make your phone ring.
               </h1>
               <p className={cn(styles.lede, styles.ledeFirst)}>
@@ -272,7 +292,7 @@ export function StoryHero() {
                 <DemoCtaButton placement="hero" size="lg">
                   Get my free personalised demo
                 </DemoCtaButton>
-                <LinkButton href="#work" variant="ghost-invert" size="lg">
+                <LinkButton href="#work" variant="ghost-invert" size="lg" className={styles.secondaryCta}>
                   See our work
                 </LinkButton>
               </div>

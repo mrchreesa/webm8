@@ -348,6 +348,8 @@ export function initialOf(name: string): string {
 }
 
 export function possessive(name: string): string {
+  // "Joe's" and "Luca’s" are already possessive.
+  if (/['’]s$/i.test(name)) return name;
   return /s$/i.test(name) ? `${name}’` : `${name}’s`;
 }
 

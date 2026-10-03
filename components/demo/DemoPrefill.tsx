@@ -7,6 +7,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type MouseEvent,
   type ReactNode,
@@ -49,8 +50,16 @@ export function DemoPrefillProvider({ children }: { children: ReactNode }) {
     if (fromUrl) trackEvent("home_trade_selected", { trade: fromUrl, source: "url" });
   }, []);
 
+  // Skip only the very first run, before the stored values above have loaded,
+  // so it never overwrites them. After that every change is saved, including
+  // clearing the name.
+  const loaded = useRef(false);
   useEffect(() => {
-    if (chosen || business) writeDemoPrefill({ trade: chosen ? tradeKey : null, business });
+    if (!loaded.current) {
+      loaded.current = true;
+      return;
+    }
+    writeDemoPrefill({ trade: chosen ? tradeKey : null, business });
   }, [chosen, tradeKey, business]);
 
   const selectTrade = useCallback((key: TradeKey) => {

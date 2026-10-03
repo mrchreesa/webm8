@@ -58,7 +58,7 @@ export function TradePicker({ tradeKey, business, onTradeChange, onBusinessChang
           </span>
         </span>
       </label>
-      <div className="mt-3.5 grid gap-1.5">
+      <div className={styles.nameBlock}>
         <label htmlFor={nameId} className="text-sm text-muted-invert">
           Your business name <span className="opacity-75">(optional)</span>
         </label>
@@ -74,7 +74,7 @@ export function TradePicker({ tradeKey, business, onTradeChange, onBusinessChang
           className={styles.nameInput}
         />
       </div>
-      <p id={hintId} className="mt-2 text-xs text-muted-invert">
+      <p id={hintId} className={styles.pickerHint}>
         This stays in your browser until you ask for your demo.
       </p>
     </div>

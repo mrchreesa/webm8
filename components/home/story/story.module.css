@@ -27,6 +27,9 @@
 .chapter { grid-area: 1 / 1; align-self: start; opacity: 0; transform: translateY(26px); transition: opacity 0.55s var(--ease-brand), transform 0.7s var(--ease-brand); }
 .chapter[data-state="on"] { opacity: 1; transform: none; }
 .chapter[data-state="past"] { transform: translateY(-26px); }
+/* The first chapter has the most to fit, so its headline also scales with
+   the screen's height. */
+.heroTitle { margin: 0; font: 700 clamp(2.1rem, min(6vw, 8.6svh), 5.1rem) / 0.96 var(--font-display); letter-spacing: -0.035em; text-wrap: balance; }
 .title { margin: 0; font: 700 clamp(2rem, 5.2vw, 4.6rem) / 0.98 var(--font-display); letter-spacing: -0.035em; text-wrap: balance; }
 .lede { max-width: 34rem; margin: 18px 0 0; color: var(--color-muted-invert); font-size: clamp(1rem, 1.35vw, 1.18rem); line-height: 1.6; text-wrap: pretty; }
 .ledeFirst { margin-top: 22px; }
@@ -34,8 +37,21 @@
 .device { display: grid; place-items: center; min-height: 0; }
 
 @media (min-width: 960px) {
-  .grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); grid-template-rows: 1fr; align-items: center; gap: 40px; padding-top: 76px; padding-bottom: 0; }
+  /* Bottom padding keeps the copy and the phone clear of the progress rail. */
+  .grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); grid-template-rows: 1fr; align-items: center; gap: 40px; padding-top: 88px; padding-bottom: 72px; }
   .ctas { margin-top: 26px; }
+}
+/* Laptops: tighten chapter 0 so its buttons stay on screen. */
+@media (min-width: 960px) and (max-height: 820px) {
+  .ledeFirst { margin-top: 14px; }
+  .picker { margin-top: 16px; padding: 14px 18px 12px; }
+  .nameBlock { margin-top: 10px; }
+  .nameInput { height: 42px; }
+  .ctas { margin-top: 18px; }
+}
+@media (min-width: 960px) and (max-height: 680px) {
+  .lede { font-size: 1rem; }
+  .pickerHint { display: none; }
 }
 @media (max-width: 959px) {
   .grid { display: block; }
@@ -43,6 +59,17 @@
   .device { position: absolute; right: 0; bottom: 46px; left: 0; height: min(58svh, 520px); place-items: end center; transform: translateY(var(--push, 0px)); transition: transform 0.7s var(--ease-brand); }
   .enter, .shake { height: 100%; }
   .phone { width: auto; height: 100%; }
+  .heroTitle { font-size: clamp(2rem, min(9.4vw, 5.6svh), 3.4rem); }
+}
+/* Shorter phones: tighten chapter 0, and show "See our work" as a text link. */
+@media (max-width: 959px) and (max-height: 760px) {
+  .ledeFirst { margin-top: 12px; font-size: 0.95rem; }
+  .picker { margin-top: 12px; padding: 12px 14px 10px; }
+  .nameBlock { margin-top: 8px; }
+  .nameInput { height: 42px; }
+  .pickerHint { display: none; }
+  .ctas { gap: 4px 16px; margin-top: 14px; align-items: center; }
+  .secondaryCta { padding: 8px 2px; background: none; box-shadow: none; text-decoration: underline; text-underline-offset: 4px; }
 }
 @media (min-width: 768px) and (max-width: 959px) { .chapters { right: 2rem; left: 2rem; } }
 
@@ -54,6 +81,8 @@
 .select option, .select optgroup { background: #fff; color: #0b1220; }
 .chevron { position: absolute; right: 4px; color: var(--color-brand); pointer-events: none; }
 .measure { position: absolute; visibility: hidden; white-space: pre; font-weight: 600; pointer-events: none; }
+.nameBlock { display: grid; gap: 6px; margin-top: 14px; }
+.pickerHint { margin: 8px 0 0; color: var(--color-muted-invert); font-size: 0.75rem; }
 .nameInput { width: 100%; height: 46px; padding: 0 14px; border: 0; border-radius: 12px; background: rgb(255 255 255 / 0.07); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14); color: #eef3fa; font: 500 1rem var(--font-sans); transition: box-shadow 0.2s, background-color 0.2s; }
 .nameInput::placeholder { color: #6f86a3; }
 .nameInput:focus { outline: none; background: rgb(255 255 255 / 0.1); box-shadow: inset 0 0 0 2px var(--color-brand); }
@@ -76,6 +105,8 @@
 @keyframes buzz { 0%, 100% { transform: translateX(0) rotate(0); } 20% { transform: translateX(-3px) rotate(-1deg); } 40% { transform: translateX(3px) rotate(1deg); } 60% { transform: translateX(-2px) rotate(-0.6deg); } 80% { transform: translateX(2px) rotate(0.6deg); } }
 @keyframes nudge { 35% { transform: translateY(-10px) rotate(-1deg); } }
 .phone { position: relative; width: clamp(200px, 21vw, 300px); aspect-ratio: 9 / 19.4; transform-style: preserve-3d; transform: perspective(1600px) rotateY(var(--flip, 0deg)) rotateX(var(--tilt-x, 4deg)) rotateZ(var(--tilt-z, -2deg)); transition: transform 0.25s linear; }
+/* Laptops: never taller than the space between the header and the rail. */
+@media (min-width: 960px) { .phone { width: min(clamp(200px, 21vw, 300px), calc((100svh - 190px) * 9 / 19.4)); } }
 .face { position: absolute; inset: 0; padding: 3.4%; border-radius: 15% / 7%; background: linear-gradient(145deg, #23324a, #0b1220 40%, #131d30); box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.14), 0 80px 120px -50px rgb(0 0 0 / 0.9), 0 0 0 1px #02060d; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .back { transform: rotateY(180deg); }
 .screen { position: relative; height: 100%; overflow: hidden; border-radius: 12.4% / 5.8%; background: #fff; color: #1d2330; container-type: inline-size; }
@@ -189,6 +220,21 @@
 .noteHead { display: flex; justify-content: space-between; font-size: 3.2cqi; opacity: 0.8; }
 .note b { display: block; margin-top: 0.6cqi; font-size: 4.1cqi; }
 .note p { margin: 0.6cqi 0 0; font-size: 3.6cqi; line-height: 1.3; opacity: 0.92; }
+
+/* Too short to pin (a phone held sideways, a small window): the first chapter
+   becomes a normal hero with the phone beside it, and the story is skipped.
+   StoryHero keeps the story on chapter 0 at the same breakpoint. */
+@media (max-height: 560px) {
+  .story { height: auto; }
+  .pin { position: relative; height: auto; overflow: visible; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr); grid-template-rows: auto; align-items: center; gap: 24px; height: auto; padding-top: 84px; padding-bottom: 40px; }
+  .chapters { position: static; }
+  .chapter:not(:first-child) { display: none; }
+  .device { position: relative; inset: auto; height: 340px; transform: none; place-items: center; }
+  .enter, .shake { height: 100%; }
+  .phone { width: auto; height: 100%; }
+  .railWrap { display: none; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .enter, .shake[data-buzz], .shake[data-nudge], .crowd circle, .caret, .tap[data-go] { animation: none; }

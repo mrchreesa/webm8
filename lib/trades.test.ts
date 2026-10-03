@@ -122,6 +122,12 @@ test("possessives handle names that end in s", () => {
   assert.equal(possessive("Fade House Barbers"), "Fade House Barbers’");
 });
 
+test("names that are already possessive are left as they are", () => {
+  assert.equal(possessive("Joe's"), "Joe's");
+  assert.equal(possessive("Luca’s"), "Luca’s");
+  assert.equal(possessive("TONY'S"), "TONY'S");
+});
+
 test("search suggestions lead with the trade's own search and never repeat it", () => {
   for (const trade of tradeList) {
     const list = searchSuggestions(trade);
