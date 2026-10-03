@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Hero } from "@/components/home/Hero";
+import { DemoPrefillProvider } from "@/components/demo/DemoPrefill";
+import { StoryHero } from "@/components/home/story/StoryHero";
 import { WhatYouGet } from "@/components/home/WhatYouGet";
 import { Pricing } from "@/components/home/Pricing";
 import { Portfolio } from "@/components/home/Portfolio";
@@ -22,8 +23,8 @@ export const metadata: Metadata = createPageMetadata({
 
 export default function HomePage() {
   return (
-    <>
-      <Hero />
+    <DemoPrefillProvider>
+      <StoryHero />
       <WhatYouGet />
       <Portfolio limit={3} />
       <Pricing />
@@ -31,6 +32,6 @@ export default function HomePage() {
       <AuditTeaser />
       <Testimonials />
       <DemoClosing />
-    </>
+    </DemoPrefillProvider>
   );
 }
