@@ -22,7 +22,7 @@ export default function ContactPage() {
         title={
           <>
             Start a project.{" "}
-            <span className="text-brand">
+            <span className="text-link">
               We reply within one business day.
             </span>
           </>
@@ -49,7 +49,7 @@ export default function ContactPage() {
                   value={
                     <a
                       href={`mailto:${intakeEmail}`}
-                      className="text-sm font-semibold text-ink transition-colors hover:text-brand"
+                      className="text-sm font-semibold text-ink transition-colors hover:text-link"
                     >
                       {intakeEmail}
                     </a>
@@ -110,7 +110,7 @@ function InfoRow({
 }) {
   const iconBg =
     tone === "brand"
-      ? "bg-brand/10 text-brand"
+      ? "bg-brand text-brand-ink"
       : tone === "accent"
         ? "bg-accent/10 text-accent"
         : "bg-ink/5 text-ink";

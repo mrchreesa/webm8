@@ -177,7 +177,7 @@ function ToggleOption({
       <span
         className={cn(
           "flex min-h-11 items-center rounded-full px-3.5 text-sm font-semibold transition-colors sm:px-5",
-          "peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand",
+          "peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink",
           selected ? "bg-ink text-white" : "text-muted hover:text-ink",
         )}
       >

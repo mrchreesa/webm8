@@ -26,7 +26,7 @@ const palettes: Record<
   house: {
     from: "from-[color:var(--color-ink-raised)]",
     to: "to-[color:var(--color-ink-deep)]",
-    accent: "bg-[color:var(--color-signal)]",
+    accent: "bg-electric",
     tag: "text-[color:var(--color-info-ink)] bg-[color:var(--color-bg-alt)]",
   },
   blue: {

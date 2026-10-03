@@ -44,7 +44,7 @@ export default function PrivacyPage() {
         eyebrow="Privacy"
         title={
           <>
-            A plain-English <span className="text-brand">privacy notice.</span>
+            A plain-English <span className="text-link">privacy notice.</span>
           </>
         }
         subtitle="This notice explains what WebM8 collects through this website and how that information is used."
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
                 For a privacy question or request, email{" "}
                 <a
                   href={`mailto:${intakeEmail}`}
-                  className="font-semibold text-brand hover:text-brand-hover"
+                  className="font-semibold text-link underline-offset-4 hover:underline"
                 >
                   {intakeEmail}
                 </a>

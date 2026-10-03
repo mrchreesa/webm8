@@ -64,7 +64,7 @@ export function MoverDemo() {
                   />
                 </PhoneFrame>
                 <div className="mt-5 flex items-baseline gap-3">
-                  <span className="text-sm font-bold text-brand tabular-nums">
+                  <span className="text-sm font-bold text-link tabular-nums">
                     {index + 1}
                   </span>
                   <div>
@@ -103,13 +103,13 @@ function OwnerIllustration() {
   ];
 
   return (
-    <div className="relative overflow-hidden rounded-[2rem] bg-ink-deep p-5 shadow-card-hover sm:p-8 lg:p-10">
+    <div className="surface-dark relative overflow-hidden rounded-[2rem] bg-ink-deep p-5 shadow-card-hover sm:p-8 lg:p-10">
       <div
         className="pointer-events-none absolute -left-24 -top-28 h-72 w-72 rounded-full bg-info/10 blur-3xl"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -bottom-32 right-0 h-72 w-72 rounded-full bg-brand/20 blur-3xl"
+        className="pointer-events-none absolute -bottom-32 right-0 h-72 w-72 rounded-full bg-electric/25 blur-3xl"
         aria-hidden="true"
       />
 
@@ -142,7 +142,7 @@ function OwnerIllustration() {
           <div className="rounded-[1.15rem] border border-border/70 bg-bg p-4 sm:p-6">
             <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
               <div className="flex items-center gap-3">
-                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand text-white shadow-cta">
+                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand text-brand-ink shadow-cta">
                   <Icon name="mail" size={20} aria-hidden />
                 </span>
                 <div>
@@ -161,9 +161,9 @@ function OwnerIllustration() {
               </p>
               <p className="mt-1 font-bold text-ink">Chicago, IL</p>
               <div className="my-2 flex items-center gap-2" aria-hidden="true">
-                <span className="h-2 w-2 rounded-full bg-brand" />
-                <span className="h-px flex-1 border-t border-dashed border-brand/40" />
-                <Icon name="arrow" size={15} className="text-brand" />
+                <span className="h-2 w-2 rounded-full bg-ink" />
+                <span className="h-px flex-1 border-t border-dashed border-ink/30" />
+                <Icon name="arrow" size={15} className="text-ink" />
               </div>
               <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted">
                 Moving to

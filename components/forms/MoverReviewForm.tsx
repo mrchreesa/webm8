@@ -229,7 +229,7 @@ export function MoverReviewForm() {
         >
           <legend className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
             How should the site feel? (pick any that fit)
-            <span className="ml-1 text-brand" aria-hidden="true">
+            <span className="ml-1 text-link" aria-hidden="true">
               *
             </span>
           </legend>
@@ -243,7 +243,7 @@ export function MoverReviewForm() {
                   type="checkbox"
                   name="siteFeel"
                   value={option.value}
-                  className="h-5 w-5 shrink-0 rounded border-border text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                  className="h-5 w-5 shrink-0 rounded border-border accent-ink"
                 />
                 {option.label}
               </label>
@@ -302,7 +302,7 @@ export function MoverReviewForm() {
       <p className="mt-4 text-sm leading-relaxed text-muted">
         By sending this, you agree that WebM8 may contact you about your custom
         demo request by email or phone. We don&rsquo;t sell your details. Read the{" "}
-        <Link href="/privacy/" className="font-medium text-brand underline hover:text-brand-hover">
+        <Link href="/privacy/" className="font-medium text-link underline hover:text-ink">
           privacy notice
         </Link>
         .

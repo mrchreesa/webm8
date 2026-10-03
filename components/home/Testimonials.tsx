@@ -23,7 +23,7 @@ export function Testimonials() {
                 &ldquo;{t.quote}&rdquo;
               </p>
               <footer className="mt-6 flex items-center gap-3 border-t border-border pt-5">
-                <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-hover font-mono text-sm font-bold text-white">
+                <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-ink font-mono text-sm font-bold text-white">
                   {t.initials}
                 </div>
                 <div>

@@ -34,7 +34,7 @@ export function MoverBenefits() {
               key={benefit.title}
               className="border-t border-border pt-6 md:pt-8"
             >
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand/10 text-brand">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand text-brand-ink">
                 <Icon name={benefit.icon} size={20} aria-hidden />
               </span>
               <h3 className="mt-5 text-xl font-bold text-ink">{benefit.title}</h3>

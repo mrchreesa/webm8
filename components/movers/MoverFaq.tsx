@@ -68,7 +68,7 @@ export function MoverFaq() {
               <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-5 text-lg font-semibold text-ink">
                 {faq.question}
                 <span
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink/5 text-lg text-brand transition-transform group-open:rotate-45"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink/5 text-lg text-link transition-transform group-open:rotate-45"
                   aria-hidden
                 >
                   +

@@ -7,7 +7,7 @@ export default function NotFound() {
     <section className="relative overflow-hidden py-32 md:py-40">
       <AmbientBlobs variant="light" />
       <div className="container-page text-center">
-        <p className="animate-rise font-mono text-sm font-bold uppercase tracking-[0.2em] text-brand">
+        <p className="animate-rise font-mono text-sm font-bold uppercase tracking-[0.2em] text-link">
           404
         </p>
         <h1

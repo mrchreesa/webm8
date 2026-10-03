@@ -22,8 +22,8 @@ const cardStyles: Record<
   },
   enquiries: {
     surface: "border-ink/10 bg-[#f0f4fa]",
-    accent: "text-brand",
-    check: "bg-brand/10 text-brand ring-brand/10",
+    accent: "text-link",
+    check: "bg-ink/5 text-link ring-ink/10",
   },
   care: {
     surface: "border-ink bg-ink text-white",

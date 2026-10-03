@@ -33,13 +33,13 @@ export function AmbientBlobs({
         <>
           <div className="absolute inset-0 bg-gradient-to-br from-ink-raised via-ink to-ink-deep" />
           <div className="animate-drift-slow absolute -left-24 top-0 h-96 w-96 rounded-full bg-info/25 blur-3xl" />
-          <div className="animate-drift-slow-alt absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-signal/25 blur-3xl" />
+          <div className="animate-drift-slow-alt absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-electric/25 blur-3xl" />
         </>
       )}
       {variant === "dark" && (
         <>
           <div className="animate-drift-slow absolute left-1/2 top-0 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-ink-raised/70 blur-3xl" />
-          <div className="animate-drift-slow-alt absolute right-0 bottom-0 h-80 w-80 rounded-full bg-signal/20 blur-3xl" />
+          <div className="animate-drift-slow-alt absolute right-0 bottom-0 h-80 w-80 rounded-full bg-electric/20 blur-3xl" />
         </>
       )}
 

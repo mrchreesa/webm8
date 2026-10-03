@@ -21,7 +21,7 @@ export function MoverProof() {
 
             <div className="mt-8 flex items-center gap-4">
               <span
-                className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand/10 text-2xl font-bold text-brand"
+                className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand text-2xl font-bold text-brand-ink"
                 aria-hidden
               >
                 K
@@ -52,7 +52,7 @@ export function MoverProof() {
                 href={`mailto:${intakeEmail}`}
                 data-funnel-event="mover_email_clicked"
                 data-funnel-location="proof"
-                className="text-brand underline underline-offset-4 hover:text-brand-hover"
+                className="text-link underline underline-offset-4 hover:text-ink"
               >
                 {intakeEmail}
               </a>

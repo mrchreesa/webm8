@@ -23,13 +23,13 @@ export function ReviewExpectations() {
       className="bg-white py-16 md:py-20"
     >
       <div className="container-page">
-        <div className="relative overflow-hidden rounded-[2rem] bg-ink-deep px-6 py-8 text-white shadow-card-hover sm:px-8 sm:py-10 lg:px-12 lg:py-12">
+        <div className="surface-dark relative overflow-hidden rounded-[2rem] bg-ink-deep px-6 py-8 text-white shadow-card-hover sm:px-8 sm:py-10 lg:px-12 lg:py-12">
           <div
             className="pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full bg-info/15 blur-3xl"
             aria-hidden="true"
           />
           <div
-            className="pointer-events-none absolute -bottom-32 -left-20 h-72 w-72 rounded-full bg-brand/15 blur-3xl"
+            className="pointer-events-none absolute -bottom-32 -left-20 h-72 w-72 rounded-full bg-electric/25 blur-3xl"
             aria-hidden="true"
           />
 

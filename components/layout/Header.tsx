@@ -101,7 +101,7 @@ export function Header() {
             <span>Web</span>
             <span
               className={cn(
-                "ml-1 inline-flex items-center rounded-[0.45rem] bg-neon px-1.5 py-1 text-[0.72em] tracking-[-0.04em] text-ink-deep ring-1 transition-all",
+                "ml-1 inline-flex items-center rounded-[0.45rem] bg-brand px-1.5 py-1 text-[0.72em] tracking-[-0.04em] text-ink-deep ring-1 transition-all",
                 overDarkHero
                   ? "shadow-[0_4px_14px_-5px_rgb(212_255_53_/_0.75)] ring-white/15"
                   : "shadow-[0_4px_12px_-6px_rgb(7_26_51_/_0.45)] ring-ink/15",
@@ -141,7 +141,7 @@ export function Header() {
                 "text-base font-bold tracking-tight transition-colors",
                 overDarkHero
                   ? "text-highlight hover:text-white"
-                  : "text-ink hover:text-brand",
+                  : "text-ink hover:text-link",
               )}
             >
               {brand.phoneLabel || brand.phone}
@@ -186,7 +186,7 @@ export function Header() {
               className={cn(
                 "rounded-xl px-4 py-3 text-base font-semibold transition-colors",
                 isActive(item.href)
-                  ? "bg-brand/10 text-brand"
+                  ? "bg-ink/5 text-ink"
                   : "text-ink hover:bg-ink/5",
               )}
             >

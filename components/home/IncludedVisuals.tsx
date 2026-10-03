@@ -97,7 +97,7 @@ function EnquiryVisual() {
           <span className="rounded-full bg-info-ink/10 px-2 py-1 text-[9px] font-semibold text-info-ink">New</span>
         </div>
         <div className="mt-4 flex items-center gap-2.5">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-bg text-brand">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-bg text-link">
             <Icon name="mail" size={18} strokeWidth={1.6} />
           </span>
           <div>

@@ -11,7 +11,7 @@ const reassurance = [
 
 export function MoverHero() {
   return (
-    <section className="relative -mt-16 flex min-h-screen min-h-svh flex-col overflow-hidden bg-ink pt-16 text-bg md:-mt-20 md:pt-20">
+    <section className="surface-dark relative -mt-16 flex min-h-screen min-h-svh flex-col overflow-hidden bg-ink pt-16 text-bg md:-mt-20 md:pt-20">
       <div className="container-page relative grid w-full flex-1 gap-12 pb-14 pt-10 md:grid-cols-2 md:items-center md:gap-12 md:pb-14 md:pt-10 lg:gap-14">
         <div>
           <p className="animate-rise inline-flex items-center gap-2 rounded-full border border-ink-raised bg-ink-raised/40 px-4 py-1.5 font-mono text-xs uppercase tracking-wider text-muted-invert">
@@ -93,7 +93,7 @@ export function MoverHero() {
 function Underline() {
   return (
     <svg
-      className="absolute -bottom-1 left-0 h-3 w-full text-signal"
+      className="absolute -bottom-1 left-0 h-3 w-full text-brand"
       viewBox="0 0 200 12"
       fill="none"
       preserveAspectRatio="none"

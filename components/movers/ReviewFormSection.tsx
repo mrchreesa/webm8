@@ -29,7 +29,7 @@ export function ReviewFormSection() {
           <ol className="mt-8 space-y-4">
             {afterYouSend.map((item, index) => (
               <li key={item} className="flex items-start gap-3">
-                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand/10 text-xs font-bold text-brand tabular-nums">
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-brand-ink tabular-nums">
                   {index + 1}
                 </span>
                 <span className="leading-relaxed text-muted">{item}</span>
@@ -45,7 +45,7 @@ export function ReviewFormSection() {
                 href={`mailto:${intakeEmail}`}
                 data-funnel-event="mover_email_clicked"
                 data-funnel-location="review_form"
-                className="font-semibold text-brand underline underline-offset-4 hover:text-brand-hover"
+                className="font-semibold text-link underline underline-offset-4 hover:text-ink"
               >
                 {intakeEmail}
               </a>{" "}

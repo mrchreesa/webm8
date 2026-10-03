@@ -26,7 +26,7 @@ export default function WorkPage() {
         title={
           <>
             Real Websites for Real{" "}
-            <span className="text-brand">Local Businesses</span>
+            <span className="text-link">Local Businesses</span>
           </>
         }
         subtitle="See examples for restaurants, cleaners, movers, car rental companies, and travel businesses on both computers and phones."
@@ -83,7 +83,7 @@ export default function WorkPage() {
                       </LinkButton>
                       <Link
                         href="/audit"
-                        className="btn-arrow inline-flex items-center gap-2 text-sm font-semibold text-brand transition-colors hover:text-brand-hover"
+                        className="btn-arrow inline-flex items-center gap-2 text-sm font-semibold text-link transition-colors hover:text-ink"
                       >
                         Ask for a similar website
                         <Icon name="arrow" size={14} />
@@ -98,7 +98,7 @@ export default function WorkPage() {
                   >
                     <div
                       aria-hidden
-                      className="animate-drift-slow absolute -inset-6 rounded-[32px] bg-gradient-to-br from-brand/25 to-accent/25 blur-2xl"
+                      className="animate-drift-slow absolute -inset-6 rounded-[32px] bg-gradient-to-br from-electric/20 to-accent/20 blur-2xl"
                     />
                     <BrowserMockup
                       palette={project.palette}

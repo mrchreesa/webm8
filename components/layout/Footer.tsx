@@ -50,7 +50,7 @@ export function Footer() {
             <ul className="mt-4 space-y-3 text-sm text-muted">
               <li>
                 <a
-                  className="transition-colors hover:text-brand"
+                  className="transition-colors hover:text-link"
                   href={`mailto:${intakeEmail}`}
                 >
                   {intakeEmail}
@@ -90,7 +90,7 @@ function FooterCol({
           <li key={l.href}>
             <Link
               href={l.href}
-              className="text-muted transition-colors hover:text-brand"
+              className="text-muted transition-colors hover:text-link"
             >
               {l.label}
             </Link>

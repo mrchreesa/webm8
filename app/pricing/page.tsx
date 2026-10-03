@@ -38,7 +38,7 @@ export default function PricingPage() {
           <>
             Every Project Is
             <br />
-            <span className="text-brand">Quoted To The Business</span>
+            <span className="text-link">Quoted To The Business</span>
           </>
         }
         subtitle="Tell us what you need and we’ll send a clear price within one business day. You do not need to book a sales call."
@@ -53,7 +53,7 @@ export default function PricingPage() {
           {reasons.map((reason, i) => (
             <Reveal key={reason.title} delay={i * 80}>
               <article className="shadow-card hover:shadow-card-hover flex h-full flex-col rounded-2xl border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand/10 text-brand">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-brand-ink">
                   <Icon name="check" size={20} />
                 </span>
                 <h3 className="mt-4 text-lg font-bold text-ink">

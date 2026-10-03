@@ -54,7 +54,7 @@ export default function AboutPage() {
         title={
           <>
             Websites that help local businesses{" "}
-            <span className="text-brand">make more money</span>.
+            <span className="text-link">make more money</span>.
           </>
         }
         subtitle="We build websites that look professional, explain the business clearly, and make it easy for customers to call, book, or ask for a quote."
@@ -69,7 +69,7 @@ export default function AboutPage() {
           {valueProps.map((v, i) => (
             <Reveal key={v.title} delay={i * 80}>
               <article className="shadow-card hover:shadow-card-hover flex h-full flex-col rounded-2xl border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand/10 text-brand">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-brand-ink">
                   <Icon name="check" size={20} />
                 </span>
                 <h3 className="mt-4 text-lg font-bold text-ink">{v.title}</h3>
@@ -89,7 +89,7 @@ export default function AboutPage() {
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
           {industries.map((industry, i) => (
             <Reveal key={industry} delay={i * 40}>
-              <div className="rounded-2xl border border-border bg-white px-5 py-4 text-center text-sm font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:border-brand/30 hover:text-brand">
+              <div className="rounded-2xl border border-border bg-white px-5 py-4 text-center text-sm font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:border-ink/30 hover:text-link">
                 {industry}
               </div>
             </Reveal>
@@ -108,10 +108,10 @@ export default function AboutPage() {
         <div className="mx-auto grid max-w-3xl gap-3">
           {faqs.map((f, i) => (
             <Reveal key={f.q} delay={i * 60}>
-              <details className="group rounded-2xl border border-border bg-white p-5 transition-all duration-300 open:border-brand/30 hover:border-ink/20">
+              <details className="group rounded-2xl border border-border bg-white p-5 transition-all duration-300 open:border-ink/30 hover:border-ink/20">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold text-ink marker:content-none">
                   {f.q}
-                  <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink/5 text-ink transition-transform duration-300 group-open:rotate-45 group-open:bg-brand group-open:text-white">
+                  <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink/5 text-ink transition-transform duration-300 group-open:rotate-45 group-open:bg-brand group-open:text-brand-ink">
                     <svg
                       width="14"
                       height="14"
