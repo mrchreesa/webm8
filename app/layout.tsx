@@ -107,12 +107,12 @@ function StructuredData() {
       email: intakeEmail,
       description: defaultDescription,
       slogan: brand.positioning,
-      areaServed: "United States",
+      areaServed: ["United States", "United Kingdom"],
       contactPoint: {
         "@type": "ContactPoint",
         email: intakeEmail,
         contactType: "customer enquiries",
-        areaServed: "US",
+        areaServed: ["US", "GB"],
         availableLanguage: "en",
       },
       knowsAbout: [
@@ -121,7 +121,7 @@ function StructuredData() {
         "mobile-first websites",
         "local SEO setup",
         "lead tracking",
-        "website audits",
+        "personalised website demos",
       ],
     },
     {
@@ -146,11 +146,11 @@ function StructuredData() {
       provider: {
         "@id": `${siteUrl}/#organization`,
       },
-      areaServed: "United States",
+      areaServed: ["United States", "United Kingdom"],
       audience: {
         "@type": "BusinessAudience",
         audienceType:
-          "US local businesses that rely on calls, bookings, quote requests, and enquiries",
+          "Local businesses that rely on calls, bookings, quote requests, and enquiries",
       },
       serviceType: "Web design and local business website optimization",
       description: defaultDescription,

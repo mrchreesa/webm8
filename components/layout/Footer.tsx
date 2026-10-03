@@ -19,8 +19,8 @@ export function Footer() {
               {brand.name}
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-muted">
-              Clear, professional websites that help US local businesses get
-              more calls, bookings, and customers.
+              Clear, professional websites that help local businesses in the
+              US and UK get more calls, bookings, and customers.
             </p>
           </div>
 

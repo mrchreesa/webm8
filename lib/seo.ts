@@ -8,10 +8,10 @@ export const defaultTitle =
   "WebM8 | Websites for Local Businesses That Want More Customers";
 
 export const defaultDescription =
-  "WebM8 builds professional websites for US local businesses. We make it easy for visitors to understand your services, trust your company, and contact you. Get a price within one business day.";
+  "WebM8 builds websites for local businesses in the US and UK that turn local searches into calls, bookings and quote requests. Start with a free personalised website demo.";
 
 export const socialDescription =
-  "Professional websites for US local businesses. More calls, more bookings, and more customers. Get a price within one business day.";
+  "Websites for local businesses in the US and UK. More calls, more bookings, more customers. Start with a free personalised website demo.";
 
 export const ogImage = {
   url: "/og-image.svg",
@@ -59,7 +59,7 @@ export const indexableRoutes = [
     path: "/about/",
     title: "About - Websites built for local business growth",
     description:
-      "WebM8 builds and looks after professional websites that help US local businesses get more calls, bookings, and customers.",
+      "WebM8 builds and looks after professional websites that help local businesses in the US and UK get more calls, bookings, and customers.",
     priority: 0.7,
   },
   {

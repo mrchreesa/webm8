@@ -1,214 +1,95 @@
 # WebM8 Agency Site
 
-High-converting marketing site for **WebM8**, a web design agency building
-websites for US local businesses. Positioning: **"Websites for Local
-Businesses That Want More Calls, Bookings, and Customers."**
+Marketing site for **WebM8**, a web design agency building websites for local
+businesses in the US and UK. The homepage sells one thing: the **Free
+Personalised Website Demo**.
 
-Plans:
-
-- **Standard — $147/month** or $1,470/year · Professional website, trust signals, contact.
-- **Growth — $247/month** or $2,470/year · Lead-generation focused with tracking + ongoing
-  improvements.
-
-Annual billing is ten months paid for twelve months of service. `lib/movers.ts`
-is the single source of truth for these numbers on `/movers/`.
-
-Built with **Next.js 15 (App Router) + TypeScript + Tailwind v4**, deployed on
-Vercel. Every page prerenders at build time except `/api/mover-review`, the
-server route behind the movers campaign form.
-
-## Stack
-
-- Next.js 15.5 (App Router, static export via `output: "export"`)
-- React 19
-- TypeScript 5.7
-- Tailwind CSS v4 (via `@tailwindcss/postcss`)
-- `next/font/google` — Geist and Geist Mono (variable, display swap)
-
-Content is rendered statically at build time. The audit and contact forms
-still submit via `mailto:` links; the `/movers/` review form POSTs to a server
-route that records the request in Supabase before reporting success.
+Built with **Next.js 15 (App Router) + React 19 + TypeScript + Tailwind CSS v4**,
+deployed on Vercel. Every page prerenders at build time; the only server code is
+under `app/api/`, behind the `/movers/` campaign.
 
 ## Getting started
 
 ```bash
-cd website
 npm install
-npm run dev
-# open http://localhost:3000
+npm run dev        # http://localhost:3000
+npm run build
+npm run start      # serve the build
+npm run lint
+npm run typecheck
+npm test           # node --test over lib/**/*.test.ts
 ```
-
-Other scripts:
-
-```bash
-npm run build     # production build + static export to ./out
-npm run start     # serve the built app (only meaningful without `output: export`)
-npm run lint      # next/eslint
-npm run typecheck # tsc --noEmit
-npm test          # node --test over lib/**/*.test.ts
-```
-
-## Deploying
-
-After `npm run build`, the entire site is written to `./out` as static
-files. Deploy that folder to any static host:
-
-- **Vercel / Netlify / Cloudflare Pages**: point the project at this
-  directory, set build command to `npm run build`, and the publish/output
-  directory to `out`.
-- **GitHub Pages / S3 / any CDN**: upload the contents of `out/` directly.
 
 ## Project structure
 
 ```
-website/
-  app/                      # App Router pages
-    layout.tsx              # Root layout with Header + Footer + Inter font
-    page.tsx                # Home (composes 10 sections)
-    pricing/page.tsx
-    work/page.tsx
-    audit/page.tsx
-    about/page.tsx
-    contact/page.tsx
-    not-found.tsx           # 404
-    globals.css             # Tailwind + @theme tokens
-  components/
-    layout/                 # Header (with mobile drawer), Footer
-    ui/                     # Button, Section, Icon, BrowserMockup, PageHero
-    home/                   # Hero, TrustBar, ValueCards, WhatYouGet,
-                            # Pricing, Portfolio, Process, AuditTeaser,
-                            # Testimonials, FinalCta
-    forms/                  # AuditForm, ContactForm, shared FormField
-  lib/
-    site.ts                 # Single source of truth: nav, plans, features,
-                            # projects, testimonials, audit checklist, copy
-    mailto.ts               # buildMailtoHref(to, subject, fields)
-  public/
-    favicon.svg
-    og-image.svg
+app/
+  page.tsx            # Home: story hero, demo sites, eight arms, how it works, plans, voices, demo close
+  demo/page.tsx       # Free Personalised Website Demo request (/audit/ redirects here)
+  work/ pricing/ about/ contact/ privacy/ movers/
+  api/                # /movers/ campaign routes only
+  globals.css         # Tailwind @theme tokens and motion utilities
+components/
+  home/story/         # StoryHero and its phone screens (CSS module: story.module.css)
+  home/               # WorkDeck, EightArms, HowItWorks, Plans, Voices (+ WhatYouGet, Testimonials for /movers/)
+  demo/               # DemoPrefill (trade/name handover, DemoCtaButton), DemoClosing
+  forms/              # DemoForm, ContactForm, MoverReviewForm, FormField
+  layout/ ui/ movers/ analytics/
+lib/
+  site.ts             # Copy: nav, plans, projects, process, demo steps, eight arms, testimonials
+  trades.ts           # The 15 trades the homepage story can show
+  demoRequest.ts      # Demo form validation and sessionStorage prefill
+  storyProgress.ts    # Scroll maths for the story
+  seo.ts analytics.ts mailto.ts movers.ts …
+scripts/
+  capture-portfolio.mjs  # Dev-only portfolio screenshots (see the file header)
 ```
 
 ## Where to edit content
 
-Almost all copy is in **`lib/site.ts`**:
+- **Most copy:** `lib/site.ts`.
+- **The homepage story's trades:** `lib/trades.ts`. Each trade is pure data, and `lib/trades.test.ts` checks every one.
+- **Adding a demo site:** add an entry to `projects` in `lib/site.ts`, and its screenshots to `public/work/`. Capture them with `node scripts/capture-portfolio.mjs <slug>` after adding the target to the script. `siteUrl` is optional, and a project without one shows no live link.
+- **Ads can open the story on a trade:** `/?trade=hvac`, `/?trade=dental`, and so on.
 
-- `primaryNav` — header/footer navigation.
-- `plans` — Standard & Growth bullets, prices, CTA labels.
-- `valueCards` — "More Trust / More Leads / More Revenue" cards.
-- `whatYouGet` — benefit headlines and visible feature checklists for the homepage’s “What’s included” cards. The supporting visuals live in `components/home/IncludedVisuals.tsx`.
-- `processSteps` — "How it works" 4 steps.
-- `auditChecklist` — items shown on `/audit` and in the home audit teaser.
-- `projects` — 6 portfolio entries rendered with the pure-CSS browser
-  mockup component.
-- `testimonials` — quote cards.
-- `valueProps` — extended value bullets shown on `/about`.
-- `intakeEmail` — target address for both forms (`mailto:`).
+## Brand tokens
 
-Page-specific copy (FAQ, comparison table, industry tiles, etc.) lives
-inside the relevant page file under `app/`.
+The tokens live in `app/globals.css` under `@theme`. The comments there are the rules.
 
-## Design tokens
+| Token | Value | Use |
+|---|---|---|
+| `brand` / `brand-hover` / `brand-ink` | `#d4ff35` / `#e2ff75` / `#071a33` | Neon action fills with dark text. Never neon text on a light ground. |
+| `link` / `link-invert` | `#1b4a80` / `#d4ff35` | Text links on light grounds / on navy grounds. |
+| `ink`, `ink-deep`, `night` | `#0e2f56`, `#071a33`, `#061429` | Navies |
+| `bg`, `bg-alt`, `surface`, `border` | warm paper family | Light grounds |
+| `electric` | `#2b6cfc` | The mascot's blue, for glows only |
 
-All brand colors and shared tokens live in `app/globals.css` under
-`@theme`:
-
-```
---color-bg:          #F8FAFC
---color-surface:     #FFFFFF
---color-ink:         #0F172A   /* main text */
---color-muted:       #475569   /* secondary text */
---color-brand:       #2563EB   /* primary accent / CTA */
---color-brand-hover: #1D4ED8
---color-accent:      #10B981   /* secondary accent */
---color-border:      #E2E8F0
-```
-
-Use them via the Tailwind v4 short form, e.g. `bg-[color:var(--color-brand)]`
-or `text-[color:var(--color-muted)]`. The Inter font is wired through
-`--font-inter` / `--font-sans`.
+Headlines (`h1`, `h2`) use Funnel Display; body text uses Geist. Put `surface-dark` on any navy section so focus rings turn neon there.
 
 ## Forms
 
-`AuditForm` and `ContactForm` are client components that validate the
-required fields, build a prefilled `mailto:` draft via
-`lib/mailto.ts::buildMailtoHref`, and open the user's mail client.
+- `DemoForm` and `ContactForm` validate fields and open a prefilled email with `lib/mailto.ts::buildMailtoHref`. `DemoForm`'s rules live in `lib/demoRequest.ts`.
+- `MoverReviewForm` (`/movers/`) posts to server routes and books a Cal.com call. See `docs/movers-campaign-handoff.md`.
 
-To move to a real backend later:
+## Measurement
 
-1. Replace the `onSubmit` handler in `components/forms/AuditForm.tsx` and
-   `components/forms/ContactForm.tsx` with a `fetch` to your endpoint.
-2. Remove `output: "export"` from `next.config.ts` if you also need server
-   actions / API routes, or keep static export and POST to a third-party
-   form service (Formspree, Basin, Resend, etc.).
-3. Update `intakeEmail` in `lib/site.ts` to the production address.
+`lib/analytics.ts` is the only adapter. It sends to Mixpanel, and to GA4 and Meta only when those are configured. Never pass names, emails, phone numbers or form answers.
 
-## Swapping placeholders for real assets
-
-The portfolio currently renders pure-CSS/SVG browser mockups
-(`components/ui/BrowserMockup.tsx`) so the site is self-contained. To
-swap in real project screenshots:
-
-1. Drop images into `public/projects/<slug>.png` (1600×1000 recommended).
-2. Extend the `Project` type in `lib/site.ts` with an `image` field.
-3. In `components/home/Portfolio.tsx`, replace the `<BrowserMockup/>`
-   with `next/image`:
-
-   ```tsx
-   import Image from "next/image";
-   // ...
-   <Image
-     src={`/projects/${project.slug}.png`}
-     alt={project.title}
-     width={1600}
-     height={1000}
-     className="rounded-xl"
-   />
-   ```
-
-   (Static export already sets `images.unoptimized: true` in
-   `next.config.ts`.)
-
-## Website measurement
-
-The site has an optional Mixpanel integration in
-`components/analytics/MixpanelAnalytics.tsx`. It stays disabled until
-`NEXT_PUBLIC_MIXPANEL_TOKEN` is set. The default API address is the EU endpoint;
-change `NEXT_PUBLIC_MIXPANEL_API_HOST` only when the Mixpanel project is stored
-in another region.
-
-The `/movers` page records a deliberately small funnel:
-
-- main call-to-action clicked
-- mover demo clicked
-- pricing reached
-- preview form reached and started
-- form submission attempted, completed, or failed
-- calendar or email clicked
-
-`lib/analytics.ts` is the single event adapter. It sends the same meaningful
-events to Mixpanel and, only if they are separately configured, GA4 and Meta.
-Never pass form values or other personal information to this helper.
-
-Mixpanel reporting and customer-report setup live in
-`../ops-dashboard/backend/README.md`.
-
-## What's intentionally out of scope
-
-- Real project screenshots / client logos (placeholders used).
-- Backend form submission / CRM integration.
-- Blog, Case Studies, Industries pages (listed as "Optional later" in the
-  original brief).
-- Paid ad conversion tags (add only when a campaign needs them).
-- Content management — all copy is code-first in `lib/site.ts`.
+The homepage and demo events are:
+- `home_trade_selected`
+- `home_story_completed`
+- `demo_cta_clicked`
+- `demo_request_email_opened`
 
 ## Routes
 
-| Path        | Description                                           |
-| ----------- | ----------------------------------------------------- |
-| `/`         | Home (10 sections: Hero → Final CTA)                  |
-| `/pricing`  | Standard vs. Growth side-by-side, comparison + FAQ    |
-| `/work`     | Full portfolio grid (6 projects)                      |
-| `/audit`    | Audit checklist + audit request form                  |
-| `/about`    | Positioning, value props, industries, process         |
-| `/contact`  | Direct contact + enquiry form (accepts `?plan=…`)     |
-| `/404`      | Branded not-found page                                |
+| Path | Description |
+|---|---|
+| `/` | Home |
+| `/demo/` | Free Personalised Website Demo request (`/audit/` redirects here) |
+| `/work/` | Demo sites |
+| `/pricing/` | Plans, quoted to the business |
+| `/about/` | Positioning, values, process |
+| `/contact/` | Enquiry form (accepts `?plan=…`) |
+| `/movers/` | Moving-company campaign |
+| `/privacy/` | Privacy notice |
