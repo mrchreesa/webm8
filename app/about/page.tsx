@@ -3,8 +3,8 @@ import { PageHero } from "@/components/ui/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Icon } from "@/components/ui/Icon";
 import { LinkButton } from "@/components/ui/Button";
-import { Process } from "@/components/home/Process";
-import { FinalCta } from "@/components/home/FinalCta";
+import { HowItWorks } from "@/components/home/HowItWorks";
+import { DemoClosing } from "@/components/demo/DemoClosing";
 import { Reveal } from "@/components/ui/Reveal";
 import { valueProps } from "@/lib/site";
 import { createPageMetadata } from "@/lib/seo";
@@ -97,7 +97,7 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      <Process />
+      <HowItWorks />
 
       <Section
         tone="surface"
@@ -138,7 +138,7 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      <FinalCta />
+      <DemoClosing />
     </>
   );
 }

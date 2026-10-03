@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
 import { BrowserMockup } from "@/components/ui/BrowserMockup";
-import { FinalCta } from "@/components/home/FinalCta";
+import { DemoClosing } from "@/components/demo/DemoClosing";
 import { Icon } from "@/components/ui/Icon";
 import { LinkButton } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
@@ -94,7 +94,7 @@ export default function WorkPage() {
         </div>
       </section>
 
-      <FinalCta />
+      <DemoClosing />
     </>
   );
 }

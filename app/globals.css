@@ -27,10 +27,6 @@
   /* The mascot's blue: glows, illustration and story UI. Never body text. */
   --color-electric: #2b6cfc;
 
-  /* Retired with the orange palette. Removed in Task 8, once FinalCta is gone. */
-  --color-neon: #d4ff35;
-  --color-neon-soft: #e2ff75;
-
   /* Highlight and information. */
   --color-highlight: #ffb92e;
   --color-info: #2bc4bd;
@@ -217,6 +213,27 @@
   animation: bob 4s ease-in-out infinite;
 }
 
+@keyframes float {
+  50% {
+    transform: translateY(-12px) rotate(1.5deg);
+  }
+}
+
+@keyframes bubble {
+  to {
+    transform: translate3d(var(--drift, 0px), -110vh, 0);
+    opacity: 0;
+  }
+}
+
+@utility animate-float {
+  animation: float 7s ease-in-out infinite;
+}
+
+@utility animate-bubble {
+  animation: bubble 14s linear infinite;
+}
+
 .hero-showcase-slide {
   opacity: 0;
   animation: heroShowcaseFade 20s cubic-bezier(0.22, 1, 0.36, 1) infinite;
@@ -291,6 +308,11 @@
 /* ---------- Reduced motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-bubble {
+    animation: none !important;
+  }
+
   *,
   *::before,
   *::after {

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
-import { FinalCta } from "@/components/home/FinalCta";
+import { DemoClosing } from "@/components/demo/DemoClosing";
 import { Section } from "@/components/ui/Section";
 import { Icon } from "@/components/ui/Icon";
 import { LinkButton } from "@/components/ui/Button";
@@ -80,7 +80,7 @@ export default function PricingPage() {
         </Reveal>
       </Section>
 
-      <FinalCta />
+      <DemoClosing />
     </>
   );
 }

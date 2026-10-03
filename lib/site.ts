@@ -177,28 +177,34 @@ export type ProcessStep = {
   number: number;
   title: string;
   body: string;
+  /** What we need from the business at this step. */
+  need: string;
 };
 
 export const processSteps: ProcessStep[] = [
   {
     number: 1,
-    title: "Free Website Audit",
-    body: "We review your current website and identify exactly what can be improved to get more enquiries.",
+    title: "Free personalised demo",
+    body: "We design a homepage for your business, with your name and services on it, and show it to you before you spend a cent.",
+    need: "two minutes to tell us about your business",
   },
   {
     number: 2,
-    title: "Website Strategy",
-    body: "We plan the pages, structure, calls to action, and content that match how your customers search and decide.",
+    title: "Website plan",
+    body: "We plan the pages, the wording and the buttons around how your customers search and decide.",
+    need: "a 15-minute call",
   },
   {
     number: 3,
-    title: "Design & Build",
-    body: "We write and build a professional website that works well on phones and makes the next step clear.",
+    title: "Design and build",
+    body: "We write and build your site so it looks the business and works properly on phones.",
+    need: "your logo and a few photos",
   },
   {
     number: 4,
-    title: "Launch & Improve",
-    body: "We launch the site, support it, and keep improving it over time so it keeps generating leads.",
+    title: "Launch and improve",
+    body: "We put it live, host it and look after it, and keep improving it so it keeps bringing in work.",
+    need: "nothing, unless you want a change",
   },
 ];
 

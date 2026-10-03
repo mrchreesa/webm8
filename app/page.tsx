@@ -3,10 +3,10 @@ import { Hero } from "@/components/home/Hero";
 import { WhatYouGet } from "@/components/home/WhatYouGet";
 import { Pricing } from "@/components/home/Pricing";
 import { Portfolio } from "@/components/home/Portfolio";
-import { Process } from "@/components/home/Process";
+import { HowItWorks } from "@/components/home/HowItWorks";
 import { AuditTeaser } from "@/components/home/AuditTeaser";
 import { Testimonials } from "@/components/home/Testimonials";
-import { FinalCta } from "@/components/home/FinalCta";
+import { DemoClosing } from "@/components/demo/DemoClosing";
 import {
   createPageMetadata,
   defaultDescription,
@@ -27,10 +27,10 @@ export default function HomePage() {
       <WhatYouGet />
       <Portfolio limit={3} />
       <Pricing />
-      <Process />
+      <HowItWorks />
       <AuditTeaser />
       <Testimonials />
-      <FinalCta />
+      <DemoClosing />
     </>
   );
 }
