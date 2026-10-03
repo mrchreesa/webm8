@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { PageHero } from "@/components/ui/PageHero";
 import { BrowserMockup } from "@/components/ui/BrowserMockup";
 import { FinalCta } from "@/components/home/FinalCta";
@@ -12,9 +11,9 @@ import { projects } from "@/lib/site";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Our Work: Websites Built for Local Businesses",
+  title: "Website Examples: Demo Sites for Local Businesses",
   description:
-    "Browse live website examples built by WebM8 for restaurants, cleaning companies, removals businesses, car rental brands, and travel agencies.",
+    "Demo websites WebM8 designed for local businesses: a tailor, two cleaning companies, a removals firm, a baby store and an activewear brand. See each on a computer and a phone.",
   path: "/work/",
 });
 
@@ -22,14 +21,8 @@ export default function WorkPage() {
   return (
     <>
       <PageHero
-        eyebrow="Our work"
-        title={
-          <>
-            Real Websites for Real{" "}
-            <span className="text-link">Local Businesses</span>
-          </>
-        }
-        subtitle="See examples for restaurants, cleaners, movers, car rental companies, and travel businesses on both computers and phones."
+        title="Demo sites we designed for local businesses"
+        subtitle="Each one is a working website, built around how that business's customers search, decide and get in touch. See it on a computer and on a phone."
       />
 
       <section className="py-16 md:py-24">
@@ -46,22 +39,19 @@ export default function WorkPage() {
                       : "lg:grid-cols-[1.1fr_1fr] lg:items-center",
                   )}
                 >
-                  <div
-                    className={cn(index % 2 === 0 ? "" : "lg:order-2")}
-                  >
+                  <div className={cn(index % 2 === 0 ? "" : "lg:order-2")}>
                     <Eyebrow>{project.industry}</Eyebrow>
-                    <h2 className="mt-4 text-3xl font-bold tracking-tight text-ink md:text-4xl">
+                    <p className="mt-4 text-sm font-semibold text-muted">{project.name}</p>
+                    <h2 className="mt-1 text-3xl font-bold text-ink md:text-4xl">
                       {project.title}
                     </h2>
-                    <p className="mt-5 text-lg text-muted">
-                      {project.description}
-                    </p>
+                    <p className="mt-5 text-lg text-muted">{project.description}</p>
 
                     <ul className="mt-6 grid gap-3 sm:grid-cols-2">
                       {project.outcomes.map((outcome) => (
                         <li
                           key={outcome}
-                          className="flex items-start gap-3 rounded-xl border border-border bg-white p-3 text-sm text-ink transition-colors hover:border-ink/20"
+                          className="flex items-start gap-3 rounded-xl border border-border bg-white p-3 text-sm text-ink"
                         >
                           <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent">
                             <Icon name="check" size={12} />
@@ -72,30 +62,18 @@ export default function WorkPage() {
                     </ul>
 
                     <div className="mt-8 flex flex-wrap gap-3">
-                      <LinkButton
-                        href={project.siteUrl}
-                        variant="primary"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        View live site
-                        <Icon name="arrow" size={16} />
+                      {project.siteUrl ? (
+                        <LinkButton href={project.siteUrl} target="_blank" rel="noreferrer">
+                          Open the live site
+                          <Icon name="arrow" size={16} className="-rotate-45" />
+                        </LinkButton>
+                      ) : null}
+                      <LinkButton href="/demo/" variant="ghost">
+                        Get a free demo like this
                       </LinkButton>
-                      <Link
-                        href="/audit"
-                        className="btn-arrow inline-flex items-center gap-2 text-sm font-semibold text-link transition-colors hover:text-ink"
-                      >
-                        Ask for a similar website
-                        <Icon name="arrow" size={14} />
-                      </Link>
                     </div>
                   </div>
-                  <div
-                    className={cn(
-                      "relative",
-                      index % 2 === 0 ? "" : "lg:order-1",
-                    )}
-                  >
+                  <div className={cn("relative", index % 2 === 0 ? "" : "lg:order-1")}>
                     <div
                       aria-hidden
                       className="animate-drift-slow absolute -inset-6 rounded-[32px] bg-gradient-to-br from-electric/20 to-accent/20 blur-2xl"

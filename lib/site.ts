@@ -233,11 +233,14 @@ export const auditChecklist: string[] = [
 
 export type Project = {
   slug: string;
+  /** The business name, shown on the homepage deck's buttons. */
+  name: string;
   industry: string;
   title: string;
   description: string;
   palette: "blue" | "green" | "slate" | "amber" | "rose" | "violet";
-  siteUrl: string;
+  /** The live demo. Omitted when the owner chose not to link it. */
+  siteUrl?: string;
   screenshots: {
     desktop: string;
     mobile: string;
@@ -245,9 +248,91 @@ export type Project = {
   outcomes: string[];
 };
 
+/** Demo sites WebM8 designed for local businesses. */
 export const projects: Project[] = [
   {
+    slug: "stitch-house",
+    name: "The Stitch House",
+    industry: "Tailoring and dry cleaning",
+    title: "Heritage tailoring site built around fittings",
+    description:
+      "A couture alterations and dry cleaning shop in Kentish Town, with fittings one tap away, prices up front and a shopfront feel online.",
+    palette: "amber",
+    siteUrl: "https://stitch-shop-one.vercel.app/heritage/",
+    screenshots: {
+      desktop: "/work/stitch-house-desktop.webp",
+      mobile: "/work/stitch-house-mobile.webp",
+    },
+    outcomes: [
+      "Book a fitting from any page",
+      "A clear price list",
+      "Opening hours and location up front",
+      "Google reviews where people decide",
+    ],
+  },
+  {
+    slug: "allen-fitness",
+    name: "Allen Fitness",
+    industry: "Activewear brand",
+    title: "High-energy activewear store",
+    description:
+      "An activewear brand site with a bold look, collections for women and men, and a clear path from browsing to the right fit.",
+    palette: "green",
+    siteUrl: "https://sports-ecom-nu.vercel.app/",
+    screenshots: {
+      desktop: "/work/allen-fitness-desktop.webp",
+      mobile: "/work/allen-fitness-mobile.webp",
+    },
+    outcomes: [
+      "A bold, high-energy brand look",
+      "Collections for women and men",
+      "A clear path to the right fit",
+      "Built for phones first",
+    ],
+  },
+  {
+    slug: "ideal-baby",
+    name: "Ideal Baby & Kids",
+    industry: "Baby and kids store",
+    title: "Family-run baby store, online and in Little Havana",
+    description:
+      "Strollers, car seats and nursery furniture from brands parents trust, on a bilingual site that brings families into the Miami store.",
+    palette: "blue",
+    siteUrl: "https://baby-shop-blue-ten.vercel.app/pop/",
+    screenshots: {
+      desktop: "/work/ideal-baby-desktop.webp",
+      mobile: "/work/ideal-baby-mobile.webp",
+    },
+    outcomes: [
+      "English and Spanish",
+      "Shop by category",
+      "Planning a store visit",
+      "Trusted brands up front",
+    ],
+  },
+  {
+    slug: "solvers-cleaning",
+    name: "Solvers Cleaning",
+    industry: "Rental and office cleaning",
+    title: "Cleaning company site built for fast quotes",
+    description:
+      "End of tenancy, deep, carpet and office cleaning across West London, Surrey and Berkshire, with prices up front and a free quote a tap away.",
+    palette: "blue",
+    siteUrl: "https://sovlers-cleaning.vercel.app/demo-b/",
+    screenshots: {
+      desktop: "/work/solvers-cleaning-desktop.webp",
+      mobile: "/work/solvers-cleaning-mobile.webp",
+    },
+    outcomes: [
+      "Free quote and WhatsApp buttons",
+      "Prices up front",
+      "How booking works, step by step",
+      "Every area covered on one page",
+    ],
+  },
+  {
     slug: "removals",
+    name: "Fantastic Moves",
     industry: "Removals",
     title: "Removals site designed for urgent quote enquiries",
     description:
@@ -267,7 +352,8 @@ export const projects: Project[] = [
   },
   {
     slug: "cleaning",
-    industry: "Cleaning",
+    name: "Fresh & Clean",
+    industry: "Home cleaning",
     title: "Fresh cleaning site built around quote requests",
     description:
       "A clean service website that makes packages easy to compare, builds trust fast, and keeps the quote journey clear on mobile.",
@@ -282,63 +368,6 @@ export const projects: Project[] = [
       "Clear cleaning packages",
       "Trust and review sections",
       "Fast mobile enquiry path",
-    ],
-  },
-  {
-    slug: "restaurant",
-    industry: "Restaurant",
-    title: "Premium restaurant site with a polished booking path",
-    description:
-      "A high-end hospitality site built to make the venue feel premium, surface menus quickly, and move visitors toward reservations.",
-    palette: "amber",
-    siteUrl: "https://restaurant.webm8agency.com/",
-    screenshots: {
-      desktop: "/work/restaurant-desktop.webp",
-      mobile: "/work/restaurant-mobile.webp",
-    },
-    outcomes: [
-      "Visual-first dining experience",
-      "Easy-to-find menu and booking buttons",
-      "Mobile location access",
-      "Premium brand presentation",
-    ],
-  },
-  {
-    slug: "car-rental",
-    industry: "Car Rental",
-    title: "Fleet-led rental site with a premium enquiry flow",
-    description:
-      "A sharp car rental website that highlights vehicle options, gives the brand a premium feel, and keeps booking intent visible.",
-    palette: "blue",
-    siteUrl: "https://car-rental.webm8agency.com/",
-    screenshots: {
-      desktop: "/work/car-rental-desktop.webp",
-      mobile: "/work/car-rental-mobile.webp",
-    },
-    outcomes: [
-      "Fleet-focused layout",
-      "A premium look",
-      "Booking buttons that are easy to find",
-      "Mobile-first browsing",
-    ],
-  },
-  {
-    slug: "travel-agency",
-    industry: "Travel Agency",
-    title: "Travel website made for people ready to plan a trip",
-    description:
-      "A polished travel agency site that uses destination imagery, clear packages, and enquiry prompts to turn browsing into leads.",
-    palette: "violet",
-    siteUrl: "https://travel.webm8agency.com/",
-    screenshots: {
-      desktop: "/work/travel-desktop.webp",
-      mobile: "/work/travel-mobile.webp",
-    },
-    outcomes: [
-      "Destination-first visuals",
-      "Package discovery flow",
-      "Enquiry-led page structure",
-      "Responsive trip browsing",
     ],
   },
 ];

@@ -29,9 +29,9 @@ export const indexableRoutes = [
   },
   {
     path: "/work/",
-    title: "Our Work - Websites Built for Local Businesses",
+    title: "Website Examples: Demo Sites for Local Businesses",
     description:
-      "Browse live website examples built by WebM8 for restaurants, cleaning companies, removals businesses, car rental brands, and travel agencies.",
+      "Demo websites WebM8 designed for local businesses: a tailor, two cleaning companies, a removals firm, a baby store and an activewear brand. See each on a computer and a phone.",
     priority: 0.8,
   },
   {
