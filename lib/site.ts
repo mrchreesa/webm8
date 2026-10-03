@@ -28,39 +28,6 @@ export const primaryNav: NavItem[] = [
   { label: "Contact", href: "/contact" },
 ];
 
-export const trustBar: { label: string; icon: string }[] = [
-  { label: "Works well on phones", icon: "device" },
-  { label: "Makes it easy to contact you", icon: "leads" },
-  { label: "Built to help Google find you", icon: "map" },
-  { label: "Clear business information", icon: "spark" },
-  { label: "Pages load quickly", icon: "bolt" },
-  { label: "Help included every month", icon: "support" },
-];
-
-export type ValueCard = {
-  title: string;
-  body: string;
-  icon: "trust" | "leads" | "revenue";
-};
-
-export const valueCards: ValueCard[] = [
-  {
-    title: "More Trust",
-    body: "Show reviews, photos, services, and clear business information so local customers feel confident contacting you.",
-    icon: "trust",
-  },
-  {
-    title: "More Leads",
-    body: "Use strong calls to action, simple forms, and click-to-call buttons placed exactly where homeowners decide to reach out.",
-    icon: "leads",
-  },
-  {
-    title: "More Revenue",
-    body: "Turn more website visitors into real customers, estimates, and bookings for your business month after month.",
-    icon: "revenue",
-  },
-];
-
 export type WebsiteFeatureGroup = {
   id: "design" | "visibility" | "enquiries" | "care";
   label: string;
@@ -149,7 +116,7 @@ export const plans: Plan[] = [
       "Hosting & support included",
       "Small changes included each month",
     ],
-    ctaLabel: "Get a Fast Estimate",
+    ctaLabel: "Get a fast estimate",
   },
   {
     id: "growth",
@@ -167,7 +134,7 @@ export const plans: Plan[] = [
       "Pages arranged to make contacting you easy",
       "Ongoing website improvements",
     ],
-    ctaLabel: "Get a Fast Estimate",
+    ctaLabel: "Get a fast estimate",
     highlighted: true,
     badge: "Best Value",
   },
@@ -226,15 +193,18 @@ export const demoSteps: DemoStep[] = [
   },
 ];
 
-export const auditChecklist: string[] = [
-  "Homepage review",
-  "How well it works on phones",
-  "How quickly pages load",
-  "How easy it is to call or contact you",
-  "Where reviews and other proof appear",
-  "How clearly Google can read the site",
-  "How clearly AI search tools can read the site",
-  "Simple ideas for getting more calls and forms",
+export type TeamArm = { title: string; body: string };
+
+/** "Eight arms. One team.": everything a site needs, around the mascot. */
+export const teamArms: TeamArm[] = [
+  { title: "Design that earns trust", body: "A professional look that matches the quality of your work." },
+  { title: "Built for phones first", body: "Most local customers will find you on a phone. It has to work there." },
+  { title: "Found in local searches", body: "Pages and business details set up so Google can show you nearby." },
+  { title: "Ready for AI search", body: "Information formatted for tools like ChatGPT and Gemini." },
+  { title: "Tap to call, easy to quote", body: "Forms and call buttons exactly where people decide." },
+  { title: "Know where calls come from", body: "A monthly report of visits, calls and form requests." },
+  { title: "Hosting and security", body: "Your site is hosted, backed up and kept secure for you." },
+  { title: "Changes when you need them", body: "Send us a message. We make the update." },
 ];
 
 export type Project = {

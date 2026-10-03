@@ -55,18 +55,23 @@ export function Header() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname?.startsWith(href) ?? false;
 
-  // These heroes are navy fields that run up behind the header, so until the
-  // page scrolls the header has to read light-on-dark.
-  const hasDarkHero = pathname === "/" || isMoversPage;
-  const overDarkHero = hasDarkHero && !scrolled;
+  // The homepage is navy from top to bottom, so its header stays dark.
+  // /movers/ has a navy hero, so its header is dark until the page scrolls.
+  const isHome = pathname === "/";
+  const overDarkHero = isHome || (isMoversPage && !scrolled);
 
   return (
     <header
       className={cn(
         "sticky top-0 z-50 w-full transition-all",
-        scrolled
-          ? "border-b border-border bg-white/85 backdrop-blur"
-          : "bg-transparent",
+        overDarkHero && "surface-dark",
+        isHome
+          ? scrolled
+            ? "border-b border-white/5 bg-night/72 backdrop-blur-lg"
+            : "bg-transparent"
+          : scrolled
+            ? "border-b border-border bg-white/85 backdrop-blur"
+            : "bg-transparent",
       )}
     >
       <div className="container-page flex h-16 items-center justify-between gap-4 md:h-20">

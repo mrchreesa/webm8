@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import { DemoPrefillProvider } from "@/components/demo/DemoPrefill";
-import { StoryHero } from "@/components/home/story/StoryHero";
-import { WhatYouGet } from "@/components/home/WhatYouGet";
-import { Pricing } from "@/components/home/Pricing";
-import { Portfolio } from "@/components/home/Portfolio";
-import { HowItWorks } from "@/components/home/HowItWorks";
-import { AuditTeaser } from "@/components/home/AuditTeaser";
-import { Testimonials } from "@/components/home/Testimonials";
 import { DemoClosing } from "@/components/demo/DemoClosing";
+import { DemoPrefillProvider } from "@/components/demo/DemoPrefill";
+import { EightArms } from "@/components/home/EightArms";
+import { HowItWorks } from "@/components/home/HowItWorks";
+import { Plans } from "@/components/home/Plans";
+import { StoryHero } from "@/components/home/story/StoryHero";
+import { Voices } from "@/components/home/Voices";
+import { WorkDeck } from "@/components/home/WorkDeck";
 import {
   createPageMetadata,
   defaultDescription,
@@ -25,12 +24,11 @@ export default function HomePage() {
   return (
     <DemoPrefillProvider>
       <StoryHero />
-      <WhatYouGet />
-      <Portfolio limit={3} />
-      <Pricing />
+      <WorkDeck />
+      <EightArms />
       <HowItWorks />
-      <AuditTeaser />
-      <Testimonials />
+      <Plans />
+      <Voices />
       <DemoClosing />
     </DemoPrefillProvider>
   );
