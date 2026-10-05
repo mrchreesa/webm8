@@ -2,6 +2,7 @@ import { cn } from "@/lib/cn";
 import { searchSuggestions, type Trade } from "@/lib/trades";
 import { SearchIcon, TrendIcon } from "./icons";
 import { StatusBar } from "./StatusBar";
+import { TradeIcon } from "./TradeIcon";
 import styles from "./story.module.css";
 
 export function SearchScreen({ trade, name }: { trade: Trade; name: string }) {
@@ -45,7 +46,8 @@ export function SearchScreen({ trade, name }: { trade: Trade; name: string }) {
         <span className={styles.mapPin} style={{ left: "18%", top: "34%" }}><b>3</b></span>
       </div>
       <div className={styles.results}>
-        <div data-story="top-result" className={styles.result}>
+        <div data-story="top-result" className={cn(styles.result, styles.resultTop)}>
+          <span className={styles.thumb}><TradeIcon trade={trade.key} strokeWidth={1.6} /></span>
           <b>{name}</b>
           <span className={styles.meta}><i>★★★★★</i> 4.9 ({trade.reviewCount}) {trade.category}</span>
           <div className={styles.actions}>

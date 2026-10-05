@@ -85,7 +85,7 @@ export function demoHref(prefill: Pick<DemoPrefillValue, "tradeKey" | "chosen"> 
   return prefill?.chosen ? `/demo/?trade=${prefill.tradeKey}` : "/demo/";
 }
 
-export type DemoCtaPlacement = "header" | "hero" | "story_end" | "closing";
+export type DemoCtaPlacement = "header" | "hero" | "closing";
 
 type DemoCtaButtonProps = Omit<LinkButtonProps, "href"> & { placement: DemoCtaPlacement };
 

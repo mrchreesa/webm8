@@ -6,7 +6,9 @@ import {
   cleanBusinessName,
   defaultTrade,
   displayName,
+  heroTradeOrder,
   initialOf,
+  nextHeroTrade,
   parseTrade,
   possessive,
   searchSuggestions,
@@ -140,4 +142,24 @@ test("search suggestions lead with the trade's own search and never repeat it", 
 test("capitalise", () => {
   assert.equal(capitalise("plumbing business"), "Plumbing business");
   assert.equal(capitalise(""), "");
+});
+
+test("the hero plays every trade but other once, starting with the default", () => {
+  assert.equal(heroTradeOrder[0], defaultTrade);
+  assert.equal(heroTradeOrder.length, 14);
+  assert.equal(new Set(heroTradeOrder).size, 14);
+  assert.ok(!heroTradeOrder.includes("other"));
+  let key = defaultTrade;
+  const seen = new Set<string>();
+  for (let i = 0; i < heroTradeOrder.length; i++) {
+    seen.add(key);
+    key = nextHeroTrade(key);
+  }
+  assert.equal(key, defaultTrade);
+  assert.equal(seen.size, 14);
+  assert.equal(nextHeroTrade("other"), heroTradeOrder[0]);
+});
+
+test("every trade has a short chip name", () => {
+  for (const trade of tradeList) assert.ok(trade.short.length > 0 && trade.short.length <= 16, trade.key);
 });

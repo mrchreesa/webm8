@@ -1,27 +1,32 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { DemoCtaButton, useDemoPrefill } from "@/components/demo/DemoPrefill";
 import { LinkButton } from "@/components/ui/Button";
 import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/cn";
 import {
+  STORY_TURN_MS,
   chapterAt,
   chapterProgress,
-  chapterScrollTarget,
+  chapterTime,
+  clamp01,
   easeInOutCubic,
   fieldFill,
-  storyProgress,
+  playProgress,
   typedText,
   type StoryChapter,
   type StoryStep,
 } from "@/lib/storyProgress";
-import { defaultTrade, displayName, trades, type Trade } from "@/lib/trades";
+import { defaultTrade, displayName, nextHeroTrade, trades, type Trade, type TradeKey } from "@/lib/trades";
+import { PauseIcon, PlayIcon } from "./icons";
+import { siteFonts } from "./fonts";
 import { LockScreen } from "./LockScreen";
+import { looks } from "./looks";
 import { RequestForm } from "./RequestForm";
 import { SearchScreen } from "./SearchScreen";
 import { StoryBackdrop } from "./StoryBackdrop";
-import { TradePicker } from "./TradePicker";
+import { TradeChips } from "./TradeChips";
 import { TradeSite } from "./TradeSite";
 import styles from "./story.module.css";
 
@@ -32,10 +37,20 @@ const RAIL: { chapter: StoryStep; label: string }[] = [
   { chapter: 4, label: "Call" },
 ];
 
-/** Below this height the story is not pinned (see story.module.css). */
-const SHORT_SCREEN = "(max-height: 560px)";
+/** The phone fades out over the end of a turn, and stays hidden this far into the next while it resets. */
+const SWAP_OUT_MS = 380;
+const SWAP_IN_MS = 260;
+
+/** Paused, or with reduced motion, a step is shown this far through. */
+const STILL_AT = 0.72;
 
 const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+type StoryControl = {
+  setPlaying: (on: boolean) => void;
+  seek: (step: StoryStep) => void;
+  tradeChanged: (key: TradeKey) => void;
+};
 
 function paletteStyle(trade: Trade): CSSProperties {
   const p = trade.palette;
@@ -46,7 +61,7 @@ function paletteStyle(trade: Trade): CSSProperties {
     "--t-accent-ink": p.accentInk,
     "--t-soft": p.soft,
     "--t-ink": p.ink,
-    "--t-font": p.serif ? 'Georgia, "Times New Roman", serif' : "var(--font-sans)",
+    "--t-font": siteFonts[looks[trade.key].font],
   } as CSSProperties;
 }
 
@@ -54,92 +69,74 @@ function screenFor(chapter: StoryChapter) {
   return chapter <= 1 ? "search" : chapter === 2 ? "site" : "form";
 }
 
-function Chapter({ index, current, children }: { index: StoryChapter; current: StoryChapter; children: ReactNode }) {
-  const state = index === current ? "on" : index < current ? "past" : "next";
-  return (
-    <div className={styles.chapter} data-state={state} inert={index !== current}>
-      {children}
-    </div>
-  );
-}
-
 /**
  * The homepage hero: one customer's journey, from a local search to the
- * owner's phone lighting up, told in five chapters as the visitor scrolls.
- * Must be rendered inside DemoPrefillProvider.
+ * owner's phone lighting up, played on a loop. Each turn shows the next
+ * trade until the visitor picks theirs. Must be rendered inside
+ * DemoPrefillProvider.
  */
 export function StoryHero() {
   const prefill = useDemoPrefill();
-  const tradeKey = prefill?.tradeKey ?? defaultTrade;
+  const chosen = prefill?.chosen ?? false;
+  const [rotationKey, setRotationKey] = useState<TradeKey>(defaultTrade);
+  const tradeKey = chosen && prefill ? prefill.tradeKey : rotationKey;
   const business = prefill?.business ?? "";
   const trade = trades[tradeKey];
-  const name = displayName(trade, business);
+  // A name typed for one trade never shows on the others.
+  const name = displayName(trade, chosen ? business : "");
 
   const sectionRef = useRef<HTMLElement>(null);
-  const chaptersRef = useRef<HTMLDivElement>(null);
   const deviceRef = useRef<HTMLDivElement>(null);
-  const shakeRef = useRef<HTMLDivElement>(null);
   const phoneRef = useRef<HTMLDivElement>(null);
   const tradeRef = useRef(trade);
+  const chosenRef = useRef(chosen);
   const frameRef = useRef<() => void>(() => {});
+  const controlRef = useRef<StoryControl | null>(null);
   const chapterRef = useRef<StoryChapter>(0);
-  const completedRef = useRef(false);
-  const firstTradeRef = useRef(true);
   const [chapter, setChapter] = useState<StoryChapter>(0);
+  const [playing, setPlaying] = useState(true);
 
-  // The scroll loop: one rAF-throttled frame writes every per-frame state.
+  // The clock: while the story is playing and on screen, one rAF loop moves
+  // it on and writes every per-frame state.
   useEffect(() => {
     const section = sectionRef.current;
+    const device = deviceRef.current;
     const phone = phoneRef.current;
-    if (!section || !phone) return;
+    if (!section || !device || !phone) return;
     const reduce = prefersReducedMotion();
     const find = (name: string) => section.querySelector<HTMLElement>(`[data-story="${name}"]`);
     const flag = (element: Element | null, name: string, on: boolean) => element?.toggleAttribute(`data-${name}`, on);
-    // Too short to pin the story (a phone held sideways): CSS lays out the
-    // first chapter as a normal hero, and the story stays on it.
-    const shortScreen = window.matchMedia(SHORT_SCREEN);
-    let raf = 0;
-    let completeTimer = 0;
-    // Jumping past the story ("See our work") also lands on the last chapter,
-    // so it counts as completed only once that chapter has stayed on screen.
-    const atEnd = () => {
-      const box = section.getBoundingClientRect();
-      return chapterRef.current === 4 && box.top <= 0 && box.bottom >= window.innerHeight * 0.5;
+    const write = (element: Element | null, text: string) => {
+      if (element && element.textContent !== text) element.textContent = text;
     };
 
-    const frame = () => {
-      raf = 0;
-      const box = section.getBoundingClientRect();
-      const p = shortScreen.matches ? 0 : storyProgress(box.top, section.offsetHeight, window.innerHeight);
+    let elapsed = reduce ? chapterTime(2, STILL_AT) : 0;
+    let swapInUntil = 0;
+    let running = false;
+    let onScreen = false;
+    let raf = 0;
+    let last = 0;
+    let completed = false;
+    let turnTrade = tradeRef.current.key;
+
+    const draw = () => {
+      const p = playProgress(elapsed);
       const current = chapterAt(p);
-      section.style.setProperty("--p", p.toFixed(4));
       if (current !== chapterRef.current) {
         chapterRef.current = current;
         setChapter(current);
       }
-      if (atEnd()) {
-        if (!completedRef.current && !completeTimer) {
-          completeTimer = window.setTimeout(() => {
-            completeTimer = 0;
-            if (!atEnd()) return;
-            completedRef.current = true;
-            trackEvent("home_story_completed", { trade: tradeRef.current.key });
-          }, 1500);
-        }
-      } else if (completeTimer) {
-        window.clearTimeout(completeTimer);
-        completeTimer = 0;
-      }
       section.querySelectorAll<HTMLElement>("[data-rail-step]").forEach((element, index) => {
         element.style.setProperty("--f", chapterProgress(p, (index + 1) as StoryStep).toFixed(3));
       });
+      find("chips")?.style.setProperty("--turn", clamp01(elapsed / STORY_TURN_MS).toFixed(3));
+      flag(device, "swapping", running && (elapsed < swapInUntil || elapsed > STORY_TURN_MS - SWAP_OUT_MS));
 
       const t = tradeRef.current;
 
       // 1. The search types itself, results appear, the top one is chosen.
       const l1 = chapterProgress(p, 1);
-      const query = find("query");
-      if (query) query.textContent = typedText(t.query, l1 / 0.4);
+      write(find("query"), typedText(t.query, l1 / 0.4));
       const search = find("search");
       flag(search, "typing", l1 > 0.02);
       flag(search, "results", l1 > 0.45);
@@ -155,8 +152,7 @@ export function StoryHero() {
       const l3 = chapterProgress(p, 3);
       section.querySelectorAll<HTMLElement>('[data-story="field"]').forEach((field, index) => {
         const amount = fieldFill(l3, index);
-        const value = field.querySelector('[data-story="field-value"]');
-        if (value) value.textContent = typedText(t.form.fields[index]?.value ?? "", amount);
+        write(field.querySelector('[data-story="field-value"]'), typedText(t.form.fields[index]?.value ?? "", amount));
         flag(field, "active", amount > 0 && amount < 1);
       });
       flag(find("form-button"), "pressed", l3 > 0.76 && l3 < 0.86);
@@ -169,27 +165,68 @@ export function StoryHero() {
       phone.style.setProperty("--flip", `${(reduce ? (flip > 0.5 ? 180 : 0) : flip * 180).toFixed(1)}deg`);
       flag(find("note-0"), "on", l4 > 0.36);
       flag(find("note-1"), "on", l4 > 0.62);
-      flag(find("shake"), "buzz", !reduce && l4 > 0.38 && l4 < 0.9);
+      flag(find("shake"), "buzz", running && !reduce && l4 > 0.38 && l4 < 0.9);
     };
-    frameRef.current = frame;
+    frameRef.current = draw;
 
-    const schedule = () => {
-      if (!raf) raf = window.requestAnimationFrame(frame);
-    };
-    let listening = false;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !listening) {
-        listening = true;
-        window.addEventListener("scroll", schedule, { passive: true });
-        schedule();
-      } else if (!entry.isIntersecting && listening) {
-        listening = false;
-        window.removeEventListener("scroll", schedule);
+    const tick = (now: number) => {
+      raf = 0;
+      if (!running || !onScreen || document.hidden) return;
+      elapsed += Math.min(Math.max(0, now - last), 100);
+      last = now;
+      if (elapsed >= STORY_TURN_MS) {
+        if (!completed) {
+          completed = true;
+          trackEvent("home_story_completed", { trade: tradeRef.current.key, chosen: chosenRef.current });
+        }
+        elapsed = 0;
+        swapInUntil = SWAP_IN_MS;
+        if (!chosenRef.current) {
+          turnTrade = nextHeroTrade(tradeRef.current.key);
+          setRotationKey(turnTrade);
+        }
       }
+      draw();
+      raf = window.requestAnimationFrame(tick);
+    };
+
+    const resume = () => {
+      if (raf || !running || !onScreen || document.hidden) return;
+      last = performance.now();
+      raf = window.requestAnimationFrame(tick);
+    };
+
+    controlRef.current = {
+      setPlaying(on) {
+        running = on;
+        if (on) resume();
+        draw();
+      },
+      seek(step) {
+        elapsed = chapterTime(step, running ? 0 : STILL_AT);
+        swapInUntil = 0;
+        draw();
+      },
+      // A trade picked by the visitor (or restored) starts its story from
+      // the top; when paused, it takes over the frame on screen.
+      tradeChanged(key) {
+        if (key === turnTrade) return;
+        turnTrade = key;
+        if (running) {
+          elapsed = 0;
+          swapInUntil = SWAP_IN_MS;
+        }
+      },
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      resume();
     });
     observer.observe(section);
-    window.addEventListener("resize", schedule);
-    frame();
+    document.addEventListener("visibilitychange", resume);
+    if (reduce) setPlaying(false);
+    draw();
 
     let onPointer: ((event: PointerEvent) => void) | null = null;
     if (!reduce && window.matchMedia("(pointer: fine)").matches) {
@@ -203,63 +240,37 @@ export function StoryHero() {
     }
 
     return () => {
+      controlRef.current = null;
       observer.disconnect();
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
+      document.removeEventListener("visibilitychange", resume);
       if (onPointer) window.removeEventListener("pointermove", onPointer);
       window.cancelAnimationFrame(raf);
-      window.clearTimeout(completeTimer);
     };
   }, []);
+
+  useEffect(() => {
+    controlRef.current?.setPlaying(playing);
+  }, [playing]);
 
   // A new trade or name re-renders the screens; redraw the typed text at once.
   useEffect(() => {
     tradeRef.current = trade;
+    chosenRef.current = chosen;
+    controlRef.current?.tradeChanged(trade.key);
     frameRef.current();
-  }, [trade, name]);
+  }, [trade, name, chosen]);
 
-  // A small nudge on the phone when the trade changes.
-  useEffect(() => {
-    if (firstTradeRef.current) {
-      firstTradeRef.current = false;
-      return;
-    }
-    const shake = shakeRef.current;
-    if (!shake || prefersReducedMotion()) return;
-    shake.removeAttribute("data-nudge");
-    void shake.offsetWidth;
-    shake.setAttribute("data-nudge", "");
-  }, [tradeKey]);
-
-  // On phones, push the phone below a chapter whose copy reaches into its space.
-  useEffect(() => {
-    const place = () => {
-      const device = deviceRef.current;
-      const list = chaptersRef.current;
-      if (!device || !list) return;
-      if (window.innerWidth >= 960) {
-        device.style.removeProperty("--push");
-        return;
-      }
-      const active = list.children[chapter] as HTMLElement | undefined;
-      if (!active) return;
-      const bottom = list.offsetTop + active.offsetHeight;
-      device.style.setProperty("--push", `${Math.max(0, bottom + 18 - device.offsetTop)}px`);
-    };
-    place();
-    window.addEventListener("resize", place);
-    return () => window.removeEventListener("resize", place);
-  }, [chapter]);
-
-  const goTo = (target: StoryStep) => {
-    const section = sectionRef.current;
-    if (!section) return;
-    const top = section.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({
-      top: chapterScrollTarget(top, section.offsetHeight, window.innerHeight, target),
-      behavior: prefersReducedMotion() ? "auto" : "smooth",
-    });
+  const pick = (key: TradeKey) => {
+    if (prefill && !(chosen && key === tradeKey)) prefill.selectTrade(key);
   };
+
+  const captions = [
+    trade.need,
+    "They find a site that looks the part.",
+    "Saying yes takes one tap.",
+    "And your phone lights up.",
+  ];
+  const caption = Math.max(1, chapter);
 
   return (
     <section
@@ -269,60 +280,36 @@ export function StoryHero() {
       className={cn("surface-dark", styles.story)}
       style={paletteStyle(trade)}
     >
-      <div className={styles.pin}>
-        <StoryBackdrop />
-        <div className={cn("container-page", styles.grid)}>
-          <div ref={chaptersRef} className={styles.chapters}>
-            <Chapter index={0} current={chapter}>
-              <h1 className={styles.heroTitle}>
-                Websites that make your phone ring.
-              </h1>
-              <p className={cn(styles.lede, styles.ledeFirst)}>
-                WebM8 designs, builds and looks after websites for local businesses in the US and UK. Pick your trade, then scroll to see how one turns a search into a new customer.
-              </p>
-              {prefill ? (
-                <TradePicker
-                  tradeKey={tradeKey}
-                  business={business}
-                  onTradeChange={prefill.selectTrade}
-                  onBusinessChange={prefill.setBusiness}
-                />
-              ) : null}
-              <div className={styles.ctas}>
-                <DemoCtaButton placement="hero" size="lg">
-                  Get my free personalised demo
-                </DemoCtaButton>
-                <LinkButton href="#work" variant="ghost-invert" size="lg" className={styles.secondaryCta}>
-                  See our work
-                </LinkButton>
-              </div>
-            </Chapter>
-            <Chapter index={1} current={chapter}>
-              <p className={styles.title}>{trade.need}</p>
-              <p className={styles.lede}>Right now, people in your area are searching for exactly what you do. Most of them are on a phone.</p>
-            </Chapter>
-            <Chapter index={2} current={chapter}>
-              <p className={styles.title}>They find a site that looks the part.</p>
-              <p className={styles.lede}>Clear, quick and built for the small screen. Within seconds they know they&apos;re in the right place.</p>
-            </Chapter>
-            <Chapter index={3} current={chapter}>
-              <p className={styles.title}>Saying yes takes one tap.</p>
-              <p className={styles.lede}>A booking or quote form right where they need it, or a button that calls you. No hunting for a phone number.</p>
-            </Chapter>
-            <Chapter index={4} current={chapter}>
-              <p className={styles.title}>And your phone lights up.</p>
-              <p className={styles.lede}>That&apos;s the whole job of a website. We build it, host it and keep it working, so you can get on with yours.</p>
-              <div className={styles.ctas}>
-                <DemoCtaButton placement="story_end" size="lg">
-                  Get my free personalised demo
-                </DemoCtaButton>
-              </div>
-            </Chapter>
+      <StoryBackdrop />
+      <div className={cn("container-page", styles.grid)}>
+        <div className={styles.copy}>
+          <h1 className={styles.heroTitle}>Websites that make your phone ring.</h1>
+          <p className={styles.lede}>
+            WebM8 designs, builds and looks after websites for local businesses in the US and UK. Watch how one turns a local search into a new customer.
+          </p>
+          <div className={styles.ctas}>
+            <DemoCtaButton placement="hero" size="lg">
+              Get my free personalised demo
+            </DemoCtaButton>
+            <LinkButton href="#work" variant="ghost-invert" size="lg" className={styles.secondaryCta}>
+              See our work
+            </LinkButton>
           </div>
+          {prefill ? (
+            <TradeChips
+              shownKey={tradeKey}
+              chosen={chosen}
+              business={business}
+              onPick={pick}
+              onBusinessChange={prefill.setBusiness}
+            />
+          ) : null}
+        </div>
 
+        <div className={styles.stage}>
           <div ref={deviceRef} className={styles.device} aria-hidden="true">
             <div className={styles.enter}>
-              <div ref={shakeRef} data-story="shake" className={styles.shake}>
+              <div data-story="shake" className={styles.shake}>
                 <div ref={phoneRef} className={styles.phone}>
                   <div className={styles.face}>
                     <div data-screen={screenFor(chapter)} className={styles.screen}>
@@ -342,25 +329,45 @@ export function StoryHero() {
               </div>
             </div>
           </div>
-        </div>
 
-        <div className={styles.railWrap}>
-          <div className={cn("container-page", styles.rail)}>
-            {RAIL.map((step) => (
-              <button
-                key={step.label}
-                type="button"
-                data-rail-step
-                className={styles.railButton}
-                aria-current={chapter === step.chapter ? "step" : undefined}
-                onClick={() => goTo(step.chapter)}
-              >
-                <span className={styles.railTrack}>
-                  <span className={styles.railFill} />
-                </span>
-                {step.label}
-              </button>
-            ))}
+          <div className={styles.captions}>
+            {captions.map((text, index) => {
+              const step = index + 1;
+              const state = step === caption ? "on" : step < caption ? "past" : "next";
+              return (
+                <p key={step} className={styles.caption} data-state={state} inert={step !== caption}>
+                  {text}
+                </p>
+              );
+            })}
+          </div>
+
+          <div className={styles.controls}>
+            <button
+              type="button"
+              className={styles.playButton}
+              aria-label={playing ? "Pause the example" : "Play the example"}
+              onClick={() => setPlaying((on) => !on)}
+            >
+              {playing ? <PauseIcon /> : <PlayIcon />}
+            </button>
+            <div className={styles.rail}>
+              {RAIL.map((step) => (
+                <button
+                  key={step.label}
+                  type="button"
+                  data-rail-step
+                  className={styles.railButton}
+                  aria-current={chapter === step.chapter ? "step" : undefined}
+                  onClick={() => controlRef.current?.seek(step.chapter)}
+                >
+                  <span className={styles.railTrack}>
+                    <span className={styles.railFill} />
+                  </span>
+                  {step.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

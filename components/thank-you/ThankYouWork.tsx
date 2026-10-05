@@ -4,16 +4,23 @@ import { cn } from "@/lib/cn";
 import { projects, type Project } from "@/lib/site";
 
 /**
- * The strongest demo sites, in the order shown, each from a different kind of
- * business so a lead can picture their own. The line under each name is
- * shorter than the project description in lib/site.ts on purpose: this page
- * is read on a phone, between an ad and a phone call.
+ * The strongest demo sites, in the order shown, from different kinds of
+ * business so a lead can picture their own. The first `featuredCount` span
+ * the full width; the rest pair up. The line under each name is shorter than
+ * the project description in lib/site.ts on purpose: this page is read on a
+ * phone, between an ad and a phone call.
  *
  * `ground` and `glow` are taken from each site's own palette, so every
  * preview sits in its client's colours rather than ours. They are off-system
  * on purpose, like the palettes in BrowserMockup.
  */
 const showcase: { slug: Project["slug"]; line: string; ground: string; glow: string }[] = [
+  {
+    slug: "allen-fitness",
+    line: "A high-energy brand site that takes shoppers straight to their fit.",
+    ground: "#171714",
+    glow: "rgb(215 240 74 / 0.4)",
+  },
   {
     slug: "stitch-house",
     line: "A heritage look for a London tailor, with fittings one tap away.",
@@ -39,12 +46,15 @@ const showcase: { slug: Project["slug"]; line: string; ground: string; glow: str
     glow: "rgb(240 99 63 / 0.45)",
   },
   {
-    slug: "allen-fitness",
-    line: "A high-energy brand site that takes shoppers straight to their fit.",
-    ground: "#171714",
-    glow: "rgb(215 240 74 / 0.4)",
+    slug: "cleaning",
+    line: "A bright home cleaning site that makes packages easy to compare.",
+    ground: "#211c54",
+    glow: "rgb(99 209 247 / 0.5)",
   },
 ];
+
+/** Two, so the four that follow fill their rows. */
+const featuredCount = 2;
 
 const examples = showcase.flatMap(({ slug, ...art }) => {
   const project = projects.find((item) => item.slug === slug);
@@ -74,8 +84,8 @@ export function ThankYouWork() {
 
         <ol className="mt-10 grid gap-6 md:grid-cols-2 lg:gap-8">
           {examples.map((example, index) => (
-            <li key={example.slug} className={cn(index === 0 && "md:col-span-2")}>
-              <ExampleCard example={example} position={index + 1} featured={index === 0} />
+            <li key={example.slug} className={cn(index < featuredCount && "md:col-span-2")}>
+              <ExampleCard example={example} position={index + 1} featured={index < featuredCount} />
             </li>
           ))}
         </ol>

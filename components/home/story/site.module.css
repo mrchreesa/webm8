@@ -1,0 +1,126 @@
+/*
+ * The example sites inside the story's phone (TradeSite). Each trade's
+ * colours and typeface arrive as custom properties from looks.ts:
+ * --g / --g-ink (ground and text), --hot / --hot-ink (main button),
+ * --extra (hairlines, picture card or disc) and --font (display face).
+ * Sizes are in cqi of the phone's screen. Rules are written base first,
+ * then per layout (.poster, .editorial, .utility, .soft), then per trade.
+ */
+
+.site { overflow: hidden; background: var(--g); color: var(--g-ink); }
+.status { position: relative; z-index: 3; background: var(--g); color: var(--g-ink); }
+.scroll { transform: translateY(calc(var(--s2, 0) * -22cqi)); }
+
+/* ----- Shared pieces ----- */
+.nav { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 3cqi; padding: 2cqi 6cqi 3.4cqi; }
+.logo { display: flex; align-items: center; gap: 2.4cqi; min-width: 0; font-size: 4.4cqi; letter-spacing: -0.01em; }
+.logo b { max-width: 60cqi; overflow: hidden; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.mark { display: grid; flex: none; place-items: center; width: 8.4cqi; height: 8.4cqi; border-radius: 2.4cqi; background: var(--hot); color: var(--hot-ink); font: 800 4.4cqi var(--font-sans); font-style: normal; }
+.burger { display: grid; gap: 1.3cqi; width: 6.4cqi; }
+.burger i { display: block; height: 0.8cqi; border-radius: 1cqi; background: currentColor; }
+.headline { position: relative; margin: 0; font-family: var(--font); text-wrap: balance; }
+.sub { position: relative; margin: 0; font-size: 3.7cqi; line-height: 1.45; }
+.cta { position: relative; display: flex; align-items: center; justify-content: center; height: 12cqi; padding: 0 5cqi; background: var(--hot); color: var(--hot-ink); font-size: 4.2cqi; font-weight: 650; white-space: nowrap; }
+.stars { color: #f5a524; font-style: normal; letter-spacing: 0.04em; }
+.rating { font-size: 3.2cqi; font-weight: 500; }
+
+.services { padding: 8cqi 6cqi 26cqi; }
+.row { display: flex; align-items: center; gap: 3cqi; padding: 3cqi 0; border-bottom: 1px solid color-mix(in srgb, var(--g-ink) 12%, transparent); font-size: 4.2cqi; font-weight: 600; }
+.rowIcon { display: grid; flex: none; place-items: center; width: 9cqi; height: 9cqi; border-radius: 50%; background: color-mix(in srgb, var(--hot) 14%, transparent); color: var(--hot); }
+.rowIcon svg { width: 5cqi; height: 5cqi; }
+.chev { width: 4cqi; margin-left: auto; opacity: 0.5; }
+
+.callBar { position: absolute; right: 4cqi; bottom: 4cqi; left: 4cqi; z-index: 3; display: flex; align-items: center; justify-content: center; gap: 2.4cqi; height: 13cqi; border-radius: 99px; background: var(--g-ink); color: var(--g); font-size: 4.3cqi; font-weight: 600; box-shadow: 0 4cqi 8cqi -4cqi rgb(0 0 0 / 0.45); }
+.callBar svg { width: 5cqi; }
+
+/* ----- Poster: fitness, barber, moving ----- */
+.poster .mark { border-radius: 1cqi; }
+.poster .logo b { font-family: var(--font); font-size: 5cqi; font-weight: 400; letter-spacing: 0.02em; text-transform: uppercase; }
+.poster .hero { position: relative; min-height: 160cqi; padding: 3cqi 6cqi 0; overflow: hidden; }
+.poster .art { position: absolute; right: -18cqi; bottom: 6cqi; width: 84cqi; }
+.poster .art svg { display: block; width: 100%; height: auto; }
+.poster .badge { position: relative; display: inline-block; padding: 1.3cqi 2.8cqi; border-radius: 1cqi; box-shadow: inset 0 0 0 0.45cqi currentColor; font-size: 3.1cqi; font-weight: 600; }
+.poster .headline { margin-top: 4.5cqi; font-size: 15.5cqi; line-height: 0.9; letter-spacing: 0.01em; text-transform: uppercase; }
+.poster .sub { max-width: 60cqi; margin-top: 4cqi; opacity: 0.85; }
+.poster .cta { width: fit-content; margin-top: 5cqi; border-radius: 1.2cqi; font-weight: 700; }
+.poster .call { position: relative; display: inline-block; margin-top: 3.4cqi; font-size: 3.6cqi; font-weight: 600; text-decoration: underline; text-underline-offset: 0.8cqi; }
+.poster .row { padding: 2.6cqi 0; border-bottom-width: 0.5cqi; font-family: var(--font); font-size: 7.4cqi; font-weight: 400; text-transform: uppercase; }
+.poster .rowIcon { display: none; }
+.poster .callBar { border-radius: 1.4cqi; background: var(--hot); color: var(--hot-ink); }
+
+.site[data-trade="fitness"] .hero { min-height: 172cqi; }
+.site[data-trade="fitness"] .art { right: -30cqi; bottom: 0; width: 82cqi; }
+.site[data-trade="barber"] .hero { min-height: 0; padding-bottom: 4cqi; }
+.site[data-trade="barber"] .art { top: -2cqi; right: 3cqi; bottom: auto; width: 17cqi; }
+.site[data-trade="barber"] .headline { max-width: 72cqi; font-size: 17cqi; }
+.site[data-trade="barber"] .sub { max-width: 66cqi; }
+.site[data-trade="moving"] .art { right: -8cqi; bottom: 2cqi; width: 88cqi; }
+.site[data-trade="moving"] .headline { color: var(--hot); }
+
+.pole { animation: pole 1.4s linear infinite; }
+@keyframes pole { to { transform: translateY(36px); } }
+.flame { transform-box: fill-box; transform-origin: 50% 100%; animation: flame 0.9s ease-in-out infinite alternate; }
+@keyframes flame { to { transform: scale(1.04, 1.09) skewX(-2deg); } }
+
+/* ----- Editorial: restaurant, salon, med spa ----- */
+.editorial { text-align: center; }
+.editorial .nav { justify-content: center; }
+.editorial .mark { display: none; }
+.editorial .logo b { font-family: var(--font); font-size: 5.4cqi; font-style: italic; font-weight: 600; }
+.editorial .burger { position: absolute; right: 6cqi; }
+.editorial .hero { padding: 2cqi 7cqi 0; }
+.editorial .archWrap { position: relative; width: 62cqi; margin: 0 auto; }
+.editorial .arch { height: 66cqi; overflow: hidden; border-radius: 31cqi 31cqi 1.4cqi 1.4cqi; outline: 0.4cqi solid var(--extra); outline-offset: 1.8cqi; }
+.editorial .arch svg { display: block; width: 100%; height: 100%; }
+.editorial .sign { position: absolute; right: -11cqi; bottom: 6cqi; max-width: 30cqi; padding: 2.2cqi 3cqi; background: var(--g); box-shadow: inset 0 0 0 0.4cqi var(--extra), 0 2cqi 5cqi rgb(0 0 0 / 0.18); font-family: var(--font); font-size: 3.8cqi; font-style: italic; font-weight: 600; line-height: 1.15; }
+.editorial .headline { margin-top: 7cqi; font-size: 10.6cqi; font-weight: 600; line-height: 1; letter-spacing: -0.02em; }
+.editorial .sub { max-width: 74cqi; margin: 3cqi auto 0; opacity: 0.8; }
+.editorial .cta { width: 66cqi; margin: 5cqi auto 0; border-radius: 99px; }
+.editorial .rating { display: block; margin-top: 3cqi; opacity: 0.8; }
+.editorial .services { padding-top: 6cqi; }
+.editorial .row { justify-content: center; padding: 1.8cqi 0; border: 0; font-family: var(--font); font-size: 5.8cqi; font-weight: 500; font-style: italic; }
+.editorial .rowIcon, .editorial .chev { display: none; }
+
+/* Cormorant sits small on its line; set it larger. */
+.site[data-font="cormorant"] .headline { font-size: 12.4cqi; font-weight: 600; line-height: 0.95; }
+.site[data-trade="salon"] .headline { font-style: italic; }
+.site[data-font="cormorant"] .logo b { font-size: 6.2cqi; }
+.site[data-font="cormorant"] .sign { font-size: 4.4cqi; }
+
+/* ----- Utility: plumbing, HVAC, electrical, roofing, other ----- */
+.utility .hero { padding: 0 4cqi; }
+.utility .artCard { position: relative; height: 56cqi; overflow: hidden; border-radius: 5cqi; background: var(--extra); }
+.utility .artCard svg { display: block; width: 100%; height: 100%; }
+.utility .badge { position: absolute; top: 3cqi; left: 3cqi; display: inline-flex; align-items: center; gap: 1.8cqi; padding: 1.5cqi 3cqi 1.5cqi 2.4cqi; border-radius: 99px; background: #fff; color: #0b1a2b; font-size: 3.1cqi; font-weight: 600; box-shadow: 0 1cqi 3cqi rgb(0 0 0 / 0.22); }
+.live { width: 1.8cqi; height: 1.8cqi; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 0.8cqi rgb(22 163 74 / 0.22); }
+.utility .headline { margin-top: 5cqi; padding: 0 2cqi; font-size: 11cqi; font-weight: 800; line-height: 0.95; letter-spacing: -0.045em; }
+.utility .sub { margin-top: 2.8cqi; padding: 0 2cqi; opacity: 0.75; }
+.utility .cta { margin: 4.4cqi 2cqi 0; border-radius: 3cqi; }
+.utility .trust { display: flex; gap: 4cqi; margin: 3.6cqi 2cqi 0; font-size: 3cqi; font-weight: 600; }
+.utility .trust span { display: inline-flex; align-items: center; gap: 1.2cqi; }
+.utility .trust svg { width: 3.4cqi; color: var(--hot); }
+.utility .services { padding-top: 7cqi; }
+
+/* ----- Soft: cleaning, café, dental, landscaping ----- */
+.soft .mark { border-radius: 50%; }
+.soft .hero { position: relative; padding: 4cqi 6cqi 0; }
+.soft .headline { font-size: 11.6cqi; font-weight: 700; line-height: 0.98; letter-spacing: -0.035em; }
+.soft .sub { max-width: 82cqi; margin-top: 3cqi; opacity: 0.78; }
+.soft .actions { display: flex; align-items: center; gap: 3.4cqi; margin-top: 4.6cqi; }
+.soft .cta { border-radius: 99px; }
+.soft .rating { font-weight: 600; line-height: 1.35; }
+.soft .discWrap { position: relative; width: 72cqi; margin: 6cqi -4cqi 0 auto; }
+.soft .disc { aspect-ratio: 1; overflow: hidden; border-radius: 50%; background: var(--extra); }
+.soft .disc svg { display: block; width: 100%; height: 100%; }
+.soft .sticker { position: absolute; top: 2cqi; left: -9cqi; display: grid; place-items: center; width: 25cqi; height: 25cqi; padding: 3cqi; border-radius: 50%; background: var(--g-ink); color: var(--g); font-size: 3.1cqi; font-weight: 700; line-height: 1.15; text-align: center; transform: rotate(-12deg); }
+.soft .services { display: flex; flex-wrap: wrap; gap: 2cqi; padding-top: 5cqi; }
+.soft .row { gap: 1.6cqi; padding: 2.4cqi 3.6cqi; border: 0; border-radius: 99px; background: color-mix(in srgb, var(--hot) 12%, transparent); font-size: 3.6cqi; }
+.soft .rowIcon { width: 4.6cqi; height: 4.6cqi; background: none; }
+.soft .rowIcon svg { width: 4.4cqi; height: 4.4cqi; }
+.soft .chev { display: none; }
+.soft .callBar { background: var(--hot); color: var(--hot-ink); }
+.site[data-font="fraunces"] .headline { font-weight: 650; letter-spacing: -0.03em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pole, .flame { animation: none; }
+}

@@ -1,20 +1,47 @@
-/** Scroll maths for the homepage story. Pure, so it is tested without a browser. */
+/** Timing maths for the homepage story. Pure, so it is tested without a browser. */
 
 export const STORY_BOUNDS = [0, 0.1, 0.32, 0.54, 0.76, 1] as const;
 
 export type StoryChapter = 0 | 1 | 2 | 3 | 4;
 export type StoryStep = Exclude<StoryChapter, 0>;
 
+/** How long each chapter plays, in milliseconds. Chapter 0 is the lead-in; the site (2) gets the longest look. */
+export const CHAPTER_MS = [800, 2300, 3000, 2600, 2500] as const;
+
+export const STORY_PLAY_MS = CHAPTER_MS.reduce((total, ms) => total + ms, 0);
+
+/** The finished story stays on screen this long before the next turn. */
+export const STORY_HOLD_MS = 1600;
+
+/** One trade's turn: the story, then the hold. */
+export const STORY_TURN_MS = STORY_PLAY_MS + STORY_HOLD_MS;
+
 export function clamp01(value: number): number {
   if (!Number.isFinite(value)) return 0;
   return Math.min(1, Math.max(0, value));
 }
 
-/** How far through the story the reader is, from the section's on-screen top. */
-export function storyProgress(sectionTop: number, sectionHeight: number, viewportHeight: number): number {
-  const scrollable = sectionHeight - viewportHeight;
-  if (scrollable <= 0) return sectionTop < 0 ? 1 : 0;
-  return clamp01(-sectionTop / scrollable);
+/** Story progress (0 to 1) at a moment in a turn. Each chapter runs for its own time. */
+export function playProgress(elapsedMs: number): number {
+  const elapsed = Number.isFinite(elapsedMs) ? Math.max(0, elapsedMs) : 0;
+  let start = 0;
+  for (let chapter = 0; chapter < CHAPTER_MS.length; chapter++) {
+    const duration = CHAPTER_MS[chapter];
+    if (elapsed < start + duration) {
+      const from = STORY_BOUNDS[chapter];
+      const to = STORY_BOUNDS[chapter + 1];
+      return from + (to - from) * ((elapsed - start) / duration);
+    }
+    start += duration;
+  }
+  return 1;
+}
+
+/** The moment in a turn that shows a chapter, `amount` of the way through. */
+export function chapterTime(chapter: StoryChapter, amount = 0): number {
+  let start = 0;
+  for (let i = 0; i < chapter; i++) start += CHAPTER_MS[i];
+  return start + CHAPTER_MS[chapter] * clamp01(amount);
 }
 
 export function chapterAt(progress: number): StoryChapter {
@@ -43,17 +70,4 @@ export function fieldFill(chapterAmount: number, index: number): number {
 export function easeInOutCubic(t: number): number {
   const x = clamp01(t);
   return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-}
-
-/** The scroll position that shows a chapter well under way, for the rail buttons. */
-export function chapterScrollTarget(
-  sectionTopOnPage: number,
-  sectionHeight: number,
-  viewportHeight: number,
-  chapter: StoryStep,
-): number {
-  const scrollable = Math.max(0, sectionHeight - viewportHeight);
-  const start = STORY_BOUNDS[chapter];
-  const end = STORY_BOUNDS[chapter + 1];
-  return Math.round(sectionTopOnPage + scrollable * (start + (end - start) * 0.55));
 }

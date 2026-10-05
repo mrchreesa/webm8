@@ -1,14 +1,19 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
+  CHAPTER_MS,
+  STORY_HOLD_MS,
+  STORY_PLAY_MS,
+  STORY_TURN_MS,
   chapterAt,
   chapterProgress,
-  chapterScrollTarget,
+  chapterTime,
   clamp01,
   easeInOutCubic,
   fieldFill,
-  storyProgress,
+  playProgress,
   typedText,
+  type StoryStep,
 } from "./storyProgress.ts";
 
 const close = (a: number, b: number) => assert.ok(Math.abs(a - b) < 1e-9, `${a} ≈ ${b}`);
@@ -21,19 +26,35 @@ test("clamp01 keeps values in range and treats NaN as zero", () => {
   assert.equal(clamp01(Number.POSITIVE_INFINITY), 0);
 });
 
-test("progress follows the section through the viewport", () => {
-  assert.equal(storyProgress(0, 4800, 1000), 0);
-  assert.equal(storyProgress(-1900, 4800, 1000), 0.5);
-  assert.equal(storyProgress(-3800, 4800, 1000), 1);
-  assert.equal(storyProgress(-99999, 4800, 1000), 1);
-  assert.equal(storyProgress(500, 4800, 1000), 0);
+test("a turn is the story plus the hold", () => {
+  assert.equal(STORY_PLAY_MS, CHAPTER_MS.reduce((total, ms) => total + ms, 0));
+  assert.equal(STORY_TURN_MS, STORY_PLAY_MS + STORY_HOLD_MS);
 });
 
-test("a section no taller than the viewport never divides by zero", () => {
-  assert.equal(storyProgress(100, 900, 900), 0);
-  assert.equal(storyProgress(0, 900, 900), 0);
-  assert.equal(storyProgress(-10, 800, 900), 1);
-  assert.ok(Number.isFinite(storyProgress(-10, 0, 0)));
+test("progress runs through each chapter in that chapter's own time", () => {
+  assert.equal(playProgress(0), 0);
+  close(playProgress(CHAPTER_MS[0]), 0.1);
+  close(playProgress(CHAPTER_MS[0] + CHAPTER_MS[1] / 2), 0.21);
+  close(playProgress(STORY_PLAY_MS - CHAPTER_MS[4] / 2), 0.88);
+  assert.equal(playProgress(STORY_PLAY_MS), 1);
+  assert.equal(playProgress(STORY_TURN_MS), 1);
+});
+
+test("progress treats bad times as the start", () => {
+  assert.equal(playProgress(-500), 0);
+  assert.equal(playProgress(Number.NaN), 0);
+  assert.equal(playProgress(Number.POSITIVE_INFINITY), 0);
+});
+
+test("a chapter's time lands back in that chapter", () => {
+  assert.equal(chapterTime(0), 0);
+  assert.equal(chapterTime(1), CHAPTER_MS[0]);
+  assert.equal(chapterTime(2, 0.5), CHAPTER_MS[0] + CHAPTER_MS[1] + CHAPTER_MS[2] / 2);
+  for (const step of [1, 2, 3, 4] as StoryStep[]) {
+    const p = playProgress(chapterTime(step, 0.72));
+    assert.equal(chapterAt(p), step);
+    close(chapterProgress(p, step), 0.72);
+  }
 });
 
 test("chapters change at the agreed bounds", () => {
@@ -70,9 +91,4 @@ test("easing starts at 0, ends at 1 and is symmetric", () => {
   assert.equal(easeInOutCubic(0.5), 0.5);
   assert.equal(easeInOutCubic(-3), 0);
   assert.equal(easeInOutCubic(3), 1);
-});
-
-test("rail buttons scroll to a point well into their chapter", () => {
-  assert.equal(chapterScrollTarget(800, 4800, 1000, 1), 1640);
-  assert.equal(chapterScrollTarget(800, 900, 1000, 3), 800);
 });
