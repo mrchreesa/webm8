@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebM8 homepage drops</title>
+<link rel="icon" href="assets/mascot.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,600..900&family=Funnel+Display:wght@600..800&family=Geist:wght@400..700&display=swap" rel="stylesheet">
+<style>
+:root { --paper: #f8f5f0; --paper-2: #efeae1; --ink: #0e2f56; --deep: #071a33; --muted: #5b6b7e; --line: #ddd6ca; --brand: #c8500f; --neon: #d4ff35; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 16px/1.6 "Geist", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 56px 20px 80px; }
+@media (min-width: 768px) { .wrap { padding: 72px 32px 96px; } }
+header { display: flex; align-items: center; gap: 14px; }
+header img { width: 52px; height: 52px; }
+h1 { font: 800 clamp(2rem, 4vw, 3rem)/1 "Archivo", sans-serif; font-variation-settings: "wdth" 112; letter-spacing: -0.02em; margin: 0; }
+.intro { color: var(--muted); max-width: 44rem; margin: 18px 0 44px; font-size: 1.08rem; }
+.drops { display: grid; gap: 28px; }
+@media (min-width: 960px) { .drops { grid-template-columns: 1fr 1fr; } }
+.drop { display: flex; flex-direction: column; background: #fff; border-radius: 24px; overflow: hidden; box-shadow: 0 0 0 1px var(--line), 0 30px 60px -40px rgb(7 26 51 / .45); text-decoration: none; color: inherit; transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s; }
+.drop:hover { transform: translateY(-4px); box-shadow: 0 0 0 1px var(--line), 0 40px 70px -36px rgb(7 26 51 / .5); }
+.drop img { width: 100%; height: auto; aspect-ratio: 1440 / 900; object-fit: cover; display: block; border-bottom: 1px solid var(--line); }
+.body { padding: 26px 28px 30px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+.name { display: flex; align-items: baseline; gap: 12px; }
+.name b { font-size: .86rem; color: var(--muted); font-weight: 500; }
+.a .name h2 { font: 800 1.9rem/1 "Archivo", sans-serif; font-variation-settings: "wdth" 116; letter-spacing: -0.02em; margin: 0; }
+.b .name h2 { font: 700 2rem/1 "Funnel Display", sans-serif; letter-spacing: -0.035em; margin: 0; }
+.body p { margin: 0; color: var(--muted); }
+dl { margin: 6px 0 0; display: grid; grid-template-columns: 7.5rem 1fr; gap: 8px 14px; font-size: .94rem; }
+dt { color: var(--muted); }
+dd { margin: 0; }
+.sw { display: inline-flex; gap: 5px; vertical-align: middle; }
+.sw i { width: 18px; height: 18px; border-radius: 5px; box-shadow: inset 0 0 0 1px rgb(0 0 0 / .1); display: inline-block; }
+.open { margin-top: auto; padding-top: 10px; font-weight: 600; color: var(--brand); }
+.b .open { color: var(--ink); }
+.b .open span { background: var(--neon); padding: 2px 8px; border-radius: 6px; }
+.shared { margin-top: 48px; padding: 28px; border-radius: 20px; background: var(--paper-2); }
+.shared h3 { margin: 0 0 10px; font-size: 1.05rem; }
+.shared ul { margin: 0; padding-left: 20px; color: var(--muted); display: grid; gap: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><img src="assets/mascot.png" alt="" width="52" height="52"><h1>Homepage drops</h1></header>
+  <p class="intro">Two directions for the WebM8 homepage, built as working prototypes with the real copy, plans and portfolio. Open each one on a computer and on your phone. Type, drag, click and scroll: the interactions are the point.</p>
+
+  <div class="drops">
+    <a class="drop a" href="drop-a-main-street.html">
+      <img src="assets/preview-a.jpg" alt="Drop A hero: 'Look the business. Get the call.' with a live website preview" width="1440" height="900">
+      <div class="body">
+        <div class="name"><h2>Main Street</h2><b>Drop A</b></div>
+        <p>Warm, personal, close to today's brand. The visitor types their business name and watches a website get built for them, live.</p>
+        <dl>
+          <dt>Moment</dt><dd>Pick a trade and the preview breaks back to a wireframe, then rebuilds in that trade's colors with the visitor's name in the logo and web address.</dd>
+          <dt>Also</dt><dd>Clickable anatomy of a real client site, a drag-to-compare before and after, a review report that ticks itself off, and an octopus that watches your cursor.</dd>
+          <dt>Palette</dt><dd><span class="sw"><i style="background:#f8f5f0"></i><i style="background:#0e2f56"></i><i style="background:#c8500f"></i><i style="background:#ffb92e"></i></span> Paper, navy, orange for actions</dd>
+          <dt>Type</dt><dd>Archivo Expanded for headlines, Geist for text</dd>
+        </dl>
+        <span class="open">Open Drop A</span>
+      </div>
+    </a>
+    <a class="drop b" href="drop-b-after-hours.html">
+      <img src="assets/preview-b.jpg" alt="Drop B hero: a phone lock screen showing a new quote request" width="1440" height="900">
+      <div class="body">
+        <div class="name"><h2>After Hours</h2><b>Drop B, chosen</b></div>
+        <p>Dark, cinematic, more premium. The visitor picks their trade and can add their business name. Scrolling then plays one of their customers' journeys, from a local search to the owner's phone lighting up.</p>
+        <dl>
+          <dt>Moment</dt><dd>The phone types their trade's search, opens a site with their name on it and fills in the booking or quote form, then spins around in 3D to show the owner's lock screen and the new request. 15 trades, plus "something else". Ads can pre-select one with <code>?trade=hvac</code>.</dd>
+          <dt>Also</dt><dd>A 3D fan of the five live sites, "Eight arms. One team." with the mascot linked to everything included, and a timeline that lights up as you read.</dd>
+          <dt>Palette</dt><dd><span class="sw"><i style="background:#061429"></i><i style="background:#2b6cfc"></i><i style="background:#d4ff35"></i><i style="background:#f8f5f0"></i></span> Night navy, mascot blue, neon for actions</dd>
+          <dt>Type</dt><dd>Funnel Display for headlines, Geist for text</dd>
+        </dl>
+        <span class="open"><span>Open Drop B</span></span>
+      </div>
+    </a>
+  </div>
+
+  <div class="shared">
+    <h3>The same in both</h3>
+    <ul>
+      <li>Drop B's main action is now the Free Personalised Website Demo.</li>
+      <li>The two plans, the four steps and the five live portfolio sites, unchanged.</li>
+      <li>No new libraries. Every animation is plain CSS and a few lines of script, and each one stops when the visitor has reduced motion turned on.</li>
+      <li>The trades, names, phone numbers and notifications inside the demos are examples, and they're labelled as examples.</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

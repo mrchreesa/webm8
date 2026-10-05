@@ -13,7 +13,15 @@ const EYES = [
 const EYE_Y = 506;
 
 /** The mascot, with eyes that follow the pointer and blink. Decorative. */
-export function MascotEyes({ className, sizes = "200px" }: { className?: string; sizes?: string }) {
+export function MascotEyes({
+  className,
+  sizes = "200px",
+  priority = false,
+}: {
+  className?: string;
+  sizes?: string;
+  priority?: boolean;
+}) {
   const rootRef = useRef<HTMLDivElement>(null);
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
 
@@ -63,7 +71,7 @@ export function MascotEyes({ className, sizes = "200px" }: { className?: string;
 
   return (
     <div ref={rootRef} className={cn("relative", className)} aria-hidden="true">
-      <Image src="/mascot.png" alt="" width={VIEW} height={VIEW} sizes={sizes} className="h-auto w-full" />
+      <Image src="/mascot.png" alt="" width={VIEW} height={VIEW} sizes={sizes} priority={priority} className="h-auto w-full" />
       <svg viewBox={`0 0 ${VIEW} ${VIEW}`} className="absolute inset-0 h-full w-full">
         <defs>
           <radialGradient id={`${uid}-white`} cx="50%" cy="62%" r="62%">

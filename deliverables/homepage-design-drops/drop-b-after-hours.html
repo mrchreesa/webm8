@@ -1,0 +1,1030 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebM8 · Drop B · After Hours</title>
+<link rel="icon" href="assets/mascot.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400..800&family=Geist:wght@400..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --night: #061429;
+  --deep: #071a33;
+  --ink: #0e2f56;
+  --raised: #16406f;
+  --line: #1d4677;
+  --electric: #2b6cfc;
+  --electric-soft: #6f9bff;
+  --neon: #d4ff35;
+  --neon-soft: #e2ff75;
+  --text: #eef3fa;
+  --muted: #9db4cd;
+  --paper: #f8f5f0;
+  --paper-line: #ddd6ca;
+  --paper-muted: #5b6b7e;
+  --display: "Funnel Display", ui-sans-serif, system-ui, sans-serif;
+  --sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, monospace;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --wrap: 1240px;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--night); color: var(--text); font: 400 17px/1.6 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--neon); outline-offset: 3px; border-radius: 6px; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 20px; }
+@media (min-width: 768px) { .wrap { padding: 0 32px; } }
+
+.display { font-family: var(--display); font-weight: 700; letter-spacing: -0.035em; line-height: .96; margin: 0; text-wrap: balance; }
+h2.display { font-size: clamp(2.3rem, 5vw, 4.4rem); }
+.lede { color: var(--muted); font-size: clamp(1.05rem, 1.35vw, 1.18rem); max-width: 34rem; margin: 18px 0 0; text-wrap: pretty; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 26px; border-radius: 999px; border: 0; font-weight: 600; font-size: 1rem; letter-spacing: -0.01em; text-decoration: none; cursor: pointer; transition: background-color .2s, transform .25s var(--ease), box-shadow .25s; }
+.btn-neon { background: var(--neon); color: var(--deep); box-shadow: 0 0 0 0 rgb(212 255 53 / 0); }
+.btn-neon:hover { background: var(--neon-soft); transform: translateY(-2px); box-shadow: 0 14px 40px -12px rgb(212 255 53 / .55); }
+.btn-ghost { background: rgb(255 255 255 / .06); color: var(--text); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .16); }
+.btn-ghost:hover { background: rgb(255 255 255 / .1); }
+
+/* ---------- Header ---------- */
+.site-header { position: fixed; inset: 0 0 auto; z-index: 50; transition: background-color .3s, box-shadow .3s; }
+.site-header.is-scrolled { background: rgb(6 20 41 / .72); backdrop-filter: blur(16px); box-shadow: 0 1px 0 rgb(255 255 255 / .06); }
+.site-header .wrap { display: flex; align-items: center; justify-content: space-between; height: 76px; gap: 20px; }
+.logo { display: inline-flex; align-items: center; gap: 4px; text-decoration: none; }
+.logo img { width: 46px; height: 46px; }
+.wordmark { font-weight: 900; font-size: 1.42rem; letter-spacing: -0.065em; display: inline-flex; align-items: center; }
+.wordmark .m8 { margin-left: 4px; background: var(--neon); color: var(--deep); font-size: .72em; letter-spacing: -0.04em; padding: 3px 6px; border-radius: 7px; box-shadow: 0 4px 16px -5px rgb(212 255 53 / .7); }
+.nav { display: none; gap: 4px; }
+.nav a { text-decoration: none; font-size: .94rem; font-weight: 500; color: var(--muted); padding: 8px 14px; border-radius: 999px; transition: color .2s, background-color .2s; }
+.nav a:hover { color: var(--text); background: rgb(255 255 255 / .06); }
+.site-header .btn { min-height: 44px; padding: 0 20px; font-size: .92rem; }
+@media (min-width: 900px) { .nav { display: flex; } }
+
+/* ---------- Story (pinned scroll) ---------- */
+.story { position: relative; height: 480vh; }
+.pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.pin-bg { position: absolute; inset: 0; pointer-events: none; }
+.pin-bg .glow { position: absolute; width: 900px; height: 900px; right: -8%; top: 50%; transform: translateY(-50%); border-radius: 50%; background: radial-gradient(circle, rgb(43 108 252 / .42), rgb(43 108 252 / .1) 40%, transparent 66%); transition: background .8s; }
+.story[data-ch="4"] .pin-bg .glow { background: radial-gradient(circle, rgb(212 255 53 / .22), rgb(43 108 252 / .14) 42%, transparent 66%); }
+.pin-bg svg.city { position: absolute; inset: -10% -5%; width: 110%; height: 120%; opacity: .55; transform: translateY(calc(var(--p, 0) * -6%)); }
+.city path { stroke: #13355f; }
+.city .crowd circle { fill: var(--electric-soft); opacity: 0; transition: opacity .5s; }
+.city .crowd circle:nth-child(odd) { transition-delay: .15s; }
+.story[data-ch="1"] .city .crowd circle, .story[data-ch="2"] .city .crowd circle { opacity: .85; animation: crowd 2.4s ease-in-out infinite; }
+.city .crowd circle:nth-child(3n) { animation-delay: .8s !important; }
+.city .crowd circle:nth-child(3n+1) { animation-delay: 1.6s !important; }
+@keyframes crowd { 50% { opacity: .2; } }
+
+.pin-grid { position: relative; height: 100%; display: grid; grid-template-rows: auto 1fr; gap: 12px; padding-top: 92px; padding-bottom: 20px; }
+@media (min-width: 960px) { .pin-grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); grid-template-rows: 1fr; align-items: center; padding-top: 76px; padding-bottom: 0; gap: 40px; } }
+
+.chapters { display: grid; position: relative; }
+.chapter { grid-area: 1 / 1; align-self: start; opacity: 0; transform: translateY(26px); transition: opacity .55s var(--ease), transform .7s var(--ease); pointer-events: none; }
+.chapter.on { opacity: 1; transform: none; pointer-events: auto; }
+.chapter.past { transform: translateY(-26px); }
+.chapter h1 { font-size: clamp(2.6rem, 6vw, 5.1rem); }
+.chapter h1 + .lede { margin-top: 26px; }
+.chapter .ch-title { font-family: var(--display); font-weight: 700; letter-spacing: -0.035em; line-height: .98; font-size: clamp(2.2rem, 5.2vw, 4.6rem); margin: 0; text-wrap: balance; }
+.chapter .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.cue { display: inline-flex; align-items: center; gap: 12px; margin-top: 36px; font-size: .9rem; color: var(--muted); }
+.cue i { width: 22px; height: 34px; border-radius: 12px; box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / .35); position: relative; }
+.cue i::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; margin-left: -1.5px; border-radius: 2px; background: var(--neon); animation: cue 1.8s var(--ease) infinite; }
+@keyframes cue { 0% { transform: translateY(0); opacity: 1; } 80% { transform: translateY(10px); opacity: 0; } 100% { opacity: 0; } }
+@media (max-width: 959px) {
+  .chapter h1 { font-size: clamp(2.3rem, 9.4vw, 3.6rem); }
+  .chapter .ch-title { font-size: clamp(2rem, 8.4vw, 3.2rem); }
+  .chapter .lede { font-size: 1rem; margin-top: 10px; }
+  .chapter .ctas { margin-top: 18px; }
+  .chapter .btn { min-height: 46px; padding: 0 20px; font-size: .94rem; }
+  .cue { display: none; }
+}
+
+.rail { display: flex; gap: 10px; margin-top: 40px; }
+.rail button { flex: 1; max-width: 120px; background: none; border: 0; padding: 0; text-align: left; cursor: pointer; color: var(--muted); font-size: .82rem; font-weight: 500; }
+.rail button span { display: block; height: 3px; border-radius: 3px; background: rgb(255 255 255 / .14); margin-bottom: 9px; overflow: hidden; }
+.rail button span i { display: block; height: 100%; width: calc(var(--f, 0) * 100%); background: var(--neon); border-radius: inherit; }
+.rail button.on { color: var(--text); }
+.rail-wrap { position: absolute; left: 0; right: 0; bottom: 28px; }
+@media (max-width: 959px) { .rail-wrap { bottom: 12px; } .rail { margin: 0; } .rail button { font-size: .72rem; } }
+
+/* Phone */
+.device { display: grid; place-items: center; perspective: 1800px; min-height: 0; }
+.shake { animation: none; }
+.shake.go { animation: buzz .5s linear 2; }
+@keyframes buzz { 0%, 100% { transform: translateX(0) rotate(0); } 20% { transform: translateX(-3px) rotate(-1deg); } 40% { transform: translateX(3px) rotate(1deg); } 60% { transform: translateX(-2px) rotate(-.6deg); } 80% { transform: translateX(2px) rotate(.6deg); } }
+.enter { animation: phoneIn 1.2s .15s var(--ease) both; }
+.phone3d { position: relative; width: clamp(200px, 21vw, 300px); aspect-ratio: 9 / 19.4; transform-style: preserve-3d; transform: perspective(1600px) rotateY(var(--flip, 0deg)) rotateX(var(--tiltX, 4deg)) rotateZ(var(--tiltZ, -2deg)); transition: transform .25s linear; }
+@keyframes phoneIn { from { opacity: 0; transform: translateY(70px); } }
+.face { position: absolute; inset: 0; border-radius: 15% / 7%; padding: 3.4%; background: linear-gradient(145deg, #23324a, #0b1220 40%, #131d30); backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / .14), 0 80px 120px -50px rgb(0 0 0 / .9), 0 0 0 1px #02060d; }
+.face.back { transform: rotateY(180deg); }
+.screen { position: relative; height: 100%; border-radius: 12.4% / 5.8%; overflow: hidden; background: #fff; container-type: inline-size; color: #1d2330; }
+.island { position: absolute; top: 2.2%; left: 50%; width: 31%; height: 3.5%; transform: translateX(-50%); background: #000; border-radius: 99px; z-index: 20; }
+.scr { position: absolute; inset: 0; opacity: 0; transition: opacity .4s var(--ease); }
+.scr.on { opacity: 1; }
+.status { display: flex; justify-content: space-between; align-items: center; padding: 5.2cqi 8cqi 0; font: 600 4.2cqi var(--sans); height: 12cqi; }
+.status svg { height: 3.6cqi; width: auto; }
+
+/* search screen */
+.s-bar { margin: 3cqi 5cqi 0; height: 13cqi; border-radius: 99px; background: #f1f3f6; display: flex; align-items: center; gap: 3cqi; padding: 0 4.6cqi; font-size: 4.5cqi; }
+.s-bar svg { width: 4.6cqi; flex: none; color: #5f6673; }
+.s-q { white-space: nowrap; overflow: hidden; }
+.s-q:empty::before { content: "Search"; color: #8a919c; }
+.caret { width: .55cqi; height: 5.4cqi; background: var(--electric); margin-left: -2cqi; animation: caretBlink 1s steps(1) infinite; }
+@keyframes caretBlink { 50% { opacity: 0; } }
+.s-tabs { display: flex; gap: 5cqi; padding: 3.6cqi 7cqi 0; font-size: 3.5cqi; color: #6b7280; border-bottom: 1px solid #eceef2; }
+.s-tabs span { padding-bottom: 2.4cqi; }
+.s-tabs span:first-child { color: var(--electric); box-shadow: inset 0 -.6cqi 0 var(--electric); }
+.s-map { position: relative; margin: 3.6cqi 5cqi 0; height: 40cqi; border-radius: 5cqi; overflow: hidden; background: #eef1ec; opacity: 0; transform: translateY(3cqi); transition: opacity .4s, transform .5s var(--ease); }
+.s-res { opacity: 0; transform: translateY(3cqi); transition: opacity .4s, transform .5s var(--ease), background-color .4s, box-shadow .4s; }
+.results-in .s-map, .results-in .s-res { opacity: 1; transform: none; }
+.results-in .s-res:nth-of-type(2) { transition-delay: .08s; }
+.results-in .s-res:nth-of-type(3) { transition-delay: .16s; }
+.s-map svg { width: 100%; height: 100%; display: block; }
+.s-pin { position: absolute; width: 7cqi; height: 7cqi; margin: -7cqi 0 0 -3.5cqi; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #ea4335; box-shadow: 0 1cqi 2cqi rgb(0 0 0 / .25); display: grid; place-items: center; }
+.s-pin b { transform: rotate(45deg); color: #fff; font: 700 3.2cqi var(--sans); }
+.s-pin.top { background: var(--electric); }
+.s-list { padding: 1cqi 0 0; }
+.s-suggest { position: absolute; left: 0; right: 0; top: 40cqi; padding: 2cqi 6cqi; transition: opacity .35s; }
+.s-suggest p { margin: 0 0 2cqi; font-size: 3.3cqi; color: #6b7280; }
+.s-suggest span { display: flex; align-items: center; gap: 3cqi; padding: 2.6cqi 0; font-size: 4.2cqi; border-bottom: 1px solid #f0f1f4; }
+.s-suggest svg { width: 4.4cqi; color: #8a919c; flex: none; }
+.typing .s-suggest { opacity: 0; }
+.s-res { padding: 3.2cqi 6cqi; border-bottom: 1px solid #eef0f3; position: relative; }
+.s-res b { display: block; font-size: 4.4cqi; font-weight: 600; color: #1a3d8f; }
+.s-res .meta { font-size: 3.3cqi; color: #6b7280; }
+.s-res .meta i { color: #f5a524; font-style: normal; letter-spacing: .05em; }
+.s-act { display: flex; gap: 2cqi; margin-top: 2cqi; }
+.s-act span { font-size: 3.2cqi; font-weight: 500; padding: 1.2cqi 3cqi; border-radius: 99px; box-shadow: inset 0 0 0 1px #d9dde3; color: #1a3d8f; position: relative; }
+.s-res.hl { background: #eef4ff; box-shadow: inset .9cqi 0 0 var(--electric); }
+.tap { position: absolute; width: 14cqi; height: 14cqi; margin: -7cqi 0 0 -7cqi; border-radius: 50%; background: rgb(43 108 252 / .35); box-shadow: 0 0 0 .6cqi rgb(255 255 255 / .9); transform: scale(0); opacity: 0; pointer-events: none; z-index: 5; }
+.tap.go { animation: tap .9s var(--ease) forwards; }
+@keyframes tap { 0% { transform: scale(.2); opacity: 0; } 25% { transform: scale(1); opacity: 1; } 55% { transform: scale(.82); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+
+
+/* form screen */
+.f-head { display: flex; align-items: center; gap: 2.4cqi; padding: 3cqi 6cqi 4cqi; border-bottom: 1px solid #eceef2; }
+.f-logo { width: 8cqi; height: 8cqi; border-radius: 2.4cqi; background: var(--t-primary); color: #fff; display: grid; place-items: center; font: 800 4.4cqi var(--sans); }
+.f-head b { font-size: 4.4cqi; }
+.f-body { padding: 6cqi; }
+.f-body h4 { margin: 0 0 1.4cqi; font: 700 7cqi/1.05 var(--sans); letter-spacing: -0.02em; color: #0d1b33; }
+.f-body p.sm { margin: 0 0 5cqi; font-size: 3.6cqi; color: #6b7280; }
+.f-field { margin-bottom: 3.4cqi; }
+.f-field label { display: block; font-size: 3.2cqi; color: #6b7280; margin-bottom: 1.2cqi; }
+.f-field div { height: 11cqi; border-radius: 2.6cqi; box-shadow: inset 0 0 0 1px #d6dbe3; display: flex; align-items: center; padding: 0 3.6cqi; font-size: 4cqi; color: #0d1b33; transition: box-shadow .3s; }
+.f-field.active div { box-shadow: inset 0 0 0 .5cqi var(--t-primary); }
+.f-btn { margin-top: 5cqi; height: 12.5cqi; border-radius: 99px; background: var(--t-primary); color: #fff; display: grid; place-items: center; font: 600 4.3cqi var(--sans); position: relative; transition: transform .2s, background-color .3s; }
+.f-btn.pressed { transform: scale(.96); filter: brightness(.88); }
+.f-done { position: absolute; inset: 0; background: #fff; display: grid; place-content: center; text-align: center; gap: 3cqi; padding: 10cqi; opacity: 0; transform: scale(.96); transition: opacity .4s, transform .5s var(--ease); }
+.f-done.on { opacity: 1; transform: none; }
+.f-done span { width: 20cqi; height: 20cqi; margin: 0 auto; border-radius: 50%; background: #e8f6ee; color: #11823b; display: grid; place-items: center; }
+.f-done span svg { width: 10cqi; }
+.f-done b { font: 700 6.4cqi var(--sans); color: #0d1b33; }
+.f-done p { margin: 0; font-size: 3.8cqi; color: #6b7280; }
+
+/* Trade picker */
+.picker { margin-top: 26px; padding: 18px 20px 16px; border-radius: 20px; background: rgb(255 255 255 / .045); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .1); backdrop-filter: blur(8px); max-width: 33rem; }
+.pk-line { display: block; font-size: 1.15rem; font-weight: 500; line-height: 1.5; }
+.pk-select { position: relative; display: inline-flex; align-items: center; white-space: nowrap; }
+.pk-select select { appearance: none; -webkit-appearance: none; background: transparent; border: 0; border-bottom: 2px solid var(--neon); border-radius: 0; color: var(--neon); font: 600 1.15rem var(--sans); padding: 0 28px 1px 2px; cursor: pointer; max-width: 100%; }
+.pk-select select:focus-visible { outline: 2px solid var(--neon); outline-offset: 4px; }
+.pk-select select option, .pk-select select optgroup { color: #0b1220; background: #fff; }
+.pk-select svg { position: absolute; right: 4px; pointer-events: none; color: var(--neon); }
+.pk-name { margin-top: 14px; display: grid; gap: 6px; }
+.pk-name label { font-size: .86rem; color: var(--muted); }
+.pk-name label span { opacity: .75; }
+.pk-name input { height: 46px; border-radius: 12px; border: 0; background: rgb(255 255 255 / .07); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .14); color: var(--text); font: 500 1rem var(--sans); padding: 0 14px; transition: box-shadow .2s, background-color .2s; }
+.pk-name input::placeholder { color: #6f86a3; }
+.pk-name input:focus { outline: none; background: rgb(255 255 255 / .1); box-shadow: inset 0 0 0 2px var(--neon); }
+.pk-hint { margin: 8px 0 0; font-size: .78rem; color: var(--muted); }
+.chapter .picker + .ctas { margin-top: 22px; }
+.shake.nudge { animation: nudge .6s var(--ease); }
+@keyframes nudge { 35% { transform: translateY(-10px) rotate(-1deg); } }
+.s-suggest span.hl { color: var(--electric); font-weight: 600; }
+.s-suggest span.hl svg { color: var(--electric); }
+
+/* The client site inside the phone, generated for the trade and name */
+.ms { position: absolute; inset: 0; background: #fff; color: var(--t-ink); overflow: hidden; }
+.ms .status { position: relative; z-index: 3; background: #fff; color: var(--t-ink); }
+.ms-scroll { transform: translateY(calc(var(--s2, 0) * -14cqi)); }
+.ms-nav { display: flex; align-items: center; justify-content: space-between; gap: 3cqi; padding: 2cqi 6cqi 3.6cqi; }
+.ms-logo { display: flex; align-items: center; gap: 2.4cqi; min-width: 0; font-size: 4.6cqi; letter-spacing: -0.02em; }
+.ms-logo b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 58cqi; font-weight: 700; }
+.ms-mark { flex: none; width: 8.6cqi; height: 8.6cqi; border-radius: 2.6cqi; background: var(--t-primary); color: #fff; display: grid; place-items: center; font: 800 4.6cqi var(--sans); font-style: normal; }
+.ms-burger { display: grid; gap: 1.3cqi; width: 6.4cqi; }
+.ms-burger i { display: block; height: .8cqi; border-radius: 1cqi; background: currentColor; }
+.ms-hero { position: relative; margin: 0 3.4cqi; border-radius: 6cqi; padding: 7cqi 6cqi; color: #fff; overflow: hidden; background: radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--t-primary) 55%, #fff) 0%, transparent 55%), linear-gradient(165deg, var(--t-primary), var(--t-deep)); }
+.ms-icon { position: absolute; right: -9cqi; top: -7cqi; width: 50cqi; height: 50cqi; opacity: .18; color: #fff; }
+.ms-icon svg { width: 100%; height: 100%; stroke-width: 1.2; }
+.ms-pill { position: relative; display: inline-flex; align-items: center; gap: 1.6cqi; font-size: 3.2cqi; font-weight: 500; padding: 1.4cqi 3cqi; border-radius: 99px; background: rgb(255 255 255 / .16); }
+.ms-pill i { color: #ffd34d; font-style: normal; letter-spacing: .04em; }
+.ms-h { position: relative; font: 800 10.2cqi/1.02 var(--t-font, var(--sans)); letter-spacing: -0.03em; margin: 4cqi 0 3cqi; text-wrap: balance; }
+.ms-sub { position: relative; font-size: 4cqi; line-height: 1.4; opacity: .88; margin: 0; }
+.ms-cta { position: relative; display: flex; align-items: center; justify-content: center; margin-top: 5.5cqi; height: 12.5cqi; border-radius: 99px; background: var(--t-accent); color: var(--t-accent-ink); font-weight: 650; font-size: 4.4cqi; }
+.ms-call2 { position: relative; display: flex; align-items: center; justify-content: center; gap: 1.4cqi; margin-top: 2.4cqi; height: 11cqi; border-radius: 99px; box-shadow: inset 0 0 0 1px rgb(255 255 255 / .45); font-size: 4cqi; font-weight: 500; }
+.ms-svc { padding: 5cqi 6cqi 0; }
+.ms-svc p { margin: 0 0 1.4cqi; font-size: 3.4cqi; font-weight: 500; color: color-mix(in srgb, var(--t-ink) 60%, transparent); }
+.ms-row { display: flex; align-items: center; gap: 3cqi; padding: 2.8cqi 0; border-bottom: 1px solid #eef0f3; font-size: 4.3cqi; font-weight: 600; }
+.ms-row .ic { flex: none; width: 9cqi; height: 9cqi; border-radius: 50%; background: var(--t-soft); color: var(--t-primary); display: grid; place-items: center; }
+.ms-row .ic svg { width: 5cqi; height: 5cqi; stroke-width: 2; }
+.ms-row .chev { margin-left: auto; width: 4cqi; color: #9aa1ac; }
+.ms-bar { position: absolute; left: 4cqi; right: 4cqi; bottom: 4cqi; height: 13.5cqi; border-radius: 99px; background: var(--t-ink); color: #fff; display: flex; align-items: center; justify-content: center; gap: 2.4cqi; font-weight: 600; font-size: 4.4cqi; box-shadow: 0 4cqi 8cqi -4cqi rgb(0 0 0 / .45); }
+.ms-bar svg { width: 5cqi; }
+
+/* Phones: copy on top, phone below it, and the phone rises into view after the first chapter */
+@media (max-width: 959px) {
+  .pin-grid { display: block; }
+  .chapters { position: absolute; left: 20px; right: 20px; top: 84px; }
+  .device { position: absolute; left: 0; right: 0; bottom: 46px; height: min(58svh, 520px); display: grid; place-items: end center; transform: translateY(var(--push, 0px)); transition: transform .7s var(--ease); }
+  .device .enter, .device .shake { height: 100%; }
+  .phone3d { height: 100%; width: auto; }
+  .picker { margin-top: 16px; padding: 14px 16px 12px; }
+  .pk-line, .pk-select select { font-size: 1.02rem; }
+  .pk-name { margin-top: 10px; }
+  .pk-name input { height: 44px; }
+}
+
+/* Closing: what the free demo involves */
+.demo-steps { list-style: none; margin: 34px auto 0; padding: 0; max-width: 900px; display: grid; gap: 14px; text-align: left; counter-reset: s; }
+@media (min-width: 800px) { .demo-steps { grid-template-columns: repeat(3, 1fr); gap: 18px; } }
+.demo-steps li { counter-increment: s; padding: 20px 20px 22px; border-radius: 18px; background: rgb(255 255 255 / .04); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .09); }
+.demo-steps li::before { content: counter(s); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--neon); color: var(--deep); font: 600 .82rem var(--mono); margin-bottom: 14px; }
+.demo-steps b { display: block; font-size: 1.04rem; }
+.demo-steps span { display: block; margin-top: 4px; font-size: .92rem; color: var(--muted); line-height: 1.5; }
+
+/* owner lock screen */
+.lock { position: absolute; inset: 0; background: radial-gradient(120% 70% at 20% 10%, #2b6cfc 0%, transparent 55%), radial-gradient(90% 60% at 90% 90%, #0e2f56, transparent 70%), linear-gradient(#0a1f45, #050c1c); color: #fff; }
+.lock .status { color: #fff; }
+.lock-time { text-align: center; margin-top: 8cqi; }
+.lock-time small { display: block; font-size: 4.2cqi; opacity: .85; }
+.lock-time b { display: block; font: 600 22cqi/1 var(--display); letter-spacing: -0.02em; }
+.notes { position: absolute; left: 4cqi; right: 4cqi; top: 52%; display: grid; gap: 2.4cqi; }
+.note { border-radius: 5.4cqi; padding: 3.6cqi 4cqi; background: rgb(255 255 255 / .16); backdrop-filter: blur(14px); display: grid; grid-template-columns: 9cqi 1fr; gap: 3cqi; align-items: start; opacity: 0; transform: translateY(-8cqi) scale(.94); transition: opacity .45s var(--ease), transform .6s var(--ease), box-shadow .6s; }
+.note.on { opacity: 1; transform: none; }
+.note.neon.on { box-shadow: 0 0 0 .5cqi var(--neon), 0 0 12cqi -2cqi rgb(212 255 53 / .7); }
+.note .ic { width: 9cqi; height: 9cqi; border-radius: 2.4cqi; background: var(--neon); color: var(--deep); display: grid; place-items: center; }
+.note .ic svg { width: 5.4cqi; }
+.note .ic.blue { background: #1a7fe6; color: #fff; }
+.note .t { display: flex; justify-content: space-between; font-size: 3.2cqi; opacity: .8; }
+.note b { display: block; font-size: 4.1cqi; margin-top: .6cqi; }
+.note p { margin: .6cqi 0 0; font-size: 3.6cqi; line-height: 1.3; opacity: .92; }
+
+/* ---------- Sections ---------- */
+section { position: relative; }
+.sec { padding: 110px 0; }
+@media (min-width: 900px) { .sec { padding: 150px 0; } }
+.sec-head { max-width: 46rem; margin-bottom: 56px; }
+.center { text-align: center; margin-left: auto; margin-right: auto; }
+.center .lede { margin-left: auto; margin-right: auto; }
+
+/* Deck */
+.deck-sec { background: linear-gradient(var(--night), var(--deep)); overflow: hidden; }
+.deck { position: relative; height: clamp(260px, 44vw, 520px); perspective: 2000px; margin-top: 10px; touch-action: pan-y; }
+.d-card { position: absolute; left: 50%; top: 0; width: min(76vw, 760px); margin-left: calc(min(76vw, 760px) / -2); transform-style: preserve-3d; transition: transform .8s var(--ease), opacity .6s, filter .6s; cursor: pointer; border: 0; padding: 0; background: none; text-align: left; }
+.d-card .browser { border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 0 0 1px rgb(255 255 255 / .1), 0 60px 100px -40px rgb(0 0 0 / .9); }
+.d-card .chrome { display: flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; background: #e9edf3; }
+.d-card .chrome i { width: 9px; height: 9px; border-radius: 50%; background: #c3cad5; }
+.d-card .chrome span { flex: 1; max-width: 280px; margin: 0 auto; height: 20px; border-radius: 6px; background: #fff; font: 400 10.5px/20px var(--mono); color: #6b7280; text-align: center; overflow: hidden; }
+.d-card .shot { aspect-ratio: 16 / 9.2; overflow: hidden; }
+.d-card .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.d-card .ph { position: absolute; right: -3%; bottom: -8%; width: 19%; aspect-ratio: 9 / 19; border-radius: 16px; padding: 4px; background: #0b1220; box-shadow: 0 30px 50px -20px rgb(0 0 0 / .9), inset 0 0 0 1px rgb(255 255 255 / .12); transform: translateZ(60px); }
+.d-card .ph img { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 12px; }
+.deck-info { display: grid; gap: 24px; margin-top: 72px; align-items: end; }
+@media (min-width: 900px) { .deck-info { grid-template-columns: 1fr auto; } }
+.deck-info h3 { font: 700 clamp(1.8rem, 3vw, 2.6rem)/1 var(--display); letter-spacing: -0.03em; margin: 0; }
+.deck-info p { margin: 10px 0 0; color: var(--muted); max-width: 34rem; }
+.deck-info a { display: inline-flex; gap: 8px; align-items: center; margin-top: 16px; color: var(--neon); font-weight: 600; text-decoration: none; }
+.deck-info a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.deck-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.deck-tabs button { border: 0; cursor: pointer; padding: 9px 16px; border-radius: 99px; background: rgb(255 255 255 / .06); color: var(--muted); font-size: .9rem; font-weight: 500; transition: background-color .25s, color .25s; }
+.deck-tabs button:hover { color: var(--text); }
+.deck-tabs button[aria-pressed="true"] { background: var(--text); color: var(--deep); }
+
+/* Arms */
+.arms { background: var(--deep); }
+.arms-stage { position: relative; display: grid; gap: 28px; }
+@media (min-width: 1000px) { .arms-stage { grid-template-columns: 1fr 340px 1fr; gap: 40px; align-items: center; } }
+.arms-col { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; position: relative; z-index: 2; }
+@media (min-width: 1000px) { .arms-col { gap: 34px; } .arms-col.l { text-align: right; } }
+.arm { position: relative; padding: 16px 18px; border-radius: 16px; background: rgb(255 255 255 / .03); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .06); transition: background-color .3s, box-shadow .3s; cursor: default; }
+.arm:hover, .arm:focus-within, .arm.lit { background: rgb(212 255 53 / .06); box-shadow: inset 0 0 0 1px rgb(212 255 53 / .4); }
+.arm b { display: block; font-size: 1.06rem; font-weight: 600; }
+.arm p { margin: 4px 0 0; font-size: .92rem; color: var(--muted); line-height: 1.5; }
+.arms-mascot { position: relative; width: min(300px, 70vw); margin: 0 auto; z-index: 2; }
+.arms-mascot img { width: 100%; height: auto; filter: drop-shadow(0 30px 60px rgb(43 108 252 / .45)); animation: float 7s ease-in-out infinite; }
+@keyframes float { 50% { transform: translateY(-12px) rotate(1.5deg); } }
+@media (max-width: 999px) { .arms-mascot { order: -1; width: 180px; } }
+svg.tentacles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible; display: none; }
+@media (min-width: 1000px) { svg.tentacles { display: block; } }
+.tentacles path { fill: none; stroke: rgb(111 155 255 / .42); stroke-width: 2; stroke-linecap: round; stroke-dasharray: var(--len); stroke-dashoffset: var(--len); transition: stroke .3s, stroke-width .3s; }
+.arms.in .tentacles path { animation: draw 1.4s var(--ease) forwards; animation-delay: calc(var(--i) * 90ms); }
+.tentacles path.lit { stroke: var(--neon); stroke-width: 2.5; filter: drop-shadow(0 0 6px rgb(212 255 53 / .7)); }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* Process */
+.how { background: var(--night); }
+.how-grid { display: grid; gap: 48px; }
+@media (min-width: 1000px) { .how-grid { grid-template-columns: .9fr 1.1fr; gap: 80px; } .how-head { position: sticky; top: 140px; align-self: start; } }
+.steps { list-style: none; margin: 0; padding: 0 0 0 44px; position: relative; display: grid; gap: 64px; }
+.steps::before { content: ""; position: absolute; left: 14px; top: 8px; bottom: 8px; width: 2px; background: rgb(255 255 255 / .1); }
+.steps .fill { position: absolute; left: 14px; top: 8px; width: 2px; height: calc((100% - 16px) * var(--fill, 0)); background: var(--neon); box-shadow: 0 0 12px rgb(212 255 53 / .6); }
+.step { position: relative; }
+.step::before { content: attr(data-n); position: absolute; left: -44px; top: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--night); box-shadow: inset 0 0 0 2px rgb(255 255 255 / .2); display: grid; place-items: center; font: 600 .8rem var(--mono); color: var(--muted); transition: background-color .3s, color .3s, box-shadow .3s; }
+.step.on::before { background: var(--neon); color: var(--deep); box-shadow: 0 0 0 6px rgb(212 255 53 / .15); }
+.step h3 { font: 700 clamp(1.5rem, 2.4vw, 2rem)/1.05 var(--display); letter-spacing: -0.025em; margin: 0; transition: color .3s; color: var(--muted); }
+.step.on h3 { color: var(--text); }
+.step p { margin: 10px 0 0; color: var(--muted); max-width: 30rem; }
+.step .need { display: inline-block; margin-top: 14px; font-size: .86rem; color: var(--text); padding: 6px 12px; border-radius: 10px; background: rgb(255 255 255 / .05); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .08); }
+
+/* Plans (light) */
+.plans-sec { background: var(--paper); color: var(--deep); }
+.plans-sec .lede { color: var(--paper-muted); }
+.plans { display: grid; gap: 24px; }
+@media (min-width: 900px) { .plans { grid-template-columns: 1fr 1fr; gap: 28px; } }
+.plan { border-radius: 28px; padding: 36px; background: #fff; box-shadow: inset 0 0 0 1px var(--paper-line); display: flex; flex-direction: column; }
+.plan.featured { background: var(--deep); color: var(--text); box-shadow: 0 40px 80px -40px rgb(7 26 51 / .6); position: relative; overflow: hidden; }
+.plan.featured::after { content: ""; position: absolute; right: -120px; top: -120px; width: 360px; height: 360px; border-radius: 50%; background: radial-gradient(circle, rgb(43 108 252 / .5), transparent 65%); pointer-events: none; }
+.plan h3 { font: 700 2.4rem/1 var(--display); letter-spacing: -0.035em; margin: 0; }
+.plan-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.badge { font-size: .78rem; font-weight: 600; padding: 5px 11px; border-radius: 99px; background: var(--neon); color: var(--deep); position: relative; z-index: 1; }
+.plan .sum { margin: 14px 0 24px; color: var(--paper-muted); }
+.plan.featured .sum { color: var(--muted); }
+.plan ul { list-style: none; margin: 0 0 30px; padding: 0; display: grid; gap: 11px; }
+.plan li { display: flex; gap: 10px; font-size: .96rem; }
+.plan li svg { flex: none; margin-top: 4px; color: #11823b; }
+.plan.featured li svg { color: var(--neon); }
+.plan .btn { margin-top: auto; width: 100%; position: relative; z-index: 1; }
+.btn-line { background: transparent; color: var(--deep); box-shadow: inset 0 0 0 1.5px var(--paper-line); }
+.btn-line:hover { box-shadow: inset 0 0 0 1.5px var(--deep); }
+.plans-note { text-align: center; color: var(--paper-muted); font-size: .92rem; margin-top: 26px; }
+
+/* Voices */
+.voices { background: var(--deep); }
+.quote { font: 600 clamp(1.6rem, 3.2vw, 2.7rem)/1.18 var(--display); letter-spacing: -0.025em; margin: 0; max-width: 54rem; min-height: 4.8em; transition: opacity .35s; text-wrap: balance; }
+.quote.fade { opacity: 0; }
+.who { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 36px; }
+.who button { display: flex; align-items: center; gap: 12px; border: 0; cursor: pointer; text-align: left; padding: 8px 18px 8px 8px; border-radius: 99px; background: rgb(255 255 255 / .05); color: var(--muted); transition: background-color .25s, color .25s; }
+.who button i { width: 38px; height: 38px; border-radius: 50%; background: var(--raised); color: var(--text); display: grid; place-items: center; font: 600 .78rem var(--mono); font-style: normal; }
+.who button span { font-size: .88rem; line-height: 1.3; }
+.who button small { display: block; font-size: .78rem; opacity: .8; }
+.who button[aria-pressed="true"] { background: rgb(255 255 255 / .12); color: var(--text); }
+.who button[aria-pressed="true"] i { background: var(--neon); color: var(--deep); }
+
+/* Closing */
+.closing { background: radial-gradient(80% 60% at 50% 100%, rgb(43 108 252 / .35), transparent 70%), var(--night); overflow: hidden; text-align: center; }
+.closing .mascot { position: relative; width: 200px; margin: 0 auto 28px; animation: float 6s ease-in-out infinite; }
+.closing .mascot img, .closing .mascot svg { width: 100%; height: auto; display: block; }
+.closing .mascot svg { position: absolute; inset: 0; height: 100%; }
+.mascot [data-iris] { transition: transform .18s ease-out; }
+.bubbles { position: absolute; inset: 0; pointer-events: none; }
+.bubbles i { position: absolute; bottom: -20px; width: var(--s); height: var(--s); border-radius: 50%; box-shadow: inset 0 0 0 1.5px rgb(157 180 205 / .35); left: var(--x); animation: bubble var(--d) linear infinite; animation-delay: var(--dl); }
+@keyframes bubble { to { transform: translate(var(--dx), -110vh); opacity: 0; } }
+.closing h2 { font-size: clamp(2.6rem, 6.4vw, 5.4rem); }
+.checks { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 760px; margin: 30px auto 0; padding: 0; list-style: none; }
+.checks li { font-size: .86rem; padding: 7px 13px; border-radius: 99px; background: rgb(255 255 255 / .05); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .1); color: var(--muted); }
+.closing .ctas { margin-top: 36px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.closing .fine { font-size: .88rem; color: var(--muted); margin: 0; }
+
+.foot { border-top: 1px solid rgb(255 255 255 / .07); padding: 40px 0 90px; font-size: .9rem; color: var(--muted); background: var(--night); }
+.foot .wrap { display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: space-between; align-items: center; }
+.foot nav { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.foot a { text-decoration: none; }
+.foot a:hover { color: var(--text); }
+
+.drop-switch { position: fixed; right: 16px; bottom: 16px; z-index: 100; display: flex; gap: 4px; padding: 4px; border-radius: 99px; background: rgb(255 255 255 / .92); backdrop-filter: blur(10px); box-shadow: 0 10px 30px -10px rgb(0 0 0 / .6); font: 500 .8rem var(--sans); }
+.drop-switch a { color: #3a4a60; text-decoration: none; padding: 7px 14px; border-radius: 99px; white-space: nowrap; }
+@media (max-width: 600px) { .drop-switch { right: 8px; bottom: 8px; font-size: .7rem; } .drop-switch a { padding: 6px 10px; } .drop-switch a:first-child { display: none; } }
+.drop-switch a[aria-current] { background: var(--deep); color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+  .bubbles { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header" data-header>
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="WebM8 home"><img src="assets/mascot.png" alt="" width="46" height="46"><span class="wordmark" aria-hidden="true">Web<span class="m8">M8</span></span></a>
+    <nav class="nav" aria-label="Primary"><a href="#work">Work</a><a href="#included">What you get</a><a href="#how">How it works</a><a href="#plans">Plans</a></nav>
+    <a class="btn btn-neon" href="#start">Get my free demo</a>
+  </div>
+</header>
+
+<main id="top">
+  <!-- ================= STORY ================= -->
+  <section class="story" data-story data-ch="0" aria-label="An example of how a website turns a local search into a new customer">
+    <div class="pin">
+      <div class="pin-bg" aria-hidden="true">
+        <div class="glow"></div>
+        <svg class="city" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" fill="none">
+          <g stroke-width="1.2">
+            <path d="M-20 140 C 300 120, 520 210, 780 180 S 1240 120, 1480 170"/><path d="M-20 330 C 260 300, 600 380, 900 340 S 1300 300, 1480 360"/><path d="M-20 560 C 320 520, 640 600, 980 560 S 1320 520, 1480 590"/><path d="M-20 760 C 400 720, 700 800, 1040 760 S 1360 740, 1480 790"/>
+            <path d="M160 -20 C 140 260, 220 520, 180 920"/><path d="M420 -20 C 460 300, 380 600, 440 920"/><path d="M700 -20 C 660 280, 740 560, 690 920"/><path d="M980 -20 C 1020 320, 940 620, 1000 920"/><path d="M1250 -20 C 1220 260, 1290 600, 1240 920"/>
+            <path d="M40 40 L 520 470 M 860 20 L 1420 520 M 300 900 L 820 430" stroke-dasharray="2 8"/>
+          </g>
+          <g class="crowd">
+            <circle cx="182" cy="140" r="4"/><circle cx="430" cy="335" r="4"/><circle cx="702" cy="190" r="4"/><circle cx="980" cy="350" r="4"/><circle cx="1248" cy="150" r="4"/><circle cx="300" cy="560" r="4"/><circle cx="860" cy="572" r="4"/><circle cx="1120" cy="770" r="4"/><circle cx="560" cy="770" r="4"/><circle cx="1360" cy="580" r="4"/><circle cx="90" cy="760" r="4"/><circle cx="640" cy="440" r="4"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="wrap pin-grid" data-pin-grid>
+        <div class="chapters" data-chapters>
+          <div class="chapter on" data-c="0">
+            <h1 class="display">Websites that make your phone ring.</h1>
+            <p class="lede">WebM8 designs, builds and looks after websites for US local businesses. Pick your trade, then scroll to see how one turns a search into a new customer.</p>
+            <div class="picker">
+              <label class="pk-line" for="trade">Show me how it works for my
+                <span class="pk-select"><select id="trade" data-trade></select><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+              </label>
+              <div class="pk-name">
+                <label for="bizname">Your business name <span>(optional)</span></label>
+                <input id="bizname" data-bizname type="text" maxlength="30" autocomplete="organization" placeholder="e.g. Reyes Plumbing" aria-describedby="pk-hint">
+              </div>
+              <p class="pk-hint" id="pk-hint">This stays in your browser until you ask for your demo.</p>
+            </div>
+            <div class="ctas"><a class="btn btn-neon" href="#start">Get my free personalised demo</a><a class="btn btn-ghost" href="#work">See our work</a></div>
+          </div>
+          <div class="chapter" data-c="1" inert>
+            <p class="ch-title" data-bind="need">Someone nearby needs a plumber.</p>
+            <p class="lede">Right now, people in your area are searching for exactly what you do. Most of them are on a phone.</p>
+          </div>
+          <div class="chapter" data-c="2" inert>
+            <p class="ch-title">They find a site that looks the part.</p>
+            <p class="lede">Clear, quick and built for the small screen. Within seconds they know they're in the right place.</p>
+          </div>
+          <div class="chapter" data-c="3" inert>
+            <p class="ch-title">Saying yes takes one tap.</p>
+            <p class="lede">A booking or quote form right where they need it, or a button that calls you. No hunting for a phone number.</p>
+          </div>
+          <div class="chapter" data-c="4" inert>
+            <p class="ch-title">And your phone lights up.</p>
+            <p class="lede">That's the whole job of a website. We build it, host it and keep it working, so you can get on with yours.</p>
+            <div class="ctas"><a class="btn btn-neon" href="#start">Get my free personalised demo</a></div>
+          </div>
+        </div>
+
+        <div class="device" data-device aria-hidden="true">
+          <div class="enter"><div class="shake" data-shake>
+            <div class="phone3d" data-phone>
+              <div class="face front">
+                <div class="screen">
+                  <span class="island"></span>
+                  <!-- 1. search -->
+                  <div class="scr on" data-scr="search">
+                    <div class="status"><span>9:41</span><svg viewBox="0 0 64 14" fill="currentColor"><rect x="0" y="8" width="3" height="6" rx="1"/><rect x="5" y="5" width="3" height="9" rx="1"/><rect x="10" y="2" width="3" height="12" rx="1"/><rect x="15" y="0" width="3" height="14" rx="1" opacity=".35"/><rect x="36" y="1" width="24" height="12" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="38" y="3" width="16" height="8" rx="2"/></svg></div>
+                    <div class="s-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="s-q" data-q></span><i class="caret"></i></div>
+                    <div class="s-tabs"><span>All</span><span>Maps</span><span>Images</span><span>News</span></div>
+                    <div class="s-suggest" data-suggest></div>
+                    <div data-results>
+                      <div class="s-map">
+                        <svg viewBox="0 0 300 140" preserveAspectRatio="xMidYMid slice"><rect width="300" height="140" fill="#e8ede4"/><path d="M0 96 C 80 80, 160 120, 300 86" stroke="#a9cdf0" stroke-width="12" fill="none"/><rect x="190" y="14" width="70" height="40" rx="6" fill="#cfe6c3"/><g stroke="#fff" stroke-width="6" fill="none"><path d="M0 40 H300"/><path d="M60 0 V140"/><path d="M150 0 C 140 60, 170 90, 160 140"/><path d="M0 120 L300 30"/></g></svg>
+                        <span class="s-pin top" style="left:38%;top:52%"><b>1</b></span><span class="s-pin" style="left:72%;top:70%"><b>2</b></span><span class="s-pin" style="left:18%;top:34%"><b>3</b></span>
+                      </div>
+                      <div class="s-list">
+                        <div class="s-res" data-hl><b data-bind="name">Reyes Plumbing</b><span class="meta"><i>★★★★★</i> 4.9 (<span data-bind="reviews">186</span>) <span data-bind="cat">Plumber</span></span><div class="s-act"><span>Website</span><span>Directions</span><span>Call</span></div><i class="tap" data-tap="1" style="left:16%;top:78%"></i></div>
+                        <div class="s-res"><b data-bind="c0">Drain Kings</b><span class="meta"><i>★★★★</i> <span data-bind="c0r">3.8 (41)</span></span></div>
+                        <div class="s-res"><b data-bind="c1">Pipeline Plumbing Co.</b><span class="meta"><i>★★★★</i> <span data-bind="c1r">4.0 (57)</span></span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- 2. their site, generated for the trade and the name they typed -->
+                  <div class="scr" data-scr="site">
+                    <div class="ms">
+                      <div class="status"><span>9:41</span><span></span></div>
+                      <div class="ms-scroll">
+                        <div class="ms-nav"><span class="ms-logo"><i class="ms-mark" data-bind="initial">R</i><b data-bind="name">Reyes Plumbing</b></span><span class="ms-burger"><i></i><i></i><i></i></span></div>
+                        <div class="ms-hero">
+                          <span class="ms-icon" data-bind-html="icon"></span>
+                          <span class="ms-pill"><i>★★★★★</i>Rated 4.9 locally</span>
+                          <div class="ms-h" data-bind="headline">Leaks fixed. Today.</div>
+                          <p class="ms-sub" data-bind="sub"></p>
+                          <span class="ms-cta"><span data-bind="cta">Request a plumber</span><i class="tap" data-tap="2" style="left:50%;top:50%"></i></span>
+                          <span class="ms-call2">Call <span data-bind="phone">(312) 555-0142</span></span>
+                        </div>
+                        <div class="ms-svc">
+                          <p>Services</p>
+                          <div class="ms-row"><span class="ic" data-bind-html="icon"></span><span data-bind="s0"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 6 6 6-6 6"/></svg></div>
+                          <div class="ms-row"><span class="ic" data-bind-html="icon"></span><span data-bind="s1"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 6 6 6-6 6"/></svg></div>
+                          <div class="ms-row"><span class="ic" data-bind-html="icon"></span><span data-bind="s2"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 6 6 6-6 6"/></svg></div>
+                        </div>
+                      </div>
+                      <div class="ms-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>Call now</div>
+                    </div>
+                  </div>
+                  <!-- 3. form -->
+                  <div class="scr" data-scr="form">
+                    <div class="status"><span>9:42</span><span></span></div>
+                    <div class="f-head"><span class="f-logo" data-bind="initial">R</span><b data-bind="name">Reyes Plumbing</b></div>
+                    <div class="f-body">
+                      <h4 data-bind="formTitle">Request a plumber</h4>
+                      <p class="sm" data-bind="formSub"></p>
+                      <div class="f-field" data-f="0"><label data-bind="fl0"></label><div data-fv></div></div>
+                      <div class="f-field" data-f="1"><label data-bind="fl1"></label><div data-fv></div></div>
+                      <div class="f-field" data-f="2"><label data-bind="fl2"></label><div data-fv></div></div>
+                      <div class="f-field" data-f="3"><label data-bind="fl3"></label><div data-fv></div></div>
+                      <div class="f-btn" data-fbtn><span data-bind="formBtn">Send request</span><i class="tap" data-tap="3" style="left:50%;top:50%"></i></div>
+                    </div>
+                    <div class="f-done" data-fdone><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></span><b>Request sent</b><p data-bind="done"></p></div>
+                  </div>
+                </div>
+              </div>
+              <div class="face back">
+                <div class="screen">
+                  <span class="island"></span>
+                  <div class="lock">
+                    <div class="status"><span></span><svg viewBox="0 0 64 14" fill="currentColor"><rect x="0" y="8" width="3" height="6" rx="1"/><rect x="5" y="5" width="3" height="9" rx="1"/><rect x="10" y="2" width="3" height="12" rx="1"/><rect x="15" y="0" width="3" height="14" rx="1"/><rect x="36" y="1" width="24" height="12" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="38" y="3" width="12" height="8" rx="2"/></svg></div>
+                    <div class="lock-time"><small>Thursday, October 2</small><b>9:43</b></div>
+                    <div class="notes">
+                      <div class="note neon" data-note="0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span><div><div class="t"><span data-bind="noteFrom">Website enquiry</span><span>now</span></div><b data-bind="noteTitle">New job request</b><p data-bind="noteBody"></p></div></div>
+                      <div class="note" data-note="1"><span class="ic blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg></span><div><div class="t"><span>Mail</span><span>now</span></div><b>Your customer got their confirmation</b><p>We sent the details to the customer for you.</p></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="rail-wrap"><div class="wrap"><div class="rail" data-rail>
+        <button data-go="1"><span><i></i></span>Search</button>
+        <button data-go="2"><span><i></i></span>Site</button>
+        <button data-go="3"><span><i></i></span>Request</button>
+        <button data-go="4"><span><i></i></span>Call</button>
+      </div></div></div>
+    </div>
+  </section>
+
+  <!-- ================= DECK ================= -->
+  <section class="sec deck-sec" id="work">
+    <div class="wrap">
+      <header class="sec-head center"><h2 class="display">Built for businesses like yours.</h2><p class="lede">Five live sites, five different trades. Pick one to take a closer look, then open it on your phone.</p></header>
+    </div>
+    <div class="deck" data-deck></div>
+    <div class="wrap">
+      <div class="deck-info"><div><h3 data-deck-title></h3><p data-deck-body></p><a data-deck-link href="#" target="_blank" rel="noreferrer">Open the live site<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div><div class="deck-tabs" data-deck-tabs role="group" aria-label="Choose a project"></div></div>
+    </div>
+  </section>
+
+  <!-- ================= EIGHT ARMS ================= -->
+  <section class="sec arms" id="included" data-arms>
+    <div class="wrap">
+      <header class="sec-head center"><h2 class="display">Eight arms. One team.</h2><p class="lede">Everything your website needs, handled by the same people for as long as you're with us. You never have to chase three different companies.</p></header>
+      <div class="arms-stage" data-arms-stage>
+        <svg class="tentacles" data-tentacles aria-hidden="true"></svg>
+        <ul class="arms-col l" data-col="l"></ul>
+        <div class="arms-mascot" data-arms-mascot><img src="assets/mascot.png" alt="The WebM8 octopus" width="1254" height="1254" loading="lazy"></div>
+        <ul class="arms-col r" data-col="r"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HOW ================= -->
+  <section class="sec how" id="how">
+    <div class="wrap how-grid">
+      <header class="how-head"><h2 class="display">How it works.</h2><p class="lede">You'll always know what's happening, what we need from you, and what happens after launch.</p></header>
+      <ol class="steps" data-steps>
+        <span class="fill" aria-hidden="true"></span>
+        <li class="step" data-n="1"><h3>Free personalised demo</h3><p>We design a homepage for your business, with your name and services on it, and show it to you before you spend a cent.</p><span class="need">From you: two minutes to tell us about your business</span></li>
+        <li class="step" data-n="2"><h3>Website plan</h3><p>We plan the pages, the wording and the buttons around how your customers search and decide.</p><span class="need">From you: a 15-minute call</span></li>
+        <li class="step" data-n="3"><h3>Design and build</h3><p>We write and build your site so it looks the business and works properly on phones.</p><span class="need">From you: your logo and a few photos</span></li>
+        <li class="step" data-n="4"><h3>Launch and improve</h3><p>We put it live, host it and look after it, and keep improving it so it keeps bringing in work.</p><span class="need">From you: nothing, unless you want a change</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= PLANS ================= -->
+  <section class="sec plans-sec" id="plans">
+    <div class="wrap">
+      <header class="sec-head"><h2 class="display">Two plans. Priced for your business.</h2><p class="lede">Every project is quoted to the business, so you only pay for what you need. Pick the plan that fits and we'll send you a number.</p></header>
+      <div class="plans" data-plans></div>
+      <p class="plans-note">No large upfront website cost. Monthly support included. Cancel anytime.</p>
+    </div>
+  </section>
+
+  <!-- ================= VOICES ================= -->
+  <section class="sec voices" id="voices">
+    <div class="wrap">
+      <p class="quote" data-quote aria-live="polite"></p>
+      <div class="who" data-who role="group" aria-label="Choose a review"></div>
+    </div>
+  </section>
+
+  <!-- ================= CLOSING ================= -->
+  <section class="sec closing" id="start">
+    <div class="bubbles" data-bubbles aria-hidden="true"></div>
+    <div class="wrap" style="position:relative">
+      <div class="mascot" data-mascot>
+        <img src="assets/mascot.png" alt="" width="1254" height="1254" loading="lazy">
+        <svg viewBox="0 0 1254 1254" aria-hidden="true">
+          <defs>
+            <radialGradient id="eyeWhite" cx="50%" cy="62%" r="62%"><stop offset=".72" stop-color="#fff"/><stop offset="1" stop-color="#d9e3f7"/></radialGradient>
+            <radialGradient id="iris" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#3f74ff"/><stop offset=".8" stop-color="#1f49d6"/><stop offset="1" stop-color="#16359f"/></radialGradient>
+            <linearGradient id="lid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2463f6"/><stop offset="1" stop-color="#3b7cfb"/></linearGradient>
+            <clipPath id="clipL"><ellipse cx="470" cy="506" rx="86" ry="99"/></clipPath>
+            <clipPath id="clipR"><ellipse cx="780" cy="506" rx="86" ry="99"/></clipPath>
+          </defs>
+          <g clip-path="url(#clipL)"><ellipse cx="470" cy="506" rx="88" ry="101" fill="url(#eyeWhite)"/><g data-iris data-cx="470" data-cy="506" data-bias="18"><ellipse cx="470" cy="514" rx="58" ry="65" fill="url(#iris)"/><ellipse cx="470" cy="518" rx="39" ry="46" fill="#090f2d"/><circle cx="487" cy="494" r="15" fill="#fff"/></g><rect data-lid x="380" y="400" width="180" height="214" fill="url(#lid)" style="transform:scaleY(0);transform-origin:470px 405px"/></g>
+          <g clip-path="url(#clipR)"><ellipse cx="780" cy="506" rx="88" ry="101" fill="url(#eyeWhite)"/><g data-iris data-cx="780" data-cy="506" data-bias="-18"><ellipse cx="780" cy="514" rx="58" ry="65" fill="url(#iris)"/><ellipse cx="780" cy="518" rx="39" ry="46" fill="#090f2d"/><circle cx="797" cy="494" r="15" fill="#fff"/></g><rect data-lid x="690" y="400" width="180" height="214" fill="url(#lid)" style="transform:scaleY(0);transform-origin:780px 405px"/></g>
+        </svg>
+      </div>
+      <h2 class="display" data-closing-title>Let's get your phone ringing.</h2>
+      <p class="lede center">Start with a Free Personalised Website Demo. We design a homepage for your business and show it to you, before you spend a cent.</p>
+      <ol class="demo-steps">
+        <li><b>Tell us about your business</b><span>Your trade, your area and what you want more of. It takes about two minutes.</span></li>
+        <li><b>We design your homepage</b><span>With your name, your services and your area on it.</span></li>
+        <li><b>We show it to you</b><span>On a short video call, at a time that suits you.</span></li>
+      </ol>
+      <div class="ctas"><a class="btn btn-neon" href="#start">Get my free personalised demo</a><p class="fine">No payment. No obligation. We reply within one business day.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>© 2026 WebM8. Websites for US local businesses.</span>
+    <nav aria-label="Footer"><a href="#work">Work</a><a href="#plans">Plans</a><a href="#start">Free review</a><a href="mailto:info@webm8agency.com">info@webm8agency.com</a></nav>
+  </div>
+</footer>
+
+<nav class="drop-switch" aria-label="Design drops">
+  <a href="index.html">All drops</a>
+  <a href="drop-a-main-street.html">A · Main Street</a>
+  <a href="drop-b-after-hours.html" aria-current="page">B · After Hours</a>
+</nav>
+
+<script>
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const finePointer = matchMedia("(pointer: fine)").matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const ease = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>';
+
+  const header = $("[data-header]");
+  const onHeader = () => header.classList.toggle("is-scrolled", scrollY > 8);
+
+  const story = $("[data-story]");
+  /* ---------- Trades: everything in the story that changes with the visitor's business ---------- */
+  const I = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+  const ICONS = {
+    cleaning: I('<path d="M12 3l1.8 4.7 4.7 1.8-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>'),
+    hvac: I('<path d="M12 2v20M4.9 6l14.2 12M19.1 6 4.9 18"/><path d="m9 4 3 2 3-2M9 20l3-2 3 2"/>'),
+    plumbing: I('<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>'),
+    electrical: I('<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'),
+    roofing: I('<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>'),
+    landscaping: I('<path d="M12 22V12"/><path d="M12 12c0-5 4-8 9-8 0 5-4 8-9 8z"/><path d="M12 15c0-4-3-6-8-6 0 4 3 6 8 6z"/>'),
+    moving: I('<path d="M2 7h12v10H2zM14 10h4l4 4v3h-8"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/>'),
+    restaurant: I('<path d="M7 2v9M4 2v5a3 3 0 0 0 6 0V2M7 11v11"/><path d="M17 2c-2 1-3 4-3 8h3v12"/>'),
+    cafe: I('<path d="M4 9h13v5a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z"/><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 2.5c-.6 1 .6 2-.2 3M12 2.5c-.6 1 .6 2-.2 3"/>'),
+    salon: I('<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/>'),
+    barber: I('<rect x="8" y="3" width="8" height="18" rx="2"/><path d="m8 7 8 4M8 12l8 4M8 17l4 2"/>'),
+    medspa: I('<circle cx="12" cy="12" r="3"/><path d="M12 2c2 3 2 4 0 7-2-3-2-4 0-7zM12 15c2 3 2 4 0 7-2-3-2-4 0-7zM2 12c3-2 4-2 7 0-3 2-4 2-7 0zM15 12c3-2 4-2 7 0-3 2-4 2-7 0z"/>'),
+    dental: I('<path d="M7 3c-2.5 0-4 2-4 4.5 0 3 1.5 4.5 2 7 .5 3 1 6.5 2.5 6.5S9.5 17 12 17s3 4 4.5 4 2-3.5 2.5-6.5c.5-2.5 2-4 2-7C21 5 19.5 3 17 3c-2 0-3 1-5 1S9 3 7 3z"/>'),
+    fitness: I('<path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/>'),
+    other: I('<path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/>')
+  };
+  const pal = (primary, deep, accent, accentInk, soft, ink, font) => ({ primary, deep, accent, accentInk, soft, ink, font });
+  const TRADES = {
+    cleaning: { group: "Home services", label: "cleaning business", example: "Sparkle & Co. Cleaning", need: "Someone nearby needs a cleaner.", q: "house cleaners near me", cat: "House cleaning service", reviews: 214, comps: [["Budget Maids", "3.9 (58)"], ["Fresh Start Cleaning", "4.2 (73)"]], headline: "Come home to clean.", sub: "Trusted local cleaners, booked online in a minute.", cta: "Book a cleaning", phone: "(312) 555-0187", s: ["Regular cleaning", "Deep cleans", "Move-out cleans"], form: { title: "Book a cleaning", sub: "Pick a time that suits you. We'll confirm by text.", f: [["Home size", "3 bed, 2 bath"], ["Type of clean", "Deep clean"], ["Date", "Sat, Oct 18"], ["Time", "Morning"]], btn: "Book my cleaning", done: "will text you to confirm." }, note: ["New booking", "Deep clean, 3 bed 2 bath, Saturday morning"], p: pal("#0f9488", "#0b4f4a", "#c7f9e5", "#063b36", "#e3f6f1", "#0b2523") },
+    hvac: { group: "Home services", label: "HVAC company", example: "Northside Heating & Air", need: "Someone nearby needs their AC fixed.", q: "ac repair near me", cat: "HVAC contractor, open 24 hours", reviews: 167, comps: [["Cool Breeze HVAC", "3.7 (40)"], ["Air Pros Heating", "4.1 (66)"]], headline: "Comfort, fixed today.", sub: "Same-day AC and furnace repair from licensed local techs.", cta: "Book a service call", phone: "(312) 555-0163", s: ["AC repair", "Furnace service", "New installs"], form: { title: "Book a service call", sub: "Tell us what's going on and we'll send a tech.", f: [["What's wrong?", "AC not cooling"], ["System", "Central air"], ["When", "Today, as soon as possible"], ["ZIP code", "60614"]], btn: "Book my service call", done: "will call you to confirm a time." }, note: ["New service call", "AC not cooling, wants a tech today"], p: pal("#2563eb", "#1e3a8a", "#fcd34d", "#3b2500", "#e8efff", "#0c1a3d") },
+    plumbing: { group: "Home services", label: "plumbing business", example: "Reyes Plumbing", need: "Someone nearby needs a plumber.", q: "plumber near me", cat: "Plumber, open 24 hours", reviews: 186, comps: [["Drain Kings", "3.8 (41)"], ["Pipeline Plumbing Co.", "4.0 (57)"]], headline: "Leaks fixed. Today.", sub: "Licensed local plumbers for repairs, water heaters and drains.", cta: "Request a plumber", phone: "(312) 555-0142", s: ["Emergency repairs", "Water heaters", "Drain cleaning"], form: { title: "Request a plumber", sub: "Tell us what's wrong. We'll call you back fast.", f: [["What's wrong?", "Leaking water heater"], ["How urgent?", "Today"], ["Neighborhood", "Lincoln Park"], ["Best time to call", "This afternoon"]], btn: "Send my request", done: "will call you back shortly." }, note: ["New job request", "Leaking water heater, today in Lincoln Park"], p: pal("#0369a1", "#0c3a5e", "#7dd3fc", "#062a40", "#e3f2fb", "#0a2236") },
+    electrical: { group: "Home services", label: "electrical business", example: "Brightline Electric", need: "Someone nearby needs an electrician.", q: "electrician near me", cat: "Electrician", reviews: 129, comps: [["Spark Bros Electric", "3.9 (33)"], ["Volt Electric Services", "4.2 (48)"]], headline: "Safe, tidy electrical work.", sub: "Licensed electricians for repairs, upgrades and new installs.", cta: "Get a free estimate", phone: "(312) 555-0151", s: ["Panel upgrades", "Lighting", "EV chargers"], form: { title: "Get a free estimate", sub: "A few details and we'll get back to you today.", f: [["Job", "Panel upgrade"], ["Property", "House"], ["When", "Next week"], ["ZIP code", "60657"]], btn: "Get my estimate", done: "will call you with an estimate." }, note: ["New estimate request", "Panel upgrade at a house, next week"], p: pal("#1f2937", "#0b1120", "#facc15", "#1f1a00", "#f3f4f6", "#111827") },
+    roofing: { group: "Home services", label: "roofing company", example: "Summit Roofing", need: "Someone nearby needs a roofer.", q: "roof repair near me", cat: "Roofing contractor", reviews: 98, comps: [["Top Notch Roofing", "3.6 (29)"], ["Peak Roofing Co.", "4.1 (52)"]], headline: "A roof you never have to think about.", sub: "Repairs, replacements and free inspections from a local crew.", cta: "Book a free inspection", phone: "(312) 555-0176", s: ["Roof repairs", "Replacements", "Storm damage"], form: { title: "Book a free inspection", sub: "We'll check your roof and tell you straight.", f: [["Issue", "Storm damage"], ["Roof type", "Shingle, 2 story"], ["When", "This week"], ["ZIP code", "60618"]], btn: "Book my inspection", done: "will call you to set a time." }, note: ["New inspection request", "Storm damage on a 2-story shingle roof"], p: pal("#9a3412", "#5b1d0a", "#fdba74", "#3b1506", "#fbeee6", "#2a1006") },
+    landscaping: { group: "Home services", label: "landscaping business", example: "Oak & Ash Landscapes", need: "Someone nearby wants their yard done.", q: "landscaping near me", cat: "Landscaper", reviews: 141, comps: [["Green Thumb Lawn", "3.8 (37)"], ["Yard Masters", "4.0 (44)"]], headline: "A yard worth coming home to.", sub: "Lawn care, planting and seasonal cleanups across the neighborhood.", cta: "Get a free estimate", phone: "(312) 555-0129", s: ["Lawn care", "Garden design", "Cleanups"], form: { title: "Get a free estimate", sub: "Tell us about your yard and we'll come take a look.", f: [["Service", "Spring cleanup"], ["Yard", "Front and back"], ["Start", "Next week"], ["ZIP code", "60625"]], btn: "Get my estimate", done: "will call you to arrange a visit." }, note: ["New estimate request", "Spring cleanup, front and back yard"], p: pal("#2f7a32", "#1b4a1d", "#d9f99d", "#1a2e05", "#edf6e6", "#13260f") },
+    moving: { group: "Moving", label: "moving company", example: "Lakeshore Movers", need: "Someone nearby needs a mover.", q: "movers near me", cat: "Moving company, open now", reviews: 212, comps: [["Budget Van Lines", "3.8 (41)"], ["Quick Haul Moving", "4.1 (66)"]], headline: "Moving day, handled.", sub: "Careful, on-time local moves with a crew that treats your things like theirs.", cta: "Get a free quote", phone: "(312) 555-0198", s: ["Local moves", "Packing", "Storage"], form: { title: "Get a free quote", sub: "Takes about a minute. We'll call you back.", f: [["Moving from", "Lincoln Park, Chicago"], ["Moving to", "Evanston, IL"], ["Moving date", "Fri, Oct 17"], ["Home size", "3 bedrooms"]], btn: "Get my free quote", done: "will call you back shortly." }, note: ["New quote request", "3-bed move, Lincoln Park to Evanston, Friday Oct 17"], p: pal("#1f5fd6", "#123a85", "#fbbf24", "#2b1d00", "#e8effd", "#0b1b3f") },
+    restaurant: { group: "Food and hospitality", label: "restaurant", example: "Luca's Trattoria", need: "Someone nearby is hungry.", q: "italian restaurant near me", cat: "Italian restaurant, open now", reviews: 388, comps: [["Pasta Express", "3.9 (120)"], ["Bella Notte", "4.3 (204)"]], headline: "Dinner the way Nonna made it.", sub: "Fresh pasta, a wood oven and a table waiting for you tonight.", cta: "Book a table", phone: "(312) 555-0171", s: ["Dinner menu", "Private dining", "Takeout"], form: { title: "Book a table", sub: "We'll hold it for you and send a confirmation.", f: [["Party size", "4 people"], ["Date", "Sat, Oct 18"], ["Time", "7:30 pm"], ["Occasion", "Birthday"]], btn: "Book my table", done: "has your table. Confirmation sent." }, note: ["New reservation", "Table for 4, Saturday 7:30 pm, a birthday"], p: pal("#7f1d1d", "#3f0a0a", "#fcd34d", "#2b1d00", "#f8ece4", "#2b0d12", 'Georgia, "Times New Roman", serif') },
+    cafe: { group: "Food and hospitality", label: "café", example: "Corner Cup Coffee", need: "Someone nearby needs coffee.", q: "coffee near me", cat: "Coffee shop, open now", reviews: 256, comps: [["Bean Stop", "4.0 (88)"], ["Daily Grind Café", "4.2 (131)"]], headline: "Good coffee, right around the corner.", sub: "Order ahead and skip the line on your way in.", cta: "Order ahead", phone: "(312) 555-0114", s: ["Coffee and tea", "Breakfast", "Pastries"], form: { title: "Order ahead", sub: "We'll have it ready when you walk in.", f: [["Order", "2 lattes, 1 croissant"], ["Pickup", "8:15 am"], ["Name", "Sam"], ["Pay", "In store"]], btn: "Place my order", done: "is making your order now." }, note: ["New order", "2 lattes and a croissant, pickup 8:15 am"], p: pal("#6b4423", "#3b2412", "#fde68a", "#2b1d00", "#f6eee6", "#2a190c") },
+    salon: { group: "Health, beauty and wellness", label: "hair salon", example: "Studio Nine Salon", need: "Someone nearby wants a new look.", q: "hair salon near me", cat: "Hair salon", reviews: 302, comps: [["Shear Style", "4.0 (77)"], ["Mane Street Salon", "4.2 (95)"]], headline: "Hair you'll want to show off.", sub: "Cuts, color and styling from a team that listens.", cta: "Book an appointment", phone: "(312) 555-0135", s: ["Cut and style", "Color", "Treatments"], form: { title: "Book an appointment", sub: "Choose a service and a time that suits you.", f: [["Service", "Cut and color"], ["Stylist", "Any stylist"], ["Date", "Thu, Oct 16"], ["Time", "2:00 pm"]], btn: "Book my appointment", done: "has you booked in. See you Thursday." }, note: ["New appointment", "Cut and color, Thursday 2:00 pm"], p: pal("#9d174d", "#500724", "#fbcfe8", "#4a0420", "#fbe9f1", "#2e0716") },
+    barber: { group: "Health, beauty and wellness", label: "barbershop", example: "Fade House Barbers", need: "Someone nearby needs a haircut.", q: "barber near me", cat: "Barber shop, open now", reviews: 274, comps: [["Classic Cuts", "4.0 (81)"], ["Kings Barbershop", "4.3 (110)"]], headline: "Sharp cuts. No waiting.", sub: "Book your chair online and walk straight in.", cta: "Book a cut", phone: "(312) 555-0122", s: ["Haircuts", "Fades", "Beard trims"], form: { title: "Book a cut", sub: "Pick your barber and your time.", f: [["Service", "Skin fade"], ["Barber", "Any barber"], ["Date", "Today"], ["Time", "5:30 pm"]], btn: "Book my cut", done: "has your chair ready at 5:30." }, note: ["New booking", "Skin fade, today at 5:30 pm"], p: pal("#111827", "#000000", "#e5e7eb", "#111827", "#f3f4f6", "#111827") },
+    medspa: { group: "Health, beauty and wellness", label: "med spa", example: "Lumen Med Spa", need: "Someone nearby wants to book a treatment.", q: "med spa near me", cat: "Medical spa", reviews: 163, comps: [["Radiance Aesthetics", "4.1 (54)"], ["Pure Skin Studio", "4.2 (61)"]], headline: "Look rested. Feel like you.", sub: "Facials, skin treatments and injectables from licensed providers.", cta: "Book a consultation", phone: "(312) 555-0158", s: ["Facials", "Skin treatments", "Injectables"], form: { title: "Book a consultation", sub: "Your first visit starts with a free chat.", f: [["Treatment", "HydraFacial"], ["Date", "Fri, Oct 17"], ["Time", "11:00 am"], ["First visit?", "Yes"]], btn: "Book my consultation", done: "will confirm your visit by text." }, note: ["New consultation", "HydraFacial, Friday 11:00 am, first visit"], p: pal("#8b5e83", "#4a2c45", "#f5d0c5", "#3b1f2b", "#f7eef4", "#2c1a29") },
+    dental: { group: "Health, beauty and wellness", label: "dental practice", example: "Maple Family Dental", need: "Someone nearby needs a dentist.", q: "dentist near me", cat: "Dentist, accepting new patients", reviews: 241, comps: [["Smile Center", "4.0 (90)"], ["Bright Dental Group", "4.2 (112)"]], headline: "Gentle dentistry for the whole family.", sub: "New patients welcome. Most insurance accepted.", cta: "Book an appointment", phone: "(312) 555-0147", s: ["Checkups", "Whitening", "Emergency care"], form: { title: "Book an appointment", sub: "New patients welcome. We'll confirm by email.", f: [["Reason", "Checkup and cleaning"], ["Patient", "New patient"], ["Date", "Tue, Oct 21"], ["Time", "9:00 am"]], btn: "Book my appointment", done: "will email your confirmation." }, note: ["New patient booked", "Checkup and cleaning, Tuesday 9:00 am"], p: pal("#0e7490", "#164e63", "#a5f3fc", "#083344", "#e6f6fa", "#0b2a33") },
+    fitness: { group: "Health, beauty and wellness", label: "gym or fitness studio", example: "Ironworks Fitness", need: "Someone nearby wants to get fit.", q: "gym near me", cat: "Gym, open now", reviews: 197, comps: [["FitZone 24", "3.9 (76)"], ["Core Strength Studio", "4.3 (59)"]], headline: "Get strong with people who care.", sub: "Small classes, real coaching and your first class free.", cta: "Book a free class", phone: "(312) 555-0119", s: ["Strength classes", "Personal training", "Open gym"], form: { title: "Book a free class", sub: "Your first class is on us.", f: [["Class", "Intro to strength"], ["Date", "Mon, Oct 20"], ["Time", "6:30 pm"], ["Level", "Beginner"]], btn: "Book my free class", done: "has saved you a spot." }, note: ["New class booking", "Intro to strength, Monday 6:30 pm, beginner"], p: pal("#c2410c", "#431407", "#fed7aa", "#431407", "#fdf0e6", "#2a0e04") },
+    other: { group: "Something else", label: "local business", example: "Your Business", need: "Someone nearby needs what you do.", q: "best near me open now", cat: "Local business, open now", reviews: 150, comps: [["Another Local Co.", "3.9 (44)"], ["Main St. Services", "4.1 (51)"]], headline: "Local, trusted and easy to reach.", sub: "Everything your customers need to choose you, in one place.", cta: "Get in touch", phone: "(312) 555-0134", s: ["Our services", "Reviews", "About us"], form: { title: "Get in touch", sub: "Tell us what you need and we'll get back to you.", f: [["Name", "Jordan"], ["What do you need?", "A quote for next week"], ["Best time to call", "Afternoon"], ["Phone", "(312) 555-0190"]], btn: "Send my message", done: "will get back to you shortly." }, note: ["New enquiry", "Jordan wants a quote for next week"], p: pal("#1f5fd6", "#0e2f56", "#d4ff35", "#071a33", "#e8effd", "#0e2f56") }
+  };
+  const SUGGEST_POOL = ["house cleaners near me", "ac repair near me", "hair salon near me", "italian restaurant near me", "dentist near me", "movers near me", "plumber near me", "barber near me"];
+  const TREND = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 17l6-6 4 4 8-8"/></svg>';
+
+  /* ---------- Picker ---------- */
+  const tradeSel = $("[data-trade]"), nameIn = $("[data-bizname]");
+  const groups = {};
+  Object.entries(TRADES).forEach(([k, t]) => (groups[t.group] = groups[t.group] || []).push([k, t]));
+  tradeSel.innerHTML = Object.entries(groups).map(([g, list]) => `<optgroup label="${g}">${list.map(([k, t]) => `<option value="${k}">${t.label}</option>`).join("")}</optgroup>`).join("");
+  const fromUrl = new URLSearchParams(location.search).get("trade");
+  let tradeKey = TRADES[fromUrl] ? fromUrl : "plumbing";
+  tradeSel.value = tradeKey;
+
+  // Size the select to the chosen option, so the sentence reads naturally.
+  const measure = document.createElement("span");
+  measure.style.cssText = "position:absolute;visibility:hidden;white-space:pre;font:600 1.15rem var(--sans)";
+  document.body.appendChild(measure);
+  const sizeSelect = () => { measure.style.font = getComputedStyle(tradeSel).font; measure.textContent = tradeSel.selectedOptions[0].textContent; tradeSel.style.width = measure.offsetWidth + 30 + "px"; };
+
+  const bind = (key, value) => $$(`[data-bind="${key}"]`).forEach((el) => (el.textContent = value));
+  const bindHtml = (key, value) => $$(`[data-bind-html="${key}"]`).forEach((el) => (el.innerHTML = value));
+  const possessive = (n) => (/s$/i.test(n) ? n + "’" : n + "’s");
+  const closingTitle = $("[data-closing-title]");
+  let current = TRADES[tradeKey];
+
+  function applyName() {
+    const typed = nameIn.value.trim();
+    const name = typed || current.example;
+    bind("name", name);
+    bind("initial", name.replace(/^the\s+/i, "").charAt(0).toUpperCase() || "W");
+    bind("done", `${name} ${current.form.done}`);
+    if (closingTitle) closingTitle.textContent = typed ? `Let's get ${possessive(typed)} phone ringing.` : "Let's get your phone ringing.";
+  }
+  function applyTrade(k) {
+    tradeKey = k; current = TRADES[k];
+    const t = current, s = story.style;
+    s.setProperty("--t-primary", t.p.primary); s.setProperty("--t-deep", t.p.deep); s.setProperty("--t-accent", t.p.accent);
+    s.setProperty("--t-accent-ink", t.p.accentInk); s.setProperty("--t-soft", t.p.soft); s.setProperty("--t-ink", t.p.ink);
+    s.setProperty("--t-font", t.p.font || "var(--sans)");
+    bind("need", t.need); bind("cat", t.cat); bind("reviews", t.reviews);
+    bind("c0", t.comps[0][0]); bind("c0r", t.comps[0][1]); bind("c1", t.comps[1][0]); bind("c1r", t.comps[1][1]);
+    bind("headline", t.headline); bind("sub", t.sub); bind("cta", t.cta); bind("phone", t.phone);
+    t.s.forEach((v, i) => bind("s" + i, v));
+    bindHtml("icon", ICONS[k]);
+    bind("formTitle", t.form.title); bind("formSub", t.form.sub); bind("formBtn", t.form.btn);
+    t.form.f.forEach(([label], i) => bind("fl" + i, label));
+    bind("noteTitle", t.note[0]); bind("noteBody", t.note[1]);
+    const others = SUGGEST_POOL.filter((x) => x !== t.q).slice(0, 4);
+    $("[data-suggest]").innerHTML = `<p>Searched near you today</p>` + [t.q, ...others].map((x, i) => `<span class="${i === 0 ? "hl" : ""}">${TREND}${x}</span>`).join("");
+    applyName();
+    sizeSelect();
+    storyFrame();
+  }
+  tradeSel.addEventListener("change", () => {
+    applyTrade(tradeSel.value);
+    shake.classList.remove("nudge"); void shake.offsetWidth; if (!reduce) shake.classList.add("nudge");
+  });
+  nameIn.addEventListener("input", applyName);
+
+  /* ---------- Scroll story ---------- */
+  const chapters = $$(".chapter", story);
+  const chaptersEl = $("[data-chapters]");
+  const device = $("[data-device]");
+  const phone = $("[data-phone]");
+  const shake = $("[data-shake]");
+  const q = $("[data-q]");
+  const results = $("[data-results]");
+  const hl = $("[data-hl]");
+  const scr = Object.fromEntries($$("[data-scr]").map((e) => [e.dataset.scr, e]));
+  const taps = Object.fromEntries($$("[data-tap]").map((e) => [e.dataset.tap, e]));
+  const fields = $$("[data-f]");
+  const fbtn = $("[data-fbtn]"), fdone = $("[data-fdone]");
+  const notes = $$("[data-note]");
+  const railBtns = $$("[data-rail] button");
+  const BOUNDS = [0, .1, .32, .54, .76, 1];
+  let lastCh = -1;
+
+  const setTap = (id, on) => taps[id].classList.toggle("go", on);
+  const show = (name) => Object.entries(scr).forEach(([k, el]) => el.classList.toggle("on", k === name));
+
+  /* On phones the copy sits above the phone. When a chapter's copy is tall (the first one, with the picker), push the phone down so it peeks up from below instead of being covered. */
+  function placeDevice(ch) {
+    if (innerWidth >= 960) { device.style.removeProperty("--push"); return; }
+    const bottom = chaptersEl.offsetTop + chapters[ch].offsetHeight;
+    device.style.setProperty("--push", Math.max(0, bottom + 18 - device.offsetTop) + "px");
+  }
+
+  function storyFrame() {
+    const r = story.getBoundingClientRect();
+    const total = story.offsetHeight - innerHeight;
+    const p = clamp(-r.top / total);
+    story.style.setProperty("--p", p.toFixed(4));
+    let ch = 0;
+    for (let i = 1; i < BOUNDS.length - 1; i++) if (p >= BOUNDS[i]) ch = i;
+    const local = (i) => clamp((p - BOUNDS[i]) / (BOUNDS[i + 1] - BOUNDS[i]));
+
+    if (ch !== lastCh) {
+      story.dataset.ch = ch;
+      chapters.forEach((c, i) => { c.classList.toggle("on", i === ch); c.classList.toggle("past", i < ch); c.inert = i !== ch; });
+      placeDevice(ch);
+      lastCh = ch;
+    }
+    railBtns.forEach((b, i) => { const n = i + 1; b.style.setProperty("--f", local(n).toFixed(3)); b.classList.toggle("on", ch === n); });
+
+    // 1. The search: typing, results, choosing the top result
+    const l1 = local(1), query = current.q;
+    q.textContent = query.slice(0, Math.round(query.length * clamp(l1 / .4)));
+    scr.search.classList.toggle("typing", l1 > .02);
+    results.classList.toggle("results-in", l1 > .45);
+    hl.classList.toggle("hl", l1 > .7);
+    setTap("1", l1 > .82 && ch === 1);
+
+    // 2. Their site: a gentle scroll, then a tap on the main button
+    const l2 = local(2);
+    scr.site.style.setProperty("--s2", ease(l2).toFixed(3));
+    setTap("2", l2 > .74 && ch === 2);
+
+    // 3. The form fills itself in
+    const l3 = local(3);
+    fields.forEach((f, i) => {
+      const start = .06 + i * .16, end = start + .14;
+      const t = clamp((l3 - start) / (end - start));
+      const v = current.form.f[i][1];
+      f.querySelector("[data-fv]").textContent = v.slice(0, Math.round(v.length * t));
+      f.classList.toggle("active", t > 0 && t < 1);
+    });
+    fbtn.classList.toggle("pressed", l3 > .76 && l3 < .86);
+    setTap("3", l3 > .74 && ch === 3);
+    fdone.classList.toggle("on", l3 > .86);
+
+    show(ch <= 1 ? "search" : ch === 2 ? "site" : "form");
+
+    // 4. The phone turns around, and it's the owner's phone
+    const l4 = local(4);
+    const flip = ease(clamp(l4 / .3));
+    phone.style.setProperty("--flip", (reduce ? (flip > .5 ? 180 : 0) : flip * 180).toFixed(1) + "deg");
+    notes[0].classList.toggle("on", l4 > .36);
+    notes[1].classList.toggle("on", l4 > .62);
+    const buzz = l4 > .38 && l4 < .9;
+    if (buzz && !shake.classList.contains("go") && !reduce) shake.classList.add("go");
+    if (!buzz) shake.classList.remove("go");
+  }
+
+  railBtns.forEach((b) => b.addEventListener("click", () => {
+    const n = +b.dataset.go;
+    const total = story.offsetHeight - innerHeight;
+    const target = story.offsetTop + total * (BOUNDS[n] + (BOUNDS[n + 1] - BOUNDS[n]) * .55);
+    scrollTo({ top: target, behavior: reduce ? "auto" : "smooth" });
+  }));
+  addEventListener("resize", () => { sizeSelect(); placeDevice(Math.max(0, lastCh)); });
+
+  /* Pointer tilt on the phone */
+  if (finePointer && !reduce) {
+    addEventListener("pointermove", (e) => {
+      const x = e.clientX / innerWidth - .5, y = e.clientY / innerHeight - .5;
+      phone.style.setProperty("--tiltX", (4 - y * 8).toFixed(2) + "deg");
+      phone.style.setProperty("--tiltZ", (-2 + x * 4).toFixed(2) + "deg");
+    }, { passive: true });
+  }
+
+  applyTrade(tradeKey);
+  document.fonts?.ready.then(sizeSelect);
+
+  /* ---------- Deck ---------- */
+  const PROJECTS = [
+    { slug: "cleaning", trade: "Cleaning", body: "Packages that are easy to compare, trust built fast, and a quote journey that stays clear on a phone.", url: "https://cleaning.webm8agency.com/" },
+    { slug: "restaurant", trade: "Restaurant", body: "A premium dining site that surfaces the menu quickly and moves visitors toward a reservation.", url: "https://restaurant.webm8agency.com/" },
+    { slug: "removals", trade: "Removals", body: "Built for urgent quote requests, with an estimate form right under the headline and plenty of reasons to trust the crew.", url: "https://removals.webm8agency.com/" },
+    { slug: "car-rental", trade: "Car rental", body: "A fleet-led rental site with a premium feel and booking buttons that are always within reach.", url: "https://car-rental.webm8agency.com/" },
+    { slug: "travel", trade: "Travel agency", body: "Destination imagery, clear packages and enquiry prompts that turn browsing into trip requests.", url: "https://travel.webm8agency.com/" }
+  ];
+  const deck = $("[data-deck]"), tabs = $("[data-deck-tabs]");
+  let active = 2;
+  deck.innerHTML = PROJECTS.map((p, i) => `<button class="d-card" data-i="${i}" aria-label="Show the ${p.trade} website"><div class="browser"><div class="chrome"><i></i><i></i><i></i><span>${new URL(p.url).hostname}</span></div><div class="shot"><img src="assets/${p.slug}-desktop.webp" alt="" width="1600" height="900" loading="lazy" draggable="false"></div></div><div class="ph"><img src="assets/${p.slug}-mobile.webp" alt="" width="420" height="900" loading="lazy" draggable="false"></div></button>`).join("");
+  tabs.innerHTML = PROJECTS.map((p, i) => `<button data-i="${i}" aria-pressed="false">${p.trade}</button>`).join("");
+  const cards = $$(".d-card", deck);
+  function layoutDeck() {
+    const narrow = innerWidth < 760;
+    cards.forEach((c, i) => {
+      const o = i - active, a = Math.abs(o);
+      const x = o * (narrow ? 62 : 44), z = -a * (narrow ? 260 : 220), ry = -o * (narrow ? 0 : 24);
+      c.style.transform = `translateX(${x}%) translateZ(${z}px) rotateY(${ry}deg)`;
+      c.style.opacity = a > 2 ? 0 : 1 - a * .22;
+      c.style.filter = a ? `brightness(${1 - a * .25}) saturate(${1 - a * .3})` : "none";
+      c.style.zIndex = 10 - a;
+      c.tabIndex = o === 0 ? -1 : 0;
+    });
+    $$("button", tabs).forEach((b, i) => b.setAttribute("aria-pressed", i === active));
+    const p = PROJECTS[active];
+    $("[data-deck-title]").textContent = p.trade;
+    $("[data-deck-body]").textContent = p.body;
+    $("[data-deck-link]").href = p.url;
+  }
+  const go = (i) => { active = (i + PROJECTS.length) % PROJECTS.length; layoutDeck(); };
+  cards.forEach((c) => c.addEventListener("click", () => { const i = +c.dataset.i; if (i !== active) go(i); else window.open(PROJECTS[i].url, "_blank", "noreferrer"); }));
+  $$("button", tabs).forEach((b) => b.addEventListener("click", () => go(+b.dataset.i)));
+  deck.addEventListener("keydown", (e) => { if (e.key === "ArrowRight") go(active + 1); if (e.key === "ArrowLeft") go(active - 1); });
+  let sx = null;
+  deck.addEventListener("pointerdown", (e) => { sx = e.clientX; });
+  deck.addEventListener("pointerup", (e) => { if (sx === null) return; const dx = e.clientX - sx; if (Math.abs(dx) > 40) go(active + (dx < 0 ? 1 : -1)); sx = null; });
+  layoutDeck();
+  addEventListener("resize", layoutDeck);
+
+  /* ---------- Eight arms ---------- */
+  const ARMS = [
+    { t: "Design that earns trust", d: "A professional look that matches the quality of your work." },
+    { t: "Built for phones first", d: "Most local customers will find you on a phone. It has to work there." },
+    { t: "Found in local searches", d: "Pages and business details set up so Google can show you nearby." },
+    { t: "Ready for AI search", d: "Information formatted for tools like ChatGPT and Gemini." },
+    { t: "Tap to call, easy to quote", d: "Forms and call buttons exactly where people decide." },
+    { t: "Know where calls come from", d: "A monthly report of visits, calls and form requests." },
+    { t: "Hosting and security", d: "Your site is hosted, backed up and kept secure for you." },
+    { t: "Changes when you need them", d: "Send us a message. We make the update." }
+  ];
+  const colL = $('[data-col="l"]'), colR = $('[data-col="r"]');
+  ARMS.forEach((a, i) => {
+    const li = document.createElement("li");
+    li.className = "arm"; li.tabIndex = 0; li.dataset.i = i;
+    li.innerHTML = `<b>${a.t}</b><p>${a.d}</p>`;
+    (i < 4 ? colL : colR).appendChild(li);
+  });
+  const armsSec = $("[data-arms]"), stageEl = $("[data-arms-stage]"), svgT = $("[data-tentacles]"), armsMascot = $("[data-arms-mascot]");
+  function drawTentacles() {
+    if (innerWidth < 1000) { svgT.innerHTML = ""; return; }
+    const s = stageEl.getBoundingClientRect(), m = armsMascot.getBoundingClientRect();
+    svgT.setAttribute("viewBox", `0 0 ${s.width} ${s.height}`);
+    // Tentacle tips of the mascot image, as fractions of its box (left side; right is mirrored).
+    const TIPS = [[.1, .47], [.08, .65], [.25, .81], [.37, .87]];
+    let html = "";
+    $$(".arm", stageEl).forEach((li) => {
+      const r = li.getBoundingClientRect(), i = +li.dataset.i, left = i < 4;
+      const ex = left ? r.right - s.left + 6 : r.left - s.left - 6, ey = r.top - s.top + r.height / 2;
+      const [tx, ty] = TIPS[i % 4];
+      const sx = m.left - s.left + m.width * (left ? tx : 1 - tx), sy = m.top - s.top + m.height * ty;
+      const c1x = sx + (left ? -1 : 1) * 70, c1y = sy;
+      const c2x = ex + (left ? 1 : -1) * 70, c2y = ey;
+      html += `<path data-i="${i}" style="--i:${i}" d="M${sx.toFixed(1)} ${sy.toFixed(1)} C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${ex.toFixed(1)} ${ey.toFixed(1)}"/>`;
+    });
+    svgT.innerHTML = html;
+    $$("path", svgT).forEach((p) => p.style.setProperty("--len", Math.ceil(p.getTotalLength())));
+  }
+  const light = (i, on) => { const p = $(`path[data-i="${i}"]`, svgT); if (p) p.classList.toggle("lit", on); $(`.arm[data-i="${i}"]`, stageEl).classList.toggle("lit", on); };
+  $$(".arm", stageEl).forEach((li) => {
+    const i = li.dataset.i;
+    ["pointerenter", "focus"].forEach((ev) => li.addEventListener(ev, () => light(i, true)));
+    ["pointerleave", "blur"].forEach((ev) => li.addEventListener(ev, () => light(i, false)));
+  });
+  addEventListener("resize", drawTentacles);
+  $("img", armsMascot).addEventListener("load", drawTentacles);
+  new IntersectionObserver(([e], o) => { if (e.isIntersecting) { drawTentacles(); armsSec.classList.add("in"); o.disconnect(); } }, { threshold: .3 }).observe(stageEl);
+  drawTentacles();
+
+  /* ---------- How: line fills as you read ---------- */
+  const steps = $("[data-steps]"), stepEls = $$(".step", steps);
+  function howFrame() {
+    const r = steps.getBoundingClientRect();
+    const f = clamp((innerHeight * .6 - r.top) / r.height);
+    steps.style.setProperty("--fill", f.toFixed(3));
+    stepEls.forEach((s) => s.classList.toggle("on", s.getBoundingClientRect().top < innerHeight * .6));
+  }
+
+  /* ---------- Plans ---------- */
+  const PLANS = [
+    { name: "Standard", sum: "For businesses that need a clean, professional website that builds trust and helps customers get in touch.", f: ["Professional website design", "Easy to use on phones", "Homepage, services, about and contact", "Contact form and tap-to-call buttons", "Set up for Google with your business details", "Domain name, hosting and support included", "Small changes included each month"] },
+    { name: "Growth", featured: true, badge: "Best value", sum: "For businesses that want us to keep adding pages, show where calls come from, and help follow up with customers.", f: ["Everything in Standard", "Pages for your services and the towns you cover", "Business details formatted for Google and AI search", "Monthly report of visits, calls and forms", "Every form and customer kept in one place", "Automatic follow-up emails and review requests", "Ongoing website improvements"] }
+  ];
+  $("[data-plans]").innerHTML = PLANS.map((p) => `<article class="plan${p.featured ? " featured" : ""}"><div class="plan-top"><h3>${p.name}</h3>${p.badge ? `<span class="badge">${p.badge}</span>` : ""}</div><p class="sum">${p.sum}</p><ul>${p.f.map((f) => `<li>${CHECK}<span>${f}</span></li>`).join("")}</ul><a class="btn ${p.featured ? "btn-neon" : "btn-line"}" href="#start">Get a fast estimate</a></article>`).join("");
+
+  /* ---------- Voices ---------- */
+  const VOICES = [
+    { q: "Our new site actually looks like a real business now. Calls went up in the first month and the booking form finally works properly on phones.", n: "Marcus Reyes", r: "Owner, Precision HVAC", i: "MR" },
+    { q: "They rebuilt our homepage around quote requests. The reviews are right where they need to be, and customers understand what we do in seconds.", n: "Dana Whitfield", r: "Co-owner, Greenridge Landscaping", i: "DW" },
+    { q: "Ongoing edits are fast, and they actually care whether the site is bringing in leads, not just whether it looks nice.", n: "Priya Shah", r: "Director, Glowline Med Spa", i: "PS" }
+  ];
+  const quote = $("[data-quote]"), who = $("[data-who]");
+  who.innerHTML = VOICES.map((v, i) => `<button data-i="${i}" aria-pressed="${i === 0}"><i>${v.i}</i><span>${v.n}<small>${v.r}</small></span></button>`).join("");
+  const setVoice = (i) => {
+    $$("button", who).forEach((b, j) => b.setAttribute("aria-pressed", i === j));
+    quote.classList.add("fade");
+    setTimeout(() => { quote.textContent = `“${VOICES[i].q}”`; quote.classList.remove("fade"); }, reduce ? 0 : 220);
+  };
+  quote.textContent = `“${VOICES[0].q}”`;
+  $$("button", who).forEach((b) => b.addEventListener("click", () => setVoice(+b.dataset.i)));
+
+  /* ---------- Closing ---------- */
+  if (!reduce) {
+    $("[data-bubbles]").innerHTML = Array.from({ length: 16 }, () => {
+      const s = 6 + Math.random() * 18;
+      return `<i style="--s:${s.toFixed(0)}px;--x:${(Math.random() * 100).toFixed(1)}%;--d:${(9 + Math.random() * 10).toFixed(1)}s;--dl:-${(Math.random() * 18).toFixed(1)}s;--dx:${(Math.random() * 60 - 30).toFixed(0)}px"></i>`;
+    }).join("");
+  }
+  const mascot = $("[data-mascot]"), irises = $$("[data-iris]", mascot), lids = $$("[data-lid]", mascot);
+  irises.forEach((g) => (g.style.transform = `translate(${g.dataset.bias}px, 4px)`));
+  if (!reduce) {
+    if (finePointer) addEventListener("pointermove", (e) => {
+      const r = mascot.getBoundingClientRect(), k = r.width / 1254;
+      irises.forEach((g) => {
+        const dx = e.clientX - (r.left + +g.dataset.cx * k), dy = e.clientY - (r.top + +g.dataset.cy * k), d = Math.hypot(dx, dy) || 1, m = Math.min(1, d / 220);
+        g.style.transform = `translate(${((dx / d) * 26 * m).toFixed(1)}px, ${((dy / d) * 28 * m).toFixed(1)}px)`;
+      });
+    }, { passive: true });
+    const blink = () => {
+      lids.forEach((l) => { l.style.transition = "transform 90ms ease-in"; l.style.transform = "scaleY(1)"; });
+      setTimeout(() => lids.forEach((l) => { l.style.transition = "transform 140ms ease-out"; l.style.transform = "scaleY(0)"; }), 120);
+      setTimeout(blink, 2600 + Math.random() * 3200);
+    };
+    setTimeout(blink, 2400);
+  }
+
+  /* ---------- One rAF loop for scroll-linked work ---------- */
+  let ticking = false;
+  const frame = () => { ticking = false; onHeader(); storyFrame(); howFrame(); };
+  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
+  addEventListener("resize", frame);
+  frame();
+})();
+</script>
+</body>
+</html>

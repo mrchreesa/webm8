@@ -1,0 +1,56 @@
+WEBM8 FACEBOOK LAUNCH KIT
+
+1. Upload 01-profile-cream.png as your profile picture.
+   1080 × 1080 PNG. The original octopus is centered for a circular crop.
+   Optional alternative: 01-profile-navy-alternative.png.
+
+2. Upload 02-cover.png as your cover/background.
+   1640 × 924 PNG, approximately 16:9. Keep the image centered in the crop
+   preview and check both desktop and phone after saving.
+   If your Page presents a shallower banner, try 02-cover-wide-alternative.png
+   (1640 × 624). These are alternative exports: upload only one cover.
+   Main text sits in the central band to tolerate a shallower phone crop.
+   Facebook layouts vary; the included crop preview is illustrative.
+
+3. Open PAGE-COPY.txt for your bio, About description, services, website,
+   email, suggested username, action-button destination, captions, alt text,
+   and optional Messenger replies.
+
+4. Publish the welcome graphic and matching caption, then pin the post.
+   Follow with the services and free-review posts, for example a few days apart.
+   All three feed graphics are 1080 × 1080 PNGs.
+
+5. Upload the Story graphic (1080 × 1920) when you want to promote the review.
+   Key content leaves space at the top and bottom for Story interface controls.
+   Add a real link sticker if that option is available; the image button and
+   printed web address are visual elements and are not clickable by themselves.
+
+OPEN-ME.html is a local gallery with image download links.
+package-preview.png is a contact sheet, not a graphic to upload.
+profile-circle-preview.png and cover-mobile-crop-preview.png are QA previews.
+
+BRANDING
+Original mascot: public/mascot.png, used as supplied.
+Typeface: Geist, embedded in the editable HTML from the website’s font asset.
+Navy #0E2F56 / deep navy #071A33 / warm cream #F8F5F0
+Lime badge #D4FF35 / orange accent #F4681F / action orange #C8500F
+Logo treatment follows the website’s Web + lime M8 badge.
+Messaging and contact information come from lib/site.ts, lib/seo.ts,
+the home page, and the About and Contact pages in the supplied website.
+
+EDITABLE FILES
+editable-source/ contains self-contained HTML layouts with embedded mascot
+and font assets. Each opens offline in a browser at its original canvas size.
+build.cjs can regenerate the exports in the website project using Sharp and
+Playwright, with PLAYWRIGHT_PATH pointing to an installed Playwright package.
+It uses the website’s existing mascot and cached Geist Latin font.
+export-checks.json records image sizes, font readiness, and loading checks.
+
+FACEBOOK SIZING REFERENCE
+Meta’s reference: https://www.facebook.com/help/125379114252045
+The help page required login when checked on 19 September 2026. Current
+published guidance describing the 16:9 desktop and 2.4:1 phone presentation:
+https://socialmagnum.com/blog/facebook-cover-photo-size
+Final crop placement should always be checked in your own Page’s preview.
+
+This package prepares assets and text; it does not publish or change your Page.

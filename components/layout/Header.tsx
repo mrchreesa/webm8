@@ -15,6 +15,9 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const isMoversPage = pathname?.startsWith("/movers") ?? false;
+  // Meta leads land on /thank-you/ having already sent their details, so the
+  // header there is the logo alone: no nav, and no CTA back into a form.
+  const isLeadPage = pathname?.startsWith("/thank-you") ?? false;
   const navItems = isMoversPage
     ? [
         { label: "How it works", href: "#how-it-works" },
@@ -56,9 +59,10 @@ export function Header() {
     href === "/" ? pathname === "/" : pathname?.startsWith(href) ?? false;
 
   // The homepage is navy from top to bottom, so its header stays dark.
-  // /movers/ has a navy hero, so its header is dark until the page scrolls.
+  // /movers/ and /thank-you/ have navy heroes, so their headers are dark until
+  // the page scrolls.
   const isHome = pathname === "/";
-  const overDarkHero = isHome || (isMoversPage && !scrolled);
+  const overDarkHero = isHome || ((isMoversPage || isLeadPage) && !scrolled);
 
   return (
     <header
@@ -122,67 +126,71 @@ export function Header() {
           </span>
         </Link>
 
-        <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "rounded-full px-3 py-2 text-sm font-medium transition-colors",
-                overDarkHero
-                  ? isActive(item.href)
-                    ? "bg-white/10 text-bg"
-                    : "text-muted-invert hover:bg-white/10 hover:text-bg"
-                  : isActive(item.href)
-                    ? "bg-ink/5 text-ink"
-                    : "text-muted hover:bg-ink/5 hover:text-ink",
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        {isLeadPage ? null : (
+          <>
+            <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "rounded-full px-3 py-2 text-sm font-medium transition-colors",
+                    overDarkHero
+                      ? isActive(item.href)
+                        ? "bg-white/10 text-bg"
+                        : "text-muted-invert hover:bg-white/10 hover:text-bg"
+                      : isActive(item.href)
+                        ? "bg-ink/5 text-ink"
+                        : "text-muted hover:bg-ink/5 hover:text-ink",
+                  )}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
 
-        <div className="hidden items-center gap-4 md:flex">
-          {brand.phone ? (
-            <a
-              href={`tel:${brand.phone}`}
-              className={cn(
-                "text-base font-bold tracking-tight transition-colors",
-                overDarkHero
-                  ? "text-highlight hover:text-white"
-                  : "text-ink hover:text-link",
+            <div className="hidden items-center gap-4 md:flex">
+              {brand.phone ? (
+                <a
+                  href={`tel:${brand.phone}`}
+                  className={cn(
+                    "text-base font-bold tracking-tight transition-colors",
+                    overDarkHero
+                      ? "text-highlight hover:text-white"
+                      : "text-ink hover:text-link",
+                  )}
+                >
+                  {brand.phoneLabel || brand.phone}
+                </a>
+              ) : null}
+              {isMoversPage ? (
+                <LinkButton href="#review-request" size="md">
+                  Book my free review
+                </LinkButton>
+              ) : (
+                <DemoCtaButton placement="header" size="md">
+                  Get my free demo
+                </DemoCtaButton>
               )}
-            >
-              {brand.phoneLabel || brand.phone}
-            </a>
-          ) : null}
-          {isMoversPage ? (
-            <LinkButton href="#review-request" size="md">
-              Book my free review
-            </LinkButton>
-          ) : (
-            <DemoCtaButton placement="header" size="md">
-              Get my free demo
-            </DemoCtaButton>
-          )}
-        </div>
+            </div>
 
-        <button
-          type="button"
-          className={cn(
-            "inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors md:hidden",
-            overDarkHero
-              ? "border-white/25 bg-white/10 text-bg hover:bg-white/20"
-              : "border-border bg-white text-ink hover:bg-ink/5",
-          )}
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle menu"
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-        >
-          <Icon name={open ? "close" : "menu"} size={20} />
-        </button>
+            <button
+              type="button"
+              className={cn(
+                "inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors md:hidden",
+                overDarkHero
+                  ? "border-white/25 bg-white/10 text-bg hover:bg-white/20"
+                  : "border-border bg-white text-ink hover:bg-ink/5",
+              )}
+              onClick={() => setOpen((v) => !v)}
+              aria-label="Toggle menu"
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+            >
+              <Icon name={open ? "close" : "menu"} size={20} />
+            </button>
+          </>
+        )}
       </div>
 
       <div

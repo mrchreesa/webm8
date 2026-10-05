@@ -1,0 +1,145 @@
+{
+  "url": "http://localhost:3100/movers/",
+  "width": 390,
+  "height": 844,
+  "scrollWidth": 390,
+  "totalHeight": 19473,
+  "sections": [
+    {
+      "heading": "Your hands are full. Your website can take the details.",
+      "id": "",
+      "top": 0,
+      "height": 1188
+    },
+    {
+      "heading": "What a quote request actually looks like.",
+      "id": "how-it-works",
+      "top": 1188,
+      "height": 4121
+    },
+    {
+      "heading": "Everything you need.\nAll taken care of.",
+      "id": "included",
+      "top": 5308,
+      "height": 3077
+    },
+    {
+      "heading": "Three things this changes.",
+      "id": "",
+      "top": 8385,
+      "height": 1345
+    },
+    {
+      "heading": "Two ways to work with us.",
+      "id": "pricing",
+      "top": 9730,
+      "height": 3086
+    },
+    {
+      "heading": "Who you’ll actually be dealing with.",
+      "id": "",
+      "top": 12817,
+      "height": 1531
+    },
+    {
+      "heading": "What happens on the 10 minutes.",
+      "id": "",
+      "top": 14348,
+      "height": 1295
+    },
+    {
+      "heading": "The things owners ask first.",
+      "id": "faq",
+      "top": 15643,
+      "height": 1263
+    },
+    {
+      "heading": "Book your free 10-minute review.",
+      "id": "review-request",
+      "top": 16906,
+      "height": 1716
+    }
+  ],
+  "headings": [
+    {
+      "text": "Your hands are full. Your website can take the details.",
+      "top": 158,
+      "sectionHeight": 1188
+    },
+    {
+      "text": "Website features",
+      "top": 1075,
+      "sectionHeight": 140
+    },
+    {
+      "text": "What a quote request actually looks like.",
+      "top": 1236,
+      "sectionHeight": 4121
+    },
+    {
+      "text": "Everything you need.\nAll taken care of.",
+      "top": 5417,
+      "sectionHeight": 3077
+    },
+    {
+      "text": "Three things this changes.",
+      "top": 8465,
+      "sectionHeight": 1345
+    },
+    {
+      "text": "Two ways to work with us.",
+      "top": 9810,
+      "sectionHeight": 3086
+    },
+    {
+      "text": "Who you’ll actually be dealing with.",
+      "top": 12897,
+      "sectionHeight": 1531
+    },
+    {
+      "text": "What happens on the 10 minutes.",
+      "top": 14428,
+      "sectionHeight": 1295
+    },
+    {
+      "text": "The things owners ask first.",
+      "top": 15723,
+      "sectionHeight": 1263
+    },
+    {
+      "text": "Book your free 10-minute review.",
+      "top": 16986,
+      "sectionHeight": 1716
+    }
+  ],
+  "links": [
+    {
+      "text": "Book my free 10-minute review",
+      "href": "#review-request"
+    },
+    {
+      "text": "See how it works",
+      "href": "#how-it-works"
+    },
+    {
+      "text": "Explore the plans",
+      "href": "/pricing/"
+    },
+    {
+      "text": "info@webm8agency.com",
+      "href": "mailto:info@webm8agency.com"
+    },
+    {
+      "text": "info@webm8agency.com",
+      "href": "mailto:info@webm8agency.com"
+    },
+    {
+      "text": "privacy notice",
+      "href": "/privacy/"
+    },
+    {
+      "text": "Book my free 10-minute review",
+      "href": "#review-request"
+    }
+  ]
+}

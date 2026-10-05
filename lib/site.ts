@@ -9,9 +9,18 @@ export const brand = {
    * Shown in the header and the hero when set. Every competitor selling to
    * this market puts a number above the fold; leave this empty and both
    * places simply omit it. Use the dialable form, e.g. "+18885550147".
+   * /thank-you/ also tells new leads "Your call will come from" this number,
+   * so it must be the one the follow-up calls are actually made from.
    */
   phone: "",
   phoneLabel: "",
+  /**
+   * The WhatsApp number, digits only in international form, e.g. "447700900123".
+   * /thank-you/ offers "Message us on WhatsApp" only when this is set.
+   */
+  whatsapp: "",
+  /** The calendar a lead can book a call on from /thank-you/. Optional for them, never required. */
+  bookingUrl: "https://cal.com/webm8/15min",
 } as const;
 
 export type NavItem = {

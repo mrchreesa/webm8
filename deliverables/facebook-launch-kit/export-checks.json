@@ -1,0 +1,66 @@
+[
+  {
+    "file": "01-profile-cream.png",
+    "width": 1080,
+    "height": 1080,
+    "font": true,
+    "overflow": false,
+    "images": true
+  },
+  {
+    "file": "01-profile-navy-alternative.png",
+    "width": 1080,
+    "height": 1080,
+    "font": true,
+    "overflow": false,
+    "images": true
+  },
+  {
+    "file": "02-cover.png",
+    "width": 1640,
+    "height": 924,
+    "font": true,
+    "overflow": false,
+    "images": true
+  },
+  {
+    "file": "02-cover-wide-alternative.png",
+    "width": 1640,
+    "height": 624,
+    "font": true,
+    "overflow": false,
+    "images": true
+  },
+  {
+    "file": "03-post-welcome.png",
+    "width": 1080,
+    "height": 1080,
+    "font": true,
+    "overflow": false,
+    "images": true
+  },
+  {
+    "file": "04-post-services.png",
+    "width": 1080,
+    "height": 1080,
+    "font": true,
+    "overflow": false,
+    "images": true
+  },
+  {
+    "file": "05-post-free-review.png",
+    "width": 1080,
+    "height": 1080,
+    "font": true,
+    "overflow": false,
+    "images": true
+  },
+  {
+    "file": "06-story-free-review.png",
+    "width": 1080,
+    "height": 1920,
+    "font": true,
+    "overflow": false,
+    "images": true
+  }
+]
