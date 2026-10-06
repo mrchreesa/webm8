@@ -5,13 +5,13 @@ import { StatusBar } from "./StatusBar";
 import styles from "./story.module.css";
 
 /** The trade's booking or quote form. StoryHero types the values in. */
-export function RequestForm({ trade, name }: { trade: Trade; name: string }) {
+export function RequestForm({ trade }: { trade: Trade }) {
   return (
     <div data-slot="form" className={cn(styles.slot, styles.form)}>
       <StatusBar time="9:42" />
       <div className={styles.formHead}>
-        <span className={styles.formLogo}>{initialOf(name)}</span>
-        <b>{name}</b>
+        <span className={styles.formLogo}>{initialOf(trade.exampleName)}</span>
+        <b>{trade.exampleName}</b>
       </div>
       <div className={styles.formBody}>
         <p className={styles.formTitle}>{trade.form.title}</p>
@@ -30,7 +30,7 @@ export function RequestForm({ trade, name }: { trade: Trade; name: string }) {
       <div data-story="done" className={styles.done}>
         <span className={styles.doneIcon}><CheckIcon /></span>
         <b>Request sent</b>
-        <p>{name} {trade.form.done}</p>
+        <p>{trade.exampleName} {trade.form.done}</p>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { DemoCtaButton, useDemoPrefill } from "@/components/demo/DemoPrefill";
+import { DemoCtaButton } from "@/components/demo/DemoCtaButton";
 import { LinkButton } from "@/components/ui/Button";
 import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/cn";
@@ -18,7 +18,7 @@ import {
   type StoryChapter,
   type StoryStep,
 } from "@/lib/storyProgress";
-import { defaultTrade, displayName, nextHeroTrade, trades, type Trade, type TradeKey } from "@/lib/trades";
+import { defaultTrade, nextHeroTrade, trades, type Trade, type TradeKey } from "@/lib/trades";
 import { PauseIcon, PlayIcon } from "./icons";
 import { siteFonts } from "./fonts";
 import { LockScreen } from "./LockScreen";
@@ -49,7 +49,6 @@ const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: r
 type StoryControl = {
   setPlaying: (on: boolean) => void;
   seek: (step: StoryStep) => void;
-  tradeChanged: (key: TradeKey) => void;
 };
 
 function paletteStyle(trade: Trade): CSSProperties {
@@ -61,7 +60,7 @@ function paletteStyle(trade: Trade): CSSProperties {
     "--t-accent-ink": p.accentInk,
     "--t-soft": p.soft,
     "--t-ink": p.ink,
-    "--t-font": siteFonts[looks[trade.key].font],
+    "--t-font": siteFonts[looks[trade.key]?.font ?? "bricolage"],
   } as CSSProperties;
 }
 
@@ -72,24 +71,16 @@ function screenFor(chapter: StoryChapter) {
 /**
  * The homepage hero: one customer's journey, from a local search to the
  * owner's phone lighting up, played on a loop. Each turn shows the next
- * trade until the visitor picks theirs. Must be rendered inside
- * DemoPrefillProvider.
+ * trade.
  */
 export function StoryHero() {
-  const prefill = useDemoPrefill();
-  const chosen = prefill?.chosen ?? false;
-  const [rotationKey, setRotationKey] = useState<TradeKey>(defaultTrade);
-  const tradeKey = chosen && prefill ? prefill.tradeKey : rotationKey;
-  const business = prefill?.business ?? "";
+  const [tradeKey, setTradeKey] = useState<TradeKey>(defaultTrade);
   const trade = trades[tradeKey];
-  // A name typed for one trade never shows on the others.
-  const name = displayName(trade, chosen ? business : "");
 
   const sectionRef = useRef<HTMLElement>(null);
   const deviceRef = useRef<HTMLDivElement>(null);
   const phoneRef = useRef<HTMLDivElement>(null);
   const tradeRef = useRef(trade);
-  const chosenRef = useRef(chosen);
   const frameRef = useRef<() => void>(() => {});
   const controlRef = useRef<StoryControl | null>(null);
   const chapterRef = useRef<StoryChapter>(0);
@@ -117,7 +108,6 @@ export function StoryHero() {
     let raf = 0;
     let last = 0;
     let completed = false;
-    let turnTrade = tradeRef.current.key;
 
     const draw = () => {
       const p = playProgress(elapsed);
@@ -177,14 +167,11 @@ export function StoryHero() {
       if (elapsed >= STORY_TURN_MS) {
         if (!completed) {
           completed = true;
-          trackEvent("home_story_completed", { trade: tradeRef.current.key, chosen: chosenRef.current });
+          trackEvent("home_story_completed", { trade: tradeRef.current.key });
         }
         elapsed = 0;
         swapInUntil = SWAP_IN_MS;
-        if (!chosenRef.current) {
-          turnTrade = nextHeroTrade(tradeRef.current.key);
-          setRotationKey(turnTrade);
-        }
+        setTradeKey(nextHeroTrade(tradeRef.current.key));
       }
       draw();
       raf = window.requestAnimationFrame(tick);
@@ -206,16 +193,6 @@ export function StoryHero() {
         elapsed = chapterTime(step, running ? 0 : STILL_AT);
         swapInUntil = 0;
         draw();
-      },
-      // A trade picked by the visitor (or restored) starts its story from
-      // the top; when paused, it takes over the frame on screen.
-      tradeChanged(key) {
-        if (key === turnTrade) return;
-        turnTrade = key;
-        if (running) {
-          elapsed = 0;
-          swapInUntil = SWAP_IN_MS;
-        }
       },
     };
 
@@ -252,17 +229,11 @@ export function StoryHero() {
     controlRef.current?.setPlaying(playing);
   }, [playing]);
 
-  // A new trade or name re-renders the screens; redraw the typed text at once.
+  // A new trade re-renders the screens; redraw the typed text at once.
   useEffect(() => {
     tradeRef.current = trade;
-    chosenRef.current = chosen;
-    controlRef.current?.tradeChanged(trade.key);
     frameRef.current();
-  }, [trade, name, chosen]);
-
-  const pick = (key: TradeKey) => {
-    if (prefill && !(chosen && key === tradeKey)) prefill.selectTrade(key);
-  };
+  }, [trade]);
 
   const captions = [
     trade.need,
@@ -295,15 +266,7 @@ export function StoryHero() {
               See our work
             </LinkButton>
           </div>
-          {prefill ? (
-            <TradeChips
-              shownKey={tradeKey}
-              chosen={chosen}
-              business={business}
-              onPick={pick}
-              onBusinessChange={prefill.setBusiness}
-            />
-          ) : null}
+          <TradeChips shownKey={tradeKey} />
         </div>
 
         <div className={styles.stage}>
@@ -314,9 +277,9 @@ export function StoryHero() {
                   <div className={styles.face}>
                     <div data-screen={screenFor(chapter)} className={styles.screen}>
                       <span className={styles.island} />
-                      <SearchScreen trade={trade} name={name} />
-                      <TradeSite trade={trade} name={name} />
-                      <RequestForm trade={trade} name={name} />
+                      <SearchScreen trade={trade} />
+                      <TradeSite trade={trade} />
+                      <RequestForm trade={trade} />
                     </div>
                   </div>
                   <div className={cn(styles.face, styles.back)}>

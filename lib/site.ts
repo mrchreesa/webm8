@@ -190,15 +190,15 @@ export type DemoStep = { title: string; body: string };
 export const demoSteps: DemoStep[] = [
   {
     title: "Tell us about your business",
-    body: "Your trade, your area and what you want more of. It takes about two minutes.",
+    body: "Your trade, your area and how to reach you. It takes about two minutes.",
   },
   {
-    title: "We design your homepage",
-    body: "With your name, your services and your area on it.",
+    title: "A quick call",
+    body: "The same day, about five minutes, so we understand what you need.",
   },
   {
-    title: "We show it to you",
-    body: "On a short video call, at a time that suits you.",
+    title: "Your demo",
+    body: "Within 48 hours of our call, shown to you on a short video call.",
   },
 ];
 
@@ -229,8 +229,28 @@ export type Project = {
   screenshots: {
     desktop: string;
     mobile: string;
+    /** A tall capture for the homepage story's phone, when a trade shows this project. */
+    phone?: PhoneShot;
   };
   outcomes: string[];
+};
+
+/**
+ * The top of a site captured 390 CSS px wide at 2x (scripts/capture-portfolio.mjs
+ * prints these numbers). Positions are in CSS px of that 390-wide page.
+ */
+export type PhoneShot = {
+  src: string;
+  width: number;
+  height: number;
+  /** The colour at the very top of the page; the phone's status bar takes it. */
+  top: string;
+  /** The centre of the main button, where the story taps. */
+  button: { x: number; y: number };
+  /** How far the story scrolls the page before the tap. */
+  scroll: number;
+  /** The height of the site's own header, which stays pinned while the page scrolls under it. */
+  header?: number;
 };
 
 /** Demo sites WebM8 designed for local businesses. */
@@ -267,6 +287,7 @@ export const projects: Project[] = [
     screenshots: {
       desktop: "/work/allen-fitness-desktop.webp",
       mobile: "/work/allen-fitness-mobile.webp",
+      phone: { src: "/work/allen-fitness-phone.webp", width: 780, height: 2800, top: "#d8f343", button: { x: 101, y: 460 }, scroll: 80, header: 98 },
     },
     outcomes: [
       "A bold, high-energy brand look",
@@ -307,6 +328,7 @@ export const projects: Project[] = [
     screenshots: {
       desktop: "/work/solvers-cleaning-desktop.webp",
       mobile: "/work/solvers-cleaning-mobile.webp",
+      phone: { src: "/work/solvers-cleaning-phone.webp", width: 780, height: 2800, top: "#0f1a4a", button: { x: 104, y: 799 }, scroll: 200, header: 74 },
     },
     outcomes: [
       "Free quote and WhatsApp buttons",
@@ -327,6 +349,7 @@ export const projects: Project[] = [
     screenshots: {
       desktop: "/work/removals-desktop.webp",
       mobile: "/work/removals-mobile.webp",
+      phone: { src: "/work/removals-phone.webp", width: 780, height: 2800, top: "#46413a", button: { x: 195, y: 585 }, scroll: 120 },
     },
     outcomes: [
       "Fast quote positioning",

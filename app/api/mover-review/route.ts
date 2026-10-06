@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { hasOwnWebsite } from "@/lib/demoRequest";
 import { createPreviewAccessToken, isUuid, verifyPreviewAccessToken } from "@/lib/previewAccess";
 import { validateReviewRequest } from "@/lib/reviewRequest";
 import { supabaseTableRequest } from "@/lib/supabaseAdmin";
@@ -98,12 +99,7 @@ export async function POST(request: Request) {
         phone: fields.phone,
         website_url: fields.businessLink,
         business_link: fields.businessLink,
-        has_website: Boolean(
-          fields.businessLink &&
-            !/(facebook\.com|instagram\.com|maps\.app\.goo\.gl|google\.[^/]+\/maps)/i.test(
-              fields.businessLink,
-            ),
-        ),
+        has_website: hasOwnWebsite(fields.businessLink),
         main_city_state: fields.mainCityState,
         services: fields.services,
         site_feel: fields.siteFeel,

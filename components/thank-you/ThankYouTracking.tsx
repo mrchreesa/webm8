@@ -2,15 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { trackEvent } from "@/lib/analytics";
-import {
-  parseStoredAttribution,
-  pickAttribution,
-  readAttribution,
-  withUtm,
-  type Attribution,
-} from "@/lib/leadAttribution";
-
-const storageKey = "webm8:lead-attribution";
+import { rememberAttribution, withUtm } from "@/lib/leadAttribution";
 
 /**
  * Engagement tracking for /thank-you/.
@@ -26,11 +18,7 @@ export function ThankYouTracking() {
   const viewed = useRef(false);
 
   useEffect(() => {
-    const attribution = pickAttribution(
-      readAttribution(window.location.search),
-      readStored(),
-    );
-    store(attribution);
+    const attribution = rememberAttribution();
 
     if (!viewed.current) {
       viewed.current = true;
@@ -64,20 +52,4 @@ export function ThankYouTracking() {
   }, []);
 
   return null;
-}
-
-function readStored() {
-  try {
-    return parseStoredAttribution(window.sessionStorage.getItem(storageKey));
-  } catch {
-    return null;
-  }
-}
-
-function store(attribution: Attribution) {
-  try {
-    window.sessionStorage.setItem(storageKey, JSON.stringify(attribution));
-  } catch {
-    // Private browsing can refuse storage; attribution then lasts this page view.
-  }
 }

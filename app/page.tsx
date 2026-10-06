@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { DemoClosing } from "@/components/demo/DemoClosing";
-import { DemoPrefillProvider } from "@/components/demo/DemoPrefill";
 import { EightArms } from "@/components/home/EightArms";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { Plans } from "@/components/home/Plans";
@@ -22,7 +21,7 @@ export const metadata: Metadata = createPageMetadata({
 
 export default function HomePage() {
   return (
-    <DemoPrefillProvider>
+    <>
       <StoryHero />
       <WorkDeck />
       <EightArms />
@@ -30,6 +29,6 @@ export default function HomePage() {
       <Plans />
       <Voices />
       <DemoClosing />
-    </DemoPrefillProvider>
+    </>
   );
 }

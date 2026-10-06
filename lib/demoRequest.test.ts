@@ -1,116 +1,187 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
-  DEMO_PREFILL_KEY,
-  demoRequestMailFields,
-  demoRequestSubject,
-  parseDemoPrefill,
-  readDemoPrefill,
-  resolveDemoTrade,
-  serializeDemoPrefill,
-  validateDemoRequest,
-  writeDemoPrefill,
-  type DemoRequestInput,
+  emptyDemoAnswers,
+  firstNameOf,
+  hasOwnWebsite,
+  normaliseLink,
+  validateDemoAnswers,
+  validateDemoStep,
+  validateDemoSubmission,
+  type DemoAnswers,
 } from "./demoRequest.ts";
-import { buildMailtoHref } from "./mailto.ts";
 
-const valid: DemoRequestInput = {
-  business: "  Reyes   Plumbing ",
+const valid: DemoAnswers = {
   trade: "plumbing",
-  name: " Jamie Reyes ",
+  tradeOther: "",
+  business: "  Reyes   Plumbing ",
+  area: " Austin,  TX ",
+  link: "",
+  name: " Jamie   Reyes ",
+  phone: " (512) 555-0142 ",
   email: " Jamie@Example.co.uk ",
-  phone: "",
-  area: "Austin, TX",
-  website: "reyesplumbing.com",
-  goal: "",
+};
+
+const submission = {
+  ...valid,
+  submissionKey: "0b6f4c1e-2f0a-4c1b-9a51-6d6f2b7f9a10",
+  elapsedMs: 42_000,
+  website_hp: "",
+  attribution: { utm_source: "facebook", utm_campaign: "uk-trades", ad_id: "{{ad.id}}" },
+  referrer: "https://l.facebook.com/",
+  pagePath: "/demo/",
 };
 
 test("a complete request is accepted and tidied", () => {
-  const result = validateDemoRequest(valid);
+  const result = validateDemoAnswers(valid);
   assert.equal(result.ok, true);
   if (!result.ok) return;
-  assert.equal(result.request.business, "Reyes Plumbing");
-  assert.equal(result.request.name, "Jamie Reyes");
-  assert.equal(result.request.email, "Jamie@Example.co.uk");
-  assert.equal(result.request.trade, "plumbing");
-  assert.equal(result.request.website, "reyesplumbing.com");
-});
-
-test("long business names are kept in full on the form", () => {
-  const result = validateDemoRequest({ ...valid, business: "Northside Heating & Air Conditioning LLC" });
-  assert.equal(result.ok && result.request.business, "Northside Heating & Air Conditioning LLC");
+  assert.deepEqual(result.request, {
+    trade: "plumbing",
+    tradeOther: null,
+    business: "Reyes Plumbing",
+    area: "Austin, TX",
+    link: null,
+    name: "Jamie Reyes",
+    phone: "(512) 555-0142",
+    email: "Jamie@Example.co.uk",
+  });
 });
 
 test("every required field reports its own message", () => {
-  const result = validateDemoRequest({ business: " ", trade: "", name: "", email: "", phone: "", area: "", website: "", goal: "" });
+  const result = validateDemoAnswers(emptyDemoAnswers);
   assert.equal(result.ok, false);
   if (result.ok) return;
-  assert.deepEqual(Object.keys(result.errors).sort(), ["area", "business", "email", "name", "trade"]);
-  assert.equal(result.errors.email, "Add your email address.");
+  assert.deepEqual(Object.keys(result.errors).sort(), ["area", "business", "email", "name", "phone", "trade"]);
+  assert.equal(result.errors.trade, "Choose the kind of business you run.");
+  assert.equal(result.errors.phone, "Add a phone number so we can call you.");
+});
+
+test("each step checks only its own fields", () => {
+  assert.deepEqual(validateDemoStep(1, { ...emptyDemoAnswers, trade: "salon" }), {});
+  assert.deepEqual(Object.keys(validateDemoStep(2, emptyDemoAnswers)), ["business"]);
+  assert.deepEqual(Object.keys(validateDemoStep(3, { ...emptyDemoAnswers, link: "not a link" })).sort(), ["area", "link"]);
+  assert.deepEqual(Object.keys(validateDemoStep(4, { ...emptyDemoAnswers, name: "Jamie" })).sort(), ["email", "phone"]);
+});
+
+test("something else needs a description, and other trades drop it", () => {
+  const missing = validateDemoStep(1, { ...emptyDemoAnswers, trade: "other" });
+  assert.equal(missing.tradeOther, "Tell us what your business does.");
+
+  const other = validateDemoAnswers({ ...valid, trade: "other", tradeOther: "  Dog   grooming " });
+  assert.equal(other.ok && other.request.tradeOther, "Dog grooming");
+
+  const plumbing = validateDemoAnswers({ ...valid, tradeOther: "Dog grooming" });
+  assert.equal(plumbing.ok && plumbing.request.tradeOther, null);
+});
+
+test("an unknown trade is rejected", () => {
+  const result = validateDemoAnswers({ ...valid, trade: "plumber" });
+  assert.equal(result.ok, false);
+  if (!result.ok) assert.equal(result.errors.trade, "Choose the kind of business you run.");
+});
+
+test("US and UK phone numbers are accepted as typed", () => {
+  for (const phone of ["07700 900123", "020 7946 0018", "(512) 555-0142", "+44 7700 900123", "+1 512.555.0142", "512-555-0142"]) {
+    const result = validateDemoAnswers({ ...valid, phone });
+    assert.equal(result.ok, true, phone);
+  }
+});
+
+test("phone numbers that cannot be dialled are rejected", () => {
+  for (const phone of ["12345", "call me", "0770O 900123", "44+ 7700 900123", "1234567890123456"]) {
+    const result = validateDemoAnswers({ ...valid, phone });
+    assert.equal(result.ok, false, phone);
+    if (!result.ok) assert.equal(result.errors.phone, "Check your phone number, including the area code.");
+  }
 });
 
 test("malformed emails are rejected with a plain message", () => {
   for (const email of ["name@", "name@site", "name site@example.com", "@example.com", "name@@example.com"]) {
-    const result = validateDemoRequest({ ...valid, email });
+    const result = validateDemoAnswers({ ...valid, email });
     assert.equal(result.ok, false, email);
     if (!result.ok) assert.equal(result.errors.email, "Check your email address. It should look like name@example.com.");
   }
 });
 
-test("an unknown trade is rejected", () => {
-  const result = validateDemoRequest({ ...valid, trade: "plumber" });
+test("answers over the length limit are refused rather than cut", () => {
+  const result = validateDemoAnswers({ ...valid, business: "x".repeat(121) });
   assert.equal(result.ok, false);
-  if (!result.ok) assert.equal(result.errors.trade, "Choose the kind of business you run.");
+  if (!result.ok) assert.equal(result.errors.business, "Keep this under 120 characters.");
 });
 
-test("the email draft has a clear subject and leaves out empty answers", () => {
-  const result = validateDemoRequest(valid);
-  assert.ok(result.ok);
-  if (!result.ok) return;
-  assert.equal(demoRequestSubject(result.request), "Website demo request from Reyes Plumbing");
-  const fields = demoRequestMailFields(result.request);
-  assert.equal(fields["Type of business"], "Plumbing business");
-  assert.equal(fields.Source, "WebM8 marketing site, /demo");
-  const href = buildMailtoHref("info@webm8agency.com", demoRequestSubject(result.request), fields);
-  const body = new URLSearchParams(href.split("?")[1]).get("body") ?? "";
-  assert.ok(body.includes("Business: Reyes Plumbing"));
-  assert.ok(!body.includes("Phone:"));
-  assert.ok(!body.includes("Wants more of:"));
-});
-
-test("prefill parsing survives junk", () => {
-  for (const raw of [null, undefined, "", "not json", "[]", "42", "null", '{"trade":5}']) {
-    assert.deepEqual(parseDemoPrefill(raw), { trade: null, business: "" }, String(raw));
+test("links gain https:// and must look like a web address", () => {
+  assert.equal(normaliseLink("reyesplumbing.com"), "https://reyesplumbing.com/");
+  assert.equal(normaliseLink(" https://facebook.com/reyesplumbing "), "https://facebook.com/reyesplumbing");
+  assert.equal(normaliseLink("http://www.reyes.co.uk/about"), "http://www.reyes.co.uk/about");
+  assert.equal(normaliseLink(""), "");
+  for (const junk of ["reyes plumbing", "localhost", "javascript:alert(1)", "ftp://reyes.com", "https://"]) {
+    assert.equal(normaliseLink(junk), null, junk);
   }
-  assert.deepEqual(parseDemoPrefill('{"trade":"HVAC","business":"  Reyes   Plumbing "}'), { trade: "hvac", business: "Reyes Plumbing" });
-  assert.deepEqual(parseDemoPrefill('{"trade":"toString","business":"x"}'), { trade: null, business: "x" });
-  assert.equal(parseDemoPrefill(JSON.stringify({ trade: null, business: "A".repeat(50) })).business.length, 30);
+
+  const result = validateDemoAnswers({ ...valid, link: "reyesplumbing.com" });
+  assert.equal(result.ok && result.request.link, "https://reyesplumbing.com/");
+
+  const bad = validateDemoAnswers({ ...valid, link: "my facebook" });
+  assert.equal(bad.ok, false);
+  if (!bad.ok) assert.equal(bad.errors.link, "That link doesn't look right. Check it, or leave it empty.");
 });
 
-test("prefill round-trips through storage", () => {
-  const store = new Map<string, string>();
-  const storage = { getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => void store.set(k, v) };
-  writeDemoPrefill({ trade: "dental", business: "Maple Family Dental" }, storage);
-  assert.ok(store.has(DEMO_PREFILL_KEY));
-  assert.deepEqual(readDemoPrefill(storage), { trade: "dental", business: "Maple Family Dental" });
-  assert.equal(serializeDemoPrefill({ trade: null, business: "  a  b " }), '{"trade":null,"business":"a b"}');
+test("social and map links do not count as the business's own website", () => {
+  assert.equal(hasOwnWebsite(null), false);
+  assert.equal(hasOwnWebsite("https://www.facebook.com/reyesplumbing"), false);
+  assert.equal(hasOwnWebsite("https://instagram.com/reyesplumbing"), false);
+  assert.equal(hasOwnWebsite("https://maps.app.goo.gl/abc123"), false);
+  assert.equal(hasOwnWebsite("https://www.google.co.uk/maps/place/Reyes"), false);
+  assert.equal(hasOwnWebsite("https://reyesplumbing.com/"), true);
 });
 
-test("blocked storage never throws", () => {
-  const blocked = {
-    getItem: () => { throw new Error("SecurityError"); },
-    setItem: () => { throw new Error("QuotaExceededError"); },
-  };
-  assert.deepEqual(readDemoPrefill(blocked), { trade: null, business: "" });
-  assert.doesNotThrow(() => writeDemoPrefill({ trade: "hvac", business: "x" }, blocked));
-  assert.deepEqual(readDemoPrefill(null), { trade: null, business: "" });
-  assert.doesNotThrow(() => writeDemoPrefill({ trade: "hvac", business: "x" }, null));
+test("the first name is the first word of the name", () => {
+  assert.equal(firstNameOf(" Jamie   Reyes "), "Jamie");
+  assert.equal(firstNameOf("Priya"), "Priya");
+  assert.equal(firstNameOf(""), "");
 });
 
-test("a valid ?trade= wins over the stored trade", () => {
-  const stored = { trade: "salon" as const, business: "" };
-  assert.equal(resolveDemoTrade("?trade=dental", stored), "dental");
-  assert.equal(resolveDemoTrade("?trade=nope", stored), "salon");
-  assert.equal(resolveDemoTrade("", stored), "salon");
-  assert.equal(resolveDemoTrade("", { trade: null, business: "" }), null);
+test("a full submission is accepted with clean attribution", () => {
+  const result = validateDemoSubmission(submission);
+  assert.equal(result.ok, true);
+  if (!result.ok) return;
+  assert.equal(result.value.business, "Reyes Plumbing");
+  assert.equal(result.value.submissionKey, submission.submissionKey);
+  assert.deepEqual(result.value.attribution, { utm_source: "facebook", utm_campaign: "uk-trades" });
+  assert.equal(result.value.referrer, "https://l.facebook.com/");
+  assert.equal(result.value.pagePath, "/demo/");
+});
+
+test("bots are turned away with one generic message", () => {
+  for (const input of [
+    { ...submission, website_hp: "https://spam.example" },
+    { ...submission, elapsedMs: 400 },
+  ]) {
+    const result = validateDemoSubmission(input);
+    assert.equal(result.ok, false);
+    if (!result.ok) assert.deepEqual(result.errors, { form: "That request could not be accepted." });
+  }
+});
+
+test("a submission without a valid key cannot be saved", () => {
+  const result = validateDemoSubmission({ ...submission, submissionKey: "abc" });
+  assert.equal(result.ok, false);
+  if (!result.ok) assert.ok(result.errors.form);
+});
+
+test("a submission that is not an object reports field errors, not a crash", () => {
+  const result = validateDemoSubmission(null);
+  assert.equal(result.ok, false);
+});
+
+test("field errors come back for a submission with bad answers", () => {
+  const result = validateDemoSubmission({ ...submission, email: "nope" });
+  assert.equal(result.ok, false);
+  if (!result.ok) assert.equal(result.errors.email, "Check your email address. It should look like name@example.com.");
+});
+
+test("a page path must be a path on this site", () => {
+  const result = validateDemoSubmission({ ...submission, pagePath: "https://evil.example/" });
+  assert.equal(result.ok && result.value.pagePath, null);
 });

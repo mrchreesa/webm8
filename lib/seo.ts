@@ -52,7 +52,7 @@ export const indexableRoutes = [
     path: "/demo/",
     title: "Free Personalised Website Demo",
     description:
-      "Tell us about your business and we'll design a homepage for you, with your name and services on it, and show it to you on a short call. Free, no obligation.",
+      "Tell us about your business and we'll design a homepage for it, free. We call you the same day and show you your demo within 48 hours of that call. No payment, no obligation.",
     priority: 0.9,
   },
   {

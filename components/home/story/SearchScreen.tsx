@@ -1,11 +1,11 @@
 import { cn } from "@/lib/cn";
-import { searchSuggestions, type Trade } from "@/lib/trades";
+import { ratingOf, searchSuggestions, type Trade } from "@/lib/trades";
 import { SearchIcon, TrendIcon } from "./icons";
 import { StatusBar } from "./StatusBar";
 import { TradeIcon } from "./TradeIcon";
 import styles from "./story.module.css";
 
-export function SearchScreen({ trade, name }: { trade: Trade; name: string }) {
+export function SearchScreen({ trade }: { trade: Trade }) {
   return (
     <div data-slot="search" data-story="search" className={cn(styles.slot, styles.searchScreen)}>
       <StatusBar time="9:41" />
@@ -48,8 +48,8 @@ export function SearchScreen({ trade, name }: { trade: Trade; name: string }) {
       <div className={styles.results}>
         <div data-story="top-result" className={cn(styles.result, styles.resultTop)}>
           <span className={styles.thumb}><TradeIcon trade={trade.key} strokeWidth={1.6} /></span>
-          <b>{name}</b>
-          <span className={styles.meta}><i>★★★★★</i> 4.9 ({trade.reviewCount}) {trade.category}</span>
+          <b>{trade.exampleName}</b>
+          <span className={styles.meta}><i>★★★★★</i> {ratingOf(trade)} ({trade.reviewCount}) {trade.category}</span>
           <div className={styles.actions}>
             <span>Website</span>
             <span>Directions</span>

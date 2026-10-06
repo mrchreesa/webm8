@@ -1,21 +1,19 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
-  BUSINESS_NAME_MAX,
   capitalise,
-  cleanBusinessName,
   defaultTrade,
-  displayName,
   heroTradeOrder,
   initialOf,
+  isPortfolioSite,
   nextHeroTrade,
   parseTrade,
-  possessive,
   searchSuggestions,
   tradeGroups,
   tradeList,
   trades,
 } from "./trades.ts";
+import { projects } from "./site.ts";
 
 function channel(value: number) {
   const c = value / 255;
@@ -50,12 +48,36 @@ test("every trade has complete, non-empty content", () => {
   for (const trade of tradeList) {
     for (const text of strings(trade)) assert.ok(text.trim().length > 0, `${trade.key} has an empty string`);
     assert.equal(trade.form.fields.length, 4, `${trade.key} needs four form fields`);
-    assert.equal(trade.site.services.length, 3, `${trade.key} needs three services`);
     assert.equal(trade.competitors.length, 2, `${trade.key} needs two competitors`);
     assert.ok(trade.reviewCount > 0);
+    assert.ok(trade.exampleName.length <= 30, `${trade.key} example name must fit the phone`);
+    if (isPortfolioSite(trade.site)) continue;
+    assert.equal(trade.site.services.length, 3, `${trade.key} needs three services`);
     assert.match(trade.site.phone, /^\(312\) 555-01\d{2}$/, `${trade.key} phone must be fictional`);
-    assert.ok(trade.exampleName.length <= BUSINESS_NAME_MAX);
   }
+});
+
+test("a trade showing a real site names its project, which has a phone capture", () => {
+  const shown = tradeList.filter((trade) => isPortfolioSite(trade.site));
+  assert.deepEqual(shown.map((trade) => trade.key).sort(), ["cleaning", "fitness", "moving"]);
+  for (const trade of shown) {
+    const slug = isPortfolioSite(trade.site) ? trade.site.project : "";
+    const project = projects.find((p) => p.slug === slug);
+    assert.ok(project, `${trade.key}: no project ${slug}`);
+    assert.equal(trade.exampleName, project.name, `${trade.key} must use the business's own name`);
+    const shot = project.screenshots.phone;
+    assert.ok(shot, `${slug} needs a phone capture`);
+    assert.match(shot.top, /^#[0-9a-f]{6}$/);
+    assert.ok(shot.button.y - shot.scroll > (shot.header ?? 0) + 30, `${slug}: the button must stay on screen, below the header`);
+    assert.ok(shot.scroll + 900 <= (shot.height / shot.width) * 390, `${slug}: the capture must cover the scroll`);
+  }
+});
+
+test("no two real sites play back to back", () => {
+  heroTradeOrder.forEach((key, index) => {
+    const next = heroTradeOrder[(index + 1) % heroTradeOrder.length];
+    assert.ok(!(isPortfolioSite(trades[key].site) && isPortfolioSite(trades[next].site)), `${key} then ${next}`);
+  });
 });
 
 test("palettes are valid and readable", () => {
@@ -98,18 +120,6 @@ test("parseTrade rejects unknown values and object built-ins", () => {
   }
 });
 
-test("business names are tidied and capped at 30 characters", () => {
-  assert.equal(cleanBusinessName("  Reyes   Plumbing  "), "Reyes Plumbing");
-  assert.equal(cleanBusinessName("A".repeat(40)).length, BUSINESS_NAME_MAX);
-  assert.equal(cleanBusinessName("   "), "");
-});
-
-test("an empty business name falls back to the trade's example name", () => {
-  assert.equal(displayName(trades.plumbing, ""), "Reyes Plumbing");
-  assert.equal(displayName(trades.plumbing, "   "), "Reyes Plumbing");
-  assert.equal(displayName(trades.plumbing, "Bella Rosa"), "Bella Rosa");
-});
-
 test("initials skip a leading 'The' and anything that is not a letter or number", () => {
   assert.equal(initialOf("The Stitch House"), "S");
   assert.equal(initialOf("reyes plumbing"), "R");
@@ -117,17 +127,6 @@ test("initials skip a leading 'The' and anything that is not a letter or number"
   assert.equal(initialOf("1st Choice Movers"), "1");
   assert.equal(initialOf("🔧🔧"), "W");
   assert.equal(initialOf("The"), "T");
-});
-
-test("possessives handle names that end in s", () => {
-  assert.equal(possessive("Reyes Plumbing"), "Reyes Plumbing’s");
-  assert.equal(possessive("Fade House Barbers"), "Fade House Barbers’");
-});
-
-test("names that are already possessive are left as they are", () => {
-  assert.equal(possessive("Joe's"), "Joe's");
-  assert.equal(possessive("Luca’s"), "Luca’s");
-  assert.equal(possessive("TONY'S"), "TONY'S");
 });
 
 test("search suggestions lead with the trade's own search and never repeat it", () => {

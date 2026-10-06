@@ -25,20 +25,21 @@ npm test           # node --test over lib/**/*.test.ts
 ```
 app/
   page.tsx            # Home: story hero, demo sites, eight arms, how it works, plans, voices, demo close
-  demo/page.tsx       # Free Personalised Website Demo request (/audit/ redirects here)
+  demo/page.tsx       # Free Personalised Website Demo: the Meta ad landing page (/audit/ redirects here)
   work/ pricing/ about/ contact/ privacy/ movers/
-  api/                # /movers/ campaign routes only
+  api/                # demo-request (/demo/) and the /movers/ campaign routes
   globals.css         # Tailwind @theme tokens and motion utilities
 components/
   home/story/         # StoryHero and its phone screens (CSS module: story.module.css)
   home/               # WorkDeck, EightArms, HowItWorks, Plans, Voices (+ WhatYouGet, Testimonials for /movers/)
-  demo/               # DemoPrefill (trade/name handover, DemoCtaButton), DemoClosing
-  forms/              # DemoForm, ContactForm, MoverReviewForm, FormField
+  demo/               # The /demo/ page (DemoHero, DemoDeck, DemoJourney, DemoSketch, …), plus DemoCtaButton and DemoClosing
+  forms/              # ContactForm, MoverReviewForm, FormField
   layout/ ui/ movers/ analytics/
 lib/
   site.ts             # Copy: nav, plans, projects, process, demo steps, eight arms, testimonials
   trades.ts           # The 15 trades the homepage story can show
-  demoRequest.ts      # Demo form validation and sessionStorage prefill
+  demoRequest.ts      # /demo/ request validation, shared by the form and its route
+  demoEmail.ts        # The two /demo/ emails; resend.ts sends them
   storyProgress.ts    # Scroll maths for the story
   seo.ts analytics.ts mailto.ts movers.ts …
 scripts/
@@ -49,8 +50,7 @@ scripts/
 
 - **Most copy:** `lib/site.ts`.
 - **The homepage story's trades:** `lib/trades.ts`. Each trade is pure data, and `lib/trades.test.ts` checks every one.
-- **Adding a demo site:** add an entry to `projects` in `lib/site.ts`, and its screenshots to `public/work/`. Capture them with `node scripts/capture-portfolio.mjs <slug>` after adding the target to the script. `siteUrl` is optional, and a project without one shows no live link.
-- **Ads can open the story on a trade:** `/?trade=hvac`, `/?trade=dental`, and so on.
+- **Adding a demo site:** add an entry to `projects` in `lib/site.ts`, and its screenshots to `public/work/`. Capture them with `node scripts/capture-portfolio.mjs <slug>` after adding the target to the script. `siteUrl` is optional, and a project without one shows no live link. To show it in the homepage phone for a trade, give the target a `phone.button` selector, run the script with `--phone`, copy the numbers it prints into the project's `screenshots.phone`, and set that trade's `site` to `{ project: "<slug>" }` in `lib/trades.ts`.
 
 ## Brand tokens
 
@@ -68,7 +68,8 @@ Headlines (`h1`, `h2`) use Funnel Display; body text uses Geist. Put `surface-da
 
 ## Forms
 
-- `DemoForm` and `ContactForm` validate fields and open a prefilled email with `lib/mailto.ts::buildMailtoHref`. `DemoForm`'s rules live in `lib/demoRequest.ts`.
+- `/demo/` (`components/demo/DemoJourney.tsx`) asks four short steps and posts to `/api/demo-request/`, which saves the request to Supabase (`agency_review_requests`, `request_type = 'demo'`) and emails WebM8 and the visitor through Resend. Success shows only once the row exists. Rules live in `lib/demoRequest.ts`; the design is `docs/superpowers/specs/2026-10-05-demo-page-redesign-design.md`.
+- `ContactForm` validates fields and opens a prefilled email with `lib/mailto.ts::buildMailtoHref`.
 - `MoverReviewForm` (`/movers/`) posts to server routes and books a Cal.com call. See `docs/movers-campaign-handoff.md`.
 
 ## Measurement
@@ -76,17 +77,16 @@ Headlines (`h1`, `h2`) use Funnel Display; body text uses Geist. Put `surface-da
 `lib/analytics.ts` is the only adapter. It sends to Mixpanel, and to GA4 and Meta only when those are configured. Never pass names, emails, phone numbers or form answers.
 
 The homepage and demo events are:
-- `home_trade_selected`
 - `home_story_completed`
 - `demo_cta_clicked`
-- `demo_request_email_opened`
+- `demo_step_completed`, `demo_request_accepted` (with Meta `Lead`, once per saved request), `demo_request_failed`
 
 ## Routes
 
 | Path | Description |
 |---|---|
 | `/` | Home |
-| `/demo/` | Free Personalised Website Demo request (`/audit/` redirects here) |
+| `/demo/` | Free Personalised Website Demo, where Meta ads land (`/audit/` redirects here) |
 | `/work/` | Demo sites |
 | `/pricing/` | Plans, quoted to the business |
 | `/about/` | Positioning, values, process |

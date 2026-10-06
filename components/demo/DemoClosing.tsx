@@ -1,10 +1,7 @@
-"use client";
-
 import type { CSSProperties } from "react";
-import { DemoCtaButton, useDemoPrefill } from "@/components/demo/DemoPrefill";
+import { DemoCtaButton } from "@/components/demo/DemoCtaButton";
 import { MascotEyes } from "@/components/ui/MascotEyes";
 import { demoSteps } from "@/lib/site";
-import { cleanBusinessName, possessive } from "@/lib/trades";
 
 // Fixed values, so the server and the browser render the same bubbles.
 const BUBBLES = [
@@ -23,10 +20,6 @@ const BUBBLES = [
 
 /** The Free Personalised Website Demo close, shared by every marketing page. */
 export function DemoClosing() {
-  const prefill = useDemoPrefill();
-  const name = prefill ? cleanBusinessName(prefill.business) : "";
-  const title = name ? `Let’s get ${possessive(name)} phone ringing.` : "Let’s get your phone ringing.";
-
   return (
     <section
       id="demo-closing"
@@ -59,7 +52,7 @@ export function DemoClosing() {
           id="demo-closing-title"
           className="text-[clamp(2.6rem,6.4vw,5.4rem)] leading-[0.96] font-bold text-balance"
         >
-          {title}
+          Let’s get your phone ringing.
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-lg text-muted-invert">
           Start with a Free Personalised Website Demo. We design a homepage for your business and show it to you, before you spend a cent.
@@ -81,7 +74,7 @@ export function DemoClosing() {
           <DemoCtaButton placement="closing" size="lg">
             Get my free personalised demo
           </DemoCtaButton>
-          <p className="text-sm text-muted-invert">No payment. No obligation. We reply within one business day.</p>
+          <p className="text-sm text-muted-invert">No payment. No obligation. We call you the same day.</p>
         </div>
       </div>
     </section>

@@ -149,28 +149,7 @@ export function OtherArt() {
   );
 }
 
-/* ----- Poster: big type, the picture bleeding off the edge ----- */
-
-export function FitnessArt() {
-  const slots = [30, 150, 270];
-  return (
-    <svg {...svg} viewBox="0 0 100 100">
-      <circle cx="50" cy="50" r="48" fill="#c2410c" />
-      <circle cx="50" cy="50" r="42" fill="none" stroke="#7c2d12" strokeWidth="1.4" />
-      <g transform="translate(50 50)" fill="#1c0904">
-        {slots.map((angle) => (
-          <rect key={angle} transform={`rotate(${angle}) translate(0 -35)`} x="-8" y="-3.4" width="16" height="6.8" rx="3.4" />
-        ))}
-      </g>
-      <circle cx="50" cy="50" r="26" fill="#ea580c" />
-      <circle cx="50" cy="50" r="26" fill="none" stroke="#9a3412" strokeWidth="1" />
-      <circle cx="50" cy="50" r="10" fill="#1c0904" />
-      <circle cx="50" cy="50" r="6.5" fill="#d6d3d1" />
-      <circle cx="50" cy="50" r="3" fill="#78716c" />
-      <text x="50" y="35" textAnchor="middle" fontSize="7.5" fill="#fed7aa" letterSpacing="0.6">45 LB</text>
-    </svg>
-  );
-}
+/* ----- Poster: big type and a tall picture ----- */
 
 export function BarberArt() {
   const bands = Array.from({ length: 14 }, (_, i) => i);
@@ -206,35 +185,6 @@ export function BarberArt() {
       <rect x="5" y="18" width="30" height="13" rx="3" fill="url(#barber-metal)" />
       <circle cx="20" cy="11" r="7" fill="url(#barber-metal)" />
       <rect x="5" y="189" width="30" height="13" rx="3" fill="url(#barber-metal)" />
-    </svg>
-  );
-}
-
-function Box({ x, y, w, h, d }: { x: number; y: number; w: number; h: number; d: number }) {
-  const tape = x + w / 2 - 4;
-  return (
-    <g>
-      <path d={`M${x} ${y}L${x + d} ${y - d * 0.66}H${x + w + d}L${x + w} ${y}Z`} fill="#e4b97f" />
-      <path d={`M${x + w} ${y}L${x + w + d} ${y - d * 0.66}V${y + h - d * 0.66}L${x + w} ${y + h}Z`} fill="#b9864d" />
-      <rect x={x} y={y} width={w} height={h} fill="#d6a46a" />
-      <rect x={tape} y={y} width="8" height={h * 0.42} fill="#f1d39b" />
-      <path d={`M${tape} ${y}L${tape + d} ${y - d * 0.66}H${tape + 8 + d}L${tape + 8} ${y}Z`} fill="#f6e2b8" />
-    </g>
-  );
-}
-
-export function MovingArt() {
-  return (
-    <svg {...svg} viewBox="0 0 120 100">
-      <ellipse cx="62" cy="96" rx="56" ry="4" fill="#0b1b3f" opacity="0.3" />
-      <Box x={6} y={52} w={62} h={44} d={12} />
-      <rect x="12" y="76" width="18" height="12" rx="1" fill="#fff" />
-      <path d="M15 80H27M15 84H23" stroke="#b9864d" strokeWidth="1.2" />
-      <path d="M50 88V80M47 83L50 80L53 83M58 88V80M55 83L58 80L61 83" fill="none" stroke="#7a4f24" strokeWidth="1.4" />
-      <g transform="rotate(-5 46 34)">
-        <Box x={22} y={22} w={44} h={30} d={9} />
-      </g>
-      <Box x={84} y={70} w={26} h={26} d={7} />
     </svg>
   );
 }
@@ -342,35 +292,6 @@ export function MedspaArt() {
 }
 
 /* ----- Soft: a round picture with a sticker ----- */
-
-export function CleaningArt() {
-  return (
-    <svg {...svg} viewBox="0 0 100 100">
-      <g fill="#fff" stroke="#0f766e" strokeOpacity="0.35" strokeWidth="1">
-        <circle cx="78" cy="30" r="6" fillOpacity="0.6" />
-        <circle cx="84" cy="46" r="3.5" fillOpacity="0.6" />
-        <circle cx="24" cy="70" r="4.5" fillOpacity="0.6" />
-      </g>
-      <g fill="#0f766e" opacity="0.55">
-        <circle cx="25" cy="27" r="1.6" />
-        <circle cx="20" cy="33" r="1.4" />
-        <circle cx="18" cy="23" r="1.2" />
-        <circle cx="13" cy="30" r="1" />
-        <circle cx="22" cy="18" r="1" />
-      </g>
-      <rect x="38" y="46" width="32" height="44" rx="8" fill="#0f766e" />
-      <rect x="43" y="57" width="22" height="20" rx="3" fill="#e3f6f1" />
-      <path d={sparkle(54, 67, 5)} fill="#0f766e" />
-      <rect x="47" y="38" width="14" height="10" rx="2" fill="#0b4f4a" />
-      <path d="M43 26H70A4 4 0 0 1 74 30V38H39V30A4 4 0 0 1 43 26Z" fill="#0b4f4a" />
-      <rect x="29" y="27.5" width="13" height="6" rx="2" fill="#0b4f4a" />
-      <path d="M48 38Q42 44 46 51" fill="none" stroke="#0b4f4a" strokeWidth="3" strokeLinecap="round" />
-      <path d={sparkle(80, 72, 7)} fill="#fff" />
-      <path d={sparkle(30, 86, 4)} fill="#fff" />
-      <path d={sparkle(66, 14, 4.5)} fill="#0f766e" opacity="0.6" />
-    </svg>
-  );
-}
 
 export function CafeArt() {
   const beans: [number, number, number][] = [[15, 22, 30], [86, 82, -20], [16, 80, 70], [84, 16, -50]];

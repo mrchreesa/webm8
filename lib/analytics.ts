@@ -72,6 +72,29 @@ export function trackAcceptedReviewRequest(
 
 const firedLeadRequestIds = new Set<string>();
 
+/**
+ * Fire the Meta standard `Lead` event for one /demo/ request the server has
+ * saved. Called only from the form's submit handler, never when a reload
+ * restores the success screen. The request id is Meta's event id, so a later
+ * Conversions API send for the same request is deduplicated.
+ */
+export function trackAcceptedDemoRequest(
+  requestId: string,
+  details: AnalyticsDetails = {},
+) {
+  if (typeof window === "undefined" || !requestId) return;
+  if (firedLeadRequestIds.has(requestId)) return;
+  firedLeadRequestIds.add(requestId);
+
+  trackEvent("demo_request_accepted", details);
+  window.fbq?.(
+    "track",
+    "Lead",
+    { content_name: "Free personalised website demo" },
+    { eventID: requestId },
+  );
+}
+
 export function flushAnalyticsQueue() {
   if (typeof window === "undefined" || !window.mixpanel) return;
 

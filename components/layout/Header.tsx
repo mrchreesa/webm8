@@ -8,7 +8,7 @@ import { LinkButton } from "@/components/ui/Button";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
-import { DemoCtaButton } from "@/components/demo/DemoPrefill";
+import { DemoCtaButton } from "@/components/demo/DemoCtaButton";
 
 export function Header() {
   const pathname = usePathname();
@@ -18,6 +18,7 @@ export function Header() {
   // Meta leads land on /thank-you/ having already sent their details, so the
   // header there is the logo alone: no nav, and no CTA back into a form.
   const isLeadPage = pathname?.startsWith("/thank-you") ?? false;
+  const isDemoPage = pathname?.startsWith("/demo") ?? false;
   const navItems = isMoversPage
     ? [
         { label: "How it works", href: "#how-it-works" },
@@ -59,16 +60,18 @@ export function Header() {
     href === "/" ? pathname === "/" : pathname?.startsWith(href) ?? false;
 
   // The homepage is navy from top to bottom, so its header stays dark.
+  // /demo/'s form lives in its long navy hero, so its header stays dark too.
   // /movers/ and /thank-you/ have navy heroes, so their headers are dark until
   // the page scrolls.
   const isHome = pathname === "/";
-  const overDarkHero = isHome || ((isMoversPage || isLeadPage) && !scrolled);
+  const staysDark = isHome || isDemoPage;
+  const overDarkHero = staysDark || ((isMoversPage || isLeadPage) && !scrolled);
 
   return (
     <header
       className={cn(
         "sticky top-0 z-50 w-full transition-all",
-        isHome
+        staysDark
           ? scrolled
             ? "border-b border-white/5 bg-night/72 backdrop-blur-lg"
             : "bg-transparent"
