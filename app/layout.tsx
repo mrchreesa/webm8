@@ -9,7 +9,7 @@ import { brand, intakeEmail, plans, projects } from "@/lib/site";
 import {
   defaultDescription,
   defaultTitle,
-  ogImage,
+  shareImage,
   siteName,
   siteUrl,
   socialDescription,
@@ -40,19 +40,20 @@ export const metadata: Metadata = {
     template: "%s | WebM8",
   },
   description: defaultDescription,
+  applicationName: siteName,
   openGraph: {
     title: defaultTitle,
     description: socialDescription,
     url: siteUrl,
     siteName,
     type: "website",
-    images: [ogImage],
+    images: [shareImage("home")],
   },
   twitter: {
     card: "summary_large_image",
     title: defaultTitle,
     description: socialDescription,
-    images: [ogImage.url],
+    images: [shareImage("home")],
   },
   icons: {
     icon: [
@@ -60,6 +61,12 @@ export const metadata: Metadata = {
         url: "/mascot-icon.png",
         type: "image/png",
         sizes: "64x64",
+      },
+      // Google's search results want a favicon a multiple of 48px square.
+      {
+        url: "/mascot-icon-192.png",
+        type: "image/png",
+        sizes: "192x192",
       },
     ],
     apple: [
@@ -103,7 +110,13 @@ function StructuredData() {
       "@id": `${siteUrl}/#organization`,
       name: siteName,
       url: siteUrl,
-      logo: `${siteUrl}/mascot.png`,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/mascot-512.png`,
+        width: 512,
+        height: 512,
+      },
+      image: `${siteUrl}/mascot-512.png`,
       email: intakeEmail,
       description: defaultDescription,
       slogan: brand.positioning,

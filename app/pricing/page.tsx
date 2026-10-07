@@ -8,10 +8,11 @@ import { Reveal } from "@/components/ui/Reveal";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Pricing: Get a fast estimate",
+  title: "Website Pricing for Local Businesses",
   description:
-    "Every WebM8 project is quoted to the business. Tell us what you need and we'll send a straight number within one business day. No large upfront website cost.",
+    "Every WebM8 project is quoted to the business. Tell us what you need and we'll send a straight number within one business day. No large upfront cost.",
   path: "/pricing/",
+  shareCard: "pricing",
 });
 
 const reasons = [

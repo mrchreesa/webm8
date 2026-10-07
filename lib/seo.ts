@@ -1,4 +1,11 @@
 import type { Metadata } from "next";
+import {
+  shareCards,
+  shareImagePath,
+  shareImageSize,
+  shareImageType,
+  type ShareCardName,
+} from "./shareCards.ts";
 
 export const siteUrl = "https://www.webm8agency.com";
 
@@ -8,92 +15,56 @@ export const defaultTitle =
   "WebM8 | Websites for Local Businesses That Want More Customers";
 
 export const defaultDescription =
-  "WebM8 builds websites for local businesses in the US and UK that turn local searches into calls, bookings and quote requests. Start with a free personalised website demo.";
+  "WebM8 builds websites for local businesses in the US and UK that turn local searches into calls, bookings and quote requests. Start with a free website demo.";
 
 export const socialDescription =
   "Websites for local businesses in the US and UK. More calls, more bookings, more customers. Start with a free personalised website demo.";
 
-export const ogImage = {
-  url: "/og-image.svg",
-  width: 1200,
-  height: 630,
-  alt: "WebM8 websites for local businesses",
-} as const;
-
+/**
+ * The routes in the sitemap. Each page's title, description and share card
+ * live in its own createPageMetadata call.
+ */
 export const indexableRoutes = [
-  {
-    path: "/",
-    title: defaultTitle,
-    description: defaultDescription,
-    priority: 1,
-  },
-  {
-    path: "/work/",
-    title: "Website Examples: Demo Sites for Local Businesses",
-    description:
-      "Demo websites WebM8 designed for local businesses: a tailor, two cleaning companies, a removals firm, a baby store and an activewear brand. See each on a computer and a phone.",
-    priority: 0.8,
-  },
-  {
-    path: "/pricing/",
-    title: "Pricing - Get a fast estimate",
-    description:
-      "Every WebM8 project is quoted to the business. Tell us what you need and we'll send a straight number within one business day. No large upfront website cost.",
-    priority: 0.9,
-  },
-  {
-    path: "/movers/",
-    title: "Moving Company Websites, Built and Managed From $147/month",
-    description:
-      "Websites for US moving companies that make requesting an estimate simple. Two plans, $0 setup, no minimum contract term. Book a free 10-minute custom demo.",
-    priority: 0.9,
-  },
-  {
-    path: "/free-demo/",
-    title: "Free Personalised Website Demo",
-    description:
-      "Tell us about your business and we'll design a homepage for it, free. We call you the same day and show you your demo within 48 hours of that call. No payment, no obligation.",
-    priority: 0.9,
-  },
-  {
-    path: "/about/",
-    title: "About - Websites built for local business growth",
-    description:
-      "WebM8 builds and looks after professional websites that help local businesses in the US and UK get more calls, bookings, and customers.",
-    priority: 0.7,
-  },
-  {
-    path: "/contact/",
-    title: "Contact - Start a website project",
-    description:
-      "Get in touch for a fast estimate on a new website, switch plans, or ask a question. We reply within one business day.",
-    priority: 0.8,
-  },
-  {
-    path: "/privacy/",
-    title: "Privacy notice",
-    description:
-      "How WebM8 collects, uses, stores, and protects information submitted through this website.",
-    priority: 0.3,
-  },
+  { path: "/", priority: 1 },
+  { path: "/work/", priority: 0.8 },
+  { path: "/pricing/", priority: 0.9 },
+  { path: "/movers/", priority: 0.9 },
+  { path: "/free-demo/", priority: 0.9 },
+  { path: "/about/", priority: 0.7 },
+  { path: "/contact/", priority: 0.8 },
+  { path: "/privacy/", priority: 0.3 },
 ] as const;
 
 export function absoluteUrl(path: string) {
   return new URL(path, siteUrl).toString();
 }
 
+/** The og:image (and Twitter card image) for one of lib/shareCards.ts's cards. */
+export function shareImage(name: ShareCardName) {
+  return {
+    url: shareImagePath(name),
+    ...shareImageSize,
+    type: shareImageType,
+    alt: shareCards[name].alt,
+  };
+}
+
 export function createPageMetadata({
   title,
   description,
   path,
+  shareCard = "home",
   absoluteTitle = false,
 }: {
   title: string;
   description: string;
   path: string;
+  /** The picture shown when the page is shared (lib/shareCards.ts). */
+  shareCard?: ShareCardName;
   absoluteTitle?: boolean;
 }): Metadata {
   const url = absoluteUrl(path);
+  const image = shareImage(shareCard);
 
   return {
     title: absoluteTitle ? { absolute: title } : title,
@@ -107,13 +78,13 @@ export function createPageMetadata({
       url,
       siteName,
       type: "website",
-      images: [ogImage],
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [ogImage.url],
+      images: [image],
     },
   };
 }

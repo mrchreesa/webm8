@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     description:
       "We’ll call you shortly about your business and show you your demo within 48 hours of that call. No payment, no obligation.",
     path: "/demo/",
+    shareCard: "free-demo",
   }),
   robots: { index: false, follow: false },
 };

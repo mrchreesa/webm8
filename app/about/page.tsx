@@ -10,10 +10,11 @@ import { valueProps } from "@/lib/site";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "About: Websites built for local business growth",
+  title: "About Us: Web Design for Local Businesses",
   description:
-    "WebM8 builds and looks after professional websites that help local businesses in the US and UK get more calls, bookings, and customers.",
+    "WebM8 designs, builds and looks after websites that help local businesses in the US and UK get more calls, bookings and customers.",
   path: "/about/",
+  shareCard: "about",
 });
 
 const faqs = [
@@ -46,9 +47,26 @@ const industries = [
   "Dental & Med",
 ];
 
+const faqStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.a,
+    },
+  })),
+};
+
 export default function AboutPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+      />
       <PageHero
         eyebrow="About WebM8"
         title={

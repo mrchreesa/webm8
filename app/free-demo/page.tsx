@@ -11,8 +11,9 @@ import { createPageMetadata } from "@/lib/seo";
 export const metadata: Metadata = createPageMetadata({
   title: "Free Personalised Website Demo",
   description:
-    "Tell us about your business and we'll design a homepage for it, free. We call you the same day and show you your demo within 48 hours of that call. No payment, no obligation.",
+    "Tell us about your business and we'll design its homepage, free. We call the same day, then show you the demo within 48 hours. No payment, no obligation.",
   path: "/free-demo/",
+  shareCard: "free-demo",
 });
 
 /**

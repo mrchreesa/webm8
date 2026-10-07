@@ -4,10 +4,11 @@ import { createPageMetadata } from "@/lib/seo";
 import { intakeEmail } from "@/lib/site";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Privacy notice",
+  title: "Privacy Notice",
   description:
     "How WebM8 collects, uses, stores, and protects information submitted through this website.",
   path: "/privacy/",
+  shareCard: "privacy",
 });
 
 const sections = [

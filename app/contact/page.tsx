@@ -8,10 +8,11 @@ import { intakeEmail } from "@/lib/site";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Contact: Start a website project",
+  title: "Contact Us: Start a Website Project",
   description:
-    "Get in touch for a fast estimate on a new website, switch plans, or ask a question. We reply within one business day.",
+    "Get a fast estimate for a new website, switch plans, or ask a question. WebM8 replies within one business day.",
   path: "/contact/",
+  shareCard: "contact",
 });
 
 export default function ContactPage() {

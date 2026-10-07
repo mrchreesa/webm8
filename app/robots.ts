@@ -8,6 +8,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      // Form endpoints: nothing there for a search engine.
+      disallow: "/api/",
     },
     sitemap: absoluteUrl("/sitemap.xml"),
   };

@@ -13,8 +13,9 @@ import { createPageMetadata } from "@/lib/seo";
 export const metadata: Metadata = createPageMetadata({
   title: "Website Examples: Demo Sites for Local Businesses",
   description:
-    "Demo websites WebM8 designed for local businesses: a tailor, a heating engineer, two cleaning companies, a removals firm, a baby store, an activewear brand, two clothing labels and two aesthetic clinics. See each on a computer and a phone.",
+    "Demo websites WebM8 designed for local businesses: tailors, cleaners, a heating engineer, removals, clinics and shops. See each on a computer and a phone.",
   path: "/work/",
+  shareCard: "work",
 });
 
 export default function WorkPage() {
