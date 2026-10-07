@@ -33,6 +33,13 @@ const WHEEL_SETTLE_MS = 160;
  * the spring that carries it: about a third of a second to settle on a card.
  */
 const STIFFNESS = 14;
+/**
+ * The phone trails the deck on a softer spring, so it grows into place over
+ * about half a second, finishing after its card has landed.
+ */
+const PHONE_STIFFNESS = 8;
+/** A phone's size beside the deck, as a share of its size at the front. */
+const PHONE_SMALL = 0.8;
 
 /** How far apart neighbouring cards sit, as a share of a card's width. */
 const spread = (narrow: boolean) => (narrow ? 62 : 44);
@@ -55,20 +62,24 @@ function opacityAt(distance: number) {
   return Math.max(0, (3 - distance) * 0.56);
 }
 
+const smooth = (t: number) => t * t * (3 - 2 * t);
+
 /**
  * Where a card sits, and how it looks, `offset` cards from the front: the
- * card itself, its browser frame and its phone.
+ * card itself, its browser frame and its phone. The phone has its own
+ * `phoneOffset`, which trails the card's.
  *
- * The phone stands 60px proud of the front card. A filter, or opacity below
+ * The phone grows from small, a card away, to full size at the front. It
+ * also stands 60px proud of the front card, but a filter, or opacity below
  * 1, flattens a card's 3D, so the dimming goes on the frame and the phone
  * rather than the card, and the phone rises only while the card is solid,
- * within half a card of the front, easing up as the card arrives.
+ * within half a card of the front.
  */
-function cardLook(offset: number, narrow: boolean) {
+function cardLook(offset: number, narrow: boolean, phoneOffset = offset) {
   const distance = Math.abs(offset);
   const dim = Math.min(distance, 3);
-  const near = Math.max(0, 1 - distance * 2);
-  const lift = near * near * (3 - 2 * near);
+  const grow = smooth(Math.max(0, 1 - Math.abs(phoneOffset)));
+  const lift = smooth(Math.max(0, 1 - Math.max(distance, Math.abs(phoneOffset)) * 2));
   const filter = distance ? `brightness(${1 - dim * 0.25}) saturate(${1 - dim * 0.3})` : "none";
   return {
     card: {
@@ -78,7 +89,10 @@ function cardLook(offset: number, narrow: boolean) {
       pointerEvents: distance > 2.5 ? "none" : "auto",
     } satisfies CSSProperties,
     frame: { filter } satisfies CSSProperties,
-    phone: { filter, transform: `translateZ(${lift * 60}px)` } satisfies CSSProperties,
+    phone: {
+      filter,
+      transform: `translateZ(${lift * 60}px) scale(${PHONE_SMALL + (1 - PHONE_SMALL) * grow})`,
+    } satisfies CSSProperties,
   };
 }
 
@@ -95,7 +109,8 @@ type CardParts = { card: HTMLElement; frame: HTMLElement | null; phone: HTMLElem
  * spring carries it towards `target` frame by frame, keeping its speed through
  * every change of course (a scroll settling, a flick, an arrow mid-scroll),
  * and each frame is written straight onto the cards, so nothing waits on
- * React. While `held`, the deck follows a finger exactly.
+ * React. While `held`, the deck follows a finger exactly. `phoneAt` chases
+ * `position` on a softer spring, and sizes the phones.
  */
 function createDeckMotion(onActive: (index: number) => void) {
   const cards: (CardParts | null)[] = [];
@@ -110,6 +125,8 @@ function createDeckMotion(onActive: (index: number) => void) {
   let velocity = 0;
   let target = startIndex;
   let held = false;
+  let phoneAt = startIndex;
+  let phoneSpeed = 0;
   let narrow = false;
   let reduced = false;
   let frame = 0;
@@ -119,7 +136,7 @@ function createDeckMotion(onActive: (index: number) => void) {
   const draw = () => {
     cards.forEach((parts, index) => {
       if (!parts) return;
-      const look = cardLook(cardOffset(index, position, count), narrow);
+      const look = cardLook(cardOffset(index, position, count), narrow, cardOffset(index, phoneAt, count));
       Object.assign(parts.card.style, look.card);
       if (parts.frame) Object.assign(parts.frame.style, look.frame);
       if (parts.phone) Object.assign(parts.phone.style, look.phone);
@@ -151,8 +168,21 @@ function createDeckMotion(onActive: (index: number) => void) {
         }
       }
     }
+    if (reduced) {
+      phoneAt = position;
+      phoneSpeed = 0;
+    } else {
+      const [lag, speed] = springStep(phoneAt - position, phoneSpeed, PHONE_STIFFNESS, dt);
+      phoneAt = position + lag;
+      phoneSpeed = speed;
+      if (Math.abs(lag) < 1e-3 && Math.abs(speed) < 1e-2) {
+        phoneAt = position;
+        phoneSpeed = 0;
+      }
+    }
     draw();
-    frame = held || (position === target && velocity === 0) ? 0 : requestAnimationFrame(tick);
+    const resting = (held || (position === target && velocity === 0)) && phoneAt === position && phoneSpeed === 0;
+    frame = resting ? 0 : requestAnimationFrame(tick);
   };
 
   const wake = () => {
@@ -388,6 +418,7 @@ export function WorkDeck() {
         {projects.map((project, index) => {
           const slot = cardOffset(index, active, count);
           const isActive = slot === 0;
+          const disabled = isActive && !project.siteUrl;
           return (
             <button
               key={project.slug}
@@ -395,20 +426,24 @@ export function WorkDeck() {
               type="button"
               data-deck-card
               tabIndex={Math.abs(slot) > 2 ? -1 : 0}
-              disabled={isActive && !project.siteUrl}
+              disabled={disabled}
               aria-label={isActive ? `Open the ${project.name} demo site` : `Show ${project.name}`}
               onClick={() => {
                 if (swiped.current) return;
                 if (!isActive) motion.show(index);
                 else if (project.siteUrl) window.open(project.siteUrl, "_blank", "noopener,noreferrer");
               }}
-              className="absolute top-0 left-1/2 w-[min(76vw,760px)] cursor-pointer text-left [transform-style:preserve-3d] disabled:cursor-default"
+              // Hover lifts with `translate`, which the frame loop's inline `transform` leaves alone.
+              className={cn(
+                "absolute top-0 left-1/2 w-[min(76vw,760px)] cursor-pointer text-left [transform-style:preserve-3d] transition-[translate] duration-300 ease-out disabled:cursor-default",
+                !disabled && "group/card motion-safe:hover:-translate-y-1.5",
+              )}
               style={firstLooks[index].card}
             >
               <div
                 data-deck-frame
                 style={firstLooks[index].frame}
-                className="overflow-hidden rounded-[14px] bg-white shadow-[0_0_0_1px_rgb(255_255_255/0.1),0_60px_100px_-40px_rgb(0_0_0/0.9)]"
+                className="overflow-hidden rounded-[14px] bg-white shadow-[0_0_0_1px_rgb(255_255_255/0.1),0_60px_100px_-40px_rgb(0_0_0/0.9)] transition-shadow duration-300 group-hover/card:shadow-[0_0_0_1px_rgb(255_255_255/0.28),0_60px_100px_-40px_rgb(0_0_0/0.9),0_24px_80px_-24px_rgb(43_108_252/0.55)]"
               >
                 <div className="flex h-8 items-center gap-1.5 bg-[#e9edf3] px-3">
                   <i className="h-2.5 w-2.5 rounded-full bg-[#c3cad5]" />
@@ -425,14 +460,14 @@ export function WorkDeck() {
                     fill
                     draggable={false}
                     sizes="(min-width: 1024px) 760px, 76vw"
-                    className="object-cover object-top"
+                    className="origin-top object-cover object-top transition-[scale] duration-700 ease-out motion-safe:group-hover/card:scale-[1.03]"
                   />
                 </div>
               </div>
               <div
                 data-deck-phone
                 style={firstLooks[index].phone}
-                className="absolute right-[-3%] bottom-[-8%] w-[19%] rounded-2xl bg-[#0b1220] p-1 shadow-[0_30px_50px_-20px_rgb(0_0_0/0.9)] ring-1 ring-white/10"
+                className="absolute right-[-3%] bottom-[-8%] w-[19%] rounded-2xl bg-[#0b1220] p-1 shadow-[0_30px_50px_-20px_rgb(0_0_0/0.9)] origin-bottom ring-1 ring-white/10 transition-[translate] duration-300 ease-out motion-safe:group-hover/card:-translate-y-1"
               >
                 <div className="relative aspect-[9/19] overflow-hidden rounded-xl">
                   <Image src={project.screenshots.mobile} alt="" fill draggable={false} sizes="150px" className="object-cover object-top" />
