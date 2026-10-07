@@ -24,6 +24,7 @@ const STORAGE_KEY = "webm8:demo-request";
 
 export type DemoDone = {
   id: string;
+  confirmationSent?: boolean;
   trade: TradeKey;
   business: string;
   firstName: string;
@@ -160,12 +161,14 @@ export function useDemoRequest() {
     const data = (await response.json().catch(() => ({}))) as {
       ok?: boolean;
       id?: string;
+      confirmationSent?: boolean;
       errors?: DemoErrors & { form?: string };
     };
 
     if (response.ok && data.ok && data.id) {
       const record: DemoDone = {
         id: data.id,
+        confirmationSent: data.confirmationSent === true,
         trade: checked.request.trade,
         business: checked.request.business,
         firstName: firstNameOf(checked.request.name),

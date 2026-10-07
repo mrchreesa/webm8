@@ -339,8 +339,8 @@ function DemoRequestSuccess({ done, focus }: { done: DemoDone; focus: boolean })
         {done.firstName ? `You’re in, ${done.firstName}.` : "You’re in."}
       </h3>
       <p className="mt-3 text-base leading-relaxed text-muted">
-        We’ll call you today on <span className="font-semibold whitespace-nowrap text-ink">{done.phone}</span>. We’ve emailed a
-        copy to <span className="font-semibold text-ink [overflow-wrap:anywhere]">{done.email}</span>.
+        We’ll call you today on <span className="font-semibold whitespace-nowrap text-ink">{done.phone}</span>.
+        {done.confirmationSent ? <> We’ve emailed a copy to <span className="font-semibold text-ink [overflow-wrap:anywhere]">{done.email}</span>.</> : <> Your details are saved.</>}
         {brand.phone ? (
           <>
             {" "}

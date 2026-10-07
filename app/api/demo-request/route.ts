@@ -1,20 +1,18 @@
 import { NextResponse } from "next/server";
 import { demoConfirmationEmail, demoEmailFrom, demoNotificationEmail } from "@/lib/demoEmail";
-import { hasOwnWebsite, validateDemoSubmission, type DemoSubmission } from "@/lib/demoRequest";
+import { validateDemoSubmission, type DemoSubmission } from "@/lib/demoRequest";
 import { sendEmail } from "@/lib/resend";
 import { brand, intakeEmail } from "@/lib/site";
-import { supabaseTableRequest } from "@/lib/supabaseAdmin";
+import { saveDemoToCrm } from "@/lib/crmIntake";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/** /free-demo/ requests share the review-request table with /movers/, told apart by request_type. */
-const TABLE = "agency_review_requests";
+/** /free-demo/ requests are accepted only after the CRM saves them. */
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX = 5;
 const recentRequests = new Map<string, number[]>();
 
-type SavedRow = { id: string };
 
 export async function POST(request: Request) {
   let payload: unknown;
@@ -39,19 +37,10 @@ export async function POST(request: Request) {
 
   let id: string;
   try {
-    // A retry of a request already saved (a double tap, or a lost response)
-    // gets the same id back, and no second round of emails.
-    const existing = await findBySubmissionKey(demo.submissionKey);
-    if (existing) return NextResponse.json({ ok: true, id: existing.id });
-    id = await insert(demo);
+    const receipt = await saveDemoToCrm(demo);
+    id = receipt.id;
+    if (receipt.duplicate) return NextResponse.json({ ok: true, id, confirmationSent: false });
   } catch (error) {
-    // A simultaneous retry can race the insert. Resolve it as the same request.
-    try {
-      const existing = await findBySubmissionKey(demo.submissionKey);
-      if (existing) return NextResponse.json({ ok: true, id: existing.id });
-    } catch {
-      // The original error is more useful in the logs.
-    }
     console.error("demo-request: insert failed", error);
     return NextResponse.json(
       {
@@ -64,41 +53,9 @@ export async function POST(request: Request) {
 
   // Awaited, because work after the response is not guaranteed on Vercel. The
   // request is saved either way, so a failed email is logged, not returned.
-  await sendEmails(demo, id);
+  const confirmationSent = await sendEmails(demo, id);
 
-  return NextResponse.json({ ok: true, id });
-}
-
-async function insert(demo: DemoSubmission): Promise<string> {
-  const rows = await supabaseTableRequest<SavedRow[]>(TABLE, {
-    method: "POST",
-    prefer: "return=representation",
-    query: "select=id",
-    body: {
-      request_type: "demo",
-      contact_name: demo.name,
-      company_name: demo.business,
-      email: demo.email,
-      phone: demo.phone,
-      main_city_state: demo.area,
-      business_link: demo.link,
-      website_url: demo.link,
-      has_website: hasOwnWebsite(demo.link),
-      business_type: demo.trade,
-      business_type_other: demo.tradeOther,
-      submission_key: demo.submissionKey,
-      utm_source: demo.attribution.utm_source ?? null,
-      utm_medium: demo.attribution.utm_medium ?? null,
-      utm_campaign: demo.attribution.utm_campaign ?? null,
-      utm_content: demo.attribution.utm_content ?? null,
-      utm_term: demo.attribution.utm_term ?? null,
-      referrer: demo.referrer,
-      page_path: demo.pagePath,
-    },
-  });
-  const id = rows[0]?.id;
-  if (!id) throw new Error("Insert returned no row");
-  return id;
+  return NextResponse.json({ ok: true, id, confirmationSent });
 }
 
 async function sendEmails(demo: DemoSubmission, id: string) {
@@ -111,13 +68,7 @@ async function sendEmails(demo: DemoSubmission, id: string) {
   ]);
   if (!toUs.ok) console.error(`demo-request: notification not sent for ${id} (${toUs.reason})`);
   if (!toThem.ok) console.error(`demo-request: confirmation not sent for ${id} (${toThem.reason})`);
-}
-
-async function findBySubmissionKey(submissionKey: string) {
-  const rows = await supabaseTableRequest<SavedRow[]>(TABLE, {
-    query: `select=id&submission_key=eq.${encodeURIComponent(submissionKey)}&limit=1`,
-  });
-  return rows[0] ?? null;
+  return toThem.ok;
 }
 
 function clientKey(request: Request) {
