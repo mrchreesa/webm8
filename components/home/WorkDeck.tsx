@@ -1,55 +1,337 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type PointerEvent,
+} from "react";
 import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
+import { cardOffset, springStep, wrapIndex } from "@/lib/demoDeck";
 import { projects, workDeckStart } from "@/lib/site";
 
 const hostOf = (url?: string) => (url ? new URL(url).hostname : "webm8agency.com");
 
+const count = projects.length;
 const startIndex = Math.max(0, projects.findIndex((project) => project.slug === workDeckStart));
+const narrowQuery = "(max-width: 759px)";
+/** Movement, in pixels, before a press on the deck becomes a drag. */
+const DRAG_PX = 6;
+/** A drag this long, in pixels, always moves on at least one card. */
+const SWIPE_PX = 40;
+/** How far a flick carries the deck on: its speed, in cards a second, times this. */
+const FLICK_S = 0.18;
+/** The quiet after the last sideways wheel event before the deck settles on a card. */
+const WHEEL_SETTLE_MS = 160;
+/**
+ * How briskly the deck follows, as the natural frequency (radians a second) of
+ * the spring that carries it: about a third of a second to settle on a card.
+ */
+const STIFFNESS = 14;
 
-/** The demo sites as a 3D fan. Adding a project to lib/site.ts adds a card. */
+/** How far apart neighbouring cards sit, as a share of a card's width. */
+const spread = (narrow: boolean) => (narrow ? 62 : 44);
+
+/** The distance, in pixels, a drag or scroll moves to bring the next card to the front. */
+function stepWidth(stage: HTMLElement) {
+  const card = stage.querySelector<HTMLElement>("[data-deck-card]");
+  return ((card?.offsetWidth || stage.offsetWidth * 0.76) * spread(window.matchMedia(narrowQuery).matches)) / 100;
+}
+
+/**
+ * A card's opacity by its distance from the front: solid within half a card,
+ * so nothing shows through the front card mid-drag, then 0.78 beside it, 0.56
+ * two away, and gone by three.
+ */
+function opacityAt(distance: number) {
+  if (distance <= 0.5) return 1;
+  if (distance <= 1) return 1 - (distance - 0.5) * 0.44;
+  if (distance <= 2) return 1 - distance * 0.22;
+  return Math.max(0, (3 - distance) * 0.56);
+}
+
+/** Where a card sits, and how it looks, `offset` cards from the front. */
+function cardStyle(offset: number, narrow: boolean) {
+  const distance = Math.abs(offset);
+  const dim = Math.min(distance, 3);
+  return {
+    transform: `translateX(${offset * spread(narrow) - 50}%) translateZ(${-distance * (narrow ? 260 : 220)}px) rotateY(${narrow ? 0 : -offset * 24}deg)`,
+    opacity: String(opacityAt(distance)),
+    filter: distance ? `brightness(${1 - dim * 0.25}) saturate(${1 - dim * 0.3})` : "none",
+    zIndex: String(100 - Math.round(distance * 10)),
+    pointerEvents: distance > 2.5 ? "none" : "auto",
+  } satisfies CSSProperties;
+}
+
+// The server cannot know the screen size, so it draws the wide fan, and the
+// deck redraws itself for a phone once it hydrates. These never change, so
+// React never rewrites them, and the frame loop owns each card's style.
+const firstStyles = projects.map((_, index) => cardStyle(cardOffset(index, startIndex, count), false));
+
+/**
+ * Moves the deck. `position` counts cards and runs on past either end, so the
+ * deck loops for ever; a fraction is between two cards. A critically damped
+ * spring carries it towards `target` frame by frame, keeping its speed through
+ * every change of course (a scroll settling, a flick, an arrow mid-scroll),
+ * and each frame is written straight onto the cards, so nothing waits on
+ * React. While `held`, the deck follows a finger exactly.
+ */
+function createDeckMotion(onActive: (index: number) => void) {
+  const cards: (HTMLElement | null)[] = [];
+  const bind = projects.map((_, index) => (card: HTMLElement | null) => {
+    cards[index] = card;
+  });
+  let position = startIndex;
+  let velocity = 0;
+  let target = startIndex;
+  let held = false;
+  let narrow = false;
+  let reduced = false;
+  let frame = 0;
+  let last = 0;
+  let shown = startIndex;
+
+  const draw = () => {
+    cards.forEach((card, index) => {
+      if (card) Object.assign(card.style, cardStyle(cardOffset(index, position, count), narrow));
+    });
+  };
+
+  // The caption and chips show the card the deck is heading for.
+  const announce = (to: number) => {
+    const index = wrapIndex(Math.round(to), count);
+    if (index === shown) return;
+    shown = index;
+    onActive(index);
+  };
+
+  const tick = (time: number) => {
+    const dt = Math.min(0.05, Math.max(0, (time - last) / 1000));
+    last = time;
+    if (!held) {
+      if (reduced) {
+        position = target;
+        velocity = 0;
+      } else {
+        const [offset, speed] = springStep(position - target, velocity, STIFFNESS, dt);
+        position = target + offset;
+        velocity = speed;
+        if (Math.abs(offset) < 1e-3 && Math.abs(speed) < 1e-2) {
+          position = target;
+          velocity = 0;
+        }
+      }
+    }
+    draw();
+    frame = held || (position === target && velocity === 0) ? 0 : requestAnimationFrame(tick);
+  };
+
+  const wake = () => {
+    if (frame) return;
+    last = performance.now();
+    frame = requestAnimationFrame(tick);
+  };
+
+  const aim = (to: number) => {
+    target = to;
+    announce(to);
+    wake();
+  };
+
+  return {
+    bind,
+    get position() {
+      return position;
+    },
+    configure(next: { narrow: boolean; reduced: boolean }) {
+      ({ narrow, reduced } = next);
+      draw();
+    },
+    step(by: number) {
+      aim(Math.round(target) + by);
+    },
+    /** Brings a card forward the short way round, so it never rewinds the whole deck. */
+    show(index: number) {
+      const from = Math.round(target);
+      aim(from + cardOffset(index, from, count));
+    },
+    scroll(by: number) {
+      if (!held) aim(target + by);
+    },
+    settle() {
+      if (!held) aim(Math.round(target));
+    },
+    hold() {
+      held = true;
+      velocity = 0;
+      target = position;
+    },
+    drag(to: number) {
+      position = to;
+      target = to;
+      announce(to);
+      wake();
+    },
+    release(to: number, speed: number) {
+      held = false;
+      velocity = speed;
+      aim(to);
+    },
+    stop() {
+      cancelAnimationFrame(frame);
+      frame = 0;
+    },
+  };
+}
+
+type Drag = {
+  pointer: number;
+  /** Where the press began. */
+  x: number;
+  /** The deck position the drag counts from, and the card in front, once it is a drag. */
+  start: number;
+  from: number;
+  step: number;
+  dragging: boolean;
+  lastX: number;
+  lastTime: number;
+  /** The pointer's speed in px/ms, smoothed. */
+  velocity: number;
+};
+
+/**
+ * The demo sites as a 3D fan that loops endlessly. It moves with its arrows,
+ * the keyboard, a drag or swipe, and a sideways trackpad scroll. Adding a
+ * project to lib/site.ts adds a card.
+ */
 export function WorkDeck() {
   const [active, setActive] = useState(startIndex);
-  const [narrow, setNarrow] = useState(false);
-  const startX = useRef<number | null>(null);
+  const [motion] = useState(() => createDeckMotion(setActive));
+  const stageRef = useRef<HTMLDivElement>(null);
+  const drag = useRef<Drag | null>(null);
   // A drag that ends on a card must not also count as a click on it.
   const swiped = useRef(false);
-
-  useEffect(() => {
-    const query = window.matchMedia("(max-width: 759px)");
-    const update = () => setNarrow(query.matches);
-    update();
-    query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
-  }, []);
-
-  const go = (index: number) => setActive((index + projects.length) % projects.length);
   const current = projects[active];
+
+  // Draws the deck for a phone or a wider screen, and settles at once under reduced motion.
+  useLayoutEffect(() => {
+    const narrow = window.matchMedia(narrowQuery);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => motion.configure({ narrow: narrow.matches, reduced: reduced.matches });
+    update();
+    narrow.addEventListener("change", update);
+    reduced.addEventListener("change", update);
+    return () => {
+      narrow.removeEventListener("change", update);
+      reduced.removeEventListener("change", update);
+      motion.stop();
+    };
+  }, [motion]);
+
+  // A sideways trackpad scroll, or shift and the mouse wheel, scrolls the deck.
+  // Vertical scrolling is left to the page. React's wheel listener is passive,
+  // so it could not stop a sideways swipe going back a page.
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    let timer: number | undefined;
+    const onWheel = (event: WheelEvent) => {
+      const dx = event.deltaX || (event.shiftKey ? event.deltaY : 0);
+      const dy = event.deltaX || !event.shiftKey ? event.deltaY : 0;
+      if (Math.abs(dx) <= Math.abs(dy)) return;
+      event.preventDefault();
+      const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? stage.offsetWidth : 1;
+      motion.scroll((dx * unit) / stepWidth(stage));
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => motion.settle(), WHEEL_SETTLE_MS);
+    };
+    stage.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      stage.removeEventListener("wheel", onWheel);
+      window.clearTimeout(timer);
+    };
+  }, [motion]);
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === "ArrowRight") {
       event.preventDefault();
-      go(active + 1);
+      motion.step(1);
     } else if (event.key === "ArrowLeft") {
       event.preventDefault();
-      go(active - 1);
+      motion.step(-1);
     }
   };
-  const onPointerDown = (event: PointerEvent) => {
-    startX.current = event.clientX;
+
+  const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
     swiped.current = false;
+    drag.current = {
+      pointer: event.pointerId,
+      x: event.clientX,
+      start: 0,
+      from: 0,
+      step: stepWidth(event.currentTarget),
+      dragging: false,
+      lastX: event.clientX,
+      lastTime: event.timeStamp,
+      velocity: 0,
+    };
   };
-  const onPointerUp = (event: PointerEvent) => {
-    if (startX.current === null) return;
-    const dx = event.clientX - startX.current;
-    startX.current = null;
-    if (Math.abs(dx) > 40) {
-      swiped.current = true;
-      go(active + (dx < 0 ? 1 : -1));
+
+  const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    const current = drag.current;
+    if (!current || current.pointer !== event.pointerId) return;
+    const dx = event.clientX - current.x;
+    if (!current.dragging) {
+      if (Math.abs(dx) < DRAG_PX) return;
+      current.dragging = true;
+      // Keeps the drag going off the deck, and the release from clicking a card.
+      event.currentTarget.setPointerCapture(event.pointerId);
+      // Picks the deck up where it is, even mid-glide, so it never jumps.
+      motion.hold();
+      current.start = motion.position + dx / current.step;
+      current.from = Math.round(motion.position);
     }
+    const elapsed = event.timeStamp - current.lastTime;
+    if (elapsed > 0) {
+      current.velocity = 0.8 * ((event.clientX - current.lastX) / elapsed) + 0.2 * current.velocity;
+    }
+    current.lastX = event.clientX;
+    current.lastTime = event.timeStamp;
+    motion.drag(current.start - dx / current.step);
+  };
+
+  const onPointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    const current = drag.current;
+    if (!current || current.pointer !== event.pointerId) return;
+    drag.current = null;
+    if (!current.dragging) return;
+    swiped.current = true;
+    window.setTimeout(() => {
+      swiped.current = false;
+    });
+    const dx = event.clientX - current.x;
+    // A finger held still before letting go is not a flick.
+    const pointerSpeed = event.timeStamp - current.lastTime > 100 ? 0 : current.velocity;
+    const speed = (-pointerSpeed * 1000) / current.step;
+    const { from } = current;
+    const flung = motion.position + speed * FLICK_S;
+    let target = Math.round(Math.min(from + 3, Math.max(from - 3, flung)));
+    if (target === from && Math.abs(dx) >= SWIPE_PX) target = from + (dx < 0 ? 1 : -1);
+    // The deck glides on at the flick's speed into the card it lands on.
+    motion.release(target, speed);
+  };
+
+  const onPointerCancel = (event: PointerEvent<HTMLDivElement>) => {
+    const current = drag.current;
+    if (!current || current.pointer !== event.pointerId) return;
+    drag.current = null;
+    if (current.dragging) motion.release(Math.round(motion.position), 0);
   };
 
   return (
@@ -68,38 +350,36 @@ export function WorkDeck() {
       </div>
 
       <div
-        className="relative mt-12 h-[clamp(260px,44vw,520px)] touch-pan-y [perspective:2000px]"
+        ref={stageRef}
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Demo sites"
+        className="relative mt-12 h-[clamp(260px,44vw,520px)] touch-pan-y overscroll-x-contain select-none [perspective:2000px]"
         onKeyDown={onKeyDown}
         onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
+        onPointerCancel={onPointerCancel}
       >
         {projects.map((project, index) => {
-          const offset = index - active;
-          const distance = Math.abs(offset);
-          const isActive = offset === 0;
+          const slot = cardOffset(index, active, count);
+          const isActive = slot === 0;
           return (
             <button
               key={project.slug}
+              ref={motion.bind[index]}
               type="button"
-              tabIndex={distance > 2 ? -1 : 0}
+              data-deck-card
+              tabIndex={Math.abs(slot) > 2 ? -1 : 0}
               disabled={isActive && !project.siteUrl}
               aria-label={isActive ? `Open the ${project.name} demo site` : `Show ${project.name}`}
               onClick={() => {
-                if (swiped.current) {
-                  swiped.current = false;
-                  return;
-                }
-                if (!isActive) go(index);
+                if (swiped.current) return;
+                if (!isActive) motion.show(index);
                 else if (project.siteUrl) window.open(project.siteUrl, "_blank", "noopener,noreferrer");
               }}
-              className="absolute top-0 left-1/2 w-[min(76vw,760px)] cursor-pointer text-left transition-[transform,opacity,filter] duration-700 ease-brand [transform-style:preserve-3d] disabled:cursor-default"
-              style={{
-                transform: `translateX(${offset * (narrow ? 62 : 44) - 50}%) translateZ(${-distance * (narrow ? 260 : 220)}px) rotateY(${narrow ? 0 : -offset * 24}deg)`,
-                opacity: distance > 2 ? 0 : 1 - distance * 0.22,
-                filter: distance ? `brightness(${1 - distance * 0.25}) saturate(${1 - distance * 0.3})` : "none",
-                zIndex: 10 - distance,
-                pointerEvents: distance > 2 ? "none" : undefined,
-              }}
+              className="absolute top-0 left-1/2 w-[min(76vw,760px)] cursor-pointer text-left [transform-style:preserve-3d] disabled:cursor-default"
+              style={firstStyles[index]}
             >
               <div className="overflow-hidden rounded-[14px] bg-white shadow-[0_0_0_1px_rgb(255_255_255/0.1),0_60px_100px_-40px_rgb(0_0_0/0.9)]">
                 <div className="flex h-8 items-center gap-1.5 bg-[#e9edf3] px-3">
@@ -129,6 +409,21 @@ export function WorkDeck() {
             </button>
           );
         })}
+
+        {/* Under the deck on a phone, where they would cover the cards; either side of it from a tablet up. */}
+        <div className="pointer-events-none absolute inset-x-0 -bottom-4 z-[200] flex justify-center gap-3 md:inset-y-0 md:justify-between md:px-4 lg:px-10">
+          {[-1, 1].map((by) => (
+            <button
+              key={by}
+              type="button"
+              onClick={() => motion.step(by)}
+              aria-label={by < 0 ? "Previous demo site" : "Next demo site"}
+              className="pointer-events-auto grid h-11 w-11 place-items-center self-end rounded-full bg-night/70 text-white ring-1 ring-white/15 backdrop-blur-md transition-colors hover:bg-white hover:text-ink-deep md:h-12 md:w-12 md:self-center"
+            >
+              <Icon name="arrow" size={18} className={by < 0 ? "rotate-180" : undefined} aria-hidden />
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="container-page mt-18 grid items-end gap-6 lg:grid-cols-[1fr_auto]">
@@ -156,7 +451,7 @@ export function WorkDeck() {
               key={project.slug}
               type="button"
               aria-pressed={index === active}
-              onClick={() => go(index)}
+              onClick={() => motion.show(index)}
               className={cn(
                 "rounded-full px-4 py-2 text-sm font-medium transition-colors",
                 index === active ? "bg-white text-ink-deep" : "bg-white/6 text-muted-invert hover:text-white",
