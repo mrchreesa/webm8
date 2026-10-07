@@ -9,7 +9,6 @@ import {
   LandscapingArt,
   MedspaArt,
   OtherArt,
-  PlumbingArt,
   RestaurantArt,
   RoofingArt,
   SalonArt,
@@ -48,7 +47,6 @@ export type SiteLook = {
 };
 
 export const looks: Partial<Record<TradeKey, SiteLook>> = {
-  plumbing: { layout: "utility", font: "bricolage", Art: PlumbingArt, colours: { ground: "#ffffff", ink: "#0a2236", hot: "#0369a1", hotInk: "#ffffff", extra: "#0c3a5e" } },
   hvac: { layout: "utility", font: "bricolage", Art: HvacArt, colours: { ground: "#ffffff", ink: "#0c1a3d", hot: "#2563eb", hotInk: "#ffffff", extra: "#1e3a8a" } },
   electrical: { layout: "utility", font: "bricolage", Art: ElectricalArt, colours: { ground: "#111827", ink: "#f9fafb", hot: "#facc15", hotInk: "#1f1a00", extra: "#0b1120" } },
   roofing: { layout: "utility", font: "bricolage", Art: RoofingArt, colours: { ground: "#fbeee6", ink: "#2a1006", hot: "#9a3412", hotInk: "#ffffff", extra: "#fdba74" } },

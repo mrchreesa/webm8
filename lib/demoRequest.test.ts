@@ -6,7 +6,6 @@ import {
   hasOwnWebsite,
   normaliseLink,
   validateDemoAnswers,
-  validateDemoStep,
   validateDemoSubmission,
   type DemoAnswers,
 } from "./demoRequest.ts";
@@ -57,16 +56,9 @@ test("every required field reports its own message", () => {
   assert.equal(result.errors.phone, "Add a phone number so we can call you.");
 });
 
-test("each step checks only its own fields", () => {
-  assert.deepEqual(validateDemoStep(1, { ...emptyDemoAnswers, trade: "salon" }), {});
-  assert.deepEqual(Object.keys(validateDemoStep(2, emptyDemoAnswers)), ["business"]);
-  assert.deepEqual(Object.keys(validateDemoStep(3, { ...emptyDemoAnswers, link: "not a link" })).sort(), ["area", "link"]);
-  assert.deepEqual(Object.keys(validateDemoStep(4, { ...emptyDemoAnswers, name: "Jamie" })).sort(), ["email", "phone"]);
-});
-
 test("something else needs a description, and other trades drop it", () => {
-  const missing = validateDemoStep(1, { ...emptyDemoAnswers, trade: "other" });
-  assert.equal(missing.tradeOther, "Tell us what your business does.");
+  const missing = validateDemoAnswers({ ...valid, trade: "other" });
+  assert.equal(!missing.ok && missing.errors.tradeOther, "Tell us what your business does.");
 
   const other = validateDemoAnswers({ ...valid, trade: "other", tradeOther: "  Dog   grooming " });
   assert.equal(other.ok && other.request.tradeOther, "Dog grooming");

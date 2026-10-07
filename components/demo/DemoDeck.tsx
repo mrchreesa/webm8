@@ -1,26 +1,34 @@
 "use client";
 
 import Image from "next/image";
-import type { CSSProperties, KeyboardEvent, PointerEvent, ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
-import styles from "@/components/thank-you/thankYou.module.css";
+import { usePathname } from "next/navigation";
+import type { CSSProperties, FocusEvent, KeyboardEvent, MouseEvent, PointerEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/Icon";
+import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/cn";
 import { cardOffset, wrapIndex } from "@/lib/demoDeck";
 import { projects } from "@/lib/site";
+import { DemoSiteModal } from "./DemoSiteModal";
 import demo from "./demo.module.css";
 
 /**
- * The real demo sites, in deck order: different kinds of business, so a
- * visitor can picture their own. Labels are short enough for a phone card.
+ * Every real demo site, in deck order: different kinds of business, with no
+ * two alike side by side (the deck wraps), so a visitor can picture their
+ * own. Labels are short enough for a phone card.
  */
 const deckOrder: { slug: string; label: string }[] = [
   { slug: "stitch-house", label: "Tailor, London" },
   { slug: "solvers-cleaning", label: "Cleaning" },
-  { slug: "ideal-baby", label: "Baby store, Miami" },
+  { slug: "aesthetic-nacre", label: "Aesthetic clinic" },
+  { slug: "dps-gasworks", label: "Heating, Bedford" },
+  { slug: "chibauchi-atelier", label: "Fashion label" },
   { slug: "removals", label: "Removals" },
+  { slug: "aesthetic-veil", label: "Skin clinic, London" },
   { slug: "allen-fitness", label: "Activewear" },
+  { slug: "ideal-baby", label: "Baby store, Miami" },
   { slug: "cleaning", label: "Home cleaning" },
+  { slug: "chibauchi-studio", label: "Clothing brand" },
 ];
 
 const realCards = deckOrder.flatMap(({ slug, label }) => {
@@ -28,20 +36,9 @@ const realCards = deckOrder.flatMap(({ slug, label }) => {
   return project ? [{ ...project, label }] : [];
 });
 
+const count = realCards.length;
 const AUTOPLAY_MS = 3500;
 const SWIPE_PX = 40;
-
-// Fixed values, so the server and the browser render the same bubbles. Sizes
-// and distances are in cqi of the card.
-const BUBBLES = [
-  { left: "6%", size: 12, delay: 0.25, duration: 1.5, drift: -22, rise: -90 },
-  { left: "20%", size: 7, delay: 0.4, duration: 1.2, drift: -10, rise: -70 },
-  { left: "34%", size: 15, delay: 0.3, duration: 1.8, drift: -14, rise: -110 },
-  { left: "50%", size: 6, delay: 0.5, duration: 1.1, drift: 4, rise: -64 },
-  { left: "62%", size: 13, delay: 0.22, duration: 1.7, drift: 16, rise: -100 },
-  { left: "76%", size: 8, delay: 0.45, duration: 1.3, drift: 22, rise: -80 },
-  { left: "88%", size: 5, delay: 0.6, duration: 1, drift: 12, rise: -56 },
-];
 
 /** Where each card sits for its offset from the front card. */
 function placement(offset: number): CSSProperties {
@@ -64,31 +61,32 @@ function placement(offset: number): CSSProperties {
 }
 
 type DemoDeckProps = {
-  /** The visitor's sketch, once they have chosen a trade. It is always the first card. */
-  sketch: ReactNode | null;
-  /** Changes whenever the sketch is restyled for a different trade. */
-  sketchKey: string;
   active: number;
   onActiveChange: (index: number) => void;
-  /** The business name, stamped on the sketch once the request is saved. */
-  stamp: string | null;
 };
 
-export function DemoDeck({ sketch, sketchKey, active, onActiveChange, stamp }: DemoDeckProps) {
-  const count = realCards.length + (sketch ? 1 : 0);
+export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
+  const pathname = usePathname();
   const [touched, setTouched] = useState(false);
+  /** The card whose live site is open in the dialog. */
+  const [opened, setOpened] = useState<number | null>(null);
   const [paused, setPaused] = useState(false);
   const [visible, setVisible] = useState(true);
   const [reduced, setReduced] = useState(false);
   const [finePointer, setFinePointer] = useState(false);
+  const [focusWithin, setFocusWithin] = useState(false);
+  const regionRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const frontRef = useRef<HTMLDivElement>(null);
+  const frontRef = useRef<HTMLAnchorElement>(null);
+  const refocus = useRef(false);
   const drag = useRef<{ x: number; y: number } | null>(null);
   // A swipe that ends on a background card must not also bring it forward.
   const swiped = useRef(false);
 
-  const canAutoplay = !sketch && !touched && !reduced;
-  const playing = canAutoplay && !paused && visible;
+  const canAutoplay = !touched && !reduced;
+  // Autoplay also waits while focus is in the deck, so a card never turns
+  // away from under the keyboard.
+  const playing = canAutoplay && !paused && visible && !focusWithin;
 
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -128,11 +126,45 @@ export function DemoDeck({ sketch, sketchKey, active, onActiveChange, stamp }: D
     if (!playing) return;
     const timer = window.setTimeout(() => onActiveChange(wrapIndex(active + 1, count)), AUTOPLAY_MS);
     return () => window.clearTimeout(timer);
-  }, [playing, active, count, onActiveChange]);
+  }, [playing, active, onActiveChange]);
 
   function go(index: number) {
+    const next = wrapIndex(index, count);
+    // The focused front card is about to be hidden from assistive tech, so
+    // focus waits on the deck and moves to the new front card once it is there.
+    if (next !== active && document.activeElement?.closest("[data-deck-card]")) {
+      regionRef.current?.focus({ preventScroll: true });
+      refocus.current = true;
+    }
     setTouched(true);
-    onActiveChange(wrapIndex(index, count));
+    onActiveChange(next);
+  }
+
+  useLayoutEffect(() => {
+    if (!refocus.current) return;
+    refocus.current = false;
+    frontRef.current?.focus({ preventScroll: true });
+  }, [active]);
+
+  function onBlur(event: FocusEvent<HTMLDivElement>) {
+    if (!event.currentTarget.contains(event.relatedTarget)) setFocusWithin(false);
+  }
+
+  // A card is a link to its live site. A plain click opens it in the dialog
+  // and brings the card to the front; a modified click opens a new tab, as
+  // any link would. A swipe that ends on a card opens nothing.
+  function openCard(event: MouseEvent<HTMLAnchorElement>, index: number) {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    event.preventDefault();
+    if (swiped.current) return;
+    go(index);
+    setOpened(index);
+    trackEvent("portfolio_example_clicked", {
+      example: realCards[index].slug,
+      position: index + 1,
+      placement: "demo_deck",
+      page: pathname ?? "",
+    });
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
@@ -179,177 +211,143 @@ export function DemoDeck({ sketch, sketchKey, active, onActiveChange, stamp }: D
     frontRef.current?.style.setProperty("--rx", "0deg");
   }
 
-  const cards = [
-    ...(sketch ? [{ key: "sketch", label: "A quick sketch of your homepage" }] : []),
-    ...realCards.map((project) => ({ key: project.slug, label: `Real demo: ${project.label}` })),
-  ];
-
   return (
-    <div
-      role="region"
-      aria-roledescription="carousel"
-      aria-label="Demo websites"
-      onKeyDown={onKeyDown}
-      className="relative"
-    >
+    <>
       <div
-        ref={stageRef}
-        className={demo.stage}
-        onPointerDown={onPointerDown}
-        onPointerUp={onPointerUp}
-        onPointerMove={onPointerMove}
-        onPointerLeave={onPointerLeave}
-        onPointerCancel={onPointerLeave}
-        aria-live={playing ? "off" : "polite"}
+        ref={regionRef}
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Demo websites"
+        tabIndex={-1}
+        onKeyDown={onKeyDown}
+        onFocus={() => setFocusWithin(true)}
+        onBlur={onBlur}
+        className="relative outline-none"
       >
-        <p className={demo.tag} aria-hidden="true">
-          {sketch ? (
-            <>
-              Your quick sketch<span className="hidden sm:inline"> · real demo 48h after our call</span>
-            </>
-          ) : (
-            "Real demos we’ve designed"
-          )}
-        </p>
+        <div
+          ref={stageRef}
+          className={demo.stage}
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+          onPointerMove={onPointerMove}
+          onPointerLeave={onPointerLeave}
+          onPointerCancel={onPointerLeave}
+          aria-live={playing ? "off" : "polite"}
+        >
+          <p className={demo.tag} aria-hidden="true">
+            Real demos we’ve designed
+          </p>
 
-        {cards.map((card, index) => {
-          const offset = cardOffset(index, active, count);
-          const front = offset === 0;
-          const isSketch = card.key === "sketch";
-          const project = isSketch ? null : realCards.find((item) => item.slug === card.key);
-          return (
-            <div
-              key={card.key}
-              role="group"
-              aria-roledescription="slide"
-              aria-label={`${index + 1} of ${count}: ${card.label}`}
-              aria-hidden={front ? undefined : true}
-              className={demo.card}
-              style={placement(offset)}
-              onClick={() => {
-                if (!front && !swiped.current) go(index);
-              }}
-            >
+          {realCards.map((project, index) => {
+            const offset = cardOffset(index, active, count);
+            const front = offset === 0;
+            return (
               <div
-                ref={front ? frontRef : undefined}
-                className={cn(
-                  demo.cardFace,
-                  isSketch && demo.sketchFace,
-                  // The sketch card mounts once, so it deals in once.
-                  isSketch && demo.dealt,
-                  !sketch && demo.enter,
-                )}
-                style={{ "--i": index } as CSSProperties}
+                key={project.slug}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${index + 1} of ${count}: Real demo: ${project.label}`}
+                aria-hidden={front ? undefined : true}
+                className={demo.card}
+                style={placement(offset)}
               >
-                {isSketch ? (
-                  <div key={sketchKey} className={cn("absolute inset-0", demo.restyle)}>
-                    {sketch}
-                  </div>
-                ) : project ? (
-                  <>
-                    <Image
-                      src={project.screenshots.mobile}
-                      alt={`${project.name}, a demo website for a ${project.industry.toLowerCase()} business`}
-                      width={420}
-                      height={900}
-                      sizes="(min-width: 1024px) 300px, 172px"
-                      // The front card and the two fanned beside it are on screen at load.
-                      priority={!sketch && Math.abs(cardOffset(index, 0, count)) <= 1}
-                      draggable={false}
-                      className="h-full w-full object-cover object-top"
-                    />
-                    <span className={demo.label}>
-                      <small>Real demo</small>
-                      {project.label}
+                <a
+                  ref={front ? frontRef : undefined}
+                  href={project.siteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  draggable={false}
+                  tabIndex={front ? undefined : -1}
+                  data-deck-card
+                  aria-label={`View ${project.name}, a real demo website`}
+                  // A card behind the front one is hidden from assistive tech,
+                  // so a click on it must not leave focus inside it.
+                  onMouseDown={front ? undefined : (event) => event.preventDefault()}
+                  onClick={(event) => openCard(event, index)}
+                  className={cn(demo.cardFace, demo.enter, "block")}
+                  style={{ "--i": index } as CSSProperties}
+                >
+                  <Image
+                    src={project.screenshots.mobile}
+                    alt={`${project.name}, a demo website for a ${project.industry.toLowerCase()} business`}
+                    width={420}
+                    height={900}
+                    sizes="(min-width: 1024px) 300px, 172px"
+                    // The front card and the two fanned beside it are on screen at load.
+                    priority={Math.abs(cardOffset(index, 0, count)) <= 1}
+                    draggable={false}
+                    className="h-full w-full object-cover object-top"
+                  />
+                  <span className={demo.label}>
+                    <small>Real demo</small>
+                    {project.label}
+                  </span>
+                  {front ? (
+                    <span className={demo.view} aria-hidden="true">
+                      <Icon name="expand" size={12} />
+                      View site
                     </span>
-                  </>
-                ) : null}
+                  ) : null}
+                </a>
               </div>
-
-              {isSketch && stamp ? (
-                <>
-                  <div aria-hidden="true" className={cn(demo.bubbles, "motion-reduce:hidden")}>
-                    {BUBBLES.map((bubble) => (
-                      <span
-                        key={bubble.left}
-                        className={styles.bubble}
-                        style={
-                          {
-                            left: bubble.left,
-                            width: `${bubble.size}cqi`,
-                            height: `${bubble.size}cqi`,
-                            "--delay": `${bubble.delay}s`,
-                            "--duration": `${bubble.duration}s`,
-                            "--drift": `${bubble.drift}cqi`,
-                            "--rise": `${bubble.rise}cqi`,
-                          } as CSSProperties
-                        }
-                      />
-                    ))}
-                  </div>
-                  <p className={demo.stamp}>
-                    ✓ Reserved
-                    <br />
-                    {stamp}
-                  </p>
-                </>
-              ) : null}
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="relative z-40 -mt-1 flex items-center justify-center gap-2 md:mt-3 md:gap-3">
-        <button
-          type="button"
-          onClick={() => go(active - 1)}
-          aria-label="Previous"
-          className="hidden h-9 w-9 place-items-center md:grid rounded-full text-muted-invert ring-1 ring-white/15 transition-colors hover:bg-white/10 hover:text-white"
-        >
-          <Icon name="arrow" size={16} className="rotate-180" aria-hidden />
-        </button>
-        <div className="flex items-center gap-1.5">
-          {cards.map((card, index) => (
-            <button
-              key={card.key}
-              type="button"
-              onClick={() => go(index)}
-              aria-label={`Show ${card.label}`}
-              aria-current={index === active ? "true" : undefined}
-              className="grid h-6 place-items-center"
-            >
-              <span
-                className={cn(
-                  "block h-1.5 rounded-full transition-all duration-300",
-                  index === active ? "w-5 bg-brand" : "w-1.5 bg-white/30",
-                )}
-              />
-            </button>
-          ))}
+            );
+          })}
         </div>
-        <button
-          type="button"
-          onClick={() => go(active + 1)}
-          aria-label="Next"
-          className="hidden h-9 w-9 place-items-center md:grid rounded-full text-muted-invert ring-1 ring-white/15 transition-colors hover:bg-white/10 hover:text-white"
-        >
-          <Icon name="arrow" size={16} aria-hidden />
-        </button>
-        {canAutoplay ? (
+
+        <div className="relative z-40 -mt-1 flex items-center justify-center gap-2 md:mt-3 md:gap-3">
           <button
             type="button"
-            onClick={() => setPaused((value) => !value)}
-            aria-label={paused ? "Play the demos" : "Pause the demos"}
-            className="grid h-8 w-8 place-items-center md:h-9 md:w-9 rounded-full text-muted-invert ring-1 ring-white/15 transition-colors hover:bg-white/10 hover:text-white"
+            onClick={() => go(active - 1)}
+            aria-label="Previous"
+            className="hidden h-9 w-9 place-items-center md:grid rounded-full text-muted-invert ring-1 ring-white/15 transition-colors hover:bg-white/10 hover:text-white"
           >
-            {paused ? (
-              <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor" /></svg>
-            ) : (
-              <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z" fill="currentColor" /></svg>
-            )}
+            <Icon name="arrow" size={16} className="rotate-180" aria-hidden />
           </button>
-        ) : null}
+          <div className="flex items-center gap-1.5">
+            {realCards.map((project, index) => (
+              <button
+                key={project.slug}
+                type="button"
+                onClick={() => go(index)}
+                aria-label={`Show real demo: ${project.label}`}
+                aria-current={index === active ? "true" : undefined}
+                className="grid h-6 place-items-center"
+              >
+                <span
+                  className={cn(
+                    "block h-1.5 rounded-full transition-all duration-300",
+                    index === active ? "w-5 bg-brand" : "w-1.5 bg-white/30",
+                  )}
+                />
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => go(active + 1)}
+            aria-label="Next"
+            className="hidden h-9 w-9 place-items-center md:grid rounded-full text-muted-invert ring-1 ring-white/15 transition-colors hover:bg-white/10 hover:text-white"
+          >
+            <Icon name="arrow" size={16} aria-hidden />
+          </button>
+          {canAutoplay ? (
+            <button
+              type="button"
+              onClick={() => setPaused((value) => !value)}
+              aria-label={paused ? "Play the demos" : "Pause the demos"}
+              className="grid h-8 w-8 place-items-center md:h-9 md:w-9 rounded-full text-muted-invert ring-1 ring-white/15 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              {paused ? (
+                <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor" /></svg>
+              ) : (
+                <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z" fill="currentColor" /></svg>
+              )}
+            </button>
+          ) : null}
+        </div>
       </div>
-    </div>
+
+      <DemoSiteModal project={opened === null ? null : realCards[opened]} onClose={() => setOpened(null)} />
+    </>
   );
 }

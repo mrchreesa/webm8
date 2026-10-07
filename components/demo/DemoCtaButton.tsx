@@ -16,20 +16,20 @@ export function DemoCtaButton({ placement, onClick, children, ...props }: DemoCt
     onClick?.(event);
     trackEvent("demo_cta_clicked", { placement, page: pathname ?? "/" });
 
-    // On /demo/ the form is already on the page, so the button goes to it.
+    // On /free-demo/ the form is already on the page, so the button goes to it.
     // The next frame lets the mobile menu close first, so the scroll lands.
-    const journey = document.getElementById("demo-journey");
-    if (!journey) return;
+    const form = document.getElementById("demo-request");
+    if (!form) return;
     event.preventDefault();
     window.requestAnimationFrame(() => {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      journey.scrollIntoView({ block: "nearest", behavior: reduced ? "auto" : "smooth" });
-      journey.querySelector<HTMLElement>("[data-demo-legend]")?.focus({ preventScroll: true });
+      form.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });
+      form.querySelector<HTMLElement>("[data-demo-focus]")?.focus({ preventScroll: true });
     });
   }
 
   return (
-    <LinkButton href="/demo/" onClick={handleClick} {...props}>
+    <LinkButton href="/free-demo/" onClick={handleClick} {...props}>
       {children}
     </LinkButton>
   );

@@ -16,7 +16,7 @@ test("a single card is always at the front", () => {
 });
 
 test("offsets take the short way round the deck", () => {
-  // Seven cards: the sketch at 0, then six real demos.
+  // An odd deck has as many cards behind on each side.
   assert.deepEqual(
     Array.from({ length: 7 }, (_, card) => cardOffset(card, 0, 7)),
     [0, 1, 2, 3, -3, -2, -1],

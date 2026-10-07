@@ -41,6 +41,19 @@ const targets = [
     views: ["phone"],
     phone: { button: "input >> nth=0" },
   },
+  {
+    slug: "dps-gasworks",
+    url: "https://gaswork-dsp.vercel.app/",
+    hide: [".call-bar"],
+    phone: { button: "main >> text=Get a quote" },
+  },
+  // Two directions for one clinic, shown as separate projects; each page carries a switcher between them.
+  { slug: "aesthetic-veil", url: "https://aesthetic-navy.vercel.app/veil/", hide: ['nav[aria-label="Design directions"]'] },
+  { slug: "aesthetic-nacre", url: "https://aesthetic-navy.vercel.app/nacre/", hide: ['nav[aria-label="Design directions"]'] },
+  // Two concepts for one clothing brand, shown as separate projects; each page carries a pill linking to the other.
+  // Atelier's hero photo reveals itself tile by tile; give it time to finish.
+  { slug: "chibauchi-atelier", url: "https://clothes-accessories-store.vercel.app/design-a/", hide: [".demo-pill"], settle: 6000 },
+  { slug: "chibauchi-studio", url: "https://clothes-accessories-store.vercel.app/design-b/", hide: [".demo-pill"] },
   ...(process.env.RECRUITMENT_URL ? [{ slug: "recruitment", url: process.env.RECRUITMENT_URL, hide: [] }] : []),
 ];
 
@@ -102,7 +115,7 @@ for (const target of targets.filter((t) => only.size === 0 || only.has(t.slug)))
         button: box && { x: Math.round(box.x + box.width / 2), y: Math.round(box.y + box.height / 2) },
       });
     } else {
-      await page.waitForTimeout(2500); // let entrance animations settle
+      await page.waitForTimeout(target.settle ?? 2500); // let entrance animations settle
       const png = await page.screenshot({ type: "png" });
       await sharp(png).webp({ quality: 80 }).toFile(file);
       console.log(`saved ${file}`);

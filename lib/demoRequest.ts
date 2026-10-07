@@ -1,7 +1,7 @@
 /**
- * The Free Personalised Website Demo request on /demo/. The form checks each
- * step with validateDemoStep before moving on; /api/demo-request/ checks the
- * whole submission with validateDemoSubmission before saving it.
+ * The Free Personalised Website Demo request on /free-demo/. The form checks
+ * the answers with validateDemoAnswers before sending; /api/demo-request/
+ * checks the whole submission with validateDemoSubmission before saving it.
  */
 
 import { cleanAttribution, type Attribution } from "./leadAttribution.ts";
@@ -33,17 +33,6 @@ export const emptyDemoAnswers: DemoAnswers = {
   name: "",
   phone: "",
   email: "",
-};
-
-export type DemoStep = 1 | 2 | 3 | 4;
-
-export const demoStepCount = 4;
-
-export const demoStepFields: Record<DemoStep, DemoField[]> = {
-  1: ["trade", "tradeOther"],
-  2: ["business"],
-  3: ["area", "link"],
-  4: ["name", "phone", "email"],
 };
 
 export const demoLimits = {
@@ -80,7 +69,7 @@ const PHONE_PATTERN = /^\+?[\d\s().-]+$/;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const NOT_OWN_SITE = /(facebook\.com|fb\.com|instagram\.com|maps\.app\.goo\.gl|g\.page|google\.[^/]+\/maps)/i;
 
-/** Faster than this from first step to submit is a script, not a person. */
+/** Faster than this from page load to submit is a script, not a person. */
 const MIN_ELAPSED_MS = 1500;
 
 const tidy = (value: string) => value.replace(/\s+/g, " ").trim();
@@ -163,24 +152,14 @@ function checkField(field: DemoField, answers: DemoAnswers): string | undefined 
   }
 }
 
-function check(fields: DemoField[], answers: DemoAnswers): DemoErrors {
-  const errors: DemoErrors = {};
-  for (const field of fields) {
-    const error = checkField(field, answers);
-    if (error) errors[field] = error;
-  }
-  return errors;
-}
-
-/** Errors for one step's fields only. Empty when the step can move on. */
-export function validateDemoStep(step: DemoStep, answers: DemoAnswers): DemoErrors {
-  return check(demoStepFields[step], answers);
-}
-
 export function validateDemoAnswers(
   answers: DemoAnswers,
 ): { ok: true; request: DemoRequest } | { ok: false; errors: DemoErrors } {
-  const errors = check(Object.keys(emptyDemoAnswers) as DemoField[], answers);
+  const errors: DemoErrors = {};
+  for (const field of Object.keys(emptyDemoAnswers) as DemoField[]) {
+    const error = checkField(field, answers);
+    if (error) errors[field] = error;
+  }
   const trade = parseTrade(answers.trade);
   if (!trade || Object.keys(errors).length > 0) return { ok: false, errors };
 

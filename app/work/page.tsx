@@ -13,7 +13,7 @@ import { createPageMetadata } from "@/lib/seo";
 export const metadata: Metadata = createPageMetadata({
   title: "Website Examples: Demo Sites for Local Businesses",
   description:
-    "Demo websites WebM8 designed for local businesses: a tailor, two cleaning companies, a removals firm, a baby store and an activewear brand. See each on a computer and a phone.",
+    "Demo websites WebM8 designed for local businesses: a tailor, a heating engineer, two cleaning companies, a removals firm, a baby store, an activewear brand, two clothing labels and two aesthetic clinics. See each on a computer and a phone.",
   path: "/work/",
 });
 
@@ -68,7 +68,7 @@ export default function WorkPage() {
                           <Icon name="arrow" size={16} className="-rotate-45" />
                         </LinkButton>
                       ) : null}
-                      <LinkButton href="/demo/" variant="ghost">
+                      <LinkButton href="/free-demo/" variant="ghost">
                         Get a free demo like this
                       </LinkButton>
                     </div>

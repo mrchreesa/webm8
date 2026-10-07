@@ -4,8 +4,8 @@ import { cn } from "@/lib/cn";
 import { projects, type Project } from "@/lib/site";
 
 /**
- * The strongest demo sites, in the order shown, from different kinds of
- * business so a lead can picture their own. The first `featuredCount` span
+ * Every demo site, strongest first, from different kinds of business so a
+ * lead can picture their own. The first `featuredCount` span
  * the full width; the rest pair up. The line under each name is shorter than
  * the project description in lib/site.ts on purpose: this page is read on a
  * phone, between an ad and a phone call.
@@ -28,10 +28,28 @@ const showcase: { slug: Project["slug"]; line: string; ground: string; glow: str
     glow: "rgb(201 161 74 / 0.5)",
   },
   {
+    slug: "aesthetic-nacre",
+    line: "A dark, sensorial clinic site with a hero that catches the light.",
+    ground: "#0d0a10",
+    glow: "rgb(220 187 246 / 0.42)",
+  },
+  {
+    slug: "dps-gasworks",
+    line: "A heating engineer's site with a call button on every screen.",
+    ground: "#1b2631",
+    glow: "rgb(224 154 95 / 0.45)",
+  },
+  {
     slug: "solvers-cleaning",
     line: "A bold cleaning site built around fast quotes and WhatsApp.",
     ground: "#111b63",
     glow: "rgb(155 225 93 / 0.42)",
+  },
+  {
+    slug: "aesthetic-veil",
+    line: "A soft, photographic site for a doctor-led London clinic.",
+    ground: "#c3cfd4",
+    glow: "rgb(110 42 67 / 0.35)",
   },
   {
     slug: "removals",
@@ -40,10 +58,22 @@ const showcase: { slug: Project["slug"]; line: string; ground: string; glow: str
     glow: "rgb(125 196 255 / 0.6)",
   },
   {
+    slug: "chibauchi-atelier",
+    line: "An editorial fashion store where every lookbook outfit can be bought.",
+    ground: "#1c1915",
+    glow: "rgb(164 83 47 / 0.55)",
+  },
+  {
     slug: "ideal-baby",
     line: "A bilingual family store site that brings parents through the door.",
     ground: "#f3bd2e",
     glow: "rgb(240 99 63 / 0.45)",
+  },
+  {
+    slug: "chibauchi-studio",
+    line: "A bold, graphic clothing store made for swiping on a phone.",
+    ground: "#0f0f10",
+    glow: "rgb(46 59 255 / 0.55)",
   },
   {
     slug: "cleaning",
@@ -53,8 +83,8 @@ const showcase: { slug: Project["slug"]; line: string; ground: string; glow: str
   },
 ];
 
-/** Two, so the four that follow fill their rows. */
-const featuredCount = 2;
+/** Three, so the eight that follow fill their rows. */
+const featuredCount = 3;
 
 const examples = showcase.flatMap(({ slug, ...art }) => {
   const project = projects.find((item) => item.slug === slug);
@@ -79,7 +109,7 @@ export function ThankYouWork() {
         </h2>
         <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted">
           Every WebM8 website is designed around the individual business. These
-          are a few recent examples.
+          are our recent examples.
         </p>
 
         <ol className="mt-10 grid gap-6 md:grid-cols-2 lg:gap-8">

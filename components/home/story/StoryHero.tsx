@@ -49,6 +49,8 @@ const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: r
 type StoryControl = {
   setPlaying: (on: boolean) => void;
   seek: (step: StoryStep) => void;
+  /** Plays a trade from the start. Returns false when it is shown still instead (reduced motion, paused). */
+  pick: (key: TradeKey) => boolean;
 };
 
 function paletteStyle(trade: Trade): CSSProperties {
@@ -71,10 +73,12 @@ function screenFor(chapter: StoryChapter) {
 /**
  * The homepage hero: one customer's journey, from a local search to the
  * owner's phone lighting up, played on a loop. Each turn shows the next
- * trade.
+ * trade, or the one a visitor picks from the chips.
  */
 export function StoryHero() {
   const [tradeKey, setTradeKey] = useState<TradeKey>(defaultTrade);
+  // A picked trade lights its chip at once; the phone swaps once it has faded out.
+  const [pickedKey, setPickedKey] = useState<TradeKey | null>(null);
   const trade = trades[tradeKey];
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -108,6 +112,17 @@ export function StoryHero() {
     let raf = 0;
     let last = 0;
     let completed = false;
+    let picked: TradeKey | null = null;
+    let fadeLeft = 0;
+
+    /** Puts a trade on the phone, at the start of its turn. */
+    const begin = (key: TradeKey) => {
+      picked = null;
+      elapsed = 0;
+      swapInUntil = SWAP_IN_MS;
+      setPickedKey(null);
+      setTradeKey(key);
+    };
 
     const draw = () => {
       const p = playProgress(elapsed);
@@ -119,8 +134,12 @@ export function StoryHero() {
       section.querySelectorAll<HTMLElement>("[data-rail-step]").forEach((element, index) => {
         element.style.setProperty("--f", chapterProgress(p, (index + 1) as StoryStep).toFixed(3));
       });
-      find("chips")?.style.setProperty("--turn", clamp01(elapsed / STORY_TURN_MS).toFixed(3));
-      flag(device, "swapping", running && (elapsed < swapInUntil || elapsed > STORY_TURN_MS - SWAP_OUT_MS));
+      find("chips")?.style.setProperty("--turn", picked ? "0" : clamp01(elapsed / STORY_TURN_MS).toFixed(3));
+      flag(
+        device,
+        "swapping",
+        running && (picked !== null || elapsed < swapInUntil || elapsed > STORY_TURN_MS - SWAP_OUT_MS),
+      );
 
       const t = tradeRef.current;
 
@@ -162,16 +181,21 @@ export function StoryHero() {
     const tick = (now: number) => {
       raf = 0;
       if (!running || !onScreen || document.hidden) return;
-      elapsed += Math.min(Math.max(0, now - last), 100);
+      const step = Math.min(Math.max(0, now - last), 100);
       last = now;
-      if (elapsed >= STORY_TURN_MS) {
-        if (!completed) {
-          completed = true;
-          trackEvent("home_story_completed", { trade: tradeRef.current.key });
+      if (picked) {
+        // The story holds still while the phone fades out for the picked trade.
+        fadeLeft -= step;
+        if (fadeLeft <= 0) begin(picked);
+      } else {
+        elapsed += step;
+        if (elapsed >= STORY_TURN_MS) {
+          if (!completed) {
+            completed = true;
+            trackEvent("home_story_completed", { trade: tradeRef.current.key });
+          }
+          begin(nextHeroTrade(tradeRef.current.key));
         }
-        elapsed = 0;
-        swapInUntil = SWAP_IN_MS;
-        setTradeKey(nextHeroTrade(tradeRef.current.key));
       }
       draw();
       raf = window.requestAnimationFrame(tick);
@@ -186,13 +210,36 @@ export function StoryHero() {
     controlRef.current = {
       setPlaying(on) {
         running = on;
+        // Never leave the phone faded out: a pause mid-swap shows the picked trade's search, still.
+        if (!on && picked) {
+          begin(picked);
+          elapsed = chapterTime(1, STILL_AT);
+          swapInUntil = 0;
+        }
         if (on) resume();
         draw();
       },
       seek(step) {
+        if (picked) begin(picked);
         elapsed = chapterTime(step, running ? 0 : STILL_AT);
         swapInUntil = 0;
         draw();
+      },
+      pick(key) {
+        if (reduce && !running) {
+          begin(key);
+          elapsed = chapterTime(2, STILL_AT);
+          swapInUntil = 0;
+          draw();
+          return false;
+        }
+        if (!picked) fadeLeft = SWAP_OUT_MS;
+        picked = key;
+        setPickedKey(key);
+        running = true;
+        resume();
+        draw();
+        return true;
       },
     };
 
@@ -243,6 +290,11 @@ export function StoryHero() {
   ];
   const caption = Math.max(1, chapter);
 
+  const pickTrade = (key: TradeKey) => {
+    trackEvent("home_story_trade_picked", { trade: key });
+    if (controlRef.current?.pick(key)) setPlaying(true);
+  };
+
   return (
     <section
       ref={sectionRef}
@@ -266,7 +318,7 @@ export function StoryHero() {
               See our work
             </LinkButton>
           </div>
-          <TradeChips shownKey={tradeKey} />
+          <TradeChips shownKey={pickedKey ?? tradeKey} onPick={pickTrade} />
         </div>
 
         <div className={styles.stage}>

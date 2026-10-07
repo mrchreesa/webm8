@@ -32,7 +32,7 @@ export const primaryNav: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Work", href: "/work" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Free Demo", href: "/demo" },
+  { label: "Free Demo", href: "/free-demo" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
@@ -186,7 +186,7 @@ export const processSteps: ProcessStep[] = [
 
 export type DemoStep = { title: string; body: string };
 
-/** What the Free Personalised Website Demo involves, on /demo/ and in DemoClosing. */
+/** What the Free Personalised Website Demo involves, in DemoClosing. */
 export const demoSteps: DemoStep[] = [
   {
     title: "Tell us about your business",
@@ -226,6 +226,11 @@ export type Project = {
   palette: "blue" | "green" | "slate" | "amber" | "rose" | "violet";
   /** The live demo. Omitted when the owner chose not to link it. */
   siteUrl?: string;
+  /**
+   * The live demo refuses to load inside another page (X-Frame-Options), so
+   * the demo deck's preview shows its screenshots and a link out instead.
+   */
+  blocksFraming?: boolean;
   screenshots: {
     desktop: string;
     mobile: string;
@@ -253,8 +258,93 @@ export type PhoneShot = {
   header?: number;
 };
 
-/** Demo sites WebM8 designed for local businesses. */
+/**
+ * Demo sites WebM8 designed for local businesses, in the order the homepage
+ * deck and the work page show them. The deck opens on `workDeckStart`, so its
+ * neighbours here are the cards either side of it.
+ */
 export const projects: Project[] = [
+  {
+    slug: "chibauchi-atelier",
+    name: "Atelier",
+    industry: "Clothing and accessories",
+    title: "Editorial fashion store with a shoppable lookbook",
+    description:
+      "A clothing and accessories label cut for everybody, in a warm, cinematic style: a lookbook where every look can be bought, quick add on every piece, and delivery and returns made clear.",
+    palette: "amber",
+    siteUrl: "https://clothes-accessories-store.vercel.app/design-a/",
+    screenshots: {
+      desktop: "/work/chibauchi-atelier-desktop.webp",
+      mobile: "/work/chibauchi-atelier-mobile.webp",
+    },
+    outcomes: [
+      "Every lookbook outfit is shoppable",
+      "Quick add, with sizes, on every piece",
+      "Free delivery and returns up front",
+      "A journal that tells the brand's story",
+    ],
+  },
+  {
+    slug: "ideal-baby",
+    name: "Ideal Baby & Kids",
+    industry: "Baby and kids store",
+    title: "Family-run baby store, online and in Little Havana",
+    description:
+      "Strollers, car seats and nursery furniture from brands parents trust, on a bilingual site that brings families into the Miami store.",
+    palette: "blue",
+    siteUrl: "https://baby-shop-blue-ten.vercel.app/pop/",
+    screenshots: {
+      desktop: "/work/ideal-baby-desktop.webp",
+      mobile: "/work/ideal-baby-mobile.webp",
+    },
+    outcomes: [
+      "English and Spanish",
+      "Shop by category",
+      "Planning a store visit",
+      "Trusted brands up front",
+    ],
+  },
+  {
+    slug: "cleaning",
+    name: "Fresh & Clean",
+    industry: "Home cleaning",
+    title: "Fresh cleaning site built around quote requests",
+    description:
+      "A clean service website that makes packages easy to compare, builds trust fast, and keeps the quote journey clear on mobile.",
+    palette: "green",
+    siteUrl: "https://cleaning.webm8agency.com/",
+    screenshots: {
+      desktop: "/work/cleaning-desktop.webp",
+      mobile: "/work/cleaning-mobile.webp",
+    },
+    outcomes: [
+      "A simple path to request a quote",
+      "Clear cleaning packages",
+      "Trust and review sections",
+      "Fast mobile enquiry path",
+    ],
+  },
+  {
+    slug: "dps-gasworks",
+    name: "DPS Gasworks",
+    industry: "Gas, heating and plumbing",
+    title: "Gas Safe engineer's site built around the phone",
+    description:
+      "Boilers, central heating and plumbing across Bedford, from a one-engineer business: a call button everywhere, a clear price before any work, and a quote form for when he's on a job.",
+    palette: "amber",
+    siteUrl: "https://gaswork-dsp.vercel.app/",
+    screenshots: {
+      desktop: "/work/dps-gasworks-desktop.webp",
+      mobile: "/work/dps-gasworks-mobile.webp",
+      phone: { src: "/work/dps-gasworks-phone.webp", width: 780, height: 2800, top: "#1b2631", button: { x: 219, y: 517 }, scroll: 200, header: 61 },
+    },
+    outcomes: [
+      "Call buttons on every screen",
+      "Gas Safe and reviews up front",
+      "Photos from his own jobs",
+      "A quote form for when he's busy",
+    ],
+  },
   {
     slug: "stitch-house",
     name: "The Stitch House",
@@ -297,23 +387,23 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: "ideal-baby",
-    name: "Ideal Baby & Kids",
-    industry: "Baby and kids store",
-    title: "Family-run baby store, online and in Little Havana",
+    slug: "aesthetic-nacre",
+    name: "Nacre",
+    industry: "Aesthetic clinic",
+    title: "Dark, sensorial site for a doctor-led clinic",
     description:
-      "Strollers, car seats and nursery furniture from brands parents trust, on a bilingual site that brings families into the Miami store.",
-    palette: "blue",
-    siteUrl: "https://baby-shop-blue-ten.vercel.app/pop/",
+      "A doctor-led aesthetic clinic in Marylebone, with a satin hero that catches the light as you move, every treatment and price at a glance, and a quiet path to booking.",
+    palette: "violet",
+    siteUrl: "https://aesthetic-navy.vercel.app/nacre/",
     screenshots: {
-      desktop: "/work/ideal-baby-desktop.webp",
-      mobile: "/work/ideal-baby-mobile.webp",
+      desktop: "/work/aesthetic-nacre-desktop.webp",
+      mobile: "/work/aesthetic-nacre-mobile.webp",
     },
     outcomes: [
-      "English and Spanish",
-      "Shop by category",
-      "Planning a store visit",
-      "Trusted brands up front",
+      "A satin hero that answers to touch",
+      "Every treatment and price at a glance",
+      "Four clear steps, consultation to review",
+      "A call-back form that asks the right things",
     ],
   },
   {
@@ -346,6 +436,7 @@ export const projects: Project[] = [
       "A clear removals website that explains the services, makes quotes easy, and gives customers reasons to trust the company.",
     palette: "slate",
     siteUrl: "https://removals.webm8agency.com/",
+    blocksFraming: true,
     screenshots: {
       desktop: "/work/removals-desktop.webp",
       mobile: "/work/removals-mobile.webp",
@@ -359,26 +450,49 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: "cleaning",
-    name: "Fresh & Clean",
-    industry: "Home cleaning",
-    title: "Fresh cleaning site built around quote requests",
+    slug: "chibauchi-studio",
+    name: "Studio",
+    industry: "Clothing and accessories",
+    title: "Bold, graphic fashion store built to move",
     description:
-      "A clean service website that makes packages easy to compare, builds trust fast, and keeps the quote journey clear on mobile.",
-    palette: "green",
-    siteUrl: "https://cleaning.webm8agency.com/",
+      "A clothing and accessories label in a graphic, kinetic style: a wordmark filled with photography, a piece of the week, new arrivals to swipe through and a lookbook that shuffles with a tap.",
+    palette: "blue",
+    siteUrl: "https://clothes-accessories-store.vercel.app/design-b/",
     screenshots: {
-      desktop: "/work/cleaning-desktop.webp",
-      mobile: "/work/cleaning-mobile.webp",
+      desktop: "/work/chibauchi-studio-desktop.webp",
+      mobile: "/work/chibauchi-studio-mobile.webp",
     },
     outcomes: [
-      "A simple path to request a quote",
-      "Clear cleaning packages",
-      "Trust and review sections",
-      "Fast mobile enquiry path",
+      "A piece of the week up front",
+      "Six categories from the homepage",
+      "New arrivals to swipe through",
+      "Returns, dispatch and repairs promised",
+    ],
+  },
+  {
+    slug: "aesthetic-veil",
+    name: "Veil",
+    industry: "Aesthetic clinic",
+    title: "Light, photographic site for a doctor-led clinic",
+    description:
+      "A doctor-led aesthetic clinic on Wimpole Street, with a soft photographic look, every treatment priced with its downtime, and a consultation one tap away.",
+    palette: "rose",
+    siteUrl: "https://aesthetic-navy.vercel.app/veil/",
+    screenshots: {
+      desktop: "/work/aesthetic-veil-desktop.webp",
+      mobile: "/work/aesthetic-veil-mobile.webp",
+    },
+    outcomes: [
+      "A consultation a tap away",
+      "Prices and downtime for each treatment",
+      "The doctor front and centre",
+      "Privacy made clear from the start",
     ],
   },
 ];
+
+/** The project the homepage deck opens on. */
+export const workDeckStart = "allen-fitness";
 
 export type Testimonial = {
   quote: string;

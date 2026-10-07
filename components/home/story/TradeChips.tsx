@@ -5,8 +5,8 @@ import { heroTradeOrder, trades, type TradeKey } from "@/lib/trades";
 import { TradeIcon } from "./TradeIcon";
 import styles from "./story.module.css";
 
-/** Every trade the story plays, with the one on the phone right now lit. */
-export function TradeChips({ shownKey }: { shownKey: TradeKey }) {
+/** Every trade the story plays, with the one on the phone right now lit. Picking one plays it next. */
+export function TradeChips({ shownKey, onPick }: { shownKey: TradeKey; onPick: (key: TradeKey) => void }) {
   const labelId = useId();
   const listRef = useRef<HTMLUListElement>(null);
 
@@ -30,15 +30,17 @@ export function TradeChips({ shownKey }: { shownKey: TradeKey }) {
       </p>
       <ul ref={listRef} aria-labelledby={labelId} data-story="chips" className={styles.chips}>
         {heroTradeOrder.map((key) => (
-          <li
-            key={key}
-            data-trade={key}
-            data-live={key === shownKey ? "" : undefined}
-            aria-current={key === shownKey ? "true" : undefined}
-            className={styles.chip}
-          >
-            <TradeIcon trade={key} className={styles.chipIcon} />
-            {trades[key].short}
+          <li key={key} data-trade={key} className={styles.chipItem}>
+            <button
+              type="button"
+              data-live={key === shownKey ? "" : undefined}
+              aria-pressed={key === shownKey}
+              className={styles.chip}
+              onClick={() => onPick(key)}
+            >
+              <TradeIcon trade={key} className={styles.chipIcon} />
+              {trades[key].short}
+            </button>
           </li>
         ))}
       </ul>

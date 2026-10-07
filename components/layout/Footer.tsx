@@ -30,7 +30,7 @@ export function Footer() {
               { label: "Home", href: "/" },
               { label: "Websites for Movers", href: "/movers/" },
               { label: "Work", href: "/work" },
-              { label: "Free Demo", href: "/demo/" },
+              { label: "Free Demo", href: "/free-demo/" },
             ]}
           />
           <FooterCol

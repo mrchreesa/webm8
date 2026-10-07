@@ -12,8 +12,8 @@ const nextConfig: NextConfig = {
   // The free website review became the Free Personalised Website Demo.
   async redirects() {
     return [
-      { source: "/audit", destination: "/demo/", permanent: true },
-      { source: "/audit/", destination: "/demo/", permanent: true },
+      { source: "/audit", destination: "/free-demo/", permanent: true },
+      { source: "/audit/", destination: "/free-demo/", permanent: true },
     ];
   },
 };

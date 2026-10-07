@@ -15,10 +15,11 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const isMoversPage = pathname?.startsWith("/movers") ?? false;
-  // Meta leads land on /thank-you/ having already sent their details, so the
-  // header there is the logo alone: no nav, and no CTA back into a form.
-  const isLeadPage = pathname?.startsWith("/thank-you") ?? false;
-  const isDemoPage = pathname?.startsWith("/demo") ?? false;
+  // Meta leads land on /thank-you/ and /demo/ having already sent their
+  // details, so the header there is the logo alone: no nav, and no CTA back
+  // into a form.
+  const isLeadPage = ["/thank-you", "/demo"].some((path) => pathname?.startsWith(path));
+  const isFreeDemoPage = pathname?.startsWith("/free-demo") ?? false;
   const navItems = isMoversPage
     ? [
         { label: "How it works", href: "#how-it-works" },
@@ -60,12 +61,11 @@ export function Header() {
     href === "/" ? pathname === "/" : pathname?.startsWith(href) ?? false;
 
   // The homepage is navy from top to bottom, so its header stays dark.
-  // /demo/'s form lives in its long navy hero, so its header stays dark too.
-  // /movers/ and /thank-you/ have navy heroes, so their headers are dark until
-  // the page scrolls.
+  // /movers/, /thank-you/, /demo/ and /free-demo/ have navy heroes, so their
+  // headers are dark until the page scrolls.
   const isHome = pathname === "/";
-  const staysDark = isHome || isDemoPage;
-  const overDarkHero = staysDark || ((isMoversPage || isLeadPage) && !scrolled);
+  const staysDark = isHome;
+  const overDarkHero = staysDark || ((isMoversPage || isLeadPage || isFreeDemoPage) && !scrolled);
 
   return (
     <header

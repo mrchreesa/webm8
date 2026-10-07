@@ -8,7 +8,7 @@ import { supabaseTableRequest } from "@/lib/supabaseAdmin";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/** /demo/ requests share the review-request table with /movers/, told apart by request_type. */
+/** /free-demo/ requests share the review-request table with /movers/, told apart by request_type. */
 const TABLE = "agency_review_requests";
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX = 5;

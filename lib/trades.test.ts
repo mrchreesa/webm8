@@ -59,7 +59,7 @@ test("every trade has complete, non-empty content", () => {
 
 test("a trade showing a real site names its project, which has a phone capture", () => {
   const shown = tradeList.filter((trade) => isPortfolioSite(trade.site));
-  assert.deepEqual(shown.map((trade) => trade.key).sort(), ["cleaning", "fitness", "moving"]);
+  assert.deepEqual(shown.map((trade) => trade.key).sort(), ["cleaning", "fitness", "moving", "plumbing"]);
   for (const trade of shown) {
     const slug = isPortfolioSite(trade.site) ? trade.site.project : "";
     const project = projects.find((p) => p.slug === slug);

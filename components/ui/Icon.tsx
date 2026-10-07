@@ -20,7 +20,9 @@ export type IconName =
   | "mail"
   | "whatsapp"
   | "menu"
-  | "close";
+  | "close"
+  | "expand"
+  | "external";
 
 type IconProps = SVGProps<SVGSVGElement> & {
   name: IconName;
@@ -170,6 +172,18 @@ export function Icon({ name, size = 20, className = "", ...rest }: IconProps) {
       return (
         <svg {...common}>
           <path d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      );
+    case "expand":
+      return (
+        <svg {...common}>
+          <path d="M15 4h5v5M9 20H4v-5M20 4l-6 6M4 20l6-6" />
+        </svg>
+      );
+    case "external":
+      return (
+        <svg {...common}>
+          <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
         </svg>
       );
     default:

@@ -1,5 +1,5 @@
 /**
- * The two emails a /demo/ request sends: the notification to WebM8 and the
+ * The two emails a /free-demo/ request sends: the notification to WebM8 and the
  * confirmation to the visitor. Pure builders, so they can be tested; sending
  * is lib/resend.ts. Everything the visitor typed is escaped in the HTML.
  */
@@ -62,7 +62,7 @@ export function demoNotificationEmail(
   });
 
   const text = [
-    "New Free Personalised Website Demo request from /demo/.",
+    "New Free Personalised Website Demo request from /free-demo/.",
     "",
     ...details.map(([label, value]) => `${label}: ${value}`),
     ...(campaign.length ? ["", ...campaign.map(([label, value]) => `${label}: ${value}`)] : []),

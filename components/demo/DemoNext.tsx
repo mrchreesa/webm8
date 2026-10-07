@@ -18,7 +18,7 @@ const steps = [
   },
 ];
 
-/** What happens after a /demo/ request, in the order it happens. */
+/** What happens after a demo request (on /free-demo/ or a Meta Instant Form), in order. */
 export function DemoNext() {
   return (
     <section aria-labelledby="demo-next-title" className="py-20 md:py-28">

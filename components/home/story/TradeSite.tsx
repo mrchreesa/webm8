@@ -89,28 +89,15 @@ function Hero({ trade, copy, look }: { trade: Trade; copy: DrawnSite; look: Site
   );
 }
 
-/**
- * A site drawn for the trade: header, hero, services and a review. /demo/
- * draws its sketch with this too, `standalone`, outside the story's phone.
- */
-export function DrawnTradeSite({
-  trade,
-  copy,
-  look,
-  standalone = false,
-}: {
-  trade: Trade;
-  copy: DrawnSite;
-  look: SiteLook;
-  standalone?: boolean;
-}) {
+/** A site drawn for the trade: header, hero, services and a review. */
+function DrawnTradeSite({ trade, copy, look }: { trade: Trade; copy: DrawnSite; look: SiteLook }) {
   return (
     <div
       data-slot="site"
       data-story="site"
       data-trade={trade.key}
       data-font={look.font}
-      className={cn(!standalone && styles.slot, site.site, site[look.layout])}
+      className={cn(styles.slot, site.site, site[look.layout])}
       style={lookStyle(look)}
     >
       <div className={site.top}>

@@ -24,11 +24,6 @@ const questions: { question: string; answer: ReactNode }[] = [
       "No. If you have a logo, photos or a current website, mention them on our call. They help, but we can design your demo without them.",
   },
   {
-    question: "Will my demo look like the sketch on this page?",
-    answer:
-      "No. The sketch is a quick idea made automatically from your answers. Your real demo is designed by hand for your business.",
-  },
-  {
     question: "Do you work with businesses in the UK and the US?",
     answer: "Yes, both. We call you at a time that suits your time zone.",
   },

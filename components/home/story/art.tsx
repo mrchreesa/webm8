@@ -16,31 +16,6 @@ function sparkle(x: number, y: number, r: number) {
 
 /* ----- Utility: a picture card above the headline ----- */
 
-export function PlumbingArt() {
-  return (
-    <svg {...svg} viewBox="0 0 200 130" preserveAspectRatio="xMidYMid slice">
-      <rect width="200" height="130" fill="#0c3a5e" />
-      <g stroke="#fff" strokeOpacity="0.07">
-        {[26, 52, 78, 104].map((y) => <path key={`h${y}`} d={`M0 ${y}H200`} />)}
-        {[25, 50, 75, 100, 125, 150, 175].map((x) => <path key={`v${x}`} d={`M${x} 0V130`} />)}
-      </g>
-      <ellipse cx="86" cy="124" rx="20" ry="3.5" fill="#7dd3fc" opacity="0.45" />
-      <path d="M-10 48H110A30 30 0 0 1 140 78V140" fill="none" stroke="#a8c7dd" strokeWidth="24" />
-      <path d="M-10 37H110A41 41 0 0 1 151 78V140" fill="none" stroke="#e6f2fa" strokeWidth="3" opacity="0.8" />
-      <path d="M-10 58H110A20 20 0 0 1 130 78V140" fill="none" stroke="#5f88a8" strokeWidth="3" />
-      <rect x="54" y="33" width="13" height="30" rx="2" fill="#d7e8f4" />
-      <rect x="125" y="98" width="30" height="13" rx="2" fill="#d7e8f4" />
-      <rect x="93" y="22" width="6" height="15" fill="#d7e8f4" />
-      <circle cx="96" cy="19" r="11" fill="none" stroke="#f87171" strokeWidth="4" />
-      <path d="M85 19H107M96 8V30" stroke="#f87171" strokeWidth="3" />
-      <circle cx="96" cy="19" r="3.5" fill="#fecaca" />
-      <path d="M86 64c0 0-6 8-6 12a6 6 0 0 0 12 0c0-4-6-12-6-12z" fill="#7dd3fc" />
-      <path d="M86 92c0 0-4 5.5-4 8a4 4 0 0 0 8 0c0-2.5-4-8-4-8z" fill="#7dd3fc" opacity="0.8" />
-      <path d="M83 74a3 3 0 0 0 2 3" stroke="#e0f2fe" strokeWidth="1.6" fill="none" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 export function HvacArt() {
   return (
     <svg {...svg} viewBox="0 0 200 130" preserveAspectRatio="xMidYMid slice">

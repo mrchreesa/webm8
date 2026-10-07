@@ -4,13 +4,15 @@ import Image from "next/image";
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
-import { projects } from "@/lib/site";
+import { projects, workDeckStart } from "@/lib/site";
 
 const hostOf = (url?: string) => (url ? new URL(url).hostname : "webm8agency.com");
 
+const startIndex = Math.max(0, projects.findIndex((project) => project.slug === workDeckStart));
+
 /** The demo sites as a 3D fan. Adding a project to lib/site.ts adds a card. */
 export function WorkDeck() {
-  const [active, setActive] = useState(Math.floor(projects.length / 2));
+  const [active, setActive] = useState(startIndex);
   const [narrow, setNarrow] = useState(false);
   const startX = useRef<number | null>(null);
   // A drag that ends on a card must not also count as a click on it.
@@ -148,7 +150,7 @@ export function WorkDeck() {
             </a>
           ) : null}
         </div>
-        <div role="group" aria-label="Choose a demo site" className="flex flex-wrap gap-2">
+        <div role="group" aria-label="Choose a demo site" className="flex flex-wrap gap-2 lg:max-w-xl lg:justify-end">
           {projects.map((project, index) => (
             <button
               key={project.slug}

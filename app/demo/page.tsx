@@ -5,21 +5,27 @@ import { DemoNext } from "@/components/demo/DemoNext";
 import { DemoPromise } from "@/components/demo/DemoPromise";
 import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = createPageMetadata({
-  title: "Free Personalised Website Demo",
-  description:
-    "Tell us about your business and we'll design a homepage for it, free. We call you the same day and show you your demo within 48 hours of that call. No payment, no obligation.",
-  path: "/demo/",
-});
-
 /**
- * Where Meta ad visitors land for the Free Personalised Website Demo. The
- * form is the page's only call to action, so DemoClosing is not used here.
+ * Where Meta Instant Form leads land. They have already sent their details in
+ * Meta, so the page never asks again: it shows the real demos and explains
+ * what happens next. Visitors from the site go to /free-demo/ instead.
+ *
+ * Not indexable and not in the nav: it is only for people coming from the ads.
  */
+export const metadata: Metadata = {
+  ...createPageMetadata({
+    title: "Your Free Personalised Website Demo",
+    description:
+      "We’ll call you shortly about your business and show you your demo within 48 hours of that call. No payment, no obligation.",
+    path: "/demo/",
+  }),
+  robots: { index: false, follow: false },
+};
+
 export default function DemoPage() {
   return (
     <>
-      <DemoHero />
+      <DemoHero line="We’ll call you shortly. Your demo 48 hours after our call." />
       <DemoNext />
       <DemoPromise />
       <DemoFaq />

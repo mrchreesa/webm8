@@ -73,7 +73,7 @@ export function trackAcceptedReviewRequest(
 const firedLeadRequestIds = new Set<string>();
 
 /**
- * Fire the Meta standard `Lead` event for one /demo/ request the server has
+ * Fire the Meta standard `Lead` event for one /free-demo/ request the server has
  * saved. Called only from the form's submit handler, never when a reload
  * restores the success screen. The request id is Meta's event id, so a later
  * Conversions API send for the same request is deduplicated.

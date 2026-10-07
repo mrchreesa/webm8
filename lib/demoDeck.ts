@@ -1,4 +1,4 @@
-/** Index maths for the card deck on /demo/ (components/demo/DemoDeck.tsx). */
+/** Index maths for the card deck on /demo/ and /free-demo/ (components/demo/DemoDeck.tsx). */
 
 export function wrapIndex(index: number, count: number): number {
   if (count <= 0) return 0;
