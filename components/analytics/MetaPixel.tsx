@@ -15,7 +15,7 @@ export function MetaPixel() {
   return (
     <Script id="meta-pixel" strategy="afterInteractive">
       {`
-        if (navigator.doNotTrack !== "1") {
+        if (window.__webm8MeasurementAllowed === true && navigator.doNotTrack !== "1" && navigator.globalPrivacyControl !== true) {
           !function(f,b,e,v,n,t,s)
           {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
           n.callMethod.apply(n,arguments):n.queue.push(arguments)};

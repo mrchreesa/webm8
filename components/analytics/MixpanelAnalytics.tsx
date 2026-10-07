@@ -23,10 +23,12 @@ export function MixpanelAnalytics() {
       track_pageview: "url-with-path",
     });
 
+    mixpanel.opt_in_tracking({ track: () => {} });
     window.mixpanel = mixpanel;
     flushAnalyticsQueue();
 
     return () => {
+      mixpanel.opt_out_tracking();
       delete window.mixpanel;
     };
   }, [apiHost, token]);
@@ -35,5 +37,5 @@ export function MixpanelAnalytics() {
 }
 
 function browserSaysDoNotTrack() {
-  return navigator.doNotTrack === "1";
+  return navigator.doNotTrack === "1" || (navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl === true;
 }

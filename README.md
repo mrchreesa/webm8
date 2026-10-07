@@ -25,7 +25,8 @@ npm test           # node --test over lib/**/*.test.ts
 ```
 app/
   page.tsx            # Home: story hero, demo sites, eight arms, how it works, plans, voices, demo close
-  demo/page.tsx       # Free Personalised Website Demo: the Meta ad landing page (/audit/ redirects here)
+  demo/page.tsx       # Meta Instant Form destination, with examples and next steps
+  free-demo/page.tsx  # Website enquiry form for normal site visitors
   work/ pricing/ about/ contact/ privacy/ movers/
   api/                # demo-request (/demo/) and the /movers/ campaign routes
   globals.css         # Tailwind @theme tokens and motion utilities
@@ -68,13 +69,19 @@ Headlines (`h1`, `h2`) use Funnel Display; body text uses Geist. Put `surface-da
 
 ## Forms
 
-- `/demo/` (`components/demo/DemoJourney.tsx`) asks four short steps and posts to `/api/demo-request/`, which saves the request to Supabase (`agency_review_requests`, `request_type = 'demo'`) and emails WebM8 and the visitor through Resend. Success shows only once the row exists. Rules live in `lib/demoRequest.ts`; the design is `docs/superpowers/specs/2026-10-05-demo-page-redesign-design.md`.
+- `/free-demo/` (`components/demo/DemoRequest.tsx`) posts to `/api/demo-request/`, which saves the request to Supabase (`agency_review_requests`, `request_type = 'demo'`) and emails WebM8 and the visitor through Resend. Success shows only once the row exists. Rules live in `lib/demoRequest.ts`. `/demo/` is the destination after a Meta Instant Form and has no second enquiry form.
 - `ContactForm` validates fields and opens a prefilled email with `lib/mailto.ts::buildMailtoHref`.
 - `MoverReviewForm` (`/movers/`) posts to server routes and books a Cal.com call. See `docs/movers-campaign-handoff.md`.
 
 ## Measurement
 
-`lib/analytics.ts` is the only adapter. It sends to Mixpanel, and to GA4 and Meta only when those are configured. Never pass names, emails, phone numbers or form answers.
+`components/analytics/WebsiteAnalytics.tsx` owns the measurement choice. Native WebM8 tracking and the configured Meta/Mixpanel integrations start only after the visitor allows measurement. DNT/GPC keep them off. Analytics choices stays available to withdraw; withdrawal stops future collection across open tabs and clears native browser identifiers. Choices and native activity last up to 180 days.
+
+Set `NEXT_PUBLIC_WEBM8_ANALYTICS_SITE_ID` to the registered site UUID, with both the apex and canonical `www` origin allowed in Analytics. The optional `NEXT_PUBLIC_WEBM8_TRACKER_URL` defaults to the platform tracker. Set the same UUID as `CRM_ANALYTICS_SITE_ID` in the CRM. Its Website activity panel compares `/demo` arrivals with Meta submission times and any ad/campaign identifiers. Matches remain possible, never confirmed identities. `/demo` is the owner's designated Instant Form destination, including visits without referrer/tags.
+
+The native tracker records measured pages, click labels, scroll reach and active/visible time in the same browser. It does not record form contents or activity inside external demo sites. `lib/analytics.ts` forwards business events to configured providers only while measurement is allowed. Never pass names, emails, phone numbers or form answers. Existing retained records follow the analytics retention policy after withdrawal.
+
+`npm test` covers choice expiry and provider gating. The platform's `scripts/verify-webm8-measurement.mjs [website-url]` verifies browser behaviour with outgoing measurements intercepted, so it creates no leads or live analytics records.
 
 The homepage and demo events are:
 - `home_story_completed`
@@ -86,7 +93,8 @@ The homepage and demo events are:
 | Path | Description |
 |---|---|
 | `/` | Home |
-| `/demo/` | Free Personalised Website Demo, where Meta ads land (`/audit/` redirects here) |
+| `/demo/` | Destination after a Meta Instant Form; examples and next steps |
+| `/free-demo/` | Free personalised website demo enquiry form |
 | `/work/` | Demo sites |
 | `/pricing/` | Plans, quoted to the business |
 | `/about/` | Positioning, values, process |

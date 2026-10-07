@@ -226,7 +226,7 @@ export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
       >
         <div
           ref={stageRef}
-          className={demo.stage}
+          className={demo.stage} data-analytics-section="demo-deck"
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
           onPointerMove={onPointerMove}
@@ -259,7 +259,7 @@ export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
                   draggable={false}
                   tabIndex={front ? undefined : -1}
                   data-deck-card
-                  aria-label={`View ${project.name}, a real demo website`}
+                  data-analytics-id={`demo-card-${index + 1}`} aria-label={`View ${project.name}, a real demo website`}
                   // A card behind the front one is hidden from assistive tech,
                   // so a click on it must not leave focus inside it.
                   onMouseDown={front ? undefined : (event) => event.preventDefault()}
