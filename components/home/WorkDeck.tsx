@@ -55,23 +55,39 @@ function opacityAt(distance: number) {
   return Math.max(0, (3 - distance) * 0.56);
 }
 
-/** Where a card sits, and how it looks, `offset` cards from the front. */
-function cardStyle(offset: number, narrow: boolean) {
+/**
+ * Where a card sits, and how it looks, `offset` cards from the front: the
+ * card itself, its browser frame and its phone.
+ *
+ * The phone stands 60px proud of the front card. A filter, or opacity below
+ * 1, flattens a card's 3D, so the dimming goes on the frame and the phone
+ * rather than the card, and the phone rises only while the card is solid,
+ * within half a card of the front, easing up as the card arrives.
+ */
+function cardLook(offset: number, narrow: boolean) {
   const distance = Math.abs(offset);
   const dim = Math.min(distance, 3);
+  const near = Math.max(0, 1 - distance * 2);
+  const lift = near * near * (3 - 2 * near);
+  const filter = distance ? `brightness(${1 - dim * 0.25}) saturate(${1 - dim * 0.3})` : "none";
   return {
-    transform: `translateX(${offset * spread(narrow) - 50}%) translateZ(${-distance * (narrow ? 260 : 220)}px) rotateY(${narrow ? 0 : -offset * 24}deg)`,
-    opacity: String(opacityAt(distance)),
-    filter: distance ? `brightness(${1 - dim * 0.25}) saturate(${1 - dim * 0.3})` : "none",
-    zIndex: String(100 - Math.round(distance * 10)),
-    pointerEvents: distance > 2.5 ? "none" : "auto",
-  } satisfies CSSProperties;
+    card: {
+      transform: `translateX(${offset * spread(narrow) - 50}%) translateZ(${-distance * (narrow ? 260 : 220)}px) rotateY(${narrow ? 0 : -offset * 24}deg)`,
+      opacity: String(opacityAt(distance)),
+      zIndex: String(100 - Math.round(distance * 10)),
+      pointerEvents: distance > 2.5 ? "none" : "auto",
+    } satisfies CSSProperties,
+    frame: { filter } satisfies CSSProperties,
+    phone: { filter, transform: `translateZ(${lift * 60}px)` } satisfies CSSProperties,
+  };
 }
 
 // The server cannot know the screen size, so it draws the wide fan, and the
 // deck redraws itself for a phone once it hydrates. These never change, so
 // React never rewrites them, and the frame loop owns each card's style.
-const firstStyles = projects.map((_, index) => cardStyle(cardOffset(index, startIndex, count), false));
+const firstLooks = projects.map((_, index) => cardLook(cardOffset(index, startIndex, count), false));
+
+type CardParts = { card: HTMLElement; frame: HTMLElement | null; phone: HTMLElement | null };
 
 /**
  * Moves the deck. `position` counts cards and runs on past either end, so the
@@ -82,9 +98,13 @@ const firstStyles = projects.map((_, index) => cardStyle(cardOffset(index, start
  * React. While `held`, the deck follows a finger exactly.
  */
 function createDeckMotion(onActive: (index: number) => void) {
-  const cards: (HTMLElement | null)[] = [];
+  const cards: (CardParts | null)[] = [];
   const bind = projects.map((_, index) => (card: HTMLElement | null) => {
-    cards[index] = card;
+    cards[index] = card && {
+      card,
+      frame: card.querySelector<HTMLElement>("[data-deck-frame]"),
+      phone: card.querySelector<HTMLElement>("[data-deck-phone]"),
+    };
   });
   let position = startIndex;
   let velocity = 0;
@@ -97,8 +117,12 @@ function createDeckMotion(onActive: (index: number) => void) {
   let shown = startIndex;
 
   const draw = () => {
-    cards.forEach((card, index) => {
-      if (card) Object.assign(card.style, cardStyle(cardOffset(index, position, count), narrow));
+    cards.forEach((parts, index) => {
+      if (!parts) return;
+      const look = cardLook(cardOffset(index, position, count), narrow);
+      Object.assign(parts.card.style, look.card);
+      if (parts.frame) Object.assign(parts.frame.style, look.frame);
+      if (parts.phone) Object.assign(parts.phone.style, look.phone);
     });
   };
 
@@ -379,9 +403,13 @@ export function WorkDeck() {
                 else if (project.siteUrl) window.open(project.siteUrl, "_blank", "noopener,noreferrer");
               }}
               className="absolute top-0 left-1/2 w-[min(76vw,760px)] cursor-pointer text-left [transform-style:preserve-3d] disabled:cursor-default"
-              style={firstStyles[index]}
+              style={firstLooks[index].card}
             >
-              <div className="overflow-hidden rounded-[14px] bg-white shadow-[0_0_0_1px_rgb(255_255_255/0.1),0_60px_100px_-40px_rgb(0_0_0/0.9)]">
+              <div
+                data-deck-frame
+                style={firstLooks[index].frame}
+                className="overflow-hidden rounded-[14px] bg-white shadow-[0_0_0_1px_rgb(255_255_255/0.1),0_60px_100px_-40px_rgb(0_0_0/0.9)]"
+              >
                 <div className="flex h-8 items-center gap-1.5 bg-[#e9edf3] px-3">
                   <i className="h-2.5 w-2.5 rounded-full bg-[#c3cad5]" />
                   <i className="h-2.5 w-2.5 rounded-full bg-[#c3cad5]" />
@@ -401,7 +429,11 @@ export function WorkDeck() {
                   />
                 </div>
               </div>
-              <div className="absolute right-[-3%] bottom-[-8%] w-[19%] rounded-2xl bg-[#0b1220] p-1 shadow-[0_30px_50px_-20px_rgb(0_0_0/0.9)] ring-1 ring-white/10 [transform:translateZ(60px)]">
+              <div
+                data-deck-phone
+                style={firstLooks[index].phone}
+                className="absolute right-[-3%] bottom-[-8%] w-[19%] rounded-2xl bg-[#0b1220] p-1 shadow-[0_30px_50px_-20px_rgb(0_0_0/0.9)] ring-1 ring-white/10"
+              >
                 <div className="relative aspect-[9/19] overflow-hidden rounded-xl">
                   <Image src={project.screenshots.mobile} alt="" fill draggable={false} sizes="150px" className="object-cover object-top" />
                 </div>

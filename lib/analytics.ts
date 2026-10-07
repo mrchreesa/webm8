@@ -24,7 +24,7 @@ declare global {
  * Never pass names, email addresses, phone numbers, or form answers here.
  */
 export function trackEvent(name: string, details: AnalyticsDetails = {}) {
-  if (typeof window === "undefined" || window.__webm8MeasurementAllowed !== true) return;
+  if (typeof window === "undefined") return;
 
   const safeName = name.trim().slice(0, 50);
   if (!safeName) return;
@@ -63,7 +63,7 @@ export function trackAcceptedReviewRequest(
   requestId: string,
   details: AnalyticsDetails = {},
 ) {
-  if (typeof window === "undefined" || window.__webm8MeasurementAllowed !== true || !requestId) return;
+  if (typeof window === "undefined" || !requestId) return;
   if (firedLeadRequestIds.has(requestId)) return;
   firedLeadRequestIds.add(requestId);
 
@@ -85,7 +85,7 @@ export function trackAcceptedDemoRequest(
   requestId: string,
   details: AnalyticsDetails = {},
 ) {
-  if (typeof window === "undefined" || window.__webm8MeasurementAllowed !== true || !requestId) return;
+  if (typeof window === "undefined" || !requestId) return;
   if (firedLeadRequestIds.has(requestId)) return;
   firedLeadRequestIds.add(requestId);
 
@@ -99,7 +99,7 @@ export function trackAcceptedDemoRequest(
 }
 
 export function flushAnalyticsQueue() {
-  if (typeof window === "undefined" || window.__webm8MeasurementAllowed !== true || !window.mixpanel) return;
+  if (typeof window === "undefined" || !window.mixpanel) return;
 
   const queue = window.__webm8AnalyticsQueue || [];
   window.__webm8AnalyticsQueue = [];

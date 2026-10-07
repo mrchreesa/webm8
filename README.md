@@ -75,13 +75,13 @@ Headlines (`h1`, `h2`) use Funnel Display; body text uses Geist. Put `surface-da
 
 ## Measurement
 
-`components/analytics/WebsiteAnalytics.tsx` owns the measurement choice. Native WebM8 tracking and the configured Meta/Mixpanel integrations start only after the visitor allows measurement. DNT/GPC keep them off. Analytics choices stays available to withdraw; withdrawal stops future collection across open tabs and clears native browser identifiers. Choices and native activity last up to 180 days.
+`components/analytics/WebsiteAnalytics.tsx` mounts the measurement: native WebM8 tracking and the configured Meta/Mixpanel integrations. There is no consent prompt; DNT/GPC keep them all off. Native activity lasts up to 180 days.
 
 Set `NEXT_PUBLIC_WEBM8_ANALYTICS_SITE_ID` to the registered site UUID, with both the apex and canonical `www` origin allowed in Analytics. The optional `NEXT_PUBLIC_WEBM8_TRACKER_URL` defaults to the platform tracker. Set the same UUID as `CRM_ANALYTICS_SITE_ID` in the CRM. Its Website activity panel compares `/demo` arrivals with Meta submission times and any ad/campaign identifiers. Matches remain possible, never confirmed identities. `/demo` is the owner's designated Instant Form destination, including visits without referrer/tags.
 
-The native tracker records measured pages, click labels, scroll reach and active/visible time in the same browser. It does not record form contents or activity inside external demo sites. `lib/analytics.ts` forwards business events to configured providers only while measurement is allowed. Never pass names, emails, phone numbers or form answers. Existing retained records follow the analytics retention policy after withdrawal.
+The native tracker records measured pages, click labels, scroll reach and active/visible time in the same browser. It does not record form contents or activity inside external demo sites. `lib/analytics.ts` forwards business events to configured providers. Never pass names, emails, phone numbers or form answers.
 
-`npm test` covers choice expiry and provider gating. The platform's `scripts/verify-webm8-measurement.mjs [website-url]` verifies browser behaviour with outgoing measurements intercepted, so it creates no leads or live analytics records.
+`npm test` covers the DNT/GPC check and provider forwarding. The platform's `scripts/verify-webm8-measurement.mjs [website-url]` verifies browser behaviour with outgoing measurements intercepted, so it creates no leads or live analytics records.
 
 The homepage and demo events are:
 - `home_story_completed`

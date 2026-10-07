@@ -22,19 +22,19 @@ const sections = [
   },
   {
     title: "Who receives it",
-    body: "We may use trusted companies to deliver forms and email, keep the website online, book calls, and keep customer records. With your permission, website activity is measured in WebM8 Analytics and, where configured, Mixpanel and Meta Pixel. These services receive only the information needed to do their work. We do not sell personal information.",
+    body: "We may use trusted companies to deliver forms and email, keep the website online, book calls, and keep customer records. Website activity is measured in WebM8 Analytics and, where configured, Mixpanel and Meta Pixel. These services receive only the information needed to do their work. We do not sell personal information.",
   },
   {
     title: "How we measure website use",
-    body: "If you allow activity measurement, WebM8 Analytics records the pages you visit, clicks, scroll reach, approximate time spent, device category and available ad or campaign tags. It saves random browser and session identifiers on this website. Our team may compare visit times and ad tags with incoming Meta Instant Form enquiries to suggest possible visits; this does not verify who visited. We do not put names, email addresses, phone numbers or form answers in this telemetry. Mixpanel remains configured without persistent visitor profiles. Meta Pixel, when configured and permitted, sends website events to Meta for advertising measurement. Do Not Track and Global Privacy Control disable these collectors.",
+    body: "WebM8 Analytics records the pages you visit, clicks, scroll reach, approximate time spent, device category and available ad or campaign tags. It saves random browser and session identifiers on this website. Our team may compare visit times and ad tags with incoming Meta Instant Form enquiries to suggest possible visits; this does not verify who visited. We do not put names, email addresses, phone numbers or form answers in this telemetry. Mixpanel remains configured without persistent visitor profiles. Meta Pixel, when configured, sends website events to Meta for advertising measurement. Do Not Track and Global Privacy Control disable these collectors.",
   },
   {
     title: "How long we keep it",
-    body: "Website measurements and their browser identifiers are kept for up to 180 days. Your analytics choice is remembered for 180 days. We keep enquiry and customer information only for as long as reasonably necessary to respond, provide services, maintain business records, resolve disputes, and meet applicable legal obligations.",
+    body: "Website measurements and their browser identifiers are kept for up to 180 days. We keep enquiry and customer information only for as long as reasonably necessary to respond, provide services, maintain business records, resolve disputes, and meet applicable legal obligations.",
   },
   {
     title: "Your choices",
-    body: "Use “Analytics choices” on any page to decline measurement or stop future collection and clear this site’s measurement identifiers. Previously collected activity remains subject to the retention period. You may ask what personal information we hold about you, request a correction or deletion where applicable, or ask us to stop non-essential contact. Some information may need to be retained for legal or legitimate business reasons.",
+    body: "To stop website measurement, turn on Do Not Track or Global Privacy Control in your browser. Previously collected activity remains subject to the retention period. You may ask what personal information we hold about you, request a correction or deletion where applicable, or ask us to stop non-essential contact. Some information may need to be retained for legal or legitimate business reasons.",
   },
 ];
 

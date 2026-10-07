@@ -23,12 +23,10 @@ export function MixpanelAnalytics() {
       track_pageview: "url-with-path",
     });
 
-    mixpanel.opt_in_tracking({ track: () => {} });
     window.mixpanel = mixpanel;
     flushAnalyticsQueue();
 
     return () => {
-      mixpanel.opt_out_tracking();
       delete window.mixpanel;
     };
   }, [apiHost, token]);
