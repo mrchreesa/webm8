@@ -1,7 +1,7 @@
 # Work showreel: a 20-second motion video of WebM8's demo sites, built with Remotion
 
 Date: 2026-10-08
-Status: design approved in conversation (purpose, formats, length, projects, sound, end card, approach 1, storyboard take two, layout, setup).
+Status: design approved in conversation (purpose, formats, length, projects, sound, end card, approach 1, storyboard take two, layout, setup). Built 2026-10-08; the notes under "As built" record where the build differs from this design.
 
 ## Goal
 
@@ -67,8 +67,8 @@ One `Showreel` component reads the frame size from `useVideoConfig()` and takes 
 
 ```
 website/video/
-  package.json            remotion, @remotion/cli, @remotion/transitions, @remotion/motion-blur,
-                          @remotion/fonts, react, react-dom, typescript; playwright as a dev dependency
+  package.json            remotion, @remotion/cli, @remotion/bundler, @remotion/renderer,
+                          @remotion/fonts, react, react-dom; typescript, playwright and sharp as dev dependencies
   remotion.config.ts
   tsconfig.json
   src/
@@ -77,6 +77,8 @@ website/video/
     Showreel.tsx          sequences the beats from timeline.ts
     reel.ts               the six slugs in order, the hook lines, the header line and the end-card copy;
                           looks up name and industry in ../../lib/site.ts
+    captures.ts           reads public/captures/captures.json (each capture's size)
+    motion.ts             punch(): an overshooting spring that lands at exactly 1
     timeline.ts           pure frame maths: start and length of every beat, whip and flash windows
     timeline.test.ts
     reel.test.ts
@@ -84,9 +86,10 @@ website/video/
     theme.ts              colour tokens, copied from app/globals.css with a pointer back to it
     fonts.ts              loads Funnel Display and Geist from ../../assets/fonts
     scenes/               Hook.tsx, SiteScene.tsx, DeckBeat.tsx, EndCard.tsx
-    parts/                BrowserFrame.tsx, PhoneFrame.tsx, GiantName.tsx, IndustryTag.tsx, Mascot.tsx
+    parts/                BrowserFrame.tsx, PhoneFrame.tsx, GiantName.tsx, IndustryTag.tsx, Mascot.tsx, Header.tsx
   scripts/capture.mjs     tall 2x captures of the six sites
-  public/captures/        <slug>-desktop.webp and <slug>-phone.webp, committed
+  scripts/stills.mjs      renders key frames to out/stills/ for checking a change
+  public/captures/        <slug>-desktop.webp, <slug>-phone.webp and captures.json, committed
   out/                    rendered MP4s, ignored by the site's existing `out/` rule
 ```
 
@@ -103,7 +106,7 @@ The site's `scripts/capture-portfolio.mjs` already knows each site's URL, what t
 | desktop | 1280×800 | 2x | top 2,400 CSS px (a 2,560×4,800 px file) |
 | phone | 390×844 | 2x | top 1,600 CSS px (a 780×3,200 px file) |
 
-Before each shot it applies `hide` and `reveal`, waits for fonts, scrolls down and back so sections that reveal on scroll are drawn, then waits `settle` (at least 2.5 s). Files are written as WebP with `sharp` to `video/public/captures/`. The captures are committed so the reel renders identically anywhere without re-capturing; this adds roughly 6–8 MB to the repo.
+Before each shot it applies `hide` and `reveal`, waits for fonts, scrolls down and back so sections that reveal on scroll are drawn, then waits `settle` (at least 2.5 s). Files are written as WebP with `sharp` to `video/public/captures/`. The captures are committed so the reel renders identically anywhere without re-capturing; this adds about 3 MB to the repo.
 
 If a site's sticky bar or floating button shows in the tall desktop capture, its selector is added to that target's `hide` list.
 
@@ -121,6 +124,7 @@ Nothing under `app/`, `components/` or `lib/` changes.
 npm run studio    # Remotion Studio: scrub and tweak
 npm run capture   # refresh the six sites' captures
 npm run render    # out/webm8-showreel-4x5.mp4 and out/webm8-showreel-1x1.mp4
+npm run stills    # key frames as PNGs in out/stills/ (or: npm run stills -- 95 128)
 npm test          # node --test over src/**/*.test.ts
 npm run typecheck # tsc --noEmit
 ```
@@ -140,6 +144,15 @@ Visual checks: `remotion still` at about 12 key frames in both formats (each hoo
 
 1. Remotion's bundler importing `../../lib/site.ts` and the font files from outside `video/`. If it refuses, a small webpack override in `remotion.config.ts` widens what it resolves.
 2. Sticky bars and floating buttons in the tall desktop captures. Fixed by extending `hide`.
+
+## As built
+
+- **Whips** are drawn without `@remotion/transitions` or `@remotion/motion-blur`. Each site sits in a `Sequence` that overlaps its neighbours by 3 frames either side; `whipAt()` in `timeline.ts` moves the outgoing and incoming layers a frame width apart (tested), and an SVG `feGaussianBlur` with a horizontal-only deviation gives the motion blur. Cheaper and fully deterministic.
+- **Scroll** is a fixed distance, not a share of the capture: after landing, each site holds on its hero for 14 frames, then scrolls 700 CSS px (desktop) and 600 CSS px (phone) over 44 frames.
+- **Captions** are held to the bottom margin, and the giant name is centred in the space between the devices and the caption, which balances the 4:5 frame.
+- **Veil's** manifesto sharpens word by word as you scroll, so it was captured mid-blur. Its target in `scripts/portfolio-targets.mjs` now forces `[class*="__manifestoText"] span` visible.
+- **Renders** come out at 6.2 MB (4:5) and 6.7 MB (1:1) at CRF 20: 600 frames, 20.0 s, 30 fps, H.264 `yuv420p`, no audio stream. The end card is pixel-identical from frame 555 to 599.
+- Remotion warns that macOS versions older than 15 may not render; on this Mac (macOS 14) both renders completed. Its bundled `ffmpeg` needs to be run as `npx remotion ffmpeg`, and lacks the `select` filter.
 
 ## Out of scope
 
