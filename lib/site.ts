@@ -190,7 +190,7 @@ export type DemoStep = { title: string; body: string };
 export const demoSteps: DemoStep[] = [
   {
     title: "Tell us about your business",
-    body: "Your trade, your area and how to reach you. It takes about two minutes.",
+    body: "Your trade, your business name and how to reach you. It takes about two minutes.",
   },
   {
     title: "A quick call",

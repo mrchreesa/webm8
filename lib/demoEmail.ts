@@ -50,7 +50,6 @@ export function demoNotificationEmail(
   const details: [string, string][] = [
     ["Business", request.business],
     ["Type of business", tradeName(request)],
-    ["Area", request.area],
     ...(request.link ? ([["Link", request.link]] as [string, string][]) : []),
     ["Name", request.name],
     ["Phone", request.phone],
@@ -92,7 +91,7 @@ export function demoNotificationEmail(
   );
 
   return {
-    subject: `New demo request: ${request.business} (${tradeName(request)}, ${request.area})`,
+    subject: `New demo request: ${request.business} (${tradeName(request)})`,
     text,
     html,
   };

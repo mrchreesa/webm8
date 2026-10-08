@@ -5,7 +5,7 @@ import { saveDemoToCrm } from "./crmIntake.ts";
 import type { DemoSubmission } from "./demoRequest.ts";
 
 const demo: DemoSubmission = {
-  trade: "cleaning", tradeOther: null, business: "Test business", area: "London", link: null,
+  trade: "cleaning", tradeOther: null, business: "Test business", link: null,
   name: "Test", email: "test@example.com", phone: "07700900123",
   submissionKey: "ec0e035d-8b60-45d6-8a48-33b582db45db",
   attribution: { utm_content: "arena" }, referrer: null, pagePath: "/free-demo/",

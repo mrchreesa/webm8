@@ -3,6 +3,7 @@ import { test } from "node:test";
 import {
   capitalise,
   defaultTrade,
+  drawnSiteOf,
   heroTradeOrder,
   initialOf,
   isPortfolioSite,
@@ -37,10 +38,10 @@ function strings(value: unknown): string[] {
   return [];
 }
 
-test("there are fifteen trades with unique keys and searches", () => {
-  assert.equal(tradeList.length, 15);
-  assert.equal(new Set(tradeList.map((t) => t.key)).size, 15);
-  assert.equal(new Set(tradeList.map((t) => t.query)).size, 15);
+test("there are sixteen trades with unique keys and searches", () => {
+  assert.equal(tradeList.length, 16);
+  assert.equal(new Set(tradeList.map((t) => t.key)).size, 16);
+  assert.equal(new Set(tradeList.map((t) => t.query)).size, 16);
   for (const trade of tradeList) assert.equal(trades[trade.key], trade);
 });
 
@@ -51,9 +52,10 @@ test("every trade has complete, non-empty content", () => {
     assert.equal(trade.competitors.length, 2, `${trade.key} needs two competitors`);
     assert.ok(trade.reviewCount > 0);
     assert.ok(trade.exampleName.length <= 30, `${trade.key} example name must fit the phone`);
-    if (isPortfolioSite(trade.site)) continue;
-    assert.equal(trade.site.services.length, 3, `${trade.key} needs three services`);
-    assert.match(trade.site.phone, /^\(312\) 555-01\d{2}$/, `${trade.key} phone must be fictional`);
+    const drawn = drawnSiteOf(trade);
+    assert.equal(drawn.services.length, 3, `${trade.key} needs three services`);
+    assert.match(drawn.phone, /^\(312\) 555-01\d{2}$/, `${trade.key} phone must be fictional`);
+    assert.match(drawn.review.name, /^[^,]+, [^,]+$/, `${trade.key}: the reviewer reads "Name, Area"`);
   }
 });
 
@@ -96,11 +98,11 @@ test("palettes are valid and readable", () => {
 test("every trade appears in exactly one group, in a fixed order", () => {
   assert.deepEqual(
     tradeGroups.map((g) => g.group),
-    ["Home services", "Moving", "Food and hospitality", "Health, beauty and wellness", "Something else"],
+    ["Home services", "Moving", "Food and hospitality", "Health, beauty and wellness", "Online shops", "Something else"],
   );
   const keys = tradeGroups.flatMap((g) => g.keys);
-  assert.equal(keys.length, 15);
-  assert.equal(new Set(keys).size, 15);
+  assert.equal(keys.length, 16);
+  assert.equal(new Set(keys).size, 16);
 });
 
 test("the default trade is plumbing", () => {
@@ -143,11 +145,12 @@ test("capitalise", () => {
   assert.equal(capitalise(""), "");
 });
 
-test("the hero plays every trade but other once, starting with the default", () => {
+test("the hero plays every trade but e-commerce and other once, starting with the default", () => {
   assert.equal(heroTradeOrder[0], defaultTrade);
   assert.equal(heroTradeOrder.length, 14);
   assert.equal(new Set(heroTradeOrder).size, 14);
   assert.ok(!heroTradeOrder.includes("other"));
+  assert.ok(!heroTradeOrder.includes("ecommerce"));
   let key = defaultTrade;
   const seen = new Set<string>();
   for (let i = 0; i < heroTradeOrder.length; i++) {

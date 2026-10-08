@@ -124,6 +124,64 @@ export function OtherArt() {
   );
 }
 
+export function PlumbingArt() {
+  return (
+    <svg {...svg} viewBox="0 0 200 130" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="plumb-tiles" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M20 0.5H0.5V20" fill="none" stroke="#fff" strokeOpacity="0.07" strokeWidth="1.5" />
+        </pattern>
+      </defs>
+      <rect width="200" height="130" fill="#12324f" />
+      <rect width="200" height="130" fill="url(#plumb-tiles)" />
+      <path d="M-4 40H110C123 40 132 49 132 62V70" fill="none" stroke="#a85c2a" strokeWidth="13" />
+      <path d="M-4 40H110C123 40 132 49 132 62V70" fill="none" stroke="#e09a5f" strokeWidth="9" />
+      <path d="M-4 37.5H110" stroke="#f6c79c" strokeWidth="1.6" strokeOpacity="0.8" />
+      <rect x="40" y="31" width="9" height="18" rx="2" fill="#c47a40" />
+      <rect x="92" y="31" width="9" height="18" rx="2" fill="#c47a40" />
+      <path d="M70 34V28" stroke="#a85c2a" strokeWidth="4" />
+      <circle cx="70" cy="18" r="11" fill="#f8fafc" stroke="#a85c2a" strokeWidth="3" />
+      <path d="M70 18L76 12" stroke="#12324f" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="70" cy="18" r="1.8" fill="#12324f" />
+      <rect x="129" y="58" width="6" height="12" fill="#cbd5e1" />
+      <rect x="115" y="56" width="34" height="5" rx="2.5" fill="#e2e8f0" />
+      <rect x="122" y="68" width="20" height="13" rx="3" fill="#cbd5e1" />
+      <path d="M128 81H136V86C136 88.5 134.2 90 132 90S128 88.5 128 86Z" fill="#94a3b8" />
+      <path d="M132 97C128 103 126 106 126 109A6 6 0 0 0 138 109C138 106 136 103 132 97Z" fill="#7dd3fc" />
+      <ellipse cx="132" cy="123" rx="22" ry="4" fill="none" stroke="#7dd3fc" strokeOpacity="0.45" strokeWidth="1.5" />
+      <ellipse cx="132" cy="123" rx="10" ry="1.8" fill="none" stroke="#7dd3fc" strokeOpacity="0.7" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+export function MovingArt() {
+  return (
+    <svg {...svg} viewBox="0 0 200 130" preserveAspectRatio="xMidYMid slice">
+      <rect width="200" height="130" fill="#0d3b7a" />
+      <circle cx="164" cy="26" r="46" fill="#1765c9" opacity="0.45" />
+      <path d="M0 102V74H14V62H30V80H42V58H60V102ZM150 102V70H164V56H178V76H190V64H200V102Z" fill="#0b3266" />
+      <rect y="100" width="200" height="30" fill="#082a55" />
+      <path d="M0 118H200" stroke="#fbbf24" strokeOpacity="0.6" strokeWidth="2.5" strokeDasharray="14 10" />
+      <g stroke="#fff" strokeOpacity="0.35" strokeWidth="2.5" strokeLinecap="round">
+        <path d="M6 56H28M0 68H24M10 80H30" />
+      </g>
+      <rect x="38" y="42" width="88" height="56" rx="4" fill="#fff" />
+      <rect x="38" y="80" width="88" height="6" fill="#fbbf24" />
+      <rect x="54" y="54" width="22" height="18" rx="1.5" fill="#d6a86a" />
+      <rect x="80" y="58" width="18" height="14" rx="1.5" fill="#c99556" />
+      <path d="M65 54V72M89 58V72" stroke="#f3dfbf" strokeWidth="2.2" />
+      <path d="M126 56H148C152 56 155 58 157 61L166 75C167.5 77.5 168 79.5 168 82V98H126Z" fill="#1765c9" />
+      <path d="M132 61H147C149 61 150.5 62 151.5 63.5L158 74H132Z" fill="#bfdbfe" />
+      <rect x="163" y="86" width="4.5" height="5" rx="1" fill="#fde68a" />
+      <rect x="122" y="96" width="48" height="4" rx="2" fill="#0b1b3f" />
+      <circle cx="62" cy="100" r="10" fill="#0b1b3f" />
+      <circle cx="62" cy="100" r="4" fill="#cbd5e1" />
+      <circle cx="146" cy="100" r="10" fill="#0b1b3f" />
+      <circle cx="146" cy="100" r="4" fill="#cbd5e1" />
+    </svg>
+  );
+}
+
 /* ----- Poster: big type and a tall picture ----- */
 
 export function BarberArt() {
@@ -160,6 +218,33 @@ export function BarberArt() {
       <rect x="5" y="18" width="30" height="13" rx="3" fill="url(#barber-metal)" />
       <circle cx="20" cy="11" r="7" fill="url(#barber-metal)" />
       <rect x="5" y="189" width="30" height="13" rx="3" fill="url(#barber-metal)" />
+    </svg>
+  );
+}
+
+export function FitnessArt() {
+  const plate = "#160803";
+  return (
+    <svg {...svg} viewBox="0 0 40 220">
+      <defs>
+        <linearGradient id="fit-metal" x1="0" x2="1">
+          <stop offset="0" stopColor="#57534e" />
+          <stop offset="0.45" stopColor="#f5f5f4" />
+          <stop offset="1" stopColor="#78716c" />
+        </linearGradient>
+      </defs>
+      <rect x="16" y="56" width="8" height="108" rx="2" fill="url(#fit-metal)" />
+      <path d="M16 98H24M16 103H24M16 108H24M16 113H24M16 118H24M16 123H24" stroke="#57534e" strokeWidth="0.8" />
+      <rect x="5" y="16" width="30" height="14" rx="3" fill={plate} />
+      <rect x="2" y="30" width="36" height="18" rx="3" fill={plate} />
+      <rect x="9" y="48" width="22" height="9" rx="2" fill="#2a1208" />
+      <rect x="9" y="163" width="22" height="9" rx="2" fill="#2a1208" />
+      <rect x="2" y="172" width="36" height="18" rx="3" fill={plate} />
+      <rect x="5" y="190" width="30" height="14" rx="3" fill={plate} />
+      <g stroke="#fff" strokeOpacity="0.18" strokeWidth="1">
+        <path d="M6 34V44M6 176V186" />
+        <path d="M9 19V27M9 193V201" />
+      </g>
     </svg>
   );
 }
@@ -286,6 +371,58 @@ export function CafeArt() {
       <circle cx="48" cy="52" r="20.5" fill="#6b4423" />
       <circle cx="48" cy="52" r="20.5" fill="none" stroke="#9a6a3d" strokeWidth="2" />
       <path d="M48 63C37 56 37 46 43 45C46 45 48 48 48 50C48 48 50 45 53 45C59 46 59 56 48 63Z" fill="#f6e7d4" />
+    </svg>
+  );
+}
+
+export function CleaningArt() {
+  return (
+    <svg {...svg} viewBox="0 0 100 100">
+      <g fill="none" stroke="#fff" strokeWidth="1.6">
+        <circle cx="22" cy="30" r="6" />
+        <circle cx="15" cy="46" r="3.4" />
+        <circle cx="80" cy="76" r="5" />
+        <circle cx="86" cy="63" r="2.4" />
+      </g>
+      <path d="M36 28H62L69 34H61V38H40Z" fill="#0f1a4a" />
+      <path d="M55 38L59 49" stroke="#0f1a4a" strokeWidth="3.4" strokeLinecap="round" />
+      <rect x="41" y="38" width="13" height="8" fill="#e2e8f0" />
+      <path d="M36 46H59L64 57V86A4 4 0 0 1 60 90H36A4 4 0 0 1 32 86V57Z" fill="#1f3a9e" />
+      <rect x="37" y="61" width="22" height="18" rx="2.5" fill="#fff" fillOpacity="0.92" />
+      <path d={sparkle(48, 70, 5)} fill="#1f3a9e" />
+      <g fill="#fff">
+        <circle cx="74" cy="29" r="1.6" />
+        <circle cx="79" cy="25" r="1.3" />
+        <circle cx="78" cy="33" r="1.2" />
+        <circle cx="84" cy="29" r="1.5" />
+        <circle cx="83" cy="22" r="1" />
+        <circle cx="86" cy="36" r="1" />
+      </g>
+      <path d={sparkle(78, 12, 5.5)} fill="#fff" />
+      <path d={sparkle(22, 76, 4)} fill="#1f3a9e" opacity="0.45" />
+    </svg>
+  );
+}
+
+export function EcommerceArt() {
+  return (
+    <svg {...svg} viewBox="0 0 100 100">
+      <rect x="12" y="68" width="18" height="16" rx="1.5" fill="#d6a86a" />
+      <path d="M21 68V84" stroke="#f3dfbf" strokeWidth="2.2" />
+      <path d="M40 42V33A10 10 0 0 1 60 33V42" fill="none" stroke="#1c1a3a" strokeWidth="3" strokeLinecap="round" />
+      <path d="M30 42H70L74 85A4 4 0 0 1 70 89H30A4 4 0 0 1 26 85Z" fill="#3f3a8c" />
+      <rect x="30" y="42" width="40" height="5" fill="#2f2a72" />
+      <circle cx="40" cy="44.5" r="1.6" fill="#f7c8a8" />
+      <circle cx="60" cy="44.5" r="1.6" fill="#f7c8a8" />
+      <path d={sparkle(50, 66, 7)} fill="#f3f1fb" />
+      <path d="M60 46C64 50 66 54 68 58" fill="none" stroke="#1c1a3a" strokeWidth="1" />
+      <g transform="rotate(20 76 64)">
+        <path d="M68 56H86V72H68L63 64Z" fill="#fff" />
+        <circle cx="68.5" cy="64" r="1.6" fill="#3f3a8c" />
+        <path d="M72 61H82M72 66.5H79" stroke="#3f3a8c" strokeWidth="1.5" strokeLinecap="round" />
+      </g>
+      <path d={sparkle(20, 26, 5)} fill="#fff" />
+      <path d={sparkle(80, 22, 3.5)} fill="#3f3a8c" opacity="0.5" />
     </svg>
   );
 }

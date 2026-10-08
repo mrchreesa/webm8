@@ -46,7 +46,7 @@
 .callBar { position: absolute; right: 4cqi; bottom: 4cqi; left: 4cqi; z-index: 3; display: flex; align-items: center; justify-content: center; gap: 2.4cqi; height: 13cqi; border-radius: 99px; background: var(--g-ink); color: var(--g); font-size: 4.3cqi; font-weight: 600; box-shadow: 0 4cqi 8cqi -4cqi rgb(0 0 0 / 0.45); }
 .callBar svg { width: 5cqi; }
 
-/* ----- Poster: barber ----- */
+/* ----- Poster: barber, fitness ----- */
 .poster { --travel: 16cqi; }
 .poster .mark { border-radius: 1cqi; }
 .poster .logo b { font-family: var(--font); font-size: 5cqi; font-weight: 400; letter-spacing: 0.02em; text-transform: uppercase; }
@@ -97,7 +97,7 @@
 .site[data-font="cormorant"] .sign { font-size: 4.4cqi; }
 .site[data-font="cormorant"] .review blockquote { font-size: 7cqi; font-weight: 600; line-height: 1.05; }
 
-/* ----- Utility: plumbing, HVAC, electrical, roofing, other ----- */
+/* ----- Utility: plumbing, moving, HVAC, electrical, roofing, other ----- */
 .utility .hero { padding: 0 4cqi; }
 .utility .artCard { position: relative; height: 56cqi; overflow: hidden; border-radius: 5cqi; background: var(--extra); }
 .utility .artCard svg { display: block; width: 100%; height: 100%; }
@@ -113,7 +113,7 @@
 .utility .review { box-shadow: inset 0.9cqi 0 0 var(--hot); border-radius: 1.4cqi 4cqi 4cqi 1.4cqi; }
 .utility .review blockquote { font-weight: 700; letter-spacing: -0.03em; }
 
-/* ----- Soft: café, dental, landscaping ----- */
+/* ----- Soft: cleaning, café, dental, landscaping, e-commerce ----- */
 .soft .mark { border-radius: 50%; }
 .soft .hero { position: relative; padding: 4cqi 6cqi 0; }
 .soft .headline { font-size: 11.6cqi; font-weight: 700; line-height: 0.98; letter-spacing: -0.035em; }

@@ -14,7 +14,6 @@ const valid: DemoAnswers = {
   trade: "plumbing",
   tradeOther: "",
   business: "  Reyes   Plumbing ",
-  area: " Austin,  TX ",
   link: "",
   name: " Jamie   Reyes ",
   phone: " (512) 555-0142 ",
@@ -39,7 +38,6 @@ test("a complete request is accepted and tidied", () => {
     trade: "plumbing",
     tradeOther: null,
     business: "Reyes Plumbing",
-    area: "Austin, TX",
     link: null,
     name: "Jamie Reyes",
     phone: "(512) 555-0142",
@@ -51,7 +49,7 @@ test("every required field reports its own message", () => {
   const result = validateDemoAnswers(emptyDemoAnswers);
   assert.equal(result.ok, false);
   if (result.ok) return;
-  assert.deepEqual(Object.keys(result.errors).sort(), ["area", "business", "email", "name", "phone", "trade"]);
+  assert.deepEqual(Object.keys(result.errors).sort(), ["business", "email", "name", "phone", "trade"]);
   assert.equal(result.errors.trade, "Choose the kind of business you run.");
   assert.equal(result.errors.phone, "Add a phone number so we can call you.");
 });

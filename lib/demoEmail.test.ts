@@ -7,7 +7,6 @@ const request: DemoSubmission = {
   trade: "plumbing",
   tradeOther: null,
   business: "Reyes Plumbing",
-  area: "Austin, TX",
   link: null,
   name: "Jamie Reyes",
   phone: "(512) 555-0142",
@@ -20,14 +19,14 @@ const request: DemoSubmission = {
 
 const meta = { id: "5a1f6c2e-8f43-4b7e-9d0e-1c2b3a4d5e6f", receivedAt: new Date("2026-10-05T18:04:00Z") };
 
-test("the notification subject names the business, trade and area", () => {
+test("the notification subject names the business and trade", () => {
   const email = demoNotificationEmail(request, meta);
-  assert.equal(email.subject, "New demo request: Reyes Plumbing (Plumbing, Austin, TX)");
+  assert.equal(email.subject, "New demo request: Reyes Plumbing (Plumbing)");
 });
 
 test("the notification carries every detail, with a dialable phone link", () => {
   const { text, html } = demoNotificationEmail(request, meta);
-  for (const value of ["Jamie Reyes", "(512) 555-0142", "jamie@example.com", "Austin, TX", "uk-trades", "carousel-a", meta.id, "2026-10-05 18:04 UTC"]) {
+  for (const value of ["Jamie Reyes", "(512) 555-0142", "jamie@example.com", "uk-trades", "carousel-a", meta.id, "2026-10-05 18:04 UTC"]) {
     assert.ok(text.includes(value), `text has ${value}`);
   }
   assert.ok(html.includes('href="tel:+5125550142"') || html.includes('href="tel:5125550142"'));
@@ -36,7 +35,7 @@ test("the notification carries every detail, with a dialable phone link", () => 
 
 test("something else shows what the business does", () => {
   const email = demoNotificationEmail({ ...request, trade: "other", tradeOther: "Dog grooming" }, meta);
-  assert.equal(email.subject, "New demo request: Reyes Plumbing (Dog grooming, Austin, TX)");
+  assert.equal(email.subject, "New demo request: Reyes Plumbing (Dog grooming)");
 });
 
 test("a link appears, clickable, only when there is one", () => {

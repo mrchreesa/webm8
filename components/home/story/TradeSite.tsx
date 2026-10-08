@@ -1,8 +1,8 @@
 import Image from "next/image";
-import type { CSSProperties } from "react";
+import type { AnimationEventHandler, CSSProperties } from "react";
 import { cn } from "@/lib/cn";
 import { projects } from "@/lib/site";
-import { initialOf, isPortfolioSite, ratingOf, type DrawnSite, type Trade } from "@/lib/trades";
+import { drawnSiteOf, initialOf, isPortfolioSite, ratingOf, type DrawnSite, type Trade } from "@/lib/trades";
 import { CheckIcon, ChevronRightIcon, PhoneIcon } from "./icons";
 import { lookStyle, looks, type SiteLook } from "./looks";
 import { StatusBar } from "./StatusBar";
@@ -89,23 +89,34 @@ function Hero({ trade, copy, look }: { trade: Trade; copy: DrawnSite; look: Site
   );
 }
 
+type DrawnTradeSiteProps = {
+  trade: Trade;
+  copy: DrawnSite;
+  look: SiteLook;
+  /** Another business's name in place of the example's (the /free-demo/ sketch). */
+  name?: string;
+  className?: string;
+  onAnimationEnd?: AnimationEventHandler<HTMLDivElement>;
+};
+
 /** A site drawn for the trade: header, hero, services and a review. */
-function DrawnTradeSite({ trade, copy, look }: { trade: Trade; copy: DrawnSite; look: SiteLook }) {
+function DrawnTradeSite({ trade, copy, look, name = trade.exampleName, className, onAnimationEnd }: DrawnTradeSiteProps) {
   return (
     <div
       data-slot="site"
       data-story="site"
       data-trade={trade.key}
       data-font={look.font}
-      className={cn(styles.slot, site.site, site[look.layout])}
+      className={cn(site.site, site[look.layout], className)}
       style={lookStyle(look)}
+      onAnimationEnd={onAnimationEnd}
     >
       <div className={site.top}>
         <StatusBar time="9:41" />
         <div className={site.nav}>
           <span className={site.logo}>
-            <i className={site.mark}>{initialOf(trade.exampleName)}</i>
-            <b>{trade.exampleName}</b>
+            <i className={site.mark}>{initialOf(name)}</i>
+            <b>{name}</b>
           </span>
           <span className={site.burger}><i /><i /><i /></span>
         </div>
@@ -174,6 +185,10 @@ function PortfolioTradeSite({ trade, slug }: { trade: Trade; slug: string }) {
 /** The trade's site: a real one WebM8 built where there is one, otherwise one drawn for it. */
 export function TradeSite({ trade }: { trade: Trade }) {
   if (isPortfolioSite(trade.site)) return <PortfolioTradeSite trade={trade} slug={trade.site.project} />;
-  const look = looks[trade.key];
-  return look ? <DrawnTradeSite trade={trade} copy={trade.site} look={look} /> : null;
+  return <DrawnTradeSite trade={trade} copy={trade.site} look={looks[trade.key]} className={styles.slot} />;
+}
+
+/** The trade's drawn site with the visitor's business on it: the sketch beside the /free-demo/ form. */
+export function SketchSite({ trade, ...props }: { trade: Trade } & Pick<DrawnTradeSiteProps, "name" | "className" | "onAnimationEnd">) {
+  return <DrawnTradeSite trade={trade} copy={drawnSiteOf(trade)} look={looks[trade.key]} {...props} />;
 }

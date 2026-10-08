@@ -25,7 +25,7 @@ export const metadata: Metadata = createPageMetadata({
 export default function FreeDemoPage() {
   return (
     <>
-      <DemoHero line="Two minutes now. Your demo 48 hours after our call.">
+      <DemoHero line="We design your homepage for free and show it to you within 48 hours of our call.">
         <DemoCtaButton placement="hero" size="lg" className="mt-5 md:mt-7">
           Get my free demo
           <Icon name="arrow" size={18} className="rotate-90" aria-hidden />

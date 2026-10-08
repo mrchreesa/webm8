@@ -24,6 +24,7 @@ export type TradeKey =
   | "medspa"
   | "dental"
   | "fitness"
+  | "ecommerce"
   | "other";
 
 export type TradeGroup =
@@ -31,6 +32,7 @@ export type TradeGroup =
   | "Moving"
   | "Food and hospitality"
   | "Health, beauty and wellness"
+  | "Online shops"
   | "Something else";
 
 export type Competitor = { name: string; rating: string };
@@ -59,8 +61,12 @@ export type DrawnSite = {
   review: { quote: string; name: string };
 };
 
-/** A real site WebM8 built, by its slug in lib/site.ts `projects`. */
-export type PortfolioSite = { project: string };
+/**
+ * A real site WebM8 built, by its slug in lib/site.ts `projects`. `drawn` is
+ * the same trade as a drawn site, for the sketch beside the /free-demo/ form,
+ * where the visitor's own business name goes on it.
+ */
+export type PortfolioSite = { project: string; drawn: DrawnSite };
 
 export type Trade = {
   key: TradeKey;
@@ -97,6 +103,11 @@ export function isPortfolioSite(site: Trade["site"]): site is PortfolioSite {
   return "project" in site;
 }
 
+/** The trade's drawn site, including for a trade the story shows a real site for. */
+export function drawnSiteOf(trade: Trade): DrawnSite {
+  return isPortfolioSite(trade.site) ? trade.site.drawn : trade.site;
+}
+
 /** The trade's star rating, as the story prints it: "4.9". */
 export function ratingOf(trade: Trade): string {
   return (trade.rating ?? 4.9).toFixed(1);
@@ -116,7 +127,7 @@ export const tradeList: readonly Trade[] = [
     rating: 4.7,
     reviewCount: 16,
     competitors: [{ name: "Sparkle Cleaners", rating: "3.9 (11)" }, { name: "Fresh Start Cleaning", rating: "4.2 (9)" }],
-    site: { project: "solvers-cleaning" },
+    site: { project: "solvers-cleaning", drawn: { headline: "Come home to spotless.", badge: "Booking this week", sub: "Regular, deep and move-out cleans from a vetted, insured local team.", cta: "Get a free quote", phone: "(312) 555-0119", services: ["Regular cleans", "Deep cleans", "Move-out cleans"], review: { quote: "They noticed things I'd stopped seeing. The place sparkles.", name: "Holly M., Lincoln Square" } } },
     form: { title: "Get a free quote", sub: "Tell us about the job. We'll send a price today.", fields: [field("Type of clean", "End of tenancy"), field("Property", "2 bed flat"), field("Date", "Sat 18 Oct"), field("Postcode", "TW3")], button: "Get my free quote", done: "will send your quote today." },
     notification: { title: "New quote request", body: "End of tenancy clean, 2 bed flat, Sat 18 Oct" },
     palette: { primary: "#1f3a9e", deep: "#0f1a4a", accent: "#b5e655", accentInk: "#0f1a4a", soft: "#eef1fb", ink: "#0f1a4a" },
@@ -150,7 +161,7 @@ export const tradeList: readonly Trade[] = [
     rating: 4.7,
     reviewCount: 23,
     competitors: [{ name: "Drain Kings", rating: "3.8 (17)" }, { name: "Pipeline Plumbing Co.", rating: "4.0 (12)" }],
-    site: { project: "dps-gasworks" },
+    site: { project: "dps-gasworks", drawn: { headline: "Fixed right, the first time.", badge: "Plumbers out today", sub: "Leaks, drains and water heaters, fixed by licensed local plumbers.", cta: "Book a plumber", phone: "(312) 555-0188", services: ["Leak repairs", "Drain cleaning", "Water heaters"], review: { quote: "Burst pipe at 7am. Fixed before I left for work.", name: "Dana R., Logan Square" } } },
     form: { title: "Get a quote", sub: "Tell Dav what needs doing. He'll call you back.", fields: [field("What do you need?", "Boiler repair"), field("How urgent?", "Today"), field("Postcode", "MK41"), field("Best time to call", "This afternoon")], button: "Send quote request", done: "will call you back shortly." },
     notification: { title: "New quote request", body: "Boiler repair, today in MK41" },
     palette: { primary: "#1b2631", deep: "#111a22", accent: "#e09a5f", accentInk: "#1b2631", soft: "#f6efe7", ink: "#1b2631" },
@@ -214,7 +225,7 @@ export const tradeList: readonly Trade[] = [
     category: "Moving company, open now",
     reviewCount: 212,
     competitors: [{ name: "Budget Van Lines", rating: "3.8 (41)" }, { name: "Quick Haul Moving", rating: "4.1 (66)" }],
-    site: { project: "removals" },
+    site: { project: "removals", drawn: { headline: "Moving day, minus the stress.", badge: "Free estimates today", sub: "Local and long-distance moves, packing and storage, fully insured.", cta: "Get a free estimate", phone: "(312) 555-0142", services: ["Local moves", "Packing", "Storage"], review: { quote: "Third-floor walk-up, nothing broken, done by lunch.", name: "Chris D., Evanston" } } },
     form: { title: "Get an estimate", sub: "Where from, where to and when. We'll call you back.", fields: [field("Moving from", "Lincoln Park, Chicago"), field("Moving to", "Evanston, IL"), field("Moving date", "Fri, Oct 17"), field("Home size", "3 bedrooms")], button: "Get my estimate", done: "will call you with your estimate." },
     notification: { title: "New estimate request", body: "3-bed move, Lincoln Park to Evanston, Friday Oct 17" },
     palette: { primary: "#1765c9", deep: "#0d3b7a", accent: "#fbbf24", accentInk: "#2b1d00", soft: "#e8f1fd", ink: "#0b1b3f" },
@@ -326,10 +337,26 @@ export const tradeList: readonly Trade[] = [
     category: "Sportswear store",
     reviewCount: 197,
     competitors: [{ name: "Peak Activewear", rating: "3.9 (76)" }, { name: "Motion Sportswear", rating: "4.3 (59)" }],
-    site: { project: "allen-fitness" },
+    site: { project: "allen-fitness", drawn: { headline: "Stronger starts here.", badge: "First class free", sub: "Classes, open gym and personal training for every level.", cta: "Book a free class", phone: "(312) 555-0166", services: ["Classes", "Open gym", "Personal training"], review: { quote: "Six months in and I haven't missed a Monday.", name: "Kel B., Bucktown" } } },
     form: { title: "Find your fit", sub: "Pick your size. We'll ship it today.", fields: [field("Item", "High-rise leggings"), field("Size", "M"), field("Quantity", "1"), field("Delivery", "Next day")], button: "Place my order", done: "is packing your order now." },
     notification: { title: "New order", body: "High-rise leggings, size M, next-day delivery" },
     palette: { primary: "#262624", deep: "#0f0f0e", accent: "#d8f343", accentInk: "#1c1c1a", soft: "#f4f6e6", ink: "#1c1c1a" },
+  },
+  {
+    key: "ecommerce",
+    group: "Online shops",
+    label: "online shop",
+    short: "E-commerce",
+    exampleName: "Harbour Goods Co.",
+    need: "Someone is shopping for a gift.",
+    query: "unique gifts online",
+    category: "Online store, ships today",
+    reviewCount: 318,
+    competitors: [{ name: "GiftHub Market", rating: "4.0 (92)" }, { name: "Parcel & Pine", rating: "4.2 (140)" }],
+    site: { headline: "The new collection is here.", badge: "Free shipping over $50", sub: "Thoughtfully made pieces, fast delivery and easy returns.", cta: "Shop the collection", phone: "(312) 555-0137", services: ["New arrivals", "Best sellers", "Gift cards"], review: { quote: "Arrived in two days, beautifully packed. I've already ordered again.", name: "Maya L., Wicker Park" } },
+    form: { title: "Your bag", sub: "Free shipping on this order.", fields: [field("Item", "Linen throw, sand"), field("Quantity", "1"), field("Delivery", "Next day"), field("Total", "$64.00")], button: "Check out", done: "has your order. It ships today." },
+    notification: { title: "New order", body: "Linen throw in sand, next-day delivery, $64" },
+    palette: { primary: "#3f3a8c", deep: "#221f52", accent: "#f7c8a8", accentInk: "#2b1a10", soft: "#f3f1fb", ink: "#1c1a3a" },
   },
   {
     key: "other",
@@ -358,6 +385,7 @@ const GROUP_ORDER: TradeGroup[] = [
   "Moving",
   "Food and hospitality",
   "Health, beauty and wellness",
+  "Online shops",
   "Something else",
 ];
 
@@ -370,8 +398,8 @@ export const tradeGroups = GROUP_ORDER.map((group) => ({
  * The order the hero plays the trades in, starting with the default. A
  * trade shows either a real WebM8 site or a drawn one in one of four layouts
  * (components/home/story/looks.ts). No two neighbours, including the last and
- * the first, share a layout, and no two real sites play back to back. "other"
- * is left out: it is only the demo form's catch-all.
+ * the first, share a layout, and no two real sites play back to back.
+ * "ecommerce" and "other" are left out: they are only options on the demo form.
  */
 export const heroTradeOrder: readonly TradeKey[] = [
   "plumbing",

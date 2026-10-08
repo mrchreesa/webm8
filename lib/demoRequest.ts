@@ -12,7 +12,6 @@ export type DemoAnswers = {
   /** What the business does, when trade is "other". */
   tradeOther: string;
   business: string;
-  area: string;
   /** Optional: their website, Google profile or Facebook page. */
   link: string;
   name: string;
@@ -28,7 +27,6 @@ export const emptyDemoAnswers: DemoAnswers = {
   trade: "",
   tradeOther: "",
   business: "",
-  area: "",
   link: "",
   name: "",
   phone: "",
@@ -38,7 +36,6 @@ export const emptyDemoAnswers: DemoAnswers = {
 export const demoLimits = {
   tradeOther: 80,
   business: 120,
-  area: 120,
   link: 500,
   name: 120,
   phone: 40,
@@ -50,7 +47,6 @@ export type DemoRequest = {
   trade: TradeKey;
   tradeOther: string | null;
   business: string;
-  area: string;
   link: string | null;
   name: string;
   phone: string;
@@ -116,11 +112,6 @@ function checkField(field: DemoField, answers: DemoAnswers): string | undefined 
       if (!value) return "Add your business name.";
       return value.length > demoLimits.business ? tooLong(demoLimits.business) : undefined;
     }
-    case "area": {
-      const value = tidy(answers.area);
-      if (!value) return "Add the town, city or area you work in.";
-      return value.length > demoLimits.area ? tooLong(demoLimits.area) : undefined;
-    }
     case "link": {
       if (answers.link.trim().length > demoLimits.link) return tooLong(demoLimits.link);
       return normaliseLink(answers.link) === null
@@ -169,7 +160,6 @@ export function validateDemoAnswers(
       trade,
       tradeOther: trade === "other" ? tidy(answers.tradeOther) : null,
       business: tidy(answers.business),
-      area: tidy(answers.area),
       link: normaliseLink(answers.link) || null,
       name: tidy(answers.name),
       phone: tidy(answers.phone),
