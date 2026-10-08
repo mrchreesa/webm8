@@ -2,7 +2,7 @@ import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { capturesOf } from "../captures.ts";
 import { PHONE_RATIO, type Layout } from "../layout.ts";
 import { mix, punch } from "../motion.ts";
-import { PhoneFrame } from "../parts/PhoneFrame.tsx";
+import { CaptureScreen, PhoneFrame } from "../parts/PhoneFrame.tsx";
 import { copy, type ReelProject } from "../reel.ts";
 import { color, font } from "../theme.ts";
 import { DECK } from "../timeline.ts";
@@ -33,7 +33,9 @@ export function DeckBeat({ projects, layout }: { projects: ReelProject[]; layout
                 transformOrigin: "50% 100%",
               }}
             >
-              <PhoneFrame capture={capturesOf(project.slug).phone} width={phoneWidth} height={phoneHeight} scrollY={0} />
+              <PhoneFrame width={phoneWidth} height={phoneHeight}>
+                {(screen) => <CaptureScreen capture={capturesOf(project.slug).phone} screen={screen} scrollY={0} />}
+              </PhoneFrame>
             </div>
           );
         })}

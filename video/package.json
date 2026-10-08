@@ -5,10 +5,12 @@
   "scripts": {
     "studio": "remotion studio src/index.ts",
     "capture": "node scripts/capture.mjs",
-    "render": "remotion render src/index.ts Showreel-4x5 out/webm8-showreel-4x5.mp4 && remotion render src/index.ts Showreel-1x1 out/webm8-showreel-1x1.mp4",
+    "render": "npm run render:showreel && npm run render:rings",
     "test": "node --test 'src/**/*.test.ts'",
     "typecheck": "tsc --noEmit",
-    "stills": "node scripts/stills.mjs"
+    "stills": "node scripts/stills.mjs",
+    "render:showreel": "remotion render src/index.ts Showreel-4x5 out/webm8-showreel-4x5.mp4 && remotion render src/index.ts Showreel-1x1 out/webm8-showreel-1x1.mp4",
+    "render:rings": "remotion render src/index.ts PhoneRings-4x5 out/webm8-phone-rings-4x5.mp4 && remotion render src/index.ts PhoneRings-1x1 out/webm8-phone-rings-1x1.mp4"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.534",

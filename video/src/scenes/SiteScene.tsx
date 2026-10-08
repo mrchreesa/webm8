@@ -5,7 +5,7 @@ import { mix, punch } from "../motion.ts";
 import { BrowserFrame } from "../parts/BrowserFrame.tsx";
 import { GiantName } from "../parts/GiantName.tsx";
 import { IndustryTag } from "../parts/IndustryTag.tsx";
-import { PhoneFrame } from "../parts/PhoneFrame.tsx";
+import { CaptureScreen, PhoneFrame } from "../parts/PhoneFrame.tsx";
 import type { ReelProject } from "../reel.ts";
 import { color, font } from "../theme.ts";
 import { CAPTION_IN_FRAMES, easeInOut, siteSlot, siteSpan, whipAt } from "../timeline.ts";
@@ -69,7 +69,9 @@ export function SiteScene({ index, project, layout }: { index: number; project: 
             opacity: frame >= slot.from + 3 || index > 0 ? 1 : 0,
           }}
         >
-          <PhoneFrame capture={shots.phone} width={phone.width} height={phone.height} scrollY={scroll * PHONE_SCROLL} />
+          <PhoneFrame width={phone.width} height={phone.height}>
+            {(screen) => <CaptureScreen capture={shots.phone} screen={screen} scrollY={scroll * PHONE_SCROLL} />}
+          </PhoneFrame>
         </div>
         <div
           style={{
