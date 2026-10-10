@@ -50,7 +50,7 @@ export default function PrivacyPage() {
         }
         subtitle="This notice explains what WebM8 collects through this website and how that information is used."
       />
-      <section className="py-16 md:py-20">
+      <section data-analytics-section="Privacy policy" className="py-16 md:py-20">
         <div className="container-page max-w-3xl">
           <p className="text-sm text-muted">Last updated: 7 October 2026</p>
           <div className="mt-8 space-y-8">
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
               <h2 className="text-xl font-bold text-ink">Contact</h2>
               <p className="mt-3 leading-relaxed text-muted">
                 For a privacy question or request, email{" "}
-                <a
+                <a data-analytics-id="Email WebM8"
                   href={`mailto:${intakeEmail}`}
                   className="font-semibold text-link underline-offset-4 hover:underline"
                 >

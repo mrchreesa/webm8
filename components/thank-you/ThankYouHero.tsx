@@ -26,7 +26,7 @@ const BUBBLES = [
  */
 export function ThankYouHero() {
   return (
-    <section className="surface-dark relative -mt-16 overflow-hidden bg-night pt-16 text-bg md:-mt-20 md:pt-20">
+    <section data-analytics-section="Thank you introduction" className="surface-dark relative -mt-16 overflow-hidden bg-night pt-16 text-bg md:-mt-20 md:pt-20">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_85%_0%,rgb(27_74_128/0.7),transparent_60%)]"
@@ -111,7 +111,7 @@ export function ThankYouHero() {
               <Icon name="phone" size={18} className="shrink-0 text-brand" aria-hidden />
               <span>
                 Your call will come from{" "}
-                <a
+                <a data-analytics-id="Call WebM8"
                   href={`tel:${brand.phone}`}
                   data-lead-event="call_clicked"
                   data-lead-placement="hero"
@@ -123,7 +123,7 @@ export function ThankYouHero() {
             </p>
           ) : null}
 
-          <a
+          <a data-analytics-id="See examples"
             href="#examples"
             className={`${styles.after} group mt-8 flex items-center justify-between gap-4 rounded-2xl bg-white/6 p-4 pl-5 ring-1 ring-white/12 transition-colors hover:bg-white/10 md:inline-flex md:pr-4`}
             style={{ "--delay": "0.56s" } as CSSProperties}

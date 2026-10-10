@@ -82,7 +82,7 @@ export function ContactForm() {
   }
 
   return (
-    <form
+    <form data-analytics-section="Contact form"
       onSubmit={onSubmit}
       className="shadow-card rounded-3xl border border-border bg-white p-6 md:p-8"
       noValidate
@@ -137,7 +137,7 @@ export function ContactForm() {
       </div>
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <Button type="submit" size="lg" className="shrink-0 whitespace-nowrap">
+        <Button data-analytics-id="Compose enquiry email" type="submit" size="lg" className="shrink-0 whitespace-nowrap">
           Send enquiry
         </Button>
         <FormStatus tone={status.tone}>{status.message}</FormStatus>

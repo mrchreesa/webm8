@@ -11,7 +11,7 @@ import { intakeEmail } from "@/lib/site";
  */
 export function MoverProof() {
   return (
-    <section className="bg-surface py-20 md:py-28">
+    <section data-analytics-section="Mover results" className="bg-surface py-20 md:py-28">
       <div className="container-page">
         <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div>
@@ -48,7 +48,7 @@ export function MoverProof() {
 
             <p className="mt-6 font-semibold text-ink">
               Reach us directly at{" "}
-              <a
+              <a data-analytics-id="Email WebM8"
                 href={`mailto:${intakeEmail}`}
                 data-funnel-event="mover_email_clicked"
                 data-funnel-location="proof"

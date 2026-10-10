@@ -165,7 +165,7 @@ export function MoverReviewForm() {
   if (accepted) return <BookingPanel accepted={accepted} />;
 
   return (
-    <form
+    <form data-analytics-section="Mover review form"
       onSubmit={onSubmit}
       onFocus={onStart}
       noValidate
@@ -279,7 +279,7 @@ export function MoverReviewForm() {
       </div>
 
       <div className="mt-7">
-        <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+        <Button data-analytics-id="Submit review request" type="submit" size="lg" className="w-full" disabled={submitting}>
           {submitting ? "Sending your request…" : "Book my free 10-minute demo"}
         </Button>
       </div>
@@ -302,7 +302,7 @@ export function MoverReviewForm() {
       <p className="mt-4 text-sm leading-relaxed text-muted">
         By sending this, you agree that WebM8 may contact you about your custom
         demo request by email or phone. We don&rsquo;t sell your details. Read the{" "}
-        <Link href="/privacy/" className="font-medium text-link underline hover:text-ink">
+        <Link data-analytics-id="Read privacy policy" href="/privacy/" className="font-medium text-link underline hover:text-ink">
           privacy notice
         </Link>
         .
@@ -330,7 +330,7 @@ function BookingPanel({ accepted }: { accepted: Accepted }) {
   }, []);
 
   return (
-    <div className="rounded-3xl border border-border bg-white p-6 shadow-card md:p-8" role="status">
+    <div data-analytics-section="Mover review confirmation" className="rounded-3xl border border-border bg-white p-6 shadow-card md:p-8" role="status">
       <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-accent/15 text-accent">
         <Icon name="check" size={24} aria-hidden />
       </span>
@@ -360,7 +360,7 @@ function BookingPanel({ accepted }: { accepted: Accepted }) {
       {!booked && (
         <>
           <div className="mt-6">
-            <LinkButton
+            <LinkButton data-analytics-id="Choose a call time"
               href={`${reviewCalendarUrl}?name=${encodeURIComponent(accepted.name)}&email=${encodeURIComponent(accepted.email)}`}
               size="lg"
               target="_blank"

@@ -1,5 +1,7 @@
 "use client";
 
+import { analyticsName } from "@/lib/analyticsNames";
+
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { usePlanSelection } from "@/components/movers/PlanSelection";
@@ -42,7 +44,7 @@ export function MoverPricing() {
   }
 
   return (
-    <section
+    <section data-analytics-section="Mover pricing"
       id="pricing"
       aria-labelledby="mover-plans-heading"
       className="scroll-mt-20 bg-bg py-16 md:py-20"
@@ -82,7 +84,7 @@ export function MoverPricing() {
         </div>
 
         <details className="group mt-6 rounded-2xl border border-border bg-white">
-          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 px-5 py-3 text-sm font-semibold text-ink [&::-webkit-details-marker]:hidden">
+          <summary data-analytics-id="Compare plan features" className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 px-5 py-3 text-sm font-semibold text-ink [&::-webkit-details-marker]:hidden">
             Compare everything included
             <span
               className="text-xl leading-none transition-transform group-open:rotate-45"
@@ -262,7 +264,7 @@ function PlanCard({
       </ul>
 
       <div className="mt-auto">
-        <Button
+        <Button data-analytics-id={analyticsName(`Choose ${plan.name} plan`)}
           size="lg"
           className="w-full"
           onClick={onChoose}

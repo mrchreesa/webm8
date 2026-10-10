@@ -31,7 +31,7 @@ export default function ContactPage() {
         subtitle="Tell us what you want the website to do and we’ll send a clear reply with the next step."
       />
 
-      <section className="py-16 md:py-20">
+      <section data-analytics-section="Contact details" className="py-16 md:py-20">
         <div className="container-page grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:gap-16">
           <Reveal>
             <aside className="shadow-card rounded-3xl border border-border bg-white p-6 md:p-8">
@@ -48,7 +48,7 @@ export default function ContactPage() {
                   tone="brand"
                   label="Email"
                   value={
-                    <a
+                    <a data-analytics-id="Email WebM8"
                       href={`mailto:${intakeEmail}`}
                       className="text-sm font-semibold text-ink transition-colors hover:text-link"
                     >

@@ -18,7 +18,7 @@ const steps = [
 
 export function ReviewExpectations() {
   return (
-    <section
+    <section data-analytics-section="Mover review details"
       aria-labelledby="custom-demo-heading"
       className="bg-white py-16 md:py-20"
     >
@@ -52,7 +52,7 @@ export function ReviewExpectations() {
                 a 10-minute call, then sign up only if you like it.
               </p>
 
-              <LinkButton
+              <LinkButton data-analytics-id="Book a free review"
                 href="#review-request"
                 size="lg"
                 className="mt-7"

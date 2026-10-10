@@ -1,3 +1,5 @@
+
+import { analyticsName } from "@/lib/analyticsNames";
 import { LinkButton } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
@@ -5,7 +7,7 @@ import { plans } from "@/lib/site";
 
 export function Plans() {
   return (
-    <section id="plans" aria-labelledby="plans-title" className="bg-bg py-28 text-ink-deep md:py-36">
+    <section data-analytics-section="Website plans" id="plans" aria-labelledby="plans-title" className="bg-bg py-28 text-ink-deep md:py-36">
       <div className="container-page">
         <header className="mb-14 max-w-2xl">
           <h2 id="plans-title" className="text-[clamp(2.3rem,5vw,4.4rem)] leading-[0.96] font-bold">
@@ -50,7 +52,7 @@ export function Plans() {
                     </li>
                   ))}
                 </ul>
-                <LinkButton
+                <LinkButton data-analytics-id={analyticsName(`Get ${plan.name} estimate`)}
                   href={`/contact/?plan=${plan.id}`}
                   size="lg"
                   variant={featured ? "primary" : "ghost"}

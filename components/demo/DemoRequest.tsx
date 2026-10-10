@@ -109,7 +109,7 @@ export function DemoRequest() {
   }
 
   return (
-    <section
+    <section data-analytics-section="Demo request form"
       ref={sectionRef}
       id="demo-request"
       aria-labelledby="demo-request-title"
@@ -276,7 +276,7 @@ export function DemoRequest() {
                     {formError.includes(intakeEmail) ? null : (
                       <p className="mt-1 text-muted">
                         Still stuck? Email{" "}
-                        <a href={`mailto:${intakeEmail}`} className="font-semibold text-link underline-offset-2 hover:underline">
+                        <a data-analytics-id="Email support" href={`mailto:${intakeEmail}`} className="font-semibold text-link underline-offset-2 hover:underline">
                           {intakeEmail}
                         </a>
                         .
@@ -286,7 +286,7 @@ export function DemoRequest() {
                 ) : null}
 
                 <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-                  <Button type="submit" size="lg" disabled={status === "sending"} className="w-full shrink-0 sm:w-fit">
+                  <Button data-analytics-id="Submit demo request" type="submit" size="lg" disabled={status === "sending"} className="w-full shrink-0 sm:w-fit">
                     {status === "sending" ? "Sending…" : "Get my free demo"}
                     {status === "sending" ? null : <Icon name="arrow" size={18} aria-hidden />}
                   </Button>
@@ -296,7 +296,7 @@ export function DemoRequest() {
                 </div>
                 <p className="mt-4 text-xs text-muted">
                   We only use your details to talk to you about your demo.{" "}
-                  <Link href="/privacy/" className="text-link underline underline-offset-2">
+                  <Link data-analytics-id="Read privacy policy" href="/privacy/" className="text-link underline underline-offset-2">
                     Privacy
                   </Link>
                 </p>
@@ -335,7 +335,7 @@ function DemoRequestSuccess({ done, focus }: { done: DemoDone; focus: boolean })
   ];
 
   return (
-    <div className={styles.success}>
+    <div data-analytics-section="Demo request confirmation" className={styles.success}>
       <p className="inline-flex items-center gap-2 rounded-full bg-accent/10 py-1 pr-3.5 pl-1 text-sm font-semibold text-accent">
         <span className="grid h-6 w-6 place-items-center rounded-full bg-accent text-white">
           <Icon name="check" size={14} aria-hidden />
@@ -352,7 +352,7 @@ function DemoRequestSuccess({ done, focus }: { done: DemoDone; focus: boolean })
           <>
             {" "}
             Our call will come from{" "}
-            <a href={`tel:${brand.phone}`} className="font-semibold whitespace-nowrap text-link">
+            <a data-analytics-id="Call WebM8" href={`tel:${brand.phone}`} className="font-semibold whitespace-nowrap text-link">
               {brand.phoneLabel || brand.phone}
             </a>
             .
@@ -380,12 +380,12 @@ function DemoRequestSuccess({ done, focus }: { done: DemoDone; focus: boolean })
       </ol>
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-        <LinkButton href="/work/" variant="ghost">
+        <LinkButton data-analytics-id="See more examples" href="/work/" variant="ghost">
           See more of our work
           <Icon name="arrow" size={16} aria-hidden />
         </LinkButton>
         {whatsapp ? (
-          <a
+          <a data-analytics-id="Message on WhatsApp"
             href={whatsapp}
             target="_blank"
             rel="noopener noreferrer"

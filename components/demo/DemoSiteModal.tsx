@@ -1,5 +1,7 @@
 "use client";
 
+import { analyticsName } from "@/lib/analyticsNames";
+
 import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";
 import { Icon } from "@/components/ui/Icon";
@@ -56,7 +58,7 @@ function SitePreview({ project, titleId, onClose }: { project: Project; titleId:
   const live = siteUrl && !project.blocksFraming;
 
   return (
-    <div className="flex h-full flex-col">
+    <div data-analytics-section="Demo preview" className="flex h-full flex-col">
       <div className="flex items-center gap-3 border-b border-white/10 py-2 pr-2 pl-4 sm:py-2.5 sm:pr-2.5 sm:pl-5">
         <div className="min-w-0 flex-1">
           <h2 id={titleId} className="truncate text-sm font-semibold sm:text-base">
@@ -67,7 +69,7 @@ function SitePreview({ project, titleId, onClose }: { project: Project; titleId:
           </p>
         </div>
         {siteUrl ? (
-          <a
+          <a data-analytics-id={analyticsName(`Open ${project.name} in new tab`)}
             href={siteUrl}
             target="_blank"
             rel="noopener noreferrer"
@@ -78,7 +80,7 @@ function SitePreview({ project, titleId, onClose }: { project: Project; titleId:
             <Icon name="external" size={16} aria-hidden />
           </a>
         ) : null}
-        <button
+        <button data-analytics-id={analyticsName(`Close ${project.name} preview`)}
           type="button"
           onClick={onClose}
           data-dialog-close
@@ -126,7 +128,7 @@ function SitePreview({ project, titleId, onClose }: { project: Project; titleId:
             {siteUrl ? (
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-night via-night/90 to-transparent px-5 pt-28 pb-8 text-center">
                 <p className="text-lg font-semibold">This site opens in its own tab.</p>
-                <a
+                <a data-analytics-id={analyticsName(`Open ${project.name} live site`)}
                   href={siteUrl}
                   target="_blank"
                   rel="noopener noreferrer"

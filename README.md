@@ -81,6 +81,12 @@ Set `NEXT_PUBLIC_WEBM8_ANALYTICS_SITE_ID` to the registered site UUID, with both
 
 The native tracker records measured pages, click labels, scroll reach and active/visible time in the same browser. It does not record form contents or activity inside external demo sites. `lib/analytics.ts` forwards business events to configured providers. Never pass names, emails, phone numbers or form answers.
 
+Every public link, button and FAQ summary has an explicit `data-analytics-id`, inside a named `data-analytics-section`. Labels describe the location and action, such as `Homepage examples / Select Fresh and Clean`, `Mobile menu / Pricing` and `Demo request form / Submit demo request`. Selecting a carousel card and opening its site have different names. `lib/analyticsNames.ts` normalises reviewed public project/trade/FAQ copy only; never pass visitor data, form answers, DOM text or URL query parameters. Keep the combined `section / action` within the tracker's 80-character limit. Shared `Section` accepts `analyticsSection`.
+
+These labels apply to newly collected clicks. Old `button-N` or `demo-card-N` keys did not store the control's identity and cannot reliably be renamed from today's DOM order. The platform keeps their counts and marks them unnamed. Third-party iframe interactions remain outside this website's tracker.
+
+From the canonical platform repository, run `node apps/analytics/scripts/verify-webm8-click-labels.mjs <website-url>` to audit all measured routes on desktop/mobile and exercise named interactions, form privacy and GPC. It intercepts all measurements and blocks backend writes and third-party services; no live analytics records or enquiries are created. A local website build needs `NEXT_PUBLIC_WEBM8_ANALYTICS_SITE_ID` set to a test UUID.
+
 `npm test` covers the DNT/GPC check and provider forwarding. The platform's `scripts/verify-webm8-measurement.mjs [website-url]` verifies browser behaviour with outgoing measurements intercepted, so it creates no leads or live analytics records.
 
 The homepage and demo events are:

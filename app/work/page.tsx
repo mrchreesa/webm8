@@ -1,3 +1,5 @@
+
+import { analyticsName } from "@/lib/analyticsNames";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
 import { BrowserMockup } from "@/components/ui/BrowserMockup";
@@ -26,7 +28,7 @@ export default function WorkPage() {
         subtitle="Each one is a working website, built around how that business's customers search, decide and get in touch. See it on a computer and on a phone."
       />
 
-      <section className="overflow-x-clip py-16 md:py-24">
+      <section data-analytics-section="Work gallery" className="overflow-x-clip py-16 md:py-24">
         <div className="container-page">
           <div className="grid gap-16 lg:gap-24">
             {projects.map((project, index) => (
@@ -64,12 +66,12 @@ export default function WorkPage() {
 
                     <div className="mt-8 flex flex-wrap gap-3">
                       {project.siteUrl ? (
-                        <LinkButton href={project.siteUrl} target="_blank" rel="noreferrer">
+                        <LinkButton data-analytics-id={analyticsName(`Open ${project.name}`)} href={project.siteUrl} target="_blank" rel="noreferrer">
                           Open the live site
                           <Icon name="arrow" size={16} className="-rotate-45" />
                         </LinkButton>
                       ) : null}
-                      <LinkButton href="/free-demo/" variant="ghost">
+                      <LinkButton data-analytics-id={analyticsName(`Request a demo like ${project.name}`)} href="/free-demo/" variant="ghost">
                         Get a free demo like this
                       </LinkButton>
                     </div>

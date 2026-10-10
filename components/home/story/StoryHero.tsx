@@ -1,5 +1,7 @@
 "use client";
 
+import { analyticsName } from "@/lib/analyticsNames";
+
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { DemoCtaButton } from "@/components/demo/DemoCtaButton";
 import { LinkButton } from "@/components/ui/Button";
@@ -296,7 +298,7 @@ export function StoryHero() {
   };
 
   return (
-    <section
+    <section data-analytics-section="Homepage hero"
       ref={sectionRef}
       aria-label="An example of how a website turns a local search into a new customer"
       data-chapter={chapter}
@@ -314,7 +316,7 @@ export function StoryHero() {
             <DemoCtaButton placement="hero" size="lg">
               Get my free personalised demo
             </DemoCtaButton>
-            <LinkButton href="#work" variant="ghost-invert" size="lg" className={styles.secondaryCta}>
+            <LinkButton data-analytics-id="See our work" href="#work" variant="ghost-invert" size="lg" className={styles.secondaryCta}>
               See our work
             </LinkButton>
           </div>
@@ -358,7 +360,7 @@ export function StoryHero() {
           </div>
 
           <div className={styles.controls}>
-            <button
+            <button data-analytics-id={playing ? "Pause example" : "Play example"}
               type="button"
               className={styles.playButton}
               aria-label={playing ? "Pause the example" : "Play the example"}
@@ -368,7 +370,7 @@ export function StoryHero() {
             </button>
             <div className={styles.rail}>
               {RAIL.map((step) => (
-                <button
+                <button data-analytics-id={analyticsName(`Show ${step.label} step`)}
                   key={step.label}
                   type="button"
                   data-rail-step

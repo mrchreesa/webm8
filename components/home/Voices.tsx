@@ -1,5 +1,7 @@
 "use client";
 
+import { analyticsName } from "@/lib/analyticsNames";
+
 import { useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { testimonials } from "@/lib/site";
@@ -26,7 +28,7 @@ export function Voices() {
   const current = testimonials[index];
 
   return (
-    <section aria-labelledby="voices-title" className="surface-dark bg-ink-deep py-28 text-white md:py-36">
+    <section data-analytics-section="Testimonials" aria-labelledby="voices-title" className="surface-dark bg-ink-deep py-28 text-white md:py-36">
       <div className="container-page">
         <h2 id="voices-title" className="sr-only">
           What owners say
@@ -46,7 +48,7 @@ export function Voices() {
         </figure>
         <div role="group" aria-label="Choose a review" className="mt-9 flex flex-wrap gap-2.5">
           {testimonials.map((testimonial, i) => (
-            <button
+            <button data-analytics-id={analyticsName(`Read ${testimonial.company} review`)}
               key={testimonial.name}
               type="button"
               aria-pressed={i === index}

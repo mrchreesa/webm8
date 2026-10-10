@@ -11,7 +11,7 @@ const afterYouSend = [
 
 export function ReviewFormSection() {
   return (
-    <section
+    <section data-analytics-section="Mover review request"
       id="review-request"
       className="relative scroll-mt-20 overflow-hidden py-20 md:py-28"
     >
@@ -41,7 +41,7 @@ export function ReviewFormSection() {
             <p className="font-semibold text-ink">Rather just talk?</p>
             <p className="mt-1.5 leading-relaxed text-muted">
               Email{" "}
-              <a
+              <a data-analytics-id="Email WebM8"
                 href={`mailto:${intakeEmail}`}
                 data-funnel-event="mover_email_clicked"
                 data-funnel-location="review_form"

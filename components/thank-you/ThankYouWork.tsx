@@ -1,3 +1,5 @@
+
+import { analyticsName } from "@/lib/analyticsNames";
 import Image from "next/image";
 import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
@@ -95,7 +97,7 @@ type Example = (typeof examples)[number];
 
 export function ThankYouWork() {
   return (
-    <section
+    <section data-analytics-section="Thank you examples"
       id="examples"
       aria-labelledby="examples-title"
       className="scroll-mt-16 overflow-x-clip py-14 md:scroll-mt-20 md:py-24"
@@ -149,7 +151,7 @@ function ExampleCard({
     >
       {/* The preview is a second, larger way into the same site, so it stays
           out of the tab order and the accessibility tree. */}
-      <a
+      <a data-analytics-id={analyticsName(`Open ${example.name} preview`)}
         href={example.siteUrl}
         target="_blank"
         rel="noreferrer"
@@ -199,7 +201,7 @@ function ExampleCard({
         </h3>
         <p className="mt-2 leading-relaxed text-ink/80">{example.line}</p>
 
-        <a
+        <a data-analytics-id={analyticsName(`Open ${example.name} live site`)}
           href={example.siteUrl}
           target="_blank"
           rel="noreferrer"

@@ -1,5 +1,7 @@
 "use client";
 
+import { analyticsName } from "@/lib/analyticsNames";
+
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import type { CSSProperties, FocusEvent, KeyboardEvent, MouseEvent, PointerEvent } from "react";
@@ -213,7 +215,7 @@ export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
 
   return (
     <>
-      <div
+      <div data-analytics-section="Demo examples"
         ref={regionRef}
         role="region"
         aria-roledescription="carousel"
@@ -226,7 +228,7 @@ export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
       >
         <div
           ref={stageRef}
-          className={demo.stage} data-analytics-section="demo-deck"
+          className={demo.stage}
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
           onPointerMove={onPointerMove}
@@ -259,7 +261,7 @@ export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
                   draggable={false}
                   tabIndex={front ? undefined : -1}
                   data-deck-card
-                  data-analytics-id={`demo-card-${index + 1}`} aria-label={`View ${project.name}, a real demo website`}
+                  data-analytics-id={analyticsName(`${front ? "Preview" : "Show"} ${project.name} card`)} aria-label={`View ${project.name}, a real demo website`}
                   // A card behind the front one is hidden from assistive tech,
                   // so a click on it must not leave focus inside it.
                   onMouseDown={front ? undefined : (event) => event.preventDefault()}
@@ -295,7 +297,7 @@ export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
         </div>
 
         <div className="relative z-40 -mt-1 flex items-center justify-center gap-2 md:mt-3 md:gap-3">
-          <button
+          <button data-analytics-id="Previous demo"
             type="button"
             onClick={() => go(active - 1)}
             aria-label="Previous"
@@ -305,7 +307,7 @@ export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
           </button>
           <div className="flex items-center gap-1.5">
             {realCards.map((project, index) => (
-              <button
+              <button data-analytics-id={analyticsName(`Select ${project.name}`)}
                 key={project.slug}
                 type="button"
                 onClick={() => go(index)}
@@ -322,7 +324,7 @@ export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
               </button>
             ))}
           </div>
-          <button
+          <button data-analytics-id="Next demo"
             type="button"
             onClick={() => go(active + 1)}
             aria-label="Next"
@@ -331,7 +333,7 @@ export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
             <Icon name="arrow" size={16} aria-hidden />
           </button>
           {canAutoplay ? (
-            <button
+            <button data-analytics-id={paused ? "Play demos" : "Pause demos"}
               type="button"
               onClick={() => setPaused((value) => !value)}
               aria-label={paused ? "Play the demos" : "Pause the demos"}

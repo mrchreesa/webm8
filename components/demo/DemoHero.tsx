@@ -14,7 +14,7 @@ export function DemoHero({ line, children }: { line: ReactNode; children?: React
   const [deckIndex, setDeckIndex] = useState(0);
 
   return (
-    <section
+    <section data-analytics-section="Demo introduction"
       aria-labelledby="demo-title"
       className="surface-dark relative -mt-16 overflow-hidden bg-night pt-16 text-white md:-mt-20 md:pt-20"
     >

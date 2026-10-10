@@ -1,3 +1,5 @@
+
+import { analyticsName } from "@/lib/analyticsNames";
 import Link from "next/link";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { brand, intakeEmail } from "@/lib/site";
@@ -6,11 +8,11 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-white">
+    <footer data-analytics-section="Footer" className="border-t border-border bg-white">
       <div className="container-page py-14 md:py-16">
         <div className="grid gap-10 md:grid-cols-[1.2fr_1fr_1fr_1fr]">
           <div className="max-w-sm">
-            <Link
+            <Link data-analytics-id="Logo - Home"
               href="/"
               className="flex items-center gap-2 text-lg font-bold tracking-tight text-ink"
               aria-label={`${brand.name} home`}
@@ -49,7 +51,7 @@ export function Footer() {
             </h3>
             <ul className="mt-4 space-y-3 text-sm text-muted">
               <li>
-                <a
+                <a data-analytics-id="Email WebM8"
                   className="transition-colors hover:text-link"
                   href={`mailto:${intakeEmail}`}
                 >
@@ -88,7 +90,7 @@ function FooterCol({
       <ul className="mt-4 space-y-3 text-sm">
         {links.map((l) => (
           <li key={l.href}>
-            <Link
+            <Link data-analytics-id={analyticsName(l.label)}
               href={l.href}
               className="text-muted transition-colors hover:text-link"
             >

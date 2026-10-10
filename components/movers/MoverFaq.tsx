@@ -1,3 +1,5 @@
+
+import { analyticsName } from "@/lib/analyticsNames";
 import {
   annualEquivalentMonthly,
   annualSaving,
@@ -54,7 +56,7 @@ export const moverFaqs: { question: string; answer: string }[] = [
 
 export function MoverFaq() {
   return (
-    <section id="faq" className="bg-surface py-20 md:py-28">
+    <section data-analytics-section="Mover questions" id="faq" className="bg-surface py-20 md:py-28">
       <div className="container-page">
         <div className="max-w-3xl">
           <h2 className="text-3xl font-bold tracking-tight text-ink md:text-5xl">
@@ -65,7 +67,7 @@ export function MoverFaq() {
         <div className="mt-10 max-w-4xl divide-y divide-border rounded-3xl border border-border bg-white px-6 md:px-8">
           {moverFaqs.map((faq) => (
             <details key={faq.question} className="group py-5">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-5 text-lg font-semibold text-ink">
+              <summary data-analytics-id={analyticsName(`FAQ ${faq.question}`)} className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-5 text-lg font-semibold text-ink">
                 {faq.question}
                 <span
                   className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink/5 text-lg text-link transition-transform group-open:rotate-45"

@@ -66,7 +66,7 @@ export function StickyMoverCta() {
       )}
       aria-hidden={!visible}
     >
-      <Link
+      <Link data-analytics-section="Mobile mover shortcut" data-analytics-id="Book a free review"
         href="#review-request"
         tabIndex={visible ? undefined : -1}
         data-funnel-event="mover_cta_clicked"

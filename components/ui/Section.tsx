@@ -7,6 +7,7 @@ type Tone = "default" | "surface" | "dark" | "tint";
 
 type SectionProps = {
   id?: string;
+  analyticsSection?: string;
   eyebrow?: string;
   title?: ReactNode;
   subtitle?: ReactNode;
@@ -26,6 +27,7 @@ const tones: Record<Tone, string> = {
 
 export function Section({
   id,
+  analyticsSection,
   eyebrow,
   title,
   subtitle,
@@ -43,6 +45,7 @@ export function Section({
   return (
     <section
       id={id}
+      data-analytics-section={analyticsSection}
       className={cn("relative py-20 md:py-28", tones[tone], className)}
     >
       <div className={cn("container-page", innerClassName)}>

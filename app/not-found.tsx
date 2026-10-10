@@ -4,7 +4,7 @@ import { Icon } from "@/components/ui/Icon";
 
 export default function NotFound() {
   return (
-    <section className="relative overflow-hidden py-32 md:py-40">
+    <section data-analytics-section="Page not found" className="relative overflow-hidden py-32 md:py-40">
       <AmbientBlobs variant="light" />
       <div className="container-page text-center">
         <p className="animate-rise font-mono text-sm font-bold uppercase tracking-[0.2em] text-link">
@@ -26,11 +26,11 @@ export default function NotFound() {
           className="animate-rise mt-8 flex flex-wrap justify-center gap-3"
           style={{ animationDelay: "240ms" }}
         >
-          <LinkButton href="/" size="lg">
+          <LinkButton data-analytics-id="Go home" href="/" size="lg">
             Back to home
             <Icon name="arrow" size={18} />
           </LinkButton>
-          <LinkButton href="/contact" size="lg" variant="ghost">
+          <LinkButton data-analytics-id="Contact WebM8" href="/contact" size="lg" variant="ghost">
             Contact us
           </LinkButton>
         </div>

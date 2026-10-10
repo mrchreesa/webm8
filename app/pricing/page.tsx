@@ -46,6 +46,7 @@ export default function PricingPage() {
       />
 
       <Section
+        analyticsSection="Pricing explanation"
         eyebrow="Why there is no fixed price"
         title="Because a fair number depends on what you actually need."
         align="center"
@@ -70,7 +71,7 @@ export default function PricingPage() {
 
         <Reveal delay={240}>
           <div className="mt-12 flex flex-col items-center gap-4">
-            <LinkButton href="/contact/" size="lg">
+            <LinkButton data-analytics-id="Request an estimate" href="/contact/" size="lg">
               Get a Fast Estimate
               <Icon name="arrow" size={18} />
             </LinkButton>

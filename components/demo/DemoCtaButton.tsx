@@ -29,7 +29,7 @@ export function DemoCtaButton({ placement, onClick, children, ...props }: DemoCt
   }
 
   return (
-    <LinkButton href="/free-demo/" onClick={handleClick} {...props}>
+    <LinkButton data-analytics-id="Get my free demo" href="/free-demo/" onClick={handleClick} {...props}>
       {children}
     </LinkButton>
   );

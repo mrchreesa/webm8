@@ -1,3 +1,5 @@
+
+import { analyticsName } from "@/lib/analyticsNames";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Reveal } from "@/components/ui/Reveal";
@@ -32,7 +34,7 @@ const questions: { question: string; answer: ReactNode }[] = [
     answer: (
       <>
         We use them only to contact you about your demo. We never sell them. Read our{" "}
-        <Link href="/privacy/" className="font-semibold text-link underline-offset-2 hover:underline">
+        <Link data-analytics-id="Read privacy policy" href="/privacy/" className="font-semibold text-link underline-offset-2 hover:underline">
           privacy policy
         </Link>
         .
@@ -43,7 +45,7 @@ const questions: { question: string; answer: ReactNode }[] = [
 
 export function DemoFaq() {
   return (
-    <section aria-labelledby="demo-faq-title" className="py-20 md:py-28">
+    <section data-analytics-section="Demo questions" aria-labelledby="demo-faq-title" className="py-20 md:py-28">
       <div className="container-page grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
         <Reveal>
           <h2 id="demo-faq-title" className="text-[clamp(2.2rem,5vw,3.6rem)] leading-[1] font-bold text-ink">
@@ -53,7 +55,7 @@ export function DemoFaq() {
         <div className="divide-y divide-border border-y border-border">
           {questions.map(({ question, answer }) => (
             <details key={question} className="group">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-lg font-semibold text-ink [&::-webkit-details-marker]:hidden">
+              <summary data-analytics-id={analyticsName(`FAQ ${question}`)} className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-lg font-semibold text-ink [&::-webkit-details-marker]:hidden">
                 {question}
                 <span
                   aria-hidden

@@ -17,7 +17,7 @@ export function ThankYouCall() {
   const whatsapp = whatsappHref(brand.whatsapp, whatsappMessage);
 
   return (
-    <section
+    <section data-analytics-section="Next call"
       aria-labelledby="call-title"
       className="surface-dark relative overflow-hidden bg-night py-16 text-bg md:py-24"
     >
@@ -47,7 +47,7 @@ export function ThankYouCall() {
               <p className="text-sm font-medium text-muted-invert">
                 Your call will come from:
               </p>
-              <a
+              <a data-analytics-id="Call WebM8"
                 href={`tel:${brand.phone}`}
                 data-lead-event="call_clicked"
                 data-lead-placement="call_notice"
@@ -70,7 +70,7 @@ export function ThankYouCall() {
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             {whatsapp ? (
-              <LinkButton
+              <LinkButton data-analytics-id="Message on WhatsApp"
                 href={whatsapp}
                 target="_blank"
                 rel="noreferrer"
@@ -83,7 +83,7 @@ export function ThankYouCall() {
                 Message us on WhatsApp
               </LinkButton>
             ) : null}
-            <LinkButton
+            <LinkButton data-analytics-id="Choose a call time"
               href={brand.bookingUrl}
               target="_blank"
               rel="noreferrer"

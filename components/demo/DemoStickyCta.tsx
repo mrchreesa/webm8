@@ -49,7 +49,7 @@ export function DemoStickyCta({ formRef, done }: { formRef: RefObject<HTMLElemen
   }
 
   return (
-    <button
+    <button data-analytics-section="Mobile demo shortcut" data-analytics-id="Return to demo form"
       type="button"
       onClick={onClick}
       className={cn(

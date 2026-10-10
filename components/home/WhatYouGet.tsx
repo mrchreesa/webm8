@@ -34,7 +34,7 @@ const cardStyles: Record<
 
 export function WhatYouGet() {
   return (
-    <section
+    <section data-analytics-section="Website features"
       id="included"
       aria-labelledby="included-heading"
       className="scroll-mt-20 border-b border-border/70 bg-white py-16 md:py-24"
@@ -72,7 +72,7 @@ export function WhatYouGet() {
             <span className="font-semibold text-ink">One team, from launch onward.</span>{" "}
             Find the right plan for your business.
           </p>
-          <Link
+          <Link data-analytics-id="View pricing"
             href="/pricing/"
             className="btn-arrow inline-flex min-h-11 w-fit shrink-0 items-center gap-3 rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-ink/30 hover:bg-bg"
           >

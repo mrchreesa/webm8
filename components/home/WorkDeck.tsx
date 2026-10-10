@@ -1,5 +1,7 @@
 "use client";
 
+import { analyticsName } from "@/lib/analyticsNames";
+
 import Image from "next/image";
 import {
   useEffect,
@@ -389,7 +391,7 @@ export function WorkDeck() {
   };
 
   return (
-    <section
+    <section data-analytics-section="Homepage examples"
       id="work"
       aria-labelledby="work-title"
       className="surface-dark overflow-hidden bg-gradient-to-b from-night to-ink-deep py-28 text-white md:py-36"
@@ -420,7 +422,7 @@ export function WorkDeck() {
           const isActive = slot === 0;
           const disabled = isActive && !project.siteUrl;
           return (
-            <button
+            <button data-analytics-id={analyticsName(`${isActive ? "Open" : "Show"} ${project.name} card`)}
               key={project.slug}
               ref={motion.bind[index]}
               type="button"
@@ -480,7 +482,7 @@ export function WorkDeck() {
         {/* Under the deck on a phone, where they would cover the cards; either side of it from a tablet up. */}
         <div className="pointer-events-none absolute inset-x-0 -bottom-4 z-[200] flex justify-center gap-3 md:inset-y-0 md:justify-between md:px-4 lg:px-10">
           {[-1, 1].map((by) => (
-            <button
+            <button data-analytics-id={by < 0 ? "Previous demo" : "Next demo"}
               key={by}
               type="button"
               onClick={() => motion.step(by)}
@@ -501,7 +503,7 @@ export function WorkDeck() {
           </h3>
           <p className="mt-3 max-w-xl text-muted-invert">{current.description}</p>
           {current.siteUrl ? (
-            <a
+            <a data-analytics-id={analyticsName(`Open ${current.name} live site`)}
               href={current.siteUrl}
               target="_blank"
               rel="noreferrer"
@@ -514,7 +516,7 @@ export function WorkDeck() {
         </div>
         <div role="group" aria-label="Choose a demo site" className="flex flex-wrap gap-2 lg:max-w-xl lg:justify-end">
           {projects.map((project, index) => (
-            <button
+            <button data-analytics-id={analyticsName(`Select ${project.name}`)}
               key={project.slug}
               type="button"
               aria-pressed={index === active}

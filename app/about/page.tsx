@@ -1,3 +1,5 @@
+
+import { analyticsName } from "@/lib/analyticsNames";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
 import { Section } from "@/components/ui/Section";
@@ -120,6 +122,7 @@ export default function AboutPage() {
       <Section
         tone="surface"
         eyebrow="FAQs"
+        analyticsSection="About questions"
         title="Questions owners usually ask first"
         align="center"
       >
@@ -127,7 +130,7 @@ export default function AboutPage() {
           {faqs.map((f, i) => (
             <Reveal key={f.q} delay={i * 60}>
               <details className="group rounded-2xl border border-border bg-white p-5 transition-all duration-300 open:border-ink/30 hover:border-ink/20">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold text-ink marker:content-none">
+                <summary data-analytics-id={analyticsName(`FAQ ${f.q}`)} className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold text-ink marker:content-none">
                   {f.q}
                   <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink/5 text-ink transition-transform duration-300 group-open:rotate-45 group-open:bg-brand group-open:text-brand-ink">
                     <svg
@@ -150,7 +153,7 @@ export default function AboutPage() {
         </div>
 
         <div className="mt-12 flex justify-center">
-          <LinkButton href="/contact/" size="lg" variant="ghost">
+          <LinkButton data-analytics-id="Contact WebM8" href="/contact/" size="lg" variant="ghost">
             Ask us a question
           </LinkButton>
         </div>

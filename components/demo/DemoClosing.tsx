@@ -21,7 +21,7 @@ const BUBBLES = [
 /** The Free Personalised Website Demo close, shared by every marketing page. */
 export function DemoClosing() {
   return (
-    <section
+    <section data-analytics-section="Closing invitation"
       id="demo-closing"
       aria-labelledby="demo-closing-title"
       className="surface-dark relative overflow-hidden bg-night py-28 text-center text-white md:py-36"

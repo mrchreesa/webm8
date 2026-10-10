@@ -1,5 +1,7 @@
 "use client";
 
+import { analyticsName } from "@/lib/analyticsNames";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -68,7 +70,7 @@ export function Header() {
   const overDarkHero = staysDark || ((isMoversPage || isLeadPage || isFreeDemoPage) && !scrolled);
 
   return (
-    <header
+    <header data-analytics-section="Header"
       className={cn(
         "sticky top-0 z-50 w-full transition-all",
         staysDark
@@ -88,7 +90,7 @@ export function Header() {
           overDarkHero && "surface-dark",
         )}
       >
-        <Link
+        <Link data-analytics-id="Logo - Home"
           href="/"
           className={cn(
             "flex items-center gap-1 md:gap-1.5",
@@ -133,7 +135,7 @@ export function Header() {
           <>
             <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
               {navItems.map((item) => (
-                <Link
+                <Link data-analytics-id={analyticsName(item.label)}
                   key={item.href}
                   href={item.href}
                   className={cn(
@@ -154,7 +156,7 @@ export function Header() {
 
             <div className="hidden items-center gap-4 md:flex">
               {brand.phone ? (
-                <a
+                <a data-analytics-id="Call WebM8"
                   href={`tel:${brand.phone}`}
                   className={cn(
                     "text-base font-bold tracking-tight transition-colors",
@@ -167,7 +169,7 @@ export function Header() {
                 </a>
               ) : null}
               {isMoversPage ? (
-                <LinkButton href="#review-request" size="md">
+                <LinkButton data-analytics-id="Book a free review" href="#review-request" size="md">
                   Book my free review
                 </LinkButton>
               ) : (
@@ -177,7 +179,7 @@ export function Header() {
               )}
             </div>
 
-            <button
+            <button data-analytics-id={open ? "Close menu" : "Open menu"}
               type="button"
               className={cn(
                 "inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors md:hidden",
@@ -198,6 +200,7 @@ export function Header() {
 
       <div
         id="mobile-menu"
+        data-analytics-section="Mobile menu"
         hidden={!open}
         className="border-t border-border bg-white md:hidden"
       >
@@ -206,7 +209,7 @@ export function Header() {
           className="container-page flex flex-col gap-1 py-5"
         >
           {navItems.map((item) => (
-            <Link
+            <Link data-analytics-id={analyticsName(item.label)}
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
@@ -221,7 +224,7 @@ export function Header() {
             </Link>
           ))}
           {isMoversPage ? (
-            <LinkButton
+            <LinkButton data-analytics-id="Book a free review"
               href="#review-request"
               size="lg"
               className="mt-3 justify-center"
@@ -240,7 +243,7 @@ export function Header() {
             </DemoCtaButton>
           )}
           {brand.phone ? (
-            <a
+            <a data-analytics-id="Call WebM8"
               href={`tel:${brand.phone}`}
               onClick={() => setOpen(false)}
               className="mt-2 rounded-xl px-4 py-3 text-center text-base font-bold tracking-tight text-ink hover:bg-ink/5"

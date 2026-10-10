@@ -1,5 +1,7 @@
 "use client";
 
+import { analyticsName } from "@/lib/analyticsNames";
+
 import { useEffect, useId, useRef } from "react";
 import { heroTradeOrder, trades, type TradeKey } from "@/lib/trades";
 import { TradeIcon } from "./TradeIcon";
@@ -31,7 +33,7 @@ export function TradeChips({ shownKey, onPick }: { shownKey: TradeKey; onPick: (
       <ul ref={listRef} aria-labelledby={labelId} data-story="chips" className={styles.chips}>
         {heroTradeOrder.map((key) => (
           <li key={key} data-trade={key} className={styles.chipItem}>
-            <button
+            <button data-analytics-id={analyticsName(`Choose ${trades[key].short}`)}
               type="button"
               data-live={key === shownKey ? "" : undefined}
               aria-pressed={key === shownKey}
