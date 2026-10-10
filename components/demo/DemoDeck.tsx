@@ -66,17 +66,19 @@ function placement(offset: number): CSSProperties {
 type DemoDeckProps = {
   active: number;
   onActiveChange: (index: number) => void;
+  autoPlay?: boolean;
 };
 
-export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
+export function DemoDeck({ active, onActiveChange, autoPlay = true }: DemoDeckProps) {
   const pathname = usePathname();
   // The visible fan is three cards; one more on each side is ready before
   // a swipe or autoplay brings it into view. Distant slides have no image yet.
-  const shouldLoadImage = useDeckImages(active, count, 2);
   const [touched, setTouched] = useState(false);
   /** The card whose live site is open in the dialog. */
   const [opened, setOpened] = useState<number | null>(null);
-  const [paused, setPaused] = useState(false);
+  const [paused, setPaused] = useState(!autoPlay);
+  // The organic page starts as a stable, visible fan; warm extra slides on interaction.
+  const shouldLoadImage = useDeckImages(active, count, paused && !touched ? 1 : 2);
   const [visible, setVisible] = useState(true);
   const [reduced, setReduced] = useState(false);
   const [finePointer, setFinePointer] = useState(false);
@@ -272,7 +274,7 @@ export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
                   onClick={(event) => openCard(event, index)}
                   // The first preview is useful content at first paint. Only
                   // the supporting cards deal in; navigation still animates.
-                  className={cn(demo.cardFace, index !== 0 && demo.enter, "block")}
+                  className={cn(demo.cardFace, autoPlay && index !== 0 && demo.enter, "block")}
                   style={{ "--i": index } as CSSProperties}
                 >
                   {shouldLoadImage(index) && <Image
