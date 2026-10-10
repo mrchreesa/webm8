@@ -1,6 +1,7 @@
 "use client";
 
 import Script from "next/script";
+import { metaPixelScript } from "@/lib/metaPixelScript";
 
 /**
  * Loads the Meta Pixel only when an ID is configured and the browser has not
@@ -14,20 +15,7 @@ export function MetaPixel() {
 
   return (
     <Script id="meta-pixel" strategy="afterInteractive">
-      {`
-        if (navigator.doNotTrack !== "1" && navigator.globalPrivacyControl !== true) {
-          !function(f,b,e,v,n,t,s)
-          {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-          n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-          if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-          n.queue=[];t=b.createElement(e);t.async=!0;
-          t.src=v;s=b.getElementsByTagName(e)[0];
-          s.parentNode.insertBefore(t,s)}(window,document,'script',
-          'https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', ${JSON.stringify(pixelId)});
-          fbq('track', 'PageView');
-        }
-      `}
+      {metaPixelScript(pixelId)}
     </Script>
   );
 }
