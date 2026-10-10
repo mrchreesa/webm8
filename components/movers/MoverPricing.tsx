@@ -5,15 +5,7 @@ import { Icon } from "@/components/ui/Icon";
 import { usePlanSelection } from "@/components/movers/PlanSelection";
 import { cn } from "@/lib/cn";
 import { trackEvent } from "@/lib/analytics";
-import {
-  annualEquivalentMonthly,
-  annualSaving,
-  formatUsd,
-  formatUsdPrecise,
-  moverPlans,
-  type BillingCycle,
-  type MoverPlan,
-} from "@/lib/movers";
+import { moverPlans, type MoverPlan } from "@/lib/movers";
 
 const planHighlights: Record<MoverPlan["id"], string[]> = {
   standard: [
@@ -33,13 +25,7 @@ const planHighlights: Record<MoverPlan["id"], string[]> = {
 };
 
 export function MoverPricing() {
-  const { billing, setBilling, chooseAndRequest } = usePlanSelection();
-
-  function changeBilling(next: BillingCycle) {
-    if (next === billing) return;
-    setBilling(next);
-    trackEvent("mover_billing_changed", { billing: next });
-  }
+  const { chooseAndRequest } = usePlanSelection();
 
   return (
     <section
@@ -48,14 +34,17 @@ export function MoverPricing() {
       className="scroll-mt-20 bg-bg py-16 md:py-20"
     >
       <div className="container-page">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="max-w-2xl">
           <h2
             id="mover-plans-heading"
             className="text-4xl font-bold tracking-tight text-ink md:text-5xl"
           >
             Plans
           </h2>
-          <BillingToggle billing={billing} onChange={changeBilling} />
+          <p className="mt-4 text-lg leading-relaxed text-muted">
+            Every website is quoted to the business, so you only pay for what
+            you need.
+          </p>
         </div>
 
         <div className="mt-8 grid gap-5 md:grid-cols-2 md:gap-6">
@@ -63,9 +52,8 @@ export function MoverPricing() {
             <PlanCard
               key={plan.id}
               plan={plan}
-              billing={billing}
               onChoose={() => {
-                trackEvent("mover_plan_selected", { plan: plan.id, billing });
+                trackEvent("mover_plan_selected", { plan: plan.id });
                 chooseAndRequest(plan.id);
               }}
             />
@@ -73,7 +61,7 @@ export function MoverPricing() {
         </div>
 
         <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-medium text-ink">
-          {["$0 setup fee", "No minimum contract term", "No payment to book"].map((item) => (
+          {["No setup fee", "No minimum contract term", "No payment to book"].map((item) => (
             <span key={item} className="inline-flex items-center gap-2">
               <Icon name="check" size={15} className="text-info-ink" aria-hidden />
               {item}
@@ -117,86 +105,13 @@ export function MoverPricing() {
   );
 }
 
-function BillingToggle({
-  billing,
-  onChange,
-}: {
-  billing: BillingCycle;
-  onChange: (next: BillingCycle) => void;
-}) {
-  return (
-    <div
-      role="radiogroup"
-      aria-label="Billing"
-      className="inline-flex w-fit max-w-full rounded-full border border-border bg-white p-1"
-    >
-      <ToggleOption
-        selected={billing === "monthly"}
-        onSelect={() => onChange("monthly")}
-      >
-        Monthly
-      </ToggleOption>
-      <ToggleOption
-        selected={billing === "annual"}
-        onSelect={() => onChange("annual")}
-      >
-        Annual
-        <span
-          className={cn(
-            "ml-2 rounded-full px-2 py-0.5 text-xs font-semibold",
-            billing === "annual"
-              ? "bg-white/20 text-white"
-              : "bg-accent/15 text-accent",
-          )}
-        >
-          2 months free
-        </span>
-      </ToggleOption>
-    </div>
-  );
-}
-
-function ToggleOption({
-  selected,
-  onSelect,
-  children,
-}: {
-  selected: boolean;
-  onSelect: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="relative cursor-pointer">
-      <input
-        type="radio"
-        name="mover-billing"
-        checked={selected}
-        onChange={onSelect}
-        className="peer sr-only"
-      />
-      <span
-        className={cn(
-          "flex min-h-11 items-center rounded-full px-3.5 text-sm font-semibold transition-colors sm:px-5",
-          "peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink",
-          selected ? "bg-ink text-white" : "text-muted hover:text-ink",
-        )}
-      >
-        {children}
-      </span>
-    </label>
-  );
-}
-
 function PlanCard({
   plan,
-  billing,
   onChoose,
 }: {
   plan: MoverPlan;
-  billing: BillingCycle;
   onChoose: () => void;
 }) {
-  const annual = billing === "annual";
   const growth = plan.id === "growth";
 
   return (
@@ -227,24 +142,12 @@ function PlanCard({
       </div>
 
       <div className={cn("mt-6 border-b pb-6", growth ? "border-white/15" : "border-border")}>
-        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-          <span className="text-5xl font-bold tracking-tight tabular-nums lg:text-[3.5rem]">
-            {formatUsd(annual ? plan.annualPrice : plan.monthlyPrice)}
-          </span>
-          <span className={cn("text-sm", growth ? "text-muted-invert" : "text-muted")}>
-            {annual ? "/ year" : "/ month"}
-          </span>
-        </div>
-        <p className={cn("mt-2 text-sm leading-relaxed", growth ? "text-muted-invert" : "text-muted")}>
-          {annual
-            ? `Billed yearly · ${formatUsdPrecise(annualEquivalentMonthly(plan))}/mo equivalent`
-            : "Billed monthly"}
+        <p className="text-4xl font-bold tracking-tight lg:text-5xl">
+          Custom quote
         </p>
-        {annual && (
-          <p className={cn("mt-1 text-sm font-semibold", growth ? "text-info" : "text-info-ink")}>
-            Save {formatUsd(annualSaving(plan))} a year
-          </p>
-        )}
+        <p className={cn("mt-2 text-sm leading-relaxed", growth ? "text-muted-invert" : "text-muted")}>
+          {plan.summary}
+        </p>
       </div>
 
       <ul className="my-6 space-y-3">

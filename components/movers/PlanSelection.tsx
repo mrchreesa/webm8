@@ -8,14 +8,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { BillingCycle, MoverPlanId } from "@/lib/movers";
+import type { MoverPlanId } from "@/lib/movers";
 
 type PlanSelection = {
   /** Null until the visitor picks a plan. The form treats it as optional context. */
   plan: MoverPlanId | null;
-  billing: BillingCycle;
   setPlan: (plan: MoverPlanId | null) => void;
-  setBilling: (billing: BillingCycle) => void;
   /** Pick a plan and jump to the request form in one action. */
   chooseAndRequest: (plan: MoverPlanId) => void;
 };
@@ -24,9 +22,6 @@ const PlanSelectionContext = createContext<PlanSelection | null>(null);
 
 export function PlanSelectionProvider({ children }: { children: ReactNode }) {
   const [plan, setPlan] = useState<MoverPlanId | null>(null);
-  // Monthly is the default: it is the lower commitment and the honest starting
-  // point. Annual is opt-in.
-  const [billing, setBilling] = useState<BillingCycle>("monthly");
 
   const chooseAndRequest = useCallback((next: MoverPlanId) => {
     setPlan(next);
@@ -42,8 +37,8 @@ export function PlanSelectionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ plan, billing, setPlan, setBilling, chooseAndRequest }),
-    [plan, billing, chooseAndRequest],
+    () => ({ plan, setPlan, chooseAndRequest }),
+    [plan, chooseAndRequest],
   );
 
   return (

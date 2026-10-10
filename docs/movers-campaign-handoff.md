@@ -7,9 +7,11 @@ Internal. Nothing in this file appears on the public page.
 ## What is live in the code
 
 - `/movers/` rebuilt around one offer: a free 10-minute custom demo.
-- Standard $147/month or $1,470/year; Growth $247/month or $2,470/year. Annual is
-  ten months paid for twelve months of service. Billing selector defaults to
-  Monthly; the annual option is labelled "2 months free".
+- Standard and Growth publish no price (2026-10-10), as on `/pricing/`: each card
+  reads "Custom quote" and every website is quoted to the business. The billing
+  selector is gone; the FAQ still says annual is ten months paid for twelve months
+  of service. The form no longer sends `billing`, so the server stores its default,
+  `monthly`, on new rows.
 - Review requests POST to `/api/mover-review/`, are validated server-side, and are
   written to `public.agency_review_requests` in the **webm8-platform** Supabase
   project (`usdkmmlvngsrmylcqlgb`). The success panel appears only after the row
@@ -174,5 +176,6 @@ git repository, so those files are not under version control.
   `aria-hidden`) whenever the request form is on screen.
 - Tab order through the form is name → company → email → phone → Google Business
   Profile/social page → six site-feel checkboxes → optional notes → submit.
-- Every required figure renders on the page: $147, $1,470, $247, $2,470, $122.50,
-  $205.83, $294, $494, "2 months free", "$0 setup fee", "No minimum contract term".
+- At the time, every required figure rendered on the page: $147, $1,470, $247,
+  $2,470, $122.50, $205.83, $294, $494, "2 months free", "$0 setup fee", "No
+  minimum contract term". The prices were taken off the page on 2026-10-10.

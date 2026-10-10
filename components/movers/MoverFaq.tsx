@@ -1,14 +1,3 @@
-import {
-  annualEquivalentMonthly,
-  annualSaving,
-  formatUsd,
-  formatUsdPrecise,
-  getMoverPlan,
-} from "@/lib/movers";
-
-const standard = getMoverPlan("standard");
-const growth = getMoverPlan("growth");
-
 /**
  * Exported so the page can build FAQPage structured data from exactly the
  * answers shown to a reader.
@@ -17,8 +6,8 @@ export const moverFaqs: { question: string; answer: string }[] = [
   {
     question: "What does each plan include?",
     answer:
-      `Standard (${formatUsd(standard.monthlyPrice)} a month) is a managed moving-company website: design and copy written for your company, services and real service area, a responsive layout with visible phone buttons and a straightforward estimate form, quote requests delivered to your email, trust sections built from your reviews, photos and licence and insurance details, hosting, security, backups and maintenance, foundational on-page SEO and analytics, routine small content edits, and a simple monthly website and enquiry summary. ` +
-      `Growth (${formatUsd(growth.monthlyPrice)} a month) adds the ongoing work: Google Business Profile support and optimization with your access and approval, one new or substantially improved service or location page each month, review-request and enquiry-follow-up workflows using supported integrations, one useful conversion improvement each month informed by evidence where available, and a monthly performance review covering enquiries, sources and next actions.`,
+      "Standard is a managed moving-company website: design and copy written for your company, services and real service area, a responsive layout with visible phone buttons and a straightforward estimate form, quote requests delivered to your email, trust sections built from your reviews, photos and licence and insurance details, hosting, security, backups and maintenance, foundational on-page SEO and analytics, routine small content edits, and a simple monthly website and enquiry summary. " +
+      "Growth adds the ongoing work: Google Business Profile support and optimization with your access and approval, one new or substantially improved service or location page each month, review-request and enquiry-follow-up workflows using supported integrations, one useful conversion improvement each month informed by evidence where available, and a monthly performance review covering enquiries, sources and next actions.",
   },
   {
     question: "What do we need to supply?",
@@ -31,14 +20,9 @@ export const moverFaqs: { question: string; answer: string }[] = [
       "Yes to both. If you already own a domain, the new site can be pointed at it and your address doesn't change. If you have an existing website we replace it, and we agree a switch-over time with you so there's no gap where customers can't reach you. If you don't have a domain yet we'll help you register one in your own name.",
   },
   {
-    question: "How do monthly and annual billing work?",
+    question: "How much does it cost?",
     answer:
-      `Monthly billing is ${formatUsd(standard.monthlyPrice)} or ${formatUsd(growth.monthlyPrice)} a month, charged each month, with no minimum contract term. Annual billing is a single payment up front — ${formatUsd(standard.annualPrice)} for Standard or ${formatUsd(growth.annualPrice)} for Growth — which covers 12 months of service. Either way there's no setup fee. Annual is a discount for paying up front; it isn't a trial, and it isn't two free months added to monthly billing.`,
-  },
-  {
-    question: "How much does annual billing save?",
-    answer:
-      `You pay for 10 months and get 12, so you save two months. On Standard that's ${formatUsd(annualSaving(standard))} a year, which works out at ${formatUsdPrecise(annualEquivalentMonthly(standard))} a month instead of ${formatUsd(standard.monthlyPrice)}. On Growth it's ${formatUsd(annualSaving(growth))} a year, or ${formatUsdPrecise(annualEquivalentMonthly(growth))} a month instead of ${formatUsd(growth.monthlyPrice)}. The annual amount is charged once, not monthly.`,
+      "Every website is quoted to the business. A company covering one town and a company with a page for every service and city are very different jobs, so one fixed price would be unfair to one of them. Once we know what your company needs, we give you a clear monthly price, and it's agreed before anything starts. There's no setup fee, no minimum contract term, and the demo is free. You can pay monthly, or pay for the year up front and get 12 months of service for the price of 10.",
   },
   {
     question: "How does cancelling work?",

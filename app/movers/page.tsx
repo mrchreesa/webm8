@@ -10,13 +10,12 @@ import { PlanSelectionProvider } from "@/components/movers/PlanSelection";
 import { ReviewExpectations } from "@/components/movers/ReviewExpectations";
 import { ReviewFormSection } from "@/components/movers/ReviewFormSection";
 import { StickyMoverCta } from "@/components/movers/StickyMoverCta";
-import { formatUsd, moverPlans } from "@/lib/movers";
+import { moverPlans } from "@/lib/movers";
 import { absoluteUrl, createPageMetadata, siteName } from "@/lib/seo";
 
-const fromPrice = formatUsd(Math.min(...moverPlans.map((plan) => plan.monthlyPrice)));
-const pageTitle = `Moving Company Websites, Managed From ${fromPrice}/month`;
+const pageTitle = "Moving Company Websites, Built and Managed";
 const pageDescription =
-  "WebM8 builds and manages websites for US moving companies that make requesting an estimate simple. Two plans, $0 setup, no minimum term. Free 10-minute demo.";
+  "WebM8 builds and manages websites for US moving companies that make requesting an estimate simple. No setup fee, no minimum term. Free 10-minute demo.";
 
 export const metadata: Metadata = createPageMetadata({
   title: pageTitle,
@@ -51,13 +50,6 @@ export default function MoversPage() {
           name: `${plan.name} — ${plan.label}`,
           description: plan.summary,
           url: absoluteUrl("/movers/#pricing"),
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: String(plan.monthlyPrice),
-            priceCurrency: "USD",
-            unitCode: "MON",
-            billingIncrement: 1,
-          },
           itemOffered: {
             "@type": "Service",
             name: `${plan.name} moving company website plan`,
