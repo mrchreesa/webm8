@@ -13,6 +13,7 @@ import {
   type PointerEvent,
 } from "react";
 import { Icon } from "@/components/ui/Icon";
+import { useDeckImages } from "@/components/ui/useDeckImages";
 import { cn } from "@/lib/cn";
 import { cardOffset, springStep, wrapIndex } from "@/lib/demoDeck";
 import { projects, workDeckStart } from "@/lib/site";
@@ -269,10 +270,30 @@ export function WorkDeck() {
   const [active, setActive] = useState(startIndex);
   const [motion] = useState(() => createDeckMotion(setActive));
   const stageRef = useRef<HTMLDivElement>(null);
+  const [nearViewport, setNearViewport] = useState(false);
+  const shouldLoadImage = useDeckImages(active, count, 2, nearViewport);
   const drag = useRef<Drag | null>(null);
   // A drag that ends on a card must not also count as a click on it.
   const swiped = useRef(false);
   const current = projects[active];
+
+  // This deck sits below the story. Start its visible fan shortly before it
+  // enters view, instead of competing with the hero for image bandwidth.
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    if (!("IntersectionObserver" in window)) {
+      setNearViewport(true);
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setNearViewport(true);
+      observer.disconnect();
+    }, { rootMargin: "600px 0px" });
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, []);
 
   // Draws the deck for a phone or a wider screen, and settles at once under reduced motion.
   useLayoutEffect(() => {
@@ -456,14 +477,15 @@ export function WorkDeck() {
                   </span>
                 </div>
                 <div className="relative aspect-[16/9.2] overflow-hidden">
-                  <Image
+                  {shouldLoadImage(index) && <Image
                     src={project.screenshots.desktop}
                     alt=""
                     fill
                     draggable={false}
                     sizes="(min-width: 1024px) 760px, 76vw"
+                    loading="eager"
                     className="origin-top object-cover object-top transition-[scale] duration-700 ease-out motion-safe:group-hover/card:scale-[1.03]"
-                  />
+                  />}
                 </div>
               </div>
               <div
@@ -472,7 +494,7 @@ export function WorkDeck() {
                 className="absolute right-[-3%] bottom-[-8%] w-[19%] rounded-2xl bg-[#0b1220] p-1 shadow-[0_30px_50px_-20px_rgb(0_0_0/0.9)] origin-bottom ring-1 ring-white/10 transition-[translate] duration-300 ease-out motion-safe:group-hover/card:-translate-y-1"
               >
                 <div className="relative aspect-[9/19] overflow-hidden rounded-xl">
-                  <Image src={project.screenshots.mobile} alt="" fill draggable={false} sizes="150px" className="object-cover object-top" />
+                  {shouldLoadImage(index) && <Image src={project.screenshots.mobile} alt="" fill draggable={false} sizes="150px" loading="eager" className="object-cover object-top" />}
                 </div>
               </div>
             </button>

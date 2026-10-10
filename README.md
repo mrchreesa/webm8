@@ -75,7 +75,7 @@ Headlines (`h1`, `h2`) use Funnel Display; body text uses Geist. Put `surface-da
 
 ## Measurement
 
-`components/analytics/WebsiteAnalytics.tsx` mounts the measurement: native WebM8 tracking and the configured Meta/Mixpanel integrations. There is no consent prompt; DNT/GPC keep them all off. Native activity lasts up to 180 days.
+`components/analytics/WebsiteAnalytics.tsx` mounts the measurement: native WebM8 tracking and the configured Meta Pixel. There is no consent prompt; DNT/GPC keep them all off. Native activity lasts up to 180 days.
 
 Set `NEXT_PUBLIC_WEBM8_ANALYTICS_SITE_ID` to the registered site UUID, with both the apex and canonical `www` origin allowed in Analytics. The optional `NEXT_PUBLIC_WEBM8_TRACKER_URL` defaults to the platform tracker. Set the same UUID as `CRM_ANALYTICS_SITE_ID` in the CRM. Its Website activity panel compares `/demo` arrivals with Meta submission times and any ad/campaign identifiers. Matches remain possible, never confirmed identities. `/demo` is the owner's designated Instant Form destination, including visits without referrer/tags.
 

@@ -22,11 +22,11 @@ const sections = [
   },
   {
     title: "Who receives it",
-    body: "We may use trusted companies to deliver forms and email, keep the website online, book calls, and keep customer records. Website activity is measured in WebM8 Analytics and, where configured, Mixpanel and Meta Pixel. These services receive only the information needed to do their work. We do not sell personal information.",
+    body: "We may use trusted companies to deliver forms and email, keep the website online, book calls, and keep customer records. Website activity is measured in WebM8 Analytics and, where configured, Meta Pixel. These services receive only the information needed to do their work. We do not sell personal information.",
   },
   {
     title: "How we measure website use",
-    body: "WebM8 Analytics records the pages you visit, clicks, scroll reach, approximate time spent, device category and available ad or campaign tags. It saves random browser and session identifiers on this website. Our team may compare visit times and ad tags with incoming Meta Instant Form enquiries to suggest possible visits; this does not verify who visited. We do not put names, email addresses, phone numbers or form answers in this telemetry. Mixpanel remains configured without persistent visitor profiles. Meta Pixel, when configured, sends website events to Meta for advertising measurement. Do Not Track and Global Privacy Control disable these collectors.",
+    body: "WebM8 Analytics records the pages you visit, clicks, scroll reach, approximate time spent, device category and available ad or campaign tags. It saves random browser and session identifiers on this website. Our team may compare visit times and ad tags with incoming Meta Instant Form enquiries to suggest possible visits; this does not verify who visited. We do not put names, email addresses, phone numbers or form answers in this telemetry. Meta Pixel, when configured, sends website events to Meta for advertising measurement. Do Not Track and Global Privacy Control disable these collectors.",
   },
   {
     title: "How long we keep it",
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
       />
       <section data-analytics-section="Privacy policy" className="py-16 md:py-20">
         <div className="container-page max-w-3xl">
-          <p className="text-sm text-muted">Last updated: 7 October 2026</p>
+          <p className="text-sm text-muted">Last updated: 10 October 2026</p>
           <div className="mt-8 space-y-8">
             {sections.map((section) => (
               <section key={section.title}>

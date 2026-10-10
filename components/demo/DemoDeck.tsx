@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import type { CSSProperties, FocusEvent, KeyboardEvent, MouseEvent, PointerEvent } from "react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/Icon";
+import { useDeckImages } from "@/components/ui/useDeckImages";
 import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/cn";
 import { cardOffset, wrapIndex } from "@/lib/demoDeck";
@@ -69,6 +70,9 @@ type DemoDeckProps = {
 
 export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
   const pathname = usePathname();
+  // The visible fan is three cards; one more on each side is ready before
+  // a swipe or autoplay brings it into view. Distant slides have no image yet.
+  const shouldLoadImage = useDeckImages(active, count, 2);
   const [touched, setTouched] = useState(false);
   /** The card whose live site is open in the dialog. */
   const [opened, setOpened] = useState<number | null>(null);
@@ -269,7 +273,7 @@ export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
                   className={cn(demo.cardFace, demo.enter, "block")}
                   style={{ "--i": index } as CSSProperties}
                 >
-                  <Image
+                  {shouldLoadImage(index) && <Image
                     src={project.screenshots.mobile}
                     alt={`${project.name}, a demo website for a ${project.industry.toLowerCase()} business`}
                     width={420}
@@ -277,9 +281,11 @@ export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
                     sizes="(min-width: 1024px) 300px, 172px"
                     // The front card and the two fanned beside it are on screen at load.
                     priority={Math.abs(cardOffset(index, 0, count)) <= 1}
+                    loading="eager"
+                    fetchPriority={Math.abs(offset) <= 1 ? undefined : "low"}
                     draggable={false}
                     className="h-full w-full object-cover object-top"
-                  />
+                  />}
                   <span className={demo.label}>
                     <small>Real demo</small>
                     {project.label}
