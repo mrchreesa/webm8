@@ -1,0 +1,8 @@
+{
+  "profile": "hybrid",
+  "sourceRoots": ["components/forms", "components/demo"],
+  "canonicalMap": "UX-CONTRACT.md",
+  "ownership": {
+    "Select/Listbox": "native"
+  }
+}

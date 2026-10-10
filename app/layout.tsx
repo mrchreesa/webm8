@@ -40,6 +40,7 @@ export const metadata: Metadata = {
   },
   description: defaultDescription,
   applicationName: siteName,
+  verification: { google: "ztwEL2eGG-2IbChblPqQBzN4VOCxTSfzNvPSJGJUX3s", other: { "msvalidate.01": "6BCC2A55BA367C353107629F00BB421A" } },
   openGraph: {
     title: defaultTitle,
     description: socialDescription,

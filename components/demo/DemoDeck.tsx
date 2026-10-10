@@ -281,10 +281,11 @@ export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
                     width={420}
                     height={900}
                     sizes="(min-width: 1024px) 300px, 172px"
-                    // The front card and the two fanned beside it are on screen at load.
-                    priority={Math.abs(cardOffset(index, 0, count)) <= 1}
+                    // Keep the initial LCP image high priority even after autoplay moves it.
+                    // Supporting previews must not compete with it for a preload.
+                    priority={index === 0}
                     loading="eager"
-                    fetchPriority={Math.abs(offset) <= 1 ? undefined : "low"}
+                    fetchPriority={index === 0 ? "high" : "low"}
                     draggable={false}
                     className="h-full w-full object-cover object-top"
                   />}
