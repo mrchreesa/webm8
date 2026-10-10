@@ -86,7 +86,6 @@ SUPABASE_SECRET_KEY=<the sb_secret_… key from webm8-platform>
 Optional:
 
 ```
-NEXT_PUBLIC_MIXPANEL_TOKEN=<token>     # currently unset, so measurement is off
 NEXT_PUBLIC_META_PIXEL_ID=<pixel id>   # required for the Meta Lead event
 ```
 
@@ -112,7 +111,9 @@ git repository, so those files are not under version control.
    this repo and the calendar URL is a committed constant, because an unset
    environment variable is exactly the failure that was being repeated.
 
-2. **Mixpanel has never collected anything** — no token in the live build.
+2. **Mixpanel was inactive at the original inspection** — no token in the live build.
+   Its unused integration was removed on 10 October 2026. Website measurement now
+   uses native WebM8 Analytics; see the README's Measurement section for configuration.
 
 3. **The ops-dashboard Supabase project (`ttytudvnnnjzyrmehfhi`) is PAUSED.**
    That is why review requests were not put there. A paused project would have

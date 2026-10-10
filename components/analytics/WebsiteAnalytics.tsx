@@ -1,6 +1,5 @@
 "use client";
 import { useEffect } from "react";
-import { MixpanelAnalytics } from "./MixpanelAnalytics";
 import { MetaPixel } from "./MetaPixel";
 import { measurementBlocked } from "@/lib/measurement";
 
@@ -25,7 +24,7 @@ const trackerUrl =
 
 /**
  * Website measurement: the native WebM8 tracker and, where configured,
- * Mixpanel and the Meta Pixel. A browser that sends Do Not Track or Global
+ * the Meta Pixel. A browser that sends Do Not Track or Global
  * Privacy Control gets none of them.
  */
 export function WebsiteAnalytics() {
@@ -51,10 +50,5 @@ export function WebsiteAnalytics() {
     }
     return () => window.removeEventListener("webm8:ready", ready);
   }, []);
-  return (
-    <>
-      <MixpanelAnalytics />
-      <MetaPixel />
-    </>
-  );
+  return <MetaPixel />;
 }

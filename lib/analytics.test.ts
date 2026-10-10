@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  flushAnalyticsQueue,
   trackAcceptedDemoRequest,
   trackEvent,
 } from "./analytics.ts";
@@ -22,38 +21,44 @@ test("business events reach every configured provider, and a saved demo request 
   const calls: unknown[][] = [];
   const fake = {
     fbq: (...args: unknown[]) => calls.push(["fbq", ...args]),
-    mixpanel: { track: (...args: unknown[]) => calls.push(["mixpanel", ...args]) },
+    gtag: (...args: unknown[]) => calls.push(["gtag", ...args]),
     WebM8Analytics: {
       track: (...args: unknown[]) => calls.push(["webm8.track", ...args]),
       form: (...args: unknown[]) => calls.push(["webm8.form", ...args]),
     },
   };
   withWindow(fake, () => {
-    trackEvent("demo_form_started");
+    trackEvent("demo_form_started", { placement: "free-demo" });
     assert.deepEqual(calls, [
-      ["mixpanel", "demo_form_started", {}],
       ["webm8.track", "demo_form_started"],
       ["webm8.form", "demo_request", "start"],
-      ["fbq", "trackCustom", "demo_form_started", {}],
+      ["gtag", "event", "demo_form_started", { placement: "free-demo" }],
+      ["fbq", "trackCustom", "demo_form_started", { placement: "free-demo" }],
     ]);
 
     calls.length = 0;
     trackAcceptedDemoRequest("demo-request-1");
     trackAcceptedDemoRequest("demo-request-1");
+    assert.deepEqual(calls.filter((args) => String(args[0]).startsWith("webm8.")), [
+      ["webm8.track", "demo_request_accepted"],
+      ["webm8.form", "demo_request", "success"],
+    ]);
     const leads = calls.filter((args) => args[0] === "fbq" && args[1] === "track" && args[2] === "Lead");
     assert.equal(leads.length, 1);
     assert.deepEqual(leads[0][4], { eventID: "demo-request-1" });
   });
 });
 
-test("events wait in a queue until Mixpanel loads", () => {
+test("native events work without other providers, and missing providers are safe", () => {
   const tracked: unknown[][] = [];
-  const fake: { mixpanel?: { track: (...args: unknown[]) => void } } = {};
+  const fake = {
+    WebM8Analytics: { track: (...args: unknown[]) => tracked.push(args) },
+  };
   withWindow(fake, () => {
     trackEvent("demo_cta_clicked", { placement: "hero" });
-    assert.equal(tracked.length, 0);
-    fake.mixpanel = { track: (...args) => tracked.push(args) };
-    flushAnalyticsQueue();
-    assert.deepEqual(tracked, [["demo_cta_clicked", { placement: "hero" }]]);
+    assert.deepEqual(tracked, [["demo_cta_clicked"]]);
+  });
+  withWindow({}, () => {
+    assert.doesNotThrow(() => trackEvent("demo_cta_clicked", { placement: "hero" }));
   });
 });

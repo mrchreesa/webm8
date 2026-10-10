@@ -7,15 +7,8 @@ export type AnalyticsDetails = Record<
 
 declare global {
   interface Window {
-    mixpanel?: {
-      track: (name: string, details?: Record<string, AnalyticsValue>) => void;
-    };
     gtag?: (...args: unknown[]) => void;
     fbq?: (...args: unknown[]) => void;
-    __webm8AnalyticsQueue?: Array<{
-      name: string;
-      details: Record<string, AnalyticsValue>;
-    }>;
   }
 }
 
@@ -36,13 +29,6 @@ export function trackEvent(name: string, details: AnalyticsDetails = {}) {
       .map(([key, value]) => [key.slice(0, 50), normalizeValue(value!)]),
   );
 
-  if (window.mixpanel) {
-    window.mixpanel.track(safeName, safeDetails);
-  } else {
-    const queue = (window.__webm8AnalyticsQueue ||= []);
-    queue.push({ name: safeName, details: safeDetails });
-    if (queue.length > 50) queue.shift();
-  }
   window.WebM8Analytics?.track(safeName);
   if (safeName === "demo_form_started") window.WebM8Analytics?.form("demo_request", "start");
   if (safeName === "demo_request_accepted") window.WebM8Analytics?.form("demo_request", "success");
@@ -96,14 +82,6 @@ export function trackAcceptedDemoRequest(
     { content_name: "Free personalised website demo" },
     { eventID: requestId },
   );
-}
-
-export function flushAnalyticsQueue() {
-  if (typeof window === "undefined" || !window.mixpanel) return;
-
-  const queue = window.__webm8AnalyticsQueue || [];
-  window.__webm8AnalyticsQueue = [];
-  queue.forEach(({ name, details }) => window.mixpanel?.track(name, details));
 }
 
 function normalizeValue(value: AnalyticsValue): AnalyticsValue {
