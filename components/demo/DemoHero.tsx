@@ -10,7 +10,7 @@ import { DemoIntro } from "./DemoIntro";
  * on the right, stacked on a phone. `line` is the sentence under the headline;
  * `children` sit beneath it (on /free-demo/, the button down to the form).
  */
-export function DemoHero({ line, children }: { line: ReactNode; children?: ReactNode }) {
+export function DemoHero({ line, children, autoPlay = true }: { line: ReactNode; children?: ReactNode; autoPlay?: boolean }) {
   const [deckIndex, setDeckIndex] = useState(0);
 
   return (
@@ -30,7 +30,7 @@ export function DemoHero({ line, children }: { line: ReactNode; children?: React
         </div>
 
         <div className="-mx-5 overflow-hidden px-5 pt-1 lg:mx-0 lg:overflow-visible lg:px-0">
-          <DemoDeck active={deckIndex} onActiveChange={setDeckIndex} />
+          <DemoDeck active={deckIndex} onActiveChange={setDeckIndex} autoPlay={autoPlay} />
         </div>
       </div>
     </section>
