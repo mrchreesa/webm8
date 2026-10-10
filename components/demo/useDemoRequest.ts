@@ -129,12 +129,15 @@ export function useDemoRequest() {
     if (!checked.ok) {
       setErrors(checked.errors);
       setChecks((value) => value + 1);
+      window.WebM8Analytics?.form("demo_request", "validation_error", { code: "invalid" });
       return;
     }
 
     setStatus("sending");
     setFormError(null);
     const trade = answersRef.current.trade;
+    window.WebM8Analytics?.form("demo_request", "step_complete", { step: 1, steps: 1 });
+    window.WebM8Analytics?.form("demo_request", "submit");
 
     let response: Response;
     try {

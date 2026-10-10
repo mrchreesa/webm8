@@ -69,7 +69,7 @@ export function ContactForm() {
       setErrors(checked.errors);
       setChecks((value) => value + 1);
       setMessage("Please check the highlighted fields.");
-      window.WebM8Analytics?.form("contact_enquiry", "error", {
+      window.WebM8Analytics?.form("contact_enquiry", "validation_error", {
         code: "validation",
       });
       return;
@@ -81,6 +81,8 @@ export function ContactForm() {
     busy.current = true;
     setStatus("sending");
     setMessage("Sending your enquiry…");
+    window.WebM8Analytics?.form("contact_enquiry", "step_complete", { step: 1, steps: 1 });
+    window.WebM8Analytics?.form("contact_enquiry", "submit");
     const abort = new AbortController();
     controller.current = abort;
     const timeout = window.setTimeout(() => abort.abort(), 20_000);
@@ -111,7 +113,7 @@ export function ContactForm() {
             "We couldn't confirm it was saved. Please try again; your answers are still here.",
         );
         setStatus("editing");
-        window.WebM8Analytics?.form("contact_enquiry", "error", {
+        window.WebM8Analytics?.form("contact_enquiry", "submission_error", {
           code: "server",
         });
         return;
@@ -129,7 +131,7 @@ export function ContactForm() {
       setMessage(
         "We couldn't confirm it was saved. Check your connection and try again; your answers are still here.",
       );
-      window.WebM8Analytics?.form("contact_enquiry", "error", {
+      window.WebM8Analytics?.form("contact_enquiry", "submission_error", {
         code: "network",
       });
     } finally {
@@ -150,6 +152,7 @@ export function ContactForm() {
         if (!started.current) {
           started.current = true;
           window.WebM8Analytics?.form("contact_enquiry", "start");
+          window.WebM8Analytics?.form("contact_enquiry", "step_view", { step: 1, steps: 1 });
         }
         const field = (event.target as HTMLInputElement)
           .name as keyof ContactErrors;

@@ -11,7 +11,7 @@ declare global {
       track(name: string): boolean;
       form(
         name: string,
-        action: string,
+        action: "start" | "step_view" | "step_complete" | "submit" | "success" | "checkout" | "booking_confirmed" | "validation_error" | "submission_error",
         options?: { step?: number; steps?: number; code?: string },
       ): boolean;
       refresh(): void;

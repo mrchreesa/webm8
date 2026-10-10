@@ -30,8 +30,12 @@ export function trackEvent(name: string, details: AnalyticsDetails = {}) {
   );
 
   window.WebM8Analytics?.track(safeName);
-  if (safeName === "demo_form_started") window.WebM8Analytics?.form("demo_request", "start");
+  if (safeName === "demo_form_started") {
+    window.WebM8Analytics?.form("demo_request", "start");
+    window.WebM8Analytics?.form("demo_request", "step_view", { step: 1, steps: 1 });
+  }
   if (safeName === "demo_request_accepted") window.WebM8Analytics?.form("demo_request", "success");
+  if (safeName === "demo_request_failed") window.WebM8Analytics?.form("demo_request", details.reason === "validation" ? "validation_error" : "submission_error", { code: String(details.reason || "server") });
   window.gtag?.("event", safeName, safeDetails);
 
   window.fbq?.("trackCustom", safeName, safeDetails);
