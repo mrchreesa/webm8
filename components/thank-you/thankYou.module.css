@@ -181,15 +181,20 @@
 
 /* Each line rises out of its own mask. The padding keeps descenders clear
    of the mask without changing the line spacing. */
-.line {
+.line,
+.staticLine {
   display: block;
   overflow: hidden;
   padding-bottom: 0.1em;
   margin-bottom: -0.1em;
 }
 
-.line > span {
+.line > span,
+.staticLine > span {
   display: block;
+}
+
+.line > span {
   animation: line-up 0.75s calc(0.1s + var(--i, 0) * 0.09s) var(--ease-brand) both;
 }
 

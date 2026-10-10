@@ -270,7 +270,9 @@ export function DemoDeck({ active, onActiveChange }: DemoDeckProps) {
                   // so a click on it must not leave focus inside it.
                   onMouseDown={front ? undefined : (event) => event.preventDefault()}
                   onClick={(event) => openCard(event, index)}
-                  className={cn(demo.cardFace, demo.enter, "block")}
+                  // The first preview is useful content at first paint. Only
+                  // the supporting cards deal in; navigation still animates.
+                  className={cn(demo.cardFace, index !== 0 && demo.enter, "block")}
                   style={{ "--i": index } as CSSProperties}
                 >
                   {shouldLoadImage(index) && <Image
