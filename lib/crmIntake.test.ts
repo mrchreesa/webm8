@@ -28,3 +28,9 @@ test("missing credentials, service failure and malformed receipts never report a
   await assert.rejects(saveDemoToCrm(demo, { ...options, fetcher: async () => Response.json({ ok: true }) }), /invalid receipt/);
 });
 
+test("Meta click presence is serialized as a bounded CRM attribution string", async () => {
+  await saveDemoToCrm({ ...demo, attribution: { has_fbclid: true } }, { ...options, fetcher: async (_input, init) => {
+    assert.deepEqual(JSON.parse(String(init?.body)).attribution, { has_fbclid: "true" });
+    return Response.json({ ok: true, id: demo.submissionKey, duplicate: false });
+  } });
+});

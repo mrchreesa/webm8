@@ -126,7 +126,7 @@ export function TextAreaField({
         aria-describedby={message ? messageId : undefined}
         className={cn(
           fieldBase,
-          "resize-y",
+          "resize-none",
           error && "border-error focus:border-error",
         )}
       />

@@ -143,11 +143,20 @@ function checkField(field: DemoField, answers: DemoAnswers): string | undefined 
   }
 }
 
+export function validateBusinessAnswers(answers: Pick<DemoAnswers, "business" | "link" | "name" | "phone" | "email">): DemoErrors {
+  const errors: DemoErrors = {};
+  for (const field of ["business", "link", "name", "phone", "email"] as const) {
+    const error = checkField(field, { ...emptyDemoAnswers, ...answers });
+    if (error) errors[field] = error;
+  }
+  return errors;
+}
+
 export function validateDemoAnswers(
   answers: DemoAnswers,
 ): { ok: true; request: DemoRequest } | { ok: false; errors: DemoErrors } {
-  const errors: DemoErrors = {};
-  for (const field of Object.keys(emptyDemoAnswers) as DemoField[]) {
+  const errors = validateBusinessAnswers(answers);
+  for (const field of ["trade", "tradeOther"] as const) {
     const error = checkField(field, answers);
     if (error) errors[field] = error;
   }

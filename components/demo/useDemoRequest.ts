@@ -10,7 +10,7 @@ import {
   type DemoErrors,
   type DemoField,
 } from "@/lib/demoRequest";
-import { rememberAttribution, type Attribution } from "@/lib/leadAttribution";
+import { rememberAttribution, rememberLandingReferrer, type Attribution } from "@/lib/leadAttribution";
 import { parseTrade, type TradeKey } from "@/lib/trades";
 
 /**
@@ -147,7 +147,7 @@ export function useDemoRequest() {
           elapsedMs: Date.now() - startedAt.current,
           website_hp: honeypot,
           attribution: attribution.current,
-          referrer: document.referrer,
+          referrer: rememberLandingReferrer(),
           pagePath: window.location.pathname,
         }),
       });

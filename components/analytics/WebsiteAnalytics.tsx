@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { MetaPixel } from "./MetaPixel";
 import { measurementBlocked } from "@/lib/measurement";
+import { rememberAttribution, rememberLandingReferrer } from "@/lib/leadAttribution";
 
 declare global {
   interface Window {
@@ -29,6 +30,9 @@ const trackerUrl =
  */
 export function WebsiteAnalytics() {
   useEffect(() => {
+    // Capture arrival on every entry page so the eventual CRM enquiry keeps its source.
+    rememberAttribution();
+    rememberLandingReferrer();
     if (measurementBlocked(navigator)) return;
     if (!siteId || !/^[0-9a-f-]{36}$/i.test(siteId)) return;
     // The tracker waits to be told it may collect, so it is told once it is ready.

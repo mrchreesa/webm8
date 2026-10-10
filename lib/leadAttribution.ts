@@ -68,6 +68,21 @@ export function cleanAttribution(value: unknown): Attribution {
 
 export const attributionStorageKey = "webm8:lead-attribution";
 
+/** Retain the original referring site across internal navigation, without query strings. */
+export function rememberLandingReferrer(): string {
+  let referrer = "";
+  try {
+    const url = new URL(document.referrer);
+    if (["http:", "https:"].includes(url.protocol) && url.hostname.replace(/^www\./, "") !== window.location.hostname.replace(/^www\./, "")) referrer = url.origin;
+  } catch { /* Direct arrival. */ }
+  try {
+    const stored = window.sessionStorage.getItem("webm8:landing-referrer");
+    if (stored !== null) return stored;
+    window.sessionStorage.setItem("webm8:landing-referrer", referrer);
+  } catch { /* Storage is optional. */ }
+  return referrer;
+}
+
 /**
  * Browser only. This visit's attribution: the URL's when it has any, or else
  * what an earlier page of the visit stored. Kept for the rest of the session.

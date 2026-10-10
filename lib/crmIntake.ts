@@ -1,11 +1,12 @@
 import { createHmac } from "node:crypto";
 import type { DemoSubmission } from "./demoRequest.ts";
+import type { ContactSubmission } from "./contactRequest.ts";
 
 type IntakeOptions = { url?: string; secret?: string; fetcher?: typeof fetch };
 
 /** Server-to-server only. A saved CRM record is the success condition. */
 export async function saveDemoToCrm(
-  demo: DemoSubmission,
+  demo: DemoSubmission | ContactSubmission,
   {
     url = process.env.CRM_WEBSITE_INTAKE_URL,
     secret = process.env.WEBSITE_INTAKE_SECRET,
@@ -16,7 +17,9 @@ export async function saveDemoToCrm(
   const endpoint = new URL(url);
   if (endpoint.protocol !== "https:" || endpoint.username || endpoint.password || endpoint.search || endpoint.hash)
     throw new Error("CRM website intake requires a secure endpoint");
-  const body = JSON.stringify(demo);
+  const body = JSON.stringify({ ...demo, attribution: Object.fromEntries(
+    Object.entries(demo.attribution).map(([key, value]) => [key, String(value)]),
+  ) });
   const signature = createHmac("sha256", secret).update(body).digest("hex");
   const response = await fetcher(endpoint, {
     method: "POST",
