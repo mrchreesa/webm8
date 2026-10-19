@@ -230,7 +230,7 @@ export function DemoDeck({ active, onActiveChange, autoPlay = true }: DemoDeckPr
         onKeyDown={onKeyDown}
         onFocus={() => setFocusWithin(true)}
         onBlur={onBlur}
-        className="relative outline-none"
+        className="relative flex flex-1 flex-col outline-none lg:block"
       >
         <div
           ref={stageRef}
@@ -282,7 +282,7 @@ export function DemoDeck({ active, onActiveChange, autoPlay = true }: DemoDeckPr
                     alt={`${project.name}, a demo website for a ${project.industry.toLowerCase()} business`}
                     width={420}
                     height={900}
-                    sizes="(min-width: 1024px) 300px, 172px"
+                    sizes="(min-width: 1024px) 300px, 210px"
                     // Keep the initial LCP image high priority even after autoplay moves it.
                     // Supporting previews must not compete with it for a preload.
                     priority={index === 0}
