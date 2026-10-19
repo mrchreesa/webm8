@@ -2,7 +2,7 @@
 
 Marketing site for **WebM8**, a web design agency building websites for local
 businesses in the US and UK. The homepage sells one thing: the **Free
-Personalised Website Demo**.
+Custom Website Demo**.
 
 Built with **Next.js 15 (App Router) + React 19 + TypeScript + Tailwind CSS v4**,
 deployed on Vercel. Every page prerenders at build time; the only server code is
@@ -100,7 +100,7 @@ The homepage and demo events are:
 |---|---|
 | `/` | Home |
 | `/demo/` | Destination after a Meta Instant Form; examples and next steps |
-| `/free-demo/` | Free personalised website demo enquiry form |
+| `/free-demo/` | Free custom website demo enquiry form |
 | `/work/` | Demo sites |
 | `/pricing/` | Plans, quoted to the business |
 | `/about/` | Positioning, values, process |

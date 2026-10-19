@@ -9,7 +9,7 @@ import { Icon } from "@/components/ui/Icon";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Free Personalised Website Demo",
+  title: "Free Custom Website Demo",
   description:
     "Tell us about your business and we'll design its homepage, free. We call the same day, then show you the demo within 48 hours. No payment, no obligation.",
   path: "/free-demo/",

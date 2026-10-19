@@ -160,7 +160,7 @@ export type ProcessStep = {
 export const processSteps: ProcessStep[] = [
   {
     number: 1,
-    title: "Free personalised demo",
+    title: "Free custom demo",
     body: "We design a homepage for your business, with your name and services on it, and show it to you before you spend a cent.",
     need: "two minutes to tell us about your business",
   },
@@ -186,7 +186,7 @@ export const processSteps: ProcessStep[] = [
 
 export type DemoStep = { title: string; body: string };
 
-/** What the Free Personalised Website Demo involves, in DemoClosing. */
+/** What the Free Custom Website Demo involves, in DemoClosing. */
 export const demoSteps: DemoStep[] = [
   {
     title: "Tell us about your business",

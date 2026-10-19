@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   trailingSlash: true,
-  // The free website review became the Free Personalised Website Demo.
+  // The free website review became the Free Custom Website Demo.
   async redirects() {
     return [
       { source: "/audit", destination: "/free-demo/", permanent: true },

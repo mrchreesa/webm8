@@ -1,5 +1,5 @@
 /**
- * The Free Personalised Website Demo request on /free-demo/. The form checks
+ * The Free Custom Website Demo request on /free-demo/. The form checks
  * the answers with validateDemoAnswers before sending; /api/demo-request/
  * checks the whole submission with validateDemoSubmission before saving it.
  */

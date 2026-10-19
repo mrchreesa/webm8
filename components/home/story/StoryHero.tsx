@@ -314,7 +314,7 @@ export function StoryHero() {
           </p>
           <div className={styles.ctas}>
             <DemoCtaButton placement="hero" size="lg">
-              Get my free personalised demo
+              Get my free custom demo
             </DemoCtaButton>
             <LinkButton data-analytics-id="See our work" href="#work" variant="ghost-invert" size="lg" className={styles.secondaryCta}>
               See our work

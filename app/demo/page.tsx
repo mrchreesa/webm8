@@ -14,7 +14,7 @@ import { createPageMetadata } from "@/lib/seo";
  */
 export const metadata: Metadata = {
   ...createPageMetadata({
-    title: "Your Free Personalised Website Demo",
+    title: "Your Free Custom Website Demo",
     description:
       "We’ll call you shortly about your business and show you your demo within 48 hours of that call. No payment, no obligation.",
     path: "/demo/",

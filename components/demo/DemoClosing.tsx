@@ -18,7 +18,7 @@ const BUBBLES = [
   { left: "92%", size: 8, duration: 11, delay: -8, drift: 12 },
 ];
 
-/** The Free Personalised Website Demo close, shared by every marketing page. */
+/** The Free Custom Website Demo close, shared by every marketing page. */
 export function DemoClosing() {
   return (
     <section data-analytics-section="Closing invitation"
@@ -55,7 +55,7 @@ export function DemoClosing() {
           Let’s get your phone ringing.
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-lg text-muted-invert">
-          Start with a Free Personalised Website Demo. We design a homepage for your business and show it to you, before you spend a cent.
+          Start with a Free Custom Website Demo. We design a homepage for your business and show it to you, before you spend a cent.
         </p>
 
         <ol className="mx-auto mt-9 grid max-w-4xl gap-3.5 text-left md:grid-cols-3 md:gap-4.5">
@@ -72,7 +72,7 @@ export function DemoClosing() {
 
         <div className="mt-9 flex flex-col items-center gap-3">
           <DemoCtaButton placement="closing" size="lg">
-            Get my free personalised demo
+            Get my free custom demo
           </DemoCtaButton>
           <p className="text-sm text-muted-invert">No payment. No obligation. We call you the same day.</p>
         </div>

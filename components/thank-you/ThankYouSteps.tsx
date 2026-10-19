@@ -9,7 +9,7 @@ const steps = [
   },
   {
     title: "We create",
-    body: "We design a personalised website demo around your business.",
+    body: "We design a custom website demo around your business.",
   },
   {
     title: "You decide",

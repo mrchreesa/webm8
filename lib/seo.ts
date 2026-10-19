@@ -18,7 +18,7 @@ export const defaultDescription =
   "WebM8 builds websites for local businesses in the US and UK that turn local searches into calls, bookings and quote requests. Start with a free website demo.";
 
 export const socialDescription =
-  "Websites for local businesses in the US and UK. More calls, more bookings, more customers. Start with a free personalised website demo.";
+  "Websites for local businesses in the US and UK. More calls, more bookings, more customers. Start with a free custom website demo.";
 
 /**
  * The routes in the sitemap. Each page's title, description and share card

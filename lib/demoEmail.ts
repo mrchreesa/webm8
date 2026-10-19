@@ -61,7 +61,7 @@ export function demoNotificationEmail(
   });
 
   const text = [
-    "New Free Personalised Website Demo request from /free-demo/.",
+    "New Free Custom Website Demo request from /free-demo/.",
     "",
     ...details.map(([label, value]) => `${label}: ${value}`),
     ...(campaign.length ? ["", ...campaign.map(([label, value]) => `${label}: ${value}`)] : []),

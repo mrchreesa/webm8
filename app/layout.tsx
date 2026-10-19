@@ -133,7 +133,7 @@ function StructuredData() {
         "mobile-first websites",
         "local SEO setup",
         "lead tracking",
-        "personalised website demos",
+        "custom website demos",
       ],
     },
     {
