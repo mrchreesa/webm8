@@ -25,14 +25,6 @@ const targets = [
     phone: { button: "text=Find your fit" },
   },
   { slug: "ideal-baby", url: "https://baby-shop-blue-ten.vercel.app/pop/", hide: [] },
-  {
-    slug: "solvers-cleaning",
-    url: "https://sovlers-cleaning.vercel.app/demo-b/",
-    hide: [".dock"],
-    // Its statement fades in word by word as you scroll; show it whole.
-    reveal: [".statement__text .word"],
-    phone: { button: "main >> text=Get a free quote" },
-  },
   // Removals is only captured for the phone: its desktop and mobile shots predate this script.
   {
     slug: "removals",
@@ -47,13 +39,15 @@ const targets = [
     hide: [".call-bar"],
     phone: { button: "main >> text=Get a quote" },
   },
-  // Two directions for one clinic, shown as separate projects; each page carries a switcher between them.
-  { slug: "aesthetic-veil", url: "https://aesthetic-navy.vercel.app/veil/", hide: ['nav[aria-label="Design directions"]'] },
+  // The clinic's other direction carries the same switcher.
   { slug: "aesthetic-nacre", url: "https://aesthetic-navy.vercel.app/nacre/", hide: ['nav[aria-label="Design directions"]'] },
-  // Two concepts for one clothing brand, shown as separate projects; each page carries a pill linking to the other.
-  // Atelier's hero photo reveals itself tile by tile; give it time to finish.
-  { slug: "chibauchi-atelier", url: "https://clothes-accessories-store.vercel.app/design-a/", hide: [".demo-pill"], settle: 6000 },
+  // The clothing brand's other concept carries the same pill.
   { slug: "chibauchi-studio", url: "https://clothes-accessories-store.vercel.app/design-b/", hide: [".demo-pill"] },
+  // Boniface's gold silk and All Things New's sunrise take a few seconds to draw in.
+  { slug: "boniface-salon", url: "https://beauty-two-zeta.vercel.app/demo-a-gilded/", hide: [], settle: 6000 },
+  { slug: "waffles-bubbles", url: "https://waffles-bubbles.vercel.app/a/", hide: [".dock"], settle: 4000 },
+  { slug: "all-things-new", url: "https://wellness-ria.vercel.app/gulf-dawn/", hide: [], settle: 6000 },
+  { slug: "fcg-painting", url: "https://painting-decorating.vercel.app/b/", hide: [".action-bar"], settle: 4000 },
   ...(process.env.RECRUITMENT_URL ? [{ slug: "recruitment", url: process.env.RECRUITMENT_URL, hide: [] }] : []),
 ];
 

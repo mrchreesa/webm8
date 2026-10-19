@@ -42,16 +42,16 @@ const showcase: { slug: Project["slug"]; line: string; ground: string; glow: str
     glow: "rgb(224 154 95 / 0.45)",
   },
   {
-    slug: "solvers-cleaning",
-    line: "A bold cleaning site built around fast quotes and WhatsApp.",
-    ground: "#111b63",
-    glow: "rgb(155 225 93 / 0.42)",
+    slug: "fcg-painting",
+    line: "A decorator's site with a free quote and WhatsApp on every screen.",
+    ground: "#1f5a4d",
+    glow: "rgb(240 200 72 / 0.42)",
   },
   {
-    slug: "aesthetic-veil",
-    line: "A soft, photographic site for a doctor-led London clinic.",
-    ground: "#c3cfd4",
-    glow: "rgb(110 42 67 / 0.35)",
+    slug: "boniface-salon",
+    line: "A gilded salon site with every treatment and price in one place.",
+    ground: "#1e160b",
+    glow: "rgb(214 172 96 / 0.5)",
   },
   {
     slug: "removals",
@@ -60,10 +60,10 @@ const showcase: { slug: Project["slug"]; line: string; ground: string; glow: str
     glow: "rgb(125 196 255 / 0.6)",
   },
   {
-    slug: "chibauchi-atelier",
-    line: "An editorial fashion store where every lookbook outfit can be bought.",
-    ground: "#1c1915",
-    glow: "rgb(164 83 47 / 0.55)",
+    slug: "waffles-bubbles",
+    line: "A neon late-night dessert shop, with delivery one tap away.",
+    ground: "#150c1a",
+    glow: "rgb(236 84 170 / 0.5)",
   },
   {
     slug: "ideal-baby",
@@ -78,10 +78,10 @@ const showcase: { slug: Project["slug"]; line: string; ground: string; glow: str
     glow: "rgb(46 59 255 / 0.55)",
   },
   {
-    slug: "cleaning",
-    line: "A bright home cleaning site that makes packages easy to compare.",
-    ground: "#211c54",
-    glow: "rgb(99 209 247 / 0.5)",
+    slug: "all-things-new",
+    line: "A calm, sunrise-lit site for a Florida therapist.",
+    ground: "#1f4266",
+    glow: "rgb(246 168 112 / 0.5)",
   },
 ];
 

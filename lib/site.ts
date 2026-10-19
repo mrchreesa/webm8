@@ -265,23 +265,43 @@ export type PhoneShot = {
  */
 export const projects: Project[] = [
   {
-    slug: "chibauchi-atelier",
-    name: "Atelier",
-    industry: "Clothing and accessories",
-    title: "Editorial fashion store with a shoppable lookbook",
+    slug: "boniface-salon",
+    name: "Boniface Hair & Beauty",
+    industry: "Hair and beauty salon",
+    title: "Gilded salon site with every price in one place",
     description:
-      "A clothing and accessories label cut for everybody, in a warm, cinematic style: a lookbook where every look can be bought, quick add on every piece, and delivery and returns made clear.",
+      "An award-winning hair and beauty salon on Rectory Road, Sittingbourne, in black and gold: three Kent HABA golds up front, every treatment and price on one menu, and a visit or a call one tap away.",
     palette: "amber",
-    siteUrl: "https://clothes-accessories-store.vercel.app/design-a/",
+    siteUrl: "https://beauty-two-zeta.vercel.app/demo-a-gilded/",
     screenshots: {
-      desktop: "/work/chibauchi-atelier-desktop.webp",
-      mobile: "/work/chibauchi-atelier-mobile.webp",
+      desktop: "/work/boniface-salon-desktop.webp",
+      mobile: "/work/boniface-salon-mobile.webp",
     },
     outcomes: [
-      "Every lookbook outfit is shoppable",
-      "Quick add, with sizes, on every piece",
-      "Free delivery and returns up front",
-      "A journal that tells the brand's story",
+      "Book a visit or call from the first screen",
+      "Every treatment and price on one menu",
+      "The awards and the team up front",
+      "This month's offer on the homepage",
+    ],
+  },
+  {
+    slug: "fcg-painting",
+    name: "FCG Painting & Decorating",
+    industry: "Painting and decorating",
+    title: "Painter and decorator's site built around free quotes",
+    description:
+      "Interior and exterior painting across Margate, Broadstairs and Ramsgate, from a decorator with 35 years in the trade: his own jobs up front, a free quote or WhatsApp on every screen, and every five-star review.",
+    palette: "green",
+    siteUrl: "https://painting-decorating.vercel.app/b/",
+    screenshots: {
+      desktop: "/work/fcg-painting-desktop.webp",
+      mobile: "/work/fcg-painting-mobile.webp",
+    },
+    outcomes: [
+      "A free quote or WhatsApp on every screen",
+      "Before, during and after photos",
+      "Recent jobs to swipe through",
+      "Every five-star review",
     ],
   },
   {
@@ -302,26 +322,6 @@ export const projects: Project[] = [
       "Shop by category",
       "Planning a store visit",
       "Trusted brands up front",
-    ],
-  },
-  {
-    slug: "cleaning",
-    name: "Fresh & Clean",
-    industry: "Home cleaning",
-    title: "Fresh cleaning site built around quote requests",
-    description:
-      "A clean service website that makes packages easy to compare, builds trust fast, and keeps the quote journey clear on mobile.",
-    palette: "green",
-    siteUrl: "https://cleaning.webm8agency.com/",
-    screenshots: {
-      desktop: "/work/cleaning-desktop.webp",
-      mobile: "/work/cleaning-mobile.webp",
-    },
-    outcomes: [
-      "A simple path to request a quote",
-      "Clear cleaning packages",
-      "Trust and review sections",
-      "Fast mobile enquiry path",
     ],
   },
   {
@@ -407,24 +407,23 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: "solvers-cleaning",
-    name: "Solvers Cleaning",
-    industry: "Rental and office cleaning",
-    title: "Cleaning company site built for fast quotes",
+    slug: "waffles-bubbles",
+    name: "Waffles & Bubbles",
+    industry: "Dessert shop",
+    title: "Neon site for a late-night dessert shop",
     description:
-      "End of tenancy, deep, carpet and office cleaning across West London, Surrey and Berkshire, with prices up front and a free quote a tap away.",
-    palette: "blue",
-    siteUrl: "https://sovlers-cleaning.vercel.app/demo-b/",
+      "Waffles, hot cookie dough, shakes and bubble tea on Orpington High Street, open until midnight: whether it's open right now, the whole menu by category, and delivery one tap away.",
+    palette: "violet",
+    siteUrl: "https://waffles-bubbles.vercel.app/a/",
     screenshots: {
-      desktop: "/work/solvers-cleaning-desktop.webp",
-      mobile: "/work/solvers-cleaning-mobile.webp",
-      phone: { src: "/work/solvers-cleaning-phone.webp", width: 780, height: 2800, top: "#0f1a4a", button: { x: 104, y: 799 }, scroll: 200, header: 74 },
+      desktop: "/work/waffles-bubbles-desktop.webp",
+      mobile: "/work/waffles-bubbles-mobile.webp",
     },
     outcomes: [
-      "Free quote and WhatsApp buttons",
-      "Prices up front",
-      "How booking works, step by step",
-      "Every area covered on one page",
+      "Open now, or when it opens next",
+      "The whole menu, by category",
+      "Delivery apps one tap away",
+      "Google reviews and directions",
     ],
   },
   {
@@ -450,6 +449,26 @@ export const projects: Project[] = [
     ],
   },
   {
+    slug: "all-things-new",
+    name: "All Things New",
+    industry: "Therapy practice",
+    title: "Calm, sunrise-lit site for a Florida therapist",
+    description:
+      "Trauma, grief and relationship therapy with Ria Ruane in Naples, Florida and online: a sunrise over the Gulf, what she helps with in plain words, and a free 15-minute consult a tap away.",
+    palette: "blue",
+    siteUrl: "https://wellness-ria.vercel.app/gulf-dawn/",
+    screenshots: {
+      desktop: "/work/all-things-new-desktop.webp",
+      mobile: "/work/all-things-new-mobile.webp",
+    },
+    outcomes: [
+      "A free 15-minute consult up front",
+      "What she helps with, in plain words",
+      "Intensives and retreats laid out",
+      "How the first session works",
+    ],
+  },
+  {
     slug: "chibauchi-studio",
     name: "Studio",
     industry: "Clothing and accessories",
@@ -467,26 +486,6 @@ export const projects: Project[] = [
       "Six categories from the homepage",
       "New arrivals to swipe through",
       "Returns, dispatch and repairs promised",
-    ],
-  },
-  {
-    slug: "aesthetic-veil",
-    name: "Veil",
-    industry: "Aesthetic clinic",
-    title: "Light, photographic site for a doctor-led clinic",
-    description:
-      "A doctor-led aesthetic clinic on Wimpole Street, with a soft photographic look, every treatment priced with its downtime, and a consultation one tap away.",
-    palette: "rose",
-    siteUrl: "https://aesthetic-navy.vercel.app/veil/",
-    screenshots: {
-      desktop: "/work/aesthetic-veil-desktop.webp",
-      mobile: "/work/aesthetic-veil-mobile.webp",
-    },
-    outcomes: [
-      "A consultation a tap away",
-      "Prices and downtime for each treatment",
-      "The doctor front and centre",
-      "Privacy made clear from the start",
     ],
   },
 ];

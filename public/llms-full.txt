@@ -147,6 +147,30 @@ How it works:
 
 These are demo sites WebM8 designed for local businesses.
 
+### Boniface Hair & Beauty (hair and beauty salon)
+
+- Title: Gilded salon site with every price in one place
+- URL: https://beauty-two-zeta.vercel.app/demo-a-gilded/
+- Summary: an award-winning hair and beauty salon in Sittingbourne, in black and gold, with its awards up front, every treatment and price on one menu, and a visit or a call one tap away.
+
+### FCG Painting & Decorating (painting and decorating)
+
+- Title: Painter and decorator's site built around free quotes
+- URL: https://painting-decorating.vercel.app/b/
+- Summary: interior and exterior painting across Margate, Broadstairs and Ramsgate from a decorator with 35 years in the trade, with his own jobs up front and a free quote or WhatsApp on every screen.
+
+### Waffles & Bubbles (dessert shop)
+
+- Title: Neon site for a late-night dessert shop
+- URL: https://waffles-bubbles.vercel.app/a/
+- Summary: waffles, cookie dough, shakes and bubble tea on Orpington High Street, showing whether the shop is open right now, the whole menu by category, and delivery one tap away.
+
+### All Things New (therapy practice)
+
+- Title: Calm, sunrise-lit site for a Florida therapist
+- URL: https://wellness-ria.vercel.app/gulf-dawn/
+- Summary: trauma, grief and relationship therapy in Naples, Florida and online, explaining what the therapist helps with in plain words, with a free 15-minute consult a tap away.
+
 ### The Stitch House (tailoring and dry cleaning)
 
 - Title: Heritage tailoring site built around fittings
@@ -165,12 +189,6 @@ These are demo sites WebM8 designed for local businesses.
 - URL: https://baby-shop-blue-ten.vercel.app/pop/
 - Summary: strollers, car seats and nursery furniture from trusted brands, on a bilingual site that brings families into the Miami store.
 
-### Solvers Cleaning (rental and office cleaning)
-
-- Title: Cleaning company site built for fast quotes
-- URL: https://sovlers-cleaning.vercel.app/demo-b/
-- Summary: end of tenancy, deep, carpet and office cleaning across West London, Surrey and Berkshire, with prices up front and a free quote a tap away.
-
 ### DPS Gasworks (gas, heating and plumbing)
 
 - Title: Gas Safe engineer's site built around the phone
@@ -183,18 +201,6 @@ These are demo sites WebM8 designed for local businesses.
 - URL: https://aesthetic-navy.vercel.app/nacre/
 - Summary: a doctor-led aesthetic clinic in Marylebone, with every treatment and price at a glance and a quiet path to booking.
 
-### Veil (aesthetic clinic)
-
-- Title: Light, photographic site for a doctor-led clinic
-- URL: https://aesthetic-navy.vercel.app/veil/
-- Summary: a doctor-led aesthetic clinic on Wimpole Street, with every treatment priced with its downtime and a consultation one tap away.
-
-### Atelier (clothing and accessories)
-
-- Title: Editorial fashion store with a shoppable lookbook
-- URL: https://clothes-accessories-store.vercel.app/design-a/
-- Summary: a clothing and accessories label in a warm, cinematic style, with a lookbook where every look can be bought and delivery and returns made clear.
-
 ### Studio (clothing and accessories)
 
 - Title: Bold, graphic fashion store built to move
@@ -206,12 +212,6 @@ These are demo sites WebM8 designed for local businesses.
 - Title: Removals site designed for urgent quote enquiries
 - URL: https://removals.webm8agency.com/
 - Summary: a direct, conversion-focused removals website with strong service clarity, quote prompts, and reassuring proof points.
-
-### Fresh & Clean (home cleaning)
-
-- Title: Fresh cleaning site built around quote requests
-- URL: https://cleaning.webm8agency.com/
-- Summary: a clean service website that makes packages easy to compare, builds trust fast, and keeps the quote journey clear on mobile.
 
 ## Testimonials
 

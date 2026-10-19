@@ -23,8 +23,8 @@ import { siteFonts, type SiteFont } from "./fonts";
 /**
  * How each drawn example site looks. The copy lives in lib/trades.ts; this
  * is only the design: one of four layouts, a typeface, a drawing and the
- * site's colours. The story shows a real WebM8 site for plumbing, cleaning,
- * fitness and moving, and never plays e-commerce; those looks are for the
+ * site's colours. The story shows a real WebM8 site for plumbing, fitness
+ * and moving, and never plays e-commerce; those looks are for the
  * sketch beside the /free-demo/ form, which draws every trade.
  *
  * - poster: big condensed type on a strong ground, a tall drawing beside it.

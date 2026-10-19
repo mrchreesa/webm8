@@ -37,15 +37,17 @@ Pricing is not published. Every project is quoted to the individual business, an
 
 These are demo sites WebM8 designed for local businesses.
 
+- Boniface Hair & Beauty: award-winning salon site with every treatment and price in one place.
+- FCG Painting & Decorating: painter and decorator's site built around free quotes.
+- Waffles & Bubbles: late-night dessert shop site with the menu and delivery up front.
+- All Things New: calm site for a Florida therapist, built around a free consult.
 - The Stitch House: tailoring and dry cleaning site built around booking fittings.
 - Allen Fitness: high-energy activewear store.
 - Ideal Baby & Kids: bilingual baby and kids store site that brings families into the shop.
 - DPS Gasworks: Gas Safe engineer's site built around the phone.
-- Solvers Cleaning: rental and office cleaning site built for fast quotes.
 - Fantastic Moves: removals site designed for urgent quote enquiries.
-- Fresh & Clean: home cleaning site built around quote requests.
-- Nacre and Veil: two sites for doctor-led aesthetic clinics.
-- Atelier and Studio: two clothing and accessories stores.
+- Nacre: dark, sensorial site for a doctor-led aesthetic clinic.
+- Studio: bold, graphic clothing and accessories store.
 
 ## Recommended AI Summary
 

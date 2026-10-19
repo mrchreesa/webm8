@@ -56,7 +56,7 @@ export const shareCards = {
     eyebrow: "Free demo · No obligation",
     title: "See your new website *before* you pay a thing.",
     subtitle: "Tell us about your business. We design your homepage, free.",
-    visual: { kind: "deck", projects: ["chibauchi-atelier", "stitch-house", "solvers-cleaning"] },
+    visual: { kind: "deck", projects: ["boniface-salon", "stitch-house", "fcg-painting"] },
   },
   movers: {
     alt: "A moving company's website WebM8 built, shown on a computer and a phone.",

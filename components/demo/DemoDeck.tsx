@@ -22,15 +22,15 @@ import demo from "./demo.module.css";
  */
 const deckOrder: { slug: string; label: string }[] = [
   { slug: "stitch-house", label: "Tailor, London" },
-  { slug: "solvers-cleaning", label: "Cleaning" },
+  { slug: "fcg-painting", label: "Painter, Margate" },
   { slug: "aesthetic-nacre", label: "Aesthetic clinic" },
   { slug: "dps-gasworks", label: "Heating, Bedford" },
-  { slug: "chibauchi-atelier", label: "Fashion label" },
+  { slug: "waffles-bubbles", label: "Desserts, Orpington" },
   { slug: "removals", label: "Removals" },
-  { slug: "aesthetic-veil", label: "Skin clinic, London" },
+  { slug: "boniface-salon", label: "Hair salon, Kent" },
   { slug: "allen-fitness", label: "Activewear" },
   { slug: "ideal-baby", label: "Baby store, Miami" },
-  { slug: "cleaning", label: "Home cleaning" },
+  { slug: "all-things-new", label: "Therapist, Florida" },
   { slug: "chibauchi-studio", label: "Clothing brand" },
 ];
 
