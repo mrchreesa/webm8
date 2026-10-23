@@ -24,4 +24,6 @@ Validate on submit and recheck fields already in error on change. Use noValidate
 
 Success requires a saved CRM receipt, disables resubmission and promises a reply within one business day. Email is supplementary: a failed email must not undo a CRM save. Contact success emits `contact_enquiry` success; demo success emits `demo_request` success. Clicks and validation attempts do not count as saved enquiries. Analytics events contain no form answers.
 
-The short plan selector remains native. No date picker, table selection, calendar, bulk action or new modal is in scope. Public marketing navigation keeps the existing document flow; no page-shell rewrite.
+The short plan selector remains native and is shown for recognised `?plan=standard` or `?plan=growth` links. General enquiries submit `unsure` without asking visitors to choose a plan. A plan validation error exposes the selector for recovery. Business name and phone remain required by the signed CRM contract; website and message remain optional. The page offers a price by email within one business day with no required sales call, matching `/pricing/`. Privacy is linked beside the submit area; email and the separate free-demo journey are secondary options below the form on phones.
+
+No date picker, table selection, embedded calendar, bulk action or new modal is in scope. Public marketing navigation keeps the existing document flow; no page-shell rewrite.

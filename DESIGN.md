@@ -46,11 +46,11 @@ Navy is primary text and focus; warm paper is the background; white cards use th
 
 ## Typography
 
-Geist is body and controls; Funnel Display is large headings; Geist Mono is the small uppercase field-label treatment. Keep inputs at 16px for phone usability. Use readable line height and wrap long status text.
+Geist is body and controls; Funnel Display is large headings; Geist Mono is the default small uppercase field-label treatment. Contact uses the shared `labelVariant="contact"`: 14px, sentence-case Geist labels for easier reading. Other forms retain their existing labels. Keep inputs at 16px for phone usability. Use readable line height and wrap long status text.
 
 ## Layout
 
-Keep `container-page`, natural document scrolling and existing Tailwind breakpoints. The contact form has one column on phones and two at `sm`; plan, website and message span both. Pending state preserves the form footprint and reserves button width. No fixed-height form panel.
+Keep `container-page`, natural document scrolling and existing Tailwind breakpoints. Contact has a compact introduction on the left and the form on the right at `lg`. On phones, the order is introduction, form, then email and demo alternatives; no separate hero or contact card delays the first field. The form has one column on phones and two at `sm`; plan, message and website span both. Pending state preserves the form footprint and reserves button width. No fixed-height form panel.
 
 ## Elevation & Depth
 

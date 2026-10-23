@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import {
   TextField,
@@ -23,6 +24,7 @@ import { trackEvent } from "@/lib/analytics";
 export function ContactForm() {
   const params = useSearchParams();
   const plan = params?.get("plan");
+  const hasSelectedPlan = plan === "standard" || plan === "growth";
   const [errors, setErrors] = useState<ContactErrors>({});
   const [checks, setChecks] = useState(0);
   const [status, setStatus] = useState<"editing" | "sending" | "saved">(
@@ -146,6 +148,7 @@ export function ContactForm() {
       data-analytics-section="Contact form"
       onSubmit={onSubmit}
       noValidate
+      aria-labelledby="contact-form-title"
       aria-busy={status === "sending"}
       onChange={(event) => {
         setDirty(true);
@@ -168,24 +171,28 @@ export function ContactForm() {
       }}
       className="shadow-card rounded-3xl border border-border bg-white p-6 md:p-8"
     >
+      <h2
+        id="contact-form-title"
+        className="text-2xl font-bold tracking-tight text-ink"
+      >
+        Send us a message
+      </h2>
+      <p className="mt-2 mb-6 text-sm text-muted">
+        Fields marked <span aria-hidden="true">*</span>
+        <span className="sr-only">with an asterisk</span> are required.
+      </p>
       <fieldset
         disabled={status !== "editing"}
         className="grid min-w-0 gap-5 border-0 p-0 sm:grid-cols-2"
       >
         <legend className="sr-only">Your enquiry</legend>
         <TextField
-          label="Business name"
-          name="business"
-          required
-          autoComplete="organization"
-          error={errors.business}
-        />
-        <TextField
           label="Your name"
           name="name"
           required
           autoComplete="name"
           error={errors.name}
+          labelVariant="contact"
         />
         <TextField
           label="Email"
@@ -194,6 +201,15 @@ export function ContactForm() {
           required
           autoComplete="email"
           error={errors.email}
+          labelVariant="contact"
+        />
+        <TextField
+          label="Business name"
+          name="business"
+          required
+          autoComplete="organization"
+          error={errors.business}
+          labelVariant="contact"
         />
         <TextField
           label="Phone"
@@ -202,19 +218,33 @@ export function ContactForm() {
           required
           autoComplete="tel"
           error={errors.phone}
+          labelVariant="contact"
         />
-        <SelectField
-          label="Interested in"
-          name="plan"
-          defaultValue={
-            plan === "standard" || plan === "growth" ? plan : "unsure"
-          }
-          options={Object.entries(contactPlans).map(([value, label]) => ({
-            value,
-            label,
-          }))}
-          wide
-          error={errors.plan}
+        {hasSelectedPlan || errors.plan ? (
+          <SelectField
+            key={hasSelectedPlan ? plan : "unsure"}
+            label="Plan you’re interested in"
+            name="plan"
+            defaultValue={hasSelectedPlan ? plan : "unsure"}
+            options={Object.entries(contactPlans).map(([value, label]) => ({
+              value,
+              label,
+            }))}
+            wide
+            error={errors.plan}
+            labelVariant="contact"
+          />
+        ) : (
+          <input type="hidden" name="plan" value="unsure" />
+        )}
+        <TextAreaField
+          label="How can we help? (optional)"
+          name="message"
+          rows={5}
+          error={errors.message}
+          hint="For an estimate, include the pages or features you need. Up to 3,000 characters."
+          placeholder="Tell us about your business and what you need from your website."
+          labelVariant="contact"
         />
         <TextField
           label="Current website (optional)"
@@ -223,14 +253,7 @@ export function ContactForm() {
           placeholder="https://example.com"
           wide
           error={errors.website}
-        />
-        <TextAreaField
-          label="How can we help? (optional)"
-          name="message"
-          rows={5}
-          error={errors.message}
-          hint="Up to 3,000 characters."
-          placeholder="Tell us about your business and what you want the website to do."
+          labelVariant="contact"
         />
         <div hidden aria-hidden="true">
           <label>
@@ -239,14 +262,14 @@ export function ContactForm() {
           </label>
         </div>
       </fieldset>
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-6 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <Button
           data-analytics-id="Send enquiry"
           type="submit"
           size="lg"
           disabled={status !== "editing"}
           aria-busy={status === "sending"}
-          className="min-w-40 shrink-0 whitespace-nowrap"
+          className="min-w-44 shrink-0 cursor-pointer whitespace-nowrap"
         >
           {status === "sending"
             ? "Sending…"
@@ -269,6 +292,16 @@ export function ContactForm() {
           </FormStatus>
         </div>
       </div>
+      <p className="mt-4 text-xs leading-relaxed text-muted">
+        How we use your details:{" "}
+        <Link
+          href="/privacy/"
+          className="text-link underline underline-offset-2 hover:text-ink"
+        >
+          Privacy notice
+        </Link>
+        .
+      </p>
     </form>
   );
 }

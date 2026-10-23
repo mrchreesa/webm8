@@ -12,6 +12,12 @@ export const fieldBase = cn(
 export const labelCls =
   "font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted";
 
+type LabelVariant = "default" | "contact";
+const labelVariants: Record<LabelVariant, string> = {
+  default: labelCls,
+  contact: "text-sm font-semibold text-ink",
+};
+
 type FieldProps = {
   label: string;
   name: string;
@@ -28,6 +34,7 @@ type FieldProps = {
   disabled?: boolean;
   inputMode?: "text" | "email" | "tel" | "url";
   labelClassName?: string;
+  labelVariant?: LabelVariant;
 };
 
 export function TextField({
@@ -44,6 +51,7 @@ export function TextField({
   disabled,
   inputMode,
   labelClassName,
+  labelVariant = "default",
 }: FieldProps) {
   const id = useId();
   const messageId = `${id}-message`;
@@ -51,7 +59,10 @@ export function TextField({
 
   return (
     <div className={cn("flex flex-col gap-1.5", wide && "sm:col-span-2")}>
-      <label htmlFor={id} className={cn(labelCls, labelClassName)}>
+      <label
+        htmlFor={id}
+        className={cn(labelVariants[labelVariant], labelClassName)}
+      >
         {label}
         {required && (
           <span className="ml-1 text-link" aria-hidden="true">
@@ -93,6 +104,7 @@ export function TextAreaField({
   rows = 4,
   error,
   hint,
+  labelVariant = "default",
 }: {
   label: string;
   name: string;
@@ -101,6 +113,7 @@ export function TextAreaField({
   rows?: number;
   error?: string;
   hint?: string;
+  labelVariant?: LabelVariant;
 }) {
   const id = useId();
   const messageId = `${id}-message`;
@@ -108,7 +121,7 @@ export function TextAreaField({
 
   return (
     <div className="flex flex-col gap-1.5 sm:col-span-2">
-      <label htmlFor={id} className={labelCls}>
+      <label htmlFor={id} className={labelVariants[labelVariant]}>
         {label}
         {required && (
           <span className="ml-1 text-link" aria-hidden="true">
@@ -157,6 +170,7 @@ export function SelectField({
   wide,
   error,
   placeholder,
+  labelVariant = "default",
 }: {
   label: string;
   name: string;
@@ -168,13 +182,14 @@ export function SelectField({
   error?: string;
   /** Shown as a disabled first option until something is chosen. */
   placeholder?: string;
+  labelVariant?: LabelVariant;
 }) {
   const id = useId();
   const messageId = `${id}-message`;
 
   return (
     <div className={cn("flex flex-col gap-1.5", wide && "sm:col-span-2")}>
-      <label htmlFor={id} className={labelCls}>
+      <label htmlFor={id} className={labelVariants[labelVariant]}>
         {label}
         {required && (
           <span className="ml-1 text-link" aria-hidden="true">

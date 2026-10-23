@@ -1,133 +1,97 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
-import { PageHero } from "@/components/ui/PageHero";
 import { ContactForm } from "@/components/forms/ContactForm";
+import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Icon } from "@/components/ui/Icon";
-import { Reveal } from "@/components/ui/Reveal";
 import { intakeEmail } from "@/lib/site";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Contact Us: Start a Website Project",
   description:
-    "Get a fast estimate for a new website, switch plans, or ask a question. WebM8 replies within one business day.",
+    "Need a website estimate or have a question? Contact WebM8. We reply within one business day, with no sales call required for an estimate.",
   path: "/contact/",
   shareCard: "contact",
 });
 
 export default function ContactPage() {
   return (
-    <>
-      <PageHero
-        eyebrow="Contact"
-        title={
-          <>
-            Start a project.{" "}
-            <span className="text-link">
-              We reply within one business day.
-            </span>
-          </>
-        }
-        subtitle="Tell us what you want the website to do and we’ll send a clear reply with the next step."
-      />
+    <section aria-labelledby="contact-title" className="py-10 sm:py-14 lg:py-20">
+      <div className="container-page grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:grid-rows-[auto_1fr] lg:gap-x-16 lg:gap-y-10">
+        <header className="max-w-lg lg:pt-4">
+          <Eyebrow>Contact WebM8</Eyebrow>
+          <h1
+            id="contact-title"
+            className="mt-4 text-[clamp(2.5rem,5vw,4rem)] leading-[1.04] font-bold tracking-tight text-ink"
+          >
+            Let’s talk about <span className="text-link">your website.</span>
+          </h1>
+          <p className="mt-5 max-w-md text-lg leading-relaxed text-muted">
+            Need an estimate or have a question? Tell us what you need. We’ll
+            reply within one business day.
+          </p>
+        </header>
 
-      <section data-analytics-section="Contact details" className="py-16 md:py-20">
-        <div className="container-page grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:gap-16">
-          <Reveal>
-            <aside className="shadow-card rounded-3xl border border-border bg-white p-6 md:p-8">
-              <h2 className="text-2xl font-bold tracking-tight text-ink">
-                Direct contact
-              </h2>
-              <p className="mt-2 text-sm text-muted">
-                Prefer to email or talk first? Use the details below.
-              </p>
-
-              <ul className="mt-6 space-y-5">
-                <InfoRow
-                  icon="mail"
-                  tone="brand"
-                  label="Email"
-                  value={
-                    <a data-analytics-id="Email WebM8"
-                      href={`mailto:${intakeEmail}`}
-                      className="text-sm font-semibold text-ink transition-colors hover:text-link"
-                    >
-                      {intakeEmail}
-                    </a>
-                  }
-                />
-                <InfoRow
-                  icon="calendar"
-                  tone="accent"
-                  label="Response time"
-                  value="Within 1 business day"
-                />
-              </ul>
-
-              <div className="mt-8 rounded-2xl bg-bg p-5 text-sm leading-relaxed text-muted">
-                <p className="font-semibold text-ink">What happens next</p>
-                <p className="mt-2">
-                  We review your info, send a short reply with next steps, and
-                  if it&apos;s a fit, book a quick call to plan the build.
+        <div className="min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+          <Suspense
+            fallback={
+              <div className="shadow-card min-h-[44rem] rounded-3xl border border-border bg-white p-6 md:p-8">
+                <h2 className="text-2xl font-bold tracking-tight text-ink">
+                  Send us a message
+                </h2>
+                <p role="status" className="mt-3 text-sm text-muted">
+                  Loading the enquiry form…
                 </p>
               </div>
-            </aside>
-          </Reveal>
+            }
+          >
+            <ContactForm />
+          </Suspense>
+        </div>
 
-          <Reveal variant="slide-right" delay={120}>
-            <h2 className="text-2xl font-bold tracking-tight text-ink md:text-3xl">
-              Send us a message
-            </h2>
-            <p className="mt-2 text-base text-muted">
-              Tell us a little about your business and what you want the
-              website to do.
+        <aside
+          aria-label="Other ways to get started"
+          data-analytics-section="Contact details"
+          className="max-w-lg space-y-7 lg:col-start-1 lg:row-start-2"
+        >
+          <div className="border-l-2 border-border pl-5">
+            <h2 className="text-xl font-bold text-ink">A clear price, by email.</h2>
+            <p className="mt-2 text-sm leading-relaxed text-muted">
+              For an estimate, tell us what your business does and what you need
+              from your website. We’ll send a clear price within one business
+              day. No sales call needed.
             </p>
-            <div className="mt-6">
-              <Suspense
-                fallback={
-                  <div className="shadow-card h-96 rounded-3xl border border-border bg-white" />
-                }
-              >
-                <ContactForm />
-              </Suspense>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-    </>
-  );
-}
+          </div>
 
-function InfoRow({
-  icon,
-  tone,
-  label,
-  value,
-}: {
-  icon: "mail" | "calendar" | "map";
-  tone: "brand" | "accent" | "ink";
-  label: string;
-  value: React.ReactNode;
-}) {
-  const iconBg =
-    tone === "brand"
-      ? "bg-brand text-brand-ink"
-      : tone === "accent"
-        ? "bg-accent/10 text-accent"
-        : "bg-ink/5 text-ink";
-  return (
-    <li className="flex items-start gap-3">
-      <span
-        className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${iconBg}`}
-      >
-        <Icon name={icon} size={18} />
-      </span>
-      <div>
-        <div className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
-          {label}
-        </div>
-        <div className="mt-0.5 text-sm font-semibold text-ink">{value}</div>
+          <div className="border-t border-border pt-7">
+            <h2 className="text-xl font-bold text-ink">Prefer email?</h2>
+            <a
+              data-analytics-id="Email WebM8"
+              href={`mailto:${intakeEmail}`}
+              className="mt-2 inline-flex min-h-11 items-center gap-2 text-base font-semibold text-link underline-offset-4 transition-colors hover:text-ink hover:underline"
+            >
+              <Icon name="mail" size={18} aria-hidden />
+              {intakeEmail}
+            </a>
+          </div>
+
+          <div className="border-t border-border pt-7">
+            <h2 className="text-xl font-bold text-ink">Want to see a design first?</h2>
+            <p className="mt-2 text-sm leading-relaxed text-muted">
+              Start with a free custom website demo for your business.
+            </p>
+            <Link
+              href="/free-demo/"
+              data-analytics-id="Explore the free demo"
+              className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-link underline-offset-4 transition-colors hover:text-ink hover:underline"
+            >
+              Explore the free demo
+              <Icon name="arrow" size={16} aria-hidden />
+            </Link>
+          </div>
+        </aside>
       </div>
-    </li>
+    </section>
   );
 }
