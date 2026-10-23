@@ -66,9 +66,9 @@ export const shareCards = {
     visual: { kind: "browser", project: "removals" },
   },
   about: {
-    alt: "About WebM8: websites that help local businesses make more money.",
+    alt: "About WebM8: your website, our day job. Web design and ongoing care for local businesses.",
     eyebrow: "About WebM8",
-    title: "Websites that help local businesses *make more money.*",
+    title: "Your website. *Our day job.*",
     subtitle: "We design, build and look after websites for businesses in the US and UK.",
     visual: { kind: "mascot" },
   },

@@ -52,6 +52,10 @@ Geist is body and controls; Funnel Display is large headings; Geist Mono is the 
 
 Keep `container-page`, natural document scrolling and existing Tailwind breakpoints. Contact has a compact introduction on the left and the form on the right at `lg`. On phones, the order is introduction, form, then email and demo alternatives; no separate hero or contact card delays the first field. The form has one column on phones and two at `sm`; plan, message and website span both. Pending state preserves the form footprint and reserves button width. No fixed-height form panel.
 
+About stays company-focused: a light split hero with real demo screenshots, an editorial explanation of the approach, a navy panel explaining responsibilities, and native FAQ disclosures. Label portfolio examples as demos. Use ruled rows for static information rather than interactive-looking feature cards. Keep the shared demo close as the getting-started sequence; do not repeat the homepage process above it.
+
+The shared header uses the compact menu below `lg` so its navigation and demo action do not wrap on tablets. Resizing to desktop closes the drawer and releases its scroll lock.
+
 ## Elevation & Depth
 
 Use the existing `shadow-card` and border for the form. Validation requires no modal or floating overlay.

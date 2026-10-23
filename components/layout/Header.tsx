@@ -59,6 +59,15 @@ export function Header() {
     };
   }, [open]);
 
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const closeOnDesktop = () => {
+      if (desktop.matches) setOpen(false);
+    };
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, []);
+
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname?.startsWith(href) ?? false;
 
@@ -133,7 +142,7 @@ export function Header() {
 
         {isLeadPage ? null : (
           <>
-            <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
+            <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
               {navItems.map((item) => (
                 <Link data-analytics-id={analyticsName(item.label)}
                   key={item.href}
@@ -154,7 +163,7 @@ export function Header() {
               ))}
             </nav>
 
-            <div className="hidden items-center gap-4 md:flex">
+            <div className="hidden items-center gap-4 lg:flex">
               {brand.phone ? (
                 <a data-analytics-id="Call WebM8"
                   href={`tel:${brand.phone}`}
@@ -182,7 +191,7 @@ export function Header() {
             <button data-analytics-id={open ? "Close menu" : "Open menu"}
               type="button"
               className={cn(
-                "inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors md:hidden",
+                "inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors lg:hidden",
                 overDarkHero
                   ? "border-white/25 bg-white/10 text-bg hover:bg-white/20"
                   : "border-border bg-white text-ink hover:bg-ink/5",
@@ -202,7 +211,7 @@ export function Header() {
         id="mobile-menu"
         data-analytics-section="Mobile menu"
         hidden={!open}
-        className="border-t border-border bg-white md:hidden"
+        className="border-t border-border bg-white lg:hidden"
       >
         <nav
           aria-label="Mobile"
