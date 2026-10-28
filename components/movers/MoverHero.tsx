@@ -4,8 +4,8 @@ import { Icon } from "@/components/ui/Icon";
 import { MoverFeatureCarousel } from "@/components/movers/MoverFeatureCarousel";
 
 const reassurance = [
-  "From $147 a month",
-  "$0 setup fee",
+  "Priced for your business",
+  "No setup fee",
   "No minimum contract term",
 ];
 

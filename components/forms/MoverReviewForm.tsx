@@ -50,7 +50,7 @@ type AcceptedResponse = {
 };
 
 export function MoverReviewForm() {
-  const { plan, billing } = usePlanSelection();
+  const { plan } = usePlanSelection();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [accepted, setAccepted] = useState<Accepted | null>(null);
@@ -80,7 +80,6 @@ export function MoverReviewForm() {
       utm_source: attribution.utmSource || "direct",
       utm_campaign: attribution.utmCampaign,
       plan,
-      billing,
     });
   }
 
@@ -108,7 +107,6 @@ export function MoverReviewForm() {
       companyWebsiteHp: String(data.get("companyWebsiteHp") ?? ""),
       elapsedMs: Date.now() - openedAt.current,
       plan,
-      billing,
       ...attribution,
     };
 
@@ -144,7 +142,6 @@ export function MoverReviewForm() {
         utm_medium: attribution.utmMedium,
         utm_campaign: attribution.utmCampaign,
         plan,
-        billing,
       });
 
       setAccepted({
