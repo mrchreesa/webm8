@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { cardOffset, springStep, wrapIndex } from "./demoDeck.ts";
+import { cameraDistance, cardOffset, nearestTurn, springStep, wrapIndex } from "./demoDeck.ts";
 
 test("indexes wrap in both directions", () => {
   assert.equal(wrapIndex(0, 6), 0);
@@ -71,4 +71,22 @@ test("a spring moves the same however the time is sliced into frames", () => {
 test("a spring carries a flick on before it turns for home", () => {
   const [offset] = springStep(0, 5, 14, 0.05);
   assert.ok(offset > 0, `${offset}`);
+});
+
+test("the 3D ring turns the short way round to the next demo", () => {
+  assert.equal(nearestTurn(0, 10, 11), -1);
+  assert.equal(nearestTurn(10.6, 0, 11), 11);
+  assert.equal(nearestTurn(3.2, 3, 11), 3);
+  assert.equal(nearestTurn(-12.4, 9, 11), -13);
+});
+
+test("the camera stands far enough back for the front demo to fit both ways", () => {
+  const fov = 30;
+  const half = Math.tan((fov / 2) * (Math.PI / 180));
+  for (const aspect of [0.6, 1, 1.6]) {
+    const d = cameraDistance(fov, aspect, 3.8, 2.3);
+    assert.ok(2 * d * half * aspect >= 3.8 - 1e-9, `width fits at aspect ${aspect}`);
+    assert.ok(2 * d * half >= 2.3 - 1e-9, `height fits at aspect ${aspect}`);
+    assert.ok(Math.abs(2 * d * half * aspect - 3.8) < 1e-9 || Math.abs(2 * d * half - 2.3) < 1e-9, "and no further back than it needs");
+  }
 });

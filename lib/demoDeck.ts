@@ -1,5 +1,5 @@
 /**
- * Index maths for the card deck on /demo/ and /free-demo/
+ * Index and motion maths for the card deck on /demo/ and /free-demo/
  * (components/demo/DemoDeck.tsx).
  */
 
@@ -30,4 +30,23 @@ export function springStep(offset: number, velocity: number, stiffness: number, 
   const decay = Math.exp(-stiffness * dt);
   const drift = velocity + stiffness * offset;
   return [(offset + drift * dt) * decay, (velocity - stiffness * drift * dt) * decay];
+}
+
+/**
+ * For the 3D ring on the same decks: the turn, among all the turns that show
+ * card `index` in front, closest to where the ring is now (`position`, in
+ * cards, not wrapped). Gliding there always takes the short way round.
+ */
+export function nearestTurn(position: number, index: number, count: number): number {
+  return index + Math.round((position - index) / count) * count;
+}
+
+/**
+ * How far back a camera with vertical field of view `fovDeg` must stand for
+ * a subject `width` by `height` to fill a view of `aspect` (width over height)
+ * without being cropped either way.
+ */
+export function cameraDistance(fovDeg: number, aspect: number, width: number, height: number): number {
+  const half = Math.tan((fovDeg / 2) * (Math.PI / 180));
+  return Math.max(width / (2 * half * aspect), height / (2 * half));
 }

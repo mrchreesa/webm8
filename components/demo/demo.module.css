@@ -148,6 +148,40 @@
   }
 }
 
+/* The 3D ring (DemoRing) behind the deck. Once it is drawn, the cards turn
+   invisible but keep their links, labels and focus. */
+.ringCanvas { position: absolute; inset: 0; z-index: 1; display: block; width: 100%; height: 100%; opacity: 0; pointer-events: none; transition: opacity 0.6s ease; }
+/* On a laptop the ring reaches past the deck's box, so the neighbours show. */
+@media (min-width: 1024px) { .ringCanvas { inset: -4% -14%; width: 128%; height: 108%; } }
+.stage[data-gl="ready"] .ringCanvas { opacity: 1; }
+.stage[data-gl="ready"] .cardFace { opacity: 0; transition: opacity 0.5s ease; }
+.glHit { position: absolute; inset: 12% 6% 16%; z-index: 35; display: none; border: 0; background: none; cursor: pointer; }
+.stage[data-gl="ready"] .glHit { display: block; }
+.glLabel {
+  position: absolute; left: 50%; bottom: 0.2rem; z-index: 40; translate: -50% 0;
+  display: none; align-items: center; gap: 12px; padding: 5px 5px 5px 14px; border-radius: 99px;
+  background: rgb(6 20 41 / 0.72); backdrop-filter: blur(6px); box-shadow: 0 0 0 1px rgb(255 255 255 / 0.12);
+  color: #fff; font: 600 0.8rem/1.2 var(--font-sans); white-space: nowrap;
+}
+.stage[data-gl="ready"] .glLabel { display: flex; }
+.stage[data-gl="ready"]:has(.cardFace:focus-visible) .glLabel { outline: 2px solid var(--color-brand); outline-offset: 3px; }
+.glLabel small { display: block; color: var(--color-brand); font: 500 0.58rem/1.3 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.glLabel button {
+  display: inline-flex; align-items: center; gap: 0.3rem; border: 0; border-radius: 99px; background: var(--color-brand); padding: 0.45rem 0.7rem;
+  color: var(--color-brand-ink); font: 600 0.62rem/1 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
+}
+
+/* Depth behind the hero: a grid floor and drifting light. */
+.heroFloor {
+  position: absolute; left: -60%; right: -60%; bottom: -20%; height: 70%; pointer-events: none; opacity: 0.5;
+  transform: perspective(900px) rotateX(78deg); transform-origin: bottom;
+  background-image: linear-gradient(rgb(212 255 53 / 0.28) 1px, transparent 1px), linear-gradient(90deg, rgb(43 108 252 / 0.4) 1px, transparent 1px);
+  background-size: 52px 52px; mask-image: linear-gradient(to top, black 10%, transparent 75%);
+}
+.heroDot { position: absolute; width: 3px; height: 3px; border-radius: 99px; background: #cfe0ff; box-shadow: 0 0 6px rgb(160 200 255 / 0.9); opacity: 0.6; animation: hero-drift 9s ease-in-out infinite; }
+.heroDot.neon { background: var(--color-brand); box-shadow: 0 0 8px rgb(212 255 53 / 0.9); }
+@keyframes hero-drift { 0%, 100% { translate: 0 0; opacity: 0.25; } 50% { translate: 0 -18px; opacity: 0.8; } }
+
 .tag {
   position: absolute;
   top: 0;
@@ -982,6 +1016,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .heroDot { animation: none; }
+
   .card,
   .cardFace {
     transition: none !important;

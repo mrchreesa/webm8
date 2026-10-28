@@ -12,6 +12,7 @@ import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/cn";
 import { cardOffset, wrapIndex } from "@/lib/demoDeck";
 import { projects } from "@/lib/site";
+import { DemoRing } from "./DemoRing";
 import { DemoSiteModal } from "./DemoSiteModal";
 import demo from "./demo.module.css";
 
@@ -40,6 +41,8 @@ const realCards = deckOrder.flatMap(({ slug, label }) => {
 });
 
 const count = realCards.length;
+/** The same demos, in the same order, for the 3D ring. */
+const ringSlugs = realCards.map((card) => card.slug);
 const AUTOPLAY_MS = 3500;
 const SWIPE_PX = 40;
 
@@ -83,6 +86,8 @@ export function DemoDeck({ active, onActiveChange, autoPlay = true }: DemoDeckPr
   const [reduced, setReduced] = useState(false);
   const [finePointer, setFinePointer] = useState(false);
   const [focusWithin, setFocusWithin] = useState(false);
+  /** The 3D ring has replaced the card deck's pictures (the cards keep their links). */
+  const [glReady, setGlReady] = useState(false);
   const regionRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const frontRef = useRef<HTMLAnchorElement>(null);
@@ -164,6 +169,11 @@ export function DemoDeck({ active, onActiveChange, autoPlay = true }: DemoDeckPr
   function openCard(event: MouseEvent<HTMLAnchorElement>, index: number) {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
     event.preventDefault();
+    open(index);
+  }
+
+  /** Bring a demo to the front and open its live site in the dialog. */
+  function open(index: number) {
     if (swiped.current) return;
     go(index);
     setOpened(index);
@@ -235,6 +245,7 @@ export function DemoDeck({ active, onActiveChange, autoPlay = true }: DemoDeckPr
         <div
           ref={stageRef}
           className={demo.stage}
+          data-gl={glReady ? "ready" : undefined}
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
           onPointerMove={onPointerMove}
@@ -244,6 +255,17 @@ export function DemoDeck({ active, onActiveChange, autoPlay = true }: DemoDeckPr
         >
           <p className={demo.tag} aria-hidden="true">
             Real demos we’ve designed
+          </p>
+
+          {!reduced && <DemoRing active={active} slugs={ringSlugs} onReady={() => setGlReady(true)} />}
+          {/* Once the ring is drawn, a click anywhere on the front demo opens it; the front card's link stays the keyboard's way in. */}
+          <button type="button" className={demo.glHit} tabIndex={-1} aria-hidden="true" onClick={() => open(active)} />
+          <p className={demo.glLabel} aria-hidden="true">
+            <span><small>Real demo</small>{realCards[active].label}</span>
+            <button type="button" tabIndex={-1} onClick={() => open(active)}>
+              <Icon name="expand" size={12} />
+              View site
+            </button>
           </p>
 
           {realCards.map((project, index) => {

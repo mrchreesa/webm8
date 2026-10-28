@@ -4,6 +4,14 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { DemoDeck } from "./DemoDeck";
 import { DemoIntro } from "./DemoIntro";
+import demo from "./demo.module.css";
+
+/** Stable "random" points of light, the same on the server and in the browser. */
+const LIGHTS = (() => {
+  let seed = 11;
+  const next = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+  return Array.from({ length: 28 }, (_, i) => ({ left: next() * 100, top: next() * 100, delay: -next() * 9, neon: i % 6 === 0 }));
+})();
 
 /**
  * The hero on /free-demo/ and /demo/: the promise on the left, the real demos
@@ -24,6 +32,16 @@ export function DemoHero({ line, children, autoPlay = true }: { line: ReactNode;
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_60%_at_80%_0%,rgb(27_74_128/0.75),transparent_65%),radial-gradient(60%_50%_at_10%_100%,rgb(43_108_252/0.22),transparent_70%)]"
       />
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className={demo.heroFloor} />
+        {LIGHTS.map((light, i) => (
+          <span
+            key={i}
+            className={`${demo.heroDot}${light.neon ? ` ${demo.neon}` : ""}`}
+            style={{ left: `${light.left}%`, top: `${light.top}%`, animationDelay: `${light.delay}s` }}
+          />
+        ))}
+      </div>
 
       <div className="container-page relative flex w-full flex-1 flex-col gap-x-12 gap-y-4 pt-3 pb-6 md:gap-y-6 md:pt-10 md:pb-14 lg:grid lg:min-h-[calc(100svh-5rem)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center lg:pb-20">
         <div>
