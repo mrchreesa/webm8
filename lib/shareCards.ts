@@ -1,5 +1,3 @@
-import { formatUsd, moverPlans } from "./movers.ts";
-
 /**
  * The picture a link to the site shows when it is shared: Facebook, WhatsApp,
  * iMessage, LinkedIn, X, Slack. Each card is drawn by
@@ -26,8 +24,6 @@ export type ShareCard = {
   subtitle: string;
   visual: ShareVisual;
 };
-
-const fromPrice = formatUsd(Math.min(...moverPlans.map((plan) => plan.monthlyPrice)));
 
 export const shareCards = {
   home: {
@@ -62,7 +58,7 @@ export const shareCards = {
     alt: "A moving company's website WebM8 built, shown on a computer and a phone.",
     eyebrow: "For US moving companies",
     title: "Your hands are full. Your website can take the *details.*",
-    subtitle: `Moving company websites, built and managed from ${fromPrice}/month.`,
+    subtitle: "Moving company websites, built and managed for you. No setup fee.",
     visual: { kind: "browser", project: "removals" },
   },
   about: {

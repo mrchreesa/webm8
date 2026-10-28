@@ -1,0 +1,74 @@
+{
+  "chibauchi-atelier": {
+    "desktop": {
+      "src": "captures/chibauchi-atelier-desktop.webp",
+      "width": 2560,
+      "height": 4800
+    },
+    "phone": {
+      "src": "captures/chibauchi-atelier-phone.webp",
+      "width": 780,
+      "height": 3200
+    }
+  },
+  "aesthetic-nacre": {
+    "desktop": {
+      "src": "captures/aesthetic-nacre-desktop.webp",
+      "width": 2560,
+      "height": 4800
+    },
+    "phone": {
+      "src": "captures/aesthetic-nacre-phone.webp",
+      "width": 780,
+      "height": 3200
+    }
+  },
+  "allen-fitness": {
+    "desktop": {
+      "src": "captures/allen-fitness-desktop.webp",
+      "width": 2560,
+      "height": 4800
+    },
+    "phone": {
+      "src": "captures/allen-fitness-phone.webp",
+      "width": 780,
+      "height": 3200
+    }
+  },
+  "stitch-house": {
+    "desktop": {
+      "src": "captures/stitch-house-desktop.webp",
+      "width": 2560,
+      "height": 4800
+    },
+    "phone": {
+      "src": "captures/stitch-house-phone.webp",
+      "width": 780,
+      "height": 3200
+    }
+  },
+  "ideal-baby": {
+    "desktop": {
+      "src": "captures/ideal-baby-desktop.webp",
+      "width": 2560,
+      "height": 4800
+    },
+    "phone": {
+      "src": "captures/ideal-baby-phone.webp",
+      "width": 780,
+      "height": 3200
+    }
+  },
+  "aesthetic-veil": {
+    "desktop": {
+      "src": "captures/aesthetic-veil-desktop.webp",
+      "width": 2560,
+      "height": 4800
+    },
+    "phone": {
+      "src": "captures/aesthetic-veil-phone.webp",
+      "width": 780,
+      "height": 3200
+    }
+  }
+}

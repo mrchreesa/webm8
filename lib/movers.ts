@@ -1,9 +1,9 @@
 /**
  * Single source of truth for the /movers/ campaign offer.
  *
- * Every price shown on the page is derived from `monthlyPrice` and
- * `annualPrice` here. Nothing about the pricing is written out by hand in a
- * component, so the two can never drift apart.
+ * Like /pricing/, the plans carry no price: every website is quoted to the
+ * business. Leaving the figures out of the data means no component or JSON-LD
+ * can publish one.
  */
 
 export type BillingCycle = "monthly" | "annual";
@@ -56,8 +56,6 @@ export type MoverPlan = {
   /** Honest descriptor of what the plan is, shown above the name. */
   label: string;
   summary: string;
-  monthlyPrice: number;
-  annualPrice: number;
   features: string[];
   footnote: string;
 };
@@ -69,8 +67,6 @@ export const moverPlans: MoverPlan[] = [
     label: "Managed website",
     summary:
       "A professional moving-company website, built and looked after for you, with quote requests arriving in your inbox.",
-    monthlyPrice: 147,
-    annualPrice: 1470,
     features: [
       "Website design and copy written for your company, services and real service area",
       "Responsive layout with visible phone buttons and a straightforward estimate form",
@@ -89,8 +85,6 @@ export const moverPlans: MoverPlan[] = [
     label: "Ongoing growth support",
     summary:
       "Everything in Standard, plus month-by-month work on local visibility, new pages, follow-up and conversion.",
-    monthlyPrice: 247,
-    annualPrice: 2470,
     features: [
       "Everything in Standard, plus:",
       "Google Business Profile support and optimization, with your access and approval",
@@ -113,52 +107,6 @@ export const previewCallMinutes = 15;
 export const previewCalendarEventTypeId = 7042719;
 export const previewCalendarProvider = "Cal.com";
 export const previewCallFormat = "Cal.com video call";
-
-export function getMoverPlan(id: MoverPlanId): MoverPlan {
-  const plan = moverPlans.find((item) => item.id === id);
-  if (!plan) throw new Error(`Unknown mover plan: ${id}`);
-  return plan;
-}
-
-/**
- * What the annual charge works out at per month. Never presented as the amount
- * actually billed each month — the annual charge is taken once, up front.
- */
-export function annualEquivalentMonthly(plan: MoverPlan) {
-  return Math.round((plan.annualPrice / 12) * 100) / 100;
-}
-
-/** Two months of the monthly price, saved by paying for the year up front. */
-export function annualSaving(plan: MoverPlan) {
-  return plan.monthlyPrice * 12 - plan.annualPrice;
-}
-
-/** How many months are paid for under the annual price. */
-export function annualMonthsPaid(plan: MoverPlan) {
-  return plan.annualPrice / plan.monthlyPrice;
-}
-
-const wholeDollars = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0,
-});
-
-const preciseDollars = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
-
-export function formatUsd(amount: number) {
-  return wholeDollars.format(amount);
-}
-
-export function formatUsdPrecise(amount: number) {
-  return preciseDollars.format(amount);
-}
 
 export function isMoverPlanId(value: unknown): value is MoverPlanId {
   return value === "standard" || value === "growth";
