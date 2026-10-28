@@ -1,0 +1,556 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@600;700;800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
+
+<style>
+  .v { --night:#061429; --ink:#0e2f56; --brand:#d4ff35; --brand-ink:#071a33; --electric:#2b6cfc; --muted:#a9b8cf; font-family:Geist, system-ui, sans-serif; }
+  .v-row { display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:20px; align-items:start; }
+  @media (max-width: 1100px) { .v-row { grid-template-columns:1fr; } .v-col.narrow { max-width:320px; } }
+  .v-col { min-width:0; overflow:hidden; }
+  .v-cap { font:500 11px/1 'Geist Mono', monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--text-secondary, #86868b); margin:0 0 8px 2px; }
+  .v-view { position:relative; overflow-y:auto; overscroll-behavior:contain; border-radius:20px; background:var(--night); scrollbar-width:thin; box-shadow:0 0 0 1px rgb(255 255 255 / .08); }
+  .v-view[data-mode="wide"] { width:1120px; height:630px; }
+  .v-view[data-mode="narrow"] { width:375px; height:720px; }
+  .v-track { position:relative; }
+  .v-view[data-mode="wide"] .v-track { height:4200px; }
+  .v-view[data-mode="narrow"] .v-track { height:4600px; }
+  .v-stage { position:sticky; top:0; overflow:hidden; color:#fff;
+    background: radial-gradient(80% 60% at 75% 10%, rgb(27 74 128 / .8), transparent 65%), radial-gradient(60% 50% at 10% 100%, rgb(43 108 252 / .25), transparent 70%), var(--night); }
+  .v-view[data-mode="wide"] .v-stage { height:630px; }
+  .v-view[data-mode="narrow"] .v-stage { height:720px; }
+  .v-stage * { box-sizing:border-box; }
+  .v .c3 { position:absolute; left:50%; top:50%; transform-style:preserve-3d; }
+
+  .v-floor { position:absolute; left:-80%; right:-80%; bottom:-30%; height:90%; transform:perspective(900px) rotateX(80deg); transform-origin:bottom; pointer-events:none;
+    background-image:linear-gradient(rgb(212 255 53 / .3) 1px, transparent 1px), linear-gradient(90deg, rgb(43 108 252 / .45) 1px, transparent 1px); background-size:52px 52px;
+    mask-image:linear-gradient(to top, black 15%, transparent 80%); }
+  .v-world { position:absolute; inset:0; transform-style:preserve-3d; pointer-events:none; }
+  .v-world.back { z-index:10; } .v-world.front { z-index:30; }
+  .v-view[data-mode="wide"] .v-world { perspective:950px; }
+  .v-view[data-mode="narrow"] .v-world { perspective:700px; }
+  .v-wscene { position:absolute; inset:0; transform-style:preserve-3d; }
+  .v-gl { position:absolute; inset:0; z-index:20; width:100%; height:100%; pointer-events:none; display:block; }
+  .v-dot { position:absolute; width:3px; height:3px; margin:-1.5px; border-radius:99px; background:#cfe0ff; box-shadow:0 0 6px rgb(160 200 255 / .9); }
+  .v-dot.n { background:var(--brand); box-shadow:0 0 8px rgb(212 255 53 / .9); }
+  .v-glowball { position:absolute; left:0; top:0; width:560px; height:560px; margin:-280px 0 0 -280px; border-radius:50%; background:radial-gradient(closest-side, rgb(43 108 252 / .55), rgb(43 108 252 / .12) 55%, transparent); }
+
+  .v-copy, .v-close { position:absolute; z-index:40; pointer-events:none; }
+  .v-view[data-mode="wide"] .v-copy, .v-view[data-mode="wide"] .v-close { left:64px; top:50%; translate:0 -50%; width:470px; }
+  .v-view[data-mode="narrow"] .v-copy, .v-view[data-mode="narrow"] .v-close { left:18px; right:18px; top:22px; }
+  .v-eyebrow { display:inline-flex; gap:6px; align-items:center; font:500 10px/1 'Geist Mono', monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--brand); background:rgb(255 255 255 / .06); border:1px solid rgb(255 255 255 / .12); padding:6px 9px; border-radius:99px; }
+  .v-eyebrow::before { content:''; width:6px; height:6px; border-radius:99px; background:var(--brand); box-shadow:0 0 8px var(--brand); }
+  .v-h1 { margin:14px 0 12px; font:700 58px/.96 'Funnel Display', sans-serif; letter-spacing:-.015em; }
+  .v-view[data-mode="narrow"] .v-h1 { font-size:36px; margin:10px 0 8px; }
+  .v-h1 b { color:var(--brand); font-weight:700; }
+  .v-sub { color:var(--muted); font-size:16px; line-height:1.45; max-width:34ch; }
+  .v-view[data-mode="narrow"] .v-sub { font-size:14px; }
+  .v-btns { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+  .v-btn { background:var(--brand); color:var(--brand-ink); font:600 12.5px/1 Geist, sans-serif; padding:11px 15px; border-radius:99px; box-shadow:0 10px 30px -10px rgb(212 255 53 / .8); }
+  .v-btn.ghost { background:transparent; color:#fff; box-shadow:inset 0 0 0 1px rgb(255 255 255 / .25); }
+
+  .v-float { position:absolute; left:0; top:0; }
+  .f-card { background:rgb(255 255 255 / .95); color:#0b1a30; border-radius:14px; padding:10px 12px; box-shadow:0 24px 40px -18px rgb(0 0 0 / .8); font:600 12px/1.3 Geist, sans-serif; }
+  .f-glass { background:rgb(14 47 86 / .72); color:#fff; border:1px solid rgb(255 255 255 / .16); backdrop-filter:blur(6px); border-radius:14px; padding:9px 12px; font:600 12px/1.3 Geist, sans-serif; box-shadow:0 24px 40px -18px rgb(0 0 0 / .8); }
+  .f-search { display:flex; gap:7px; align-items:center; border-radius:99px; background:#eef2f8; padding:7px 10px; font-size:12px; }
+  .f-line { height:7px; border-radius:99px; background:#d9e2ef; margin-top:8px; }
+  .f-line.hi { background:linear-gradient(90deg, #1b4a80 0 55%, #d9e2ef 55%); }
+  .f-line.s { width:62%; }
+  .f-stars { color:#f5b301; letter-spacing:1px; }
+  .f-call { width:66px; height:66px; border-radius:99px; background:var(--brand); color:var(--brand-ink); display:grid; place-items:center; font-size:26px; box-shadow:0 0 0 8px rgb(212 255 53 / .15), 0 0 40px rgb(212 255 53 / .7); }
+  .f-tile { width:56px; height:56px; border-radius:16px; display:grid; place-items:center; font-size:26px; background:linear-gradient(160deg, rgb(43 108 252 / .55), rgb(14 47 86 / .9)); border:1px solid rgb(255 255 255 / .18); box-shadow:0 20px 34px -16px rgb(0 0 0 / .9); }
+  .f-chip { white-space:nowrap; }
+
+  .v-title { position:absolute; left:0; right:0; z-index:40; text-align:center; font:700 26px/1.05 'Funnel Display', sans-serif; padding:0 16px; pointer-events:none; opacity:0; }
+  .v-view[data-mode="wide"] .v-title { top:34px; font-size:34px; }
+  .v-view[data-mode="narrow"] .v-title { top:30px; font-size:25px; }
+  .v-name { position:absolute; left:0; right:0; z-index:40; text-align:center; font:600 14px/1.2 Geist, sans-serif; color:#fff; opacity:0; pointer-events:none; }
+  .v-name small { display:block; font:500 10px/1 'Geist Mono', monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--brand); margin-bottom:5px; }
+  .v-view[data-mode="wide"] .v-name { bottom:38px; }
+  .v-view[data-mode="narrow"] .v-name { bottom:50px; }
+
+  .v-step { position:absolute; left:0; top:0; width:196px; padding:14px; border-radius:18px; background:linear-gradient(165deg, rgb(27 74 128 / .95), rgb(6 20 41 / .95)); border:1px solid rgb(255 255 255 / .16); box-shadow:0 30px 50px -24px rgb(0 0 0 / .9), 0 0 40px -16px rgb(43 108 252 / .7); }
+  .v-step b { display:grid; place-items:center; width:26px; height:26px; border-radius:99px; background:var(--brand); color:var(--brand-ink); font:700 12px/1 Geist, sans-serif; box-shadow:0 0 16px rgb(212 255 53 / .7); }
+  .v-step em { float:right; font-style:normal; font-size:22px; }
+  .v-step h4 { margin:12px 0 4px; font:700 15px/1.1 'Funnel Display', sans-serif; }
+  .v-step p { margin:0; font-size:11px; line-height:1.35; color:var(--muted); }
+
+  .v-wave { position:absolute; left:0; top:0; width:200px; height:200px; margin:-100px 0 0 -100px; border-radius:99px; border:2px solid rgb(212 255 53 / .7); box-shadow:0 0 24px rgb(212 255 53 / .4); animation:wave 1.8s ease-out infinite; }
+  .v-wave:nth-child(2) { animation-delay:.6s; } .v-wave:nth-child(3) { animation-delay:1.2s; }
+  @keyframes wave { from { scale:.55; opacity:.9 } to { scale:2.5; opacity:0 } }
+  .v-notif { position:absolute; left:0; top:0; width:210px; display:flex; gap:9px; align-items:center; background:rgb(255 255 255 / .95); color:#0b1a30; border-radius:14px; padding:9px 11px; font:600 11.5px/1.25 Geist, sans-serif; box-shadow:0 0 0 2px var(--brand), 0 24px 40px -18px rgb(0 0 0 / .9); }
+  .v-notif span { flex:none; display:grid; place-items:center; width:28px; height:28px; border-radius:9px; background:#071a33; color:var(--brand); font-size:14px; }
+  .v-notif small { display:block; font-weight:500; color:#55657d; }
+
+  /* The dive: a full-resolution copy of the screen grows to fill the view, so nothing is ever stretched. */
+  .v-zoom { position:absolute; z-index:35; overflow:hidden; pointer-events:none; background:#000; opacity:0; }
+  .v-zoom img { position:absolute; left:0; top:0; width:100%; display:block; }
+  .v-zoom .d { height:100%; object-fit:cover; object-position:top; opacity:0; }
+
+  .v-chapter { position:absolute; left:14px; bottom:12px; z-index:60; font:500 10px/1 'Geist Mono', monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--brand); background:rgb(6 20 41 / .75); padding:6px 9px; border-radius:99px; border:1px solid rgb(255 255 255 / .12); }
+  .v-bar { position:absolute; left:0; right:0; bottom:0; height:3px; z-index:60; background:rgb(255 255 255 / .08); }
+  .v-bar i { display:block; height:100%; width:0; background:var(--brand); }
+  .v-hint { position:absolute; right:14px; bottom:11px; z-index:60; font:500 10px/1 'Geist Mono', monospace; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; }
+  .v-play { position:absolute; right:12px; top:12px; z-index:70; border:0; border-radius:99px; background:var(--brand); color:var(--brand-ink); font:600 11px/1 Geist, sans-serif; padding:8px 12px; cursor:pointer; box-shadow:0 8px 20px -8px rgb(212 255 53 / .7); }
+  .v-loading { position:absolute; inset:0; z-index:80; display:grid; place-items:center; background:var(--night); font:500 11px/1 'Geist Mono', monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); transition:opacity .4s; }
+  .v-note { margin-top:16px; font-size:14px; color:var(--text-secondary, #86868b); max-width:900px; line-height:1.5; }
+</style>
+
+<div class="v">
+  <h2>A, with real 3D devices</h2>
+  <p class="subtitle">The laptops and phones are now Three.js models with metal, glass and studio reflections, and each demo fills most of the frame. Scroll inside a preview or press Play.</p>
+  <div class="v-row">
+    <div class="v-col wide"><div class="v-cap">On a laptop</div><div class="v-view" data-mode="wide"><div class="v-track"><div class="v-stage"></div></div></div></div>
+    <div class="v-col narrow"><div class="v-cap">On a phone</div><div class="v-view" data-mode="narrow"><div class="v-track"><div class="v-stage"></div></div></div></div>
+  </div>
+  <p class="v-note">The words, buttons and floating cards are still HTML, so they stay sharp and readable. The devices are real 3D: drag your mouse over the laptop preview and the light moves across the metal and glass.</p>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const seg = (p, a, b) => clamp((p - a) / (b - a));
+const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+const out3 = (t) => 1 - Math.pow(1 - t, 3);
+const lerp = (a, b, t) => a + (b - a) * t;
+const D2R = Math.PI / 180;
+const add = (parent, cls, html = '', tag = 'div') => { const d = document.createElement(tag); d.className = cls; d.innerHTML = html; parent.appendChild(d); return d; };
+
+const works = [
+  ['stitch-house', 'The Stitch House', 'Tailor, London'],
+  ['boniface-salon', 'Boniface Hair & Beauty', 'Hair salon, Kent'],
+  ['allen-fitness', 'Allen Fitness', 'Activewear'],
+  ['waffles-bubbles', 'Waffles & Bubbles', 'Desserts, Orpington'],
+  ['fcg-painting', 'FCG Painting & Decorating', 'Painter, Margate'],
+  ['aesthetic-nacre', 'Nacre', 'Aesthetic clinic'],
+  ['dps-gasworks', 'DPS Gasworks', 'Heating, Bedford'],
+];
+// Things floating around the phone: [html, laptop [x, y, z, turn], phone [x, y, z, turn]]. Positive z sits in front of the phone.
+const floaters = [
+  ['<div class="f-card" style="width:210px"><div class="f-search">🔍 <span>gym leggings that fit</span></div><div class="f-line hi"></div><div class="f-line"></div><div class="f-line s"></div></div>', [-235, -185, 60, 20], [-92, -150, 40, 16]],
+  ['<div class="f-card" style="width:160px;display:flex;gap:10px;align-items:center"><span style="flex:none;width:46px;height:58px;border-radius:10px;background:linear-gradient(160deg,#d8f343,#7f9a1a)"></span><div>Sculpt leggings<div style="color:#55657d;font-weight:500">£38 · Size M</div><div style="margin-top:6px;display:inline-block;background:#171714;color:#d8f343;border-radius:99px;padding:4px 8px;font-size:10px">Add to bag</div></div></div>', [215, -120, -40, -18], [104, -96, -40, -16]],
+  ['<div class="f-card f-chip"><span class="f-stars">★★★★★</span> 4.9 · 212 reviews</div>', [-175, 175, 140, 14], [-100, 72, 110, 12]],
+  ['<div class="f-call">🛍️</div>', [185, 150, 150, -12], [100, 104, 120, -10]],
+  ['<div class="f-glass" style="width:180px">“First leggings that don’t roll down mid-squat.”<div style="color:#a9b8cf;font-weight:500;margin-top:4px">Jess M.</div></div>', [240, -255, -260, -10], [112, -196, -260, -8]],
+  ['<div class="f-tile">👟</div>', [-330, -40, -420, 18], [-150, -24, -380, 14]],
+  ['<div class="f-tile">🏋️</div>', [290, 40, -320, -18], [150, 22, -320, -14]],
+  ['<div class="f-tile">👕</div>', [-90, -268, -460, 10], [-40, -232, -460, 8]],
+  ['<div class="f-tile">🧘</div>', [60, 250, -380, -8], [42, 172, -380, -6]],
+  ['<div class="f-glass f-chip">✓ Order placed</div>', [-115, 248, 60, 8], [-18, 166, 60, 6]],
+];
+const steps = [
+  ['🎨', 'Free custom demo', 'We design your homepage before you pay a thing.'],
+  ['🗺️', 'A website plan', 'Pages, words and buttons, planned around your customers.'],
+  ['🛠️', 'Design and build', 'Built to look the business and work on phones.'],
+  ['🚀', 'Launch and improve', 'Hosted, looked after and always getting better.'],
+];
+const notifs = [
+  ['💬', 'New quote request', 'Kitchen repaint, Margate'],
+  ['📅', 'New booking', 'Cut and colour, Thursday 10:00'],
+  ['🛍️', 'New order', 'Sculpt leggings, size M'],
+];
+
+/* ---------- Three.js: geometry helpers ---------- */
+
+function rrShape(w, h, r) {
+  const s = new THREE.Shape(), x = -w / 2, y = -h / 2;
+  s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r);
+  s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r);
+  s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y);
+  return s;
+}
+// A flat rounded rectangle whose texture spans it exactly.
+function rrPlane(w, h, r) {
+  const g = new THREE.ShapeGeometry(rrShape(w, h, r), 14);
+  const pos = g.attributes.position, uv = g.attributes.uv;
+  for (let i = 0; i < pos.count; i++) uv.setXY(i, (pos.getX(i) + w / 2) / w, (pos.getY(i) + h / 2) / h);
+  uv.needsUpdate = true;
+  return g;
+}
+// A rounded slab with softened edges, centred on z. Its front face sits at z = depth / 2 + bevel.
+function rrSlab(w, h, r, depth, bevel) {
+  const g = new THREE.ExtrudeGeometry(rrShape(w - bevel * 2, h - bevel * 2, Math.max(0.002, r - bevel)), { depth, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 6, curveSegments: 20 });
+  g.translate(0, 0, -depth / 2);
+  return g;
+}
+const loader = new THREE.TextureLoader();
+// A screenshot cropped to fill a screen of aspect h / w, from the top.
+function screenTex(url, aspect, maxAniso) {
+  const t = loader.load(url, (tt) => {
+    const ia = tt.image.height / tt.image.width;
+    if (ia > aspect) { tt.repeat.set(1, aspect / ia); tt.offset.set(0, 1 - aspect / ia); }
+    else { tt.repeat.set(ia / aspect, 1); tt.offset.set((1 - ia / aspect) / 2, 0); }
+    tt.userData.top = tt.offset.y;
+  });
+  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = maxAniso;
+  return t;
+}
+function canvasTex(w, h, draw) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+function keysTexture() {
+  return canvasTex(1024, 400, (x, w, h) => {
+    x.fillStyle = '#25282e'; x.fillRect(0, 0, w, h);
+    const rows = [[1, 14], [1, 14], [1, 14], [1, 13], [1, 12]];
+    const gap = 9, pad = 14, rh = (h - pad * 2 - gap * 5) / 6;
+    const key = (kx, ky, kw, khh) => {
+      x.fillStyle = '#0d0e11'; x.beginPath(); x.roundRect(kx, ky, kw, khh, 7); x.fill();
+      x.fillStyle = 'rgba(255,255,255,0.05)'; x.fillRect(kx + 4, ky + 2, kw - 8, 2);
+    };
+    rows.forEach(([, n], r) => {
+      const y = pad + r * (rh + gap), kh = r === 0 ? rh * 0.7 : rh;
+      const kw = (w - pad * 2 - gap * (n - 1)) / n;
+      for (let i = 0; i < n; i++) key(pad + i * (kw + gap), y + (r === 0 ? rh * 0.3 : 0), kw, kh);
+    });
+    const y = pad + 5 * (rh + gap), unit = (w - pad * 2 - gap * 7) / 12.4;
+    let cx = pad;
+    [1, 1, 1.2, 1.2, 5, 1.2, 1, 0.8].forEach((u) => { key(cx, y, unit * u, rh); cx += unit * u + gap; });
+  });
+}
+function shadowTexture() {
+  return canvasTex(256, 256, (x, w, h) => {
+    const g = x.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+    g.addColorStop(0, 'rgba(0,0,0,0.7)'); g.addColorStop(0.55, 'rgba(0,0,0,0.35)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+    x.fillStyle = g; x.fillRect(0, 0, w, h);
+  });
+}
+function lockTexture() {
+  const draw = (x, w, h) => {
+    const g = x.createLinearGradient(0, 0, w * 0.4, h);
+    g.addColorStop(0, '#2a5bd0'); g.addColorStop(0.5, '#0b2152'); g.addColorStop(1, '#061429');
+    x.fillStyle = g; x.fillRect(0, 0, w, h);
+    x.fillStyle = 'rgba(255,255,255,0.85)'; x.textAlign = 'center';
+    x.font = '500 34px Geist, sans-serif'; x.fillText('Thursday, October 2', w / 2, 190);
+    x.fillStyle = '#ffffff'; x.font = '700 170px "Funnel Display", sans-serif'; x.fillText('9:41', w / 2, 360);
+  };
+  const t = canvasTex(600, 1300, draw);
+  document.fonts.ready.then(() => { draw(t.image.getContext('2d'), 600, 1300); t.needsUpdate = true; });
+  return t;
+}
+
+/* ---------- Three.js: the devices ---------- */
+
+function materials() {
+  return {
+    titanium: new THREE.MeshPhysicalMaterial({ color: 0x9096a0, metalness: 1, roughness: 0.26, clearcoat: 0.4, clearcoatRoughness: 0.2 }),
+    alu: new THREE.MeshPhysicalMaterial({ color: 0xc8cbd1, metalness: 1, roughness: 0.34 }),
+    pad: new THREE.MeshPhysicalMaterial({ color: 0xd2d5da, metalness: 0.9, roughness: 0.22 }),
+    gloss: new THREE.MeshPhysicalMaterial({ color: 0x040506, metalness: 0, roughness: 0.15, clearcoat: 1, clearcoatRoughness: 0.03 }),
+    flat: new THREE.MeshBasicMaterial({ color: 0x000000 }),
+    lens: new THREE.MeshPhysicalMaterial({ color: 0x0a1424, metalness: 0.3, roughness: 0.05, clearcoat: 1 }),
+    // Glass over every screen: black, added on top, so only the reflections show.
+    glass: new THREE.MeshPhysicalMaterial({ color: 0x000000, roughness: 0.16, metalness: 0, specularIntensity: 0.3, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, envMapIntensity: 0.55 }),
+  };
+}
+const PW = 0.71, PH = 1.46;
+function makePhone(tex, M) {
+  const g = new THREE.Group();
+  const D = 0.05, B = 0.014, R = 0.115, zf = D / 2 + B;
+  g.add(new THREE.Mesh(rrSlab(PW, PH, R, D, B), [M.gloss, M.titanium]));
+  const sw = PW - 0.06, sh = PH - 0.06;
+  const screen = new THREE.Mesh(rrPlane(sw, sh, R - 0.03), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
+  screen.position.z = zf + 0.0012; g.add(screen);
+  const island = new THREE.Mesh(rrPlane(0.2, 0.058, 0.029), M.flat); island.position.set(0, sh / 2 - 0.065, zf + 0.0022); g.add(island);
+  const glass = new THREE.Mesh(rrPlane(PW - 0.024, PH - 0.024, R - 0.012), M.glass); glass.position.z = zf + 0.003; g.add(glass);
+  const btn = new THREE.BoxGeometry(0.016, 1, 0.028);
+  [[PW / 2 + 0.005, 0.27, 0.2], [-PW / 2 - 0.005, 0.38, 0.08], [-PW / 2 - 0.005, 0.2, 0.15], [-PW / 2 - 0.005, 0.01, 0.15]].forEach(([x, y, h]) => {
+    const b = new THREE.Mesh(btn, M.titanium); b.scale.y = h; b.position.set(x, y, 0); g.add(b);
+  });
+  const bump = new THREE.Mesh(rrSlab(0.32, 0.32, 0.08, 0.012, 0.006), [M.gloss, M.titanium]);
+  bump.position.set(-PW / 2 + 0.21, PH / 2 - 0.21, -zf - 0.012); g.add(bump);
+  const lensG = new THREE.CylinderGeometry(0.058, 0.058, 0.022, 32);
+  [[-0.06, 0.06], [-0.06, -0.06], [0.07, 0]].forEach(([x, y]) => {
+    const l = new THREE.Mesh(lensG, M.lens); l.rotation.x = Math.PI / 2; l.position.set(-PW / 2 + 0.21 + x, PH / 2 - 0.21 + y, -zf - 0.03); g.add(l);
+  });
+  g.userData = { screen, sw, sh, zf, R };
+  return g;
+}
+const LW = 2.8, LD = 1.9, LH = 1.82;
+function makeLaptop(tex, M, keysTex, shadowTex) {
+  const g = new THREE.Group();
+  const T = 0.045, B = 0.012, top = T + 2 * B;
+  const base = new THREE.Mesh(rrSlab(LW, LD, 0.09, T, B), M.alu);
+  base.rotation.x = -Math.PI / 2; base.position.y = T / 2 + B; g.add(base);
+  const keys = new THREE.Mesh(new THREE.PlaneGeometry(2.34, 0.92), new THREE.MeshStandardMaterial({ map: keysTex, roughness: 0.55, metalness: 0.15 }));
+  keys.rotation.x = -Math.PI / 2; keys.position.set(0, top + 0.0015, -0.36); g.add(keys);
+  const pad = new THREE.Mesh(rrPlane(1.1, 0.64, 0.05), M.pad); pad.rotation.x = -Math.PI / 2; pad.position.set(0, top + 0.0015, 0.48); g.add(pad);
+  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 3.4), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, toneMapped: false }));
+  shadow.rotation.x = -Math.PI / 2; shadow.position.y = -0.003; g.add(shadow);
+  const lid = new THREE.Group(); lid.position.set(0, top - 0.006, -LD / 2 + 0.05); lid.rotation.x = -0.2; g.add(lid);
+  const LT = 0.022, LB = 0.008, zf = LT / 2 + LB;
+  const shell = new THREE.Mesh(rrSlab(LW, LH, 0.09, LT, LB), [M.gloss, M.alu]); shell.position.y = LH / 2; lid.add(shell);
+  const back = new THREE.Mesh(rrPlane(LW - 0.02, LH - 0.02, 0.085), M.alu); back.position.set(0, LH / 2, -zf - 0.001); back.rotation.y = Math.PI; lid.add(back);
+  const sw = LW - 0.16, sh = sw * 0.625;
+  const screen = new THREE.Mesh(rrPlane(sw, sh, 0.035), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
+  screen.position.set(0, LH / 2 + 0.03, zf + 0.0012); lid.add(screen);
+  const notch = new THREE.Mesh(rrPlane(0.34, 0.07, 0.025), M.flat); notch.position.set(0, LH / 2 + 0.03 + sh / 2 - 0.025, zf + 0.002); lid.add(notch);
+  const glass = new THREE.Mesh(rrPlane(LW - 0.03, LH - 0.03, 0.08), M.glass); glass.position.set(0, LH / 2, zf + 0.003); lid.add(glass);
+  return g;
+}
+
+function makeGL(stage, wide, canvas) {
+  const W = stage.clientWidth, H = stage.clientHeight;
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(W, H, false);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const aniso = renderer.capabilities.getMaxAnisotropy();
+  const scene = new THREE.Scene();
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(3, 5, 4); scene.add(key);
+  const rim = new THREE.DirectionalLight(0x2b6cfc, 3); rim.position.set(-4, 2, -3); scene.add(rim);
+  const lime = new THREE.DirectionalLight(0xd4ff35, 0.6); lime.position.set(4, -1, 2); scene.add(lime);
+  scene.fog = new THREE.Fog(0x061429, 100, 200);
+  const M = materials();
+  const keysTex = keysTexture(), shadowTex = shadowTexture();
+
+  // The hero phone, playing Allen Fitness, with a lock screen for the finale.
+  const heroTex = screenTex('/files/allen-fitness-phone.webp', (PH - 0.06) / (PW - 0.06), aniso);
+  const hero = makePhone(heroTex, M);
+  const lockMat = new THREE.MeshBasicMaterial({ map: lockTexture(), toneMapped: false, transparent: true, opacity: 0 });
+  const lock = new THREE.Mesh(rrPlane(hero.userData.sw, hero.userData.sh, hero.userData.R - 0.03), lockMat);
+  lock.position.z = hero.userData.zf + 0.0018; hero.add(lock);
+  scene.add(hero);
+  const heroCam = new THREE.PerspectiveCamera(24, W / H, 0.1, 100); heroCam.position.set(0, 0, 8);
+
+  // Our work: every demo as a laptop with its phone in front, on a ring.
+  const ring = new THREE.Group(); scene.add(ring);
+  const pairs = works.map(([slug]) => {
+    const pair = new THREE.Group();
+    pair.add(makeLaptop(screenTex(`/files/${slug}-desktop.webp`, 0.625, aniso), M, keysTex, shadowTex));
+    const ph = makePhone(screenTex(`/files/${slug}-mobile.webp`, (PH - 0.06) / (PW - 0.06), aniso), M);
+    ph.scale.setScalar(0.95); ph.position.set(1.66, 0.7, 0.66); ph.rotation.y = -0.34;
+    pair.add(ph);
+    const ps = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.7), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, toneMapped: false }));
+    ps.rotation.x = -Math.PI / 2; ps.position.set(1.66, -0.002, 0.7); pair.add(ps);
+    ring.add(pair);
+    return pair;
+  });
+  const ringCam = new THREE.PerspectiveCamera(wide ? 30 : 34, W / H, 0.1, 100);
+  const R = wide ? 5.4 : 4.6;
+  return { renderer, scene, hero, heroTex, lockMat, heroCam, ring, pairs, ringCam, R, W, H };
+}
+
+/* ---------- The page ---------- */
+
+function build(stage, wide) {
+  const r = {};
+  r.floor = add(stage, 'v-floor');
+  r.back = add(stage, 'v-world back'); r.backScene = add(r.back, 'v-wscene');
+  r.canvas = add(stage, 'v-gl', '', 'canvas');
+  r.front = add(stage, 'v-world front'); r.frontScene = add(r.front, 'v-wscene');
+  r.dots = [...Array(wide ? 70 : 48)].map((_, i) => ({ el: add(r.backScene, 'c3 v-dot' + (i % 7 === 0 ? ' n' : '')), x: (Math.random() - 0.5) * 2, y: (Math.random() - 0.5) * 2, z: -Math.random() * 2600 }));
+  r.backAnchor = add(r.backScene, 'c3'); r.frontAnchor = add(r.frontScene, 'c3');
+  r.glow = add(r.backAnchor, 'v-glowball');
+  r.waveBox = add(r.backAnchor, 'c3'); [0, 1, 2].forEach(() => add(r.waveBox, 'v-wave'));
+  r.floats = floaters.map(([html, lap, pho], i) => { const [x, y, z, ry] = wide ? lap : pho; return { el: add(z >= 0 ? r.frontAnchor : r.backAnchor, 'c3 v-float', html), x, y, z, ry, i }; });
+  r.notifs = notifs.map(([icon, title, sub]) => add(r.frontAnchor, 'c3 v-notif', `<span>${icon}</span><div>${title}<small>${sub}</small></div>`));
+  r.stepBox = add(r.frontScene, 'c3');
+  r.steps = steps.map(([icon, title, line], i) => add(r.stepBox, 'v-step', `<b>${i + 1}</b><em>${icon}</em><h4>${title}</h4><p>${line}</p>`));
+  r.zoom = add(stage, 'v-zoom', `<img class="m" src="/files/allen-fitness-phone.webp" alt="">${wide ? '<img class="d" src="/files/allen-fitness-desktop.webp" alt="">' : ''}`);
+  r.zoomD = r.zoom.querySelector('.d');
+  r.copy = add(stage, 'v-copy', '<span class="v-eyebrow">Websites for local businesses</span><div class="v-h1">Websites that make your <b>phone ring.</b></div><div class="v-sub">WebM8 designs, builds and looks after websites that turn a local search into a new customer.</div><div class="v-btns"><span class="v-btn">Get my free custom demo</span><span class="v-btn ghost">See our work</span></div>');
+  r.title = add(stage, 'v-title');
+  r.name = add(stage, 'v-name');
+  r.close = add(stage, 'v-close', '<span class="v-eyebrow">Free demo · No obligation</span><div class="v-h1">Let’s get your <b>phone ringing.</b></div><div class="v-btns"><span class="v-btn">Get my free custom demo</span></div>');
+  r.chapter = add(stage, 'v-chapter');
+  r.bar = add(stage, 'v-bar', '<i></i>').firstChild;
+  r.hint = add(stage, 'v-hint', 'Scroll ↓');
+  r.play = add(stage, 'v-play', '▶ Play', 'button');
+  r.loading = add(stage, 'v-loading', 'Loading 3D…');
+  r.gl = makeGL(stage, wide, r.canvas);
+  THREE.DefaultLoadingManager.onLoad = () => document.querySelectorAll('.v-loading').forEach((l) => { l.style.opacity = 0; setTimeout(() => l.remove(), 400); });
+  return r;
+}
+
+const v3 = new THREE.Vector3();
+function toPx(gl, cam, x, y, z, obj) {
+  v3.set(x, y, z).applyMatrix4(obj.matrixWorld).project(cam);
+  return [(v3.x + 1) / 2 * gl.W, (1 - v3.y) / 2 * gl.H];
+}
+
+function render(r, stage, wide, p, time, tilt) {
+  if (r.t0 === undefined) r.t0 = time;
+  const gl = r.gl, W = gl.W, H = gl.H;
+  const k = wide ? 0.88 : 0.62;
+  const ax = wide ? W * 0.22 : 0, ay = wide ? 14 : H * 0.2;
+  const pw = wide ? 150 : 118;
+
+  const t1 = ease(seg(p, 0, 0.2));
+  const dive = ease(seg(p, 0.2, 0.36));
+  const d1 = ease(seg(p, 0.2, 0.24));
+  const grow = ease(seg(p, 0.24, 0.34));
+  const back = out3(seg(p, 0.8, 0.9));
+  const warp = dive * (1 - seg(p, 0.36, 0.42));
+
+  const worldT = `rotateX(${-tilt.y * 4}deg) rotateY(${lerp(6, -6, p) + tilt.x * 6}deg)`;
+  r.backScene.style.transform = worldT; r.frontScene.style.transform = worldT;
+
+  const cam = p * 2200 + dive * 2600;
+  r.dots.forEach((d) => {
+    let z = d.z + cam;
+    z = ((z + 2600) % 3000 + 3000) % 3000 - 2600;
+    d.el.style.transform = `translate3d(${d.x * W * 0.9}px, ${d.y * H * 0.8}px, ${z}px) scale(${1 + warp * 6}, 1)`;
+    d.el.style.opacity = clamp((z + 2600) / 1400) * clamp((400 - z) / 300) * (0.5 + warp * 0.5);
+  });
+  r.floor.style.backgroundPosition = `0 ${cam * 0.35}px`;
+  r.floor.style.opacity = lerp(0.35, 0.75, seg(p, 0.36, 0.46) * (1 - seg(p, 0.66, 0.72))) * (1 - warp * 0.6);
+
+  // Where the phone is, in page pixels and turns.
+  let x, y, z = 0, ry, rx, rz = 0, sc = 1, heroOn;
+  if (p < 0.6) {
+    x = lerp(ax, 0, d1); y = lerp(ay, 0, d1);
+    ry = lerp(-34, -12, t1) * (1 - d1); rx = lerp(14, 5, t1) * (1 - d1);
+    sc = lerp(1, 1.12, d1);
+    heroOn = p < 0.246;
+  } else {
+    x = ax; y = ay; z = lerp(-1500, 0, back);
+    ry = lerp(60, -10, back); rx = lerp(-10, 4, back); rz = lerp(-16, 0, back);
+    heroOn = p > 0.8;
+  }
+  ry += tilt.x * 6; rx -= tilt.y * 4;
+  const anchorT = `translate3d(${x}px, ${y}px, ${z}px)`;
+  r.backAnchor.style.transform = anchorT; r.frontAnchor.style.transform = anchorT;
+  r.glow.style.opacity = (p < 0.5 ? 1 - seg(p, 0.2, 0.26) : back) * 0.9;
+
+  // The 3D phone, placed where those page pixels are.
+  const ringOn = p >= 0.34 && p < 0.76;
+  const camera = ringOn ? gl.ringCam : gl.heroCam;
+  const visH = 2 * 8 * Math.tan(12 * D2R), visW = visH * (W / H);
+  const s = ((pw * 2.05) / H) * visH / PH * sc;
+  gl.hero.visible = heroOn;
+  gl.hero.position.set((x / W) * visW, -(y / H) * visH, (z / H) * visH);
+  gl.hero.scale.setScalar(s);
+  const shake = p > 0.93 ? Math.sin(time / 38) * 0.07 : 0;
+  gl.hero.rotation.set(-rx * D2R, ry * D2R + Math.sin(time / 1700) * 0.03, -rz * D2R + shake);
+  if (gl.heroTex.userData.top !== undefined) gl.heroTex.offset.y = gl.heroTex.userData.top - Math.sin(Math.PI * seg(p, 0.03, 0.2)) * 0.14;
+  gl.lockMat.opacity = p > 0.6 ? seg(p, 0.84, 0.88) : 0;
+
+  // The sharp copy of the screen takes over from the phone and grows to fill the view.
+  gl.hero.updateMatrixWorld(true);
+  const { screen, sw, sh } = gl.hero.userData;
+  const [lx, ty] = toPx(gl, gl.heroCam, -sw / 2, sh / 2, 0, screen);
+  const [rxp, by] = toPx(gl, gl.heroCam, sw / 2, -sh / 2, 0, screen);
+  r.zoom.style.left = lerp(lx, 0, grow) + 'px';
+  r.zoom.style.top = lerp(ty, 0, grow) + 'px';
+  r.zoom.style.width = lerp(rxp - lx, W, grow) + 'px';
+  r.zoom.style.height = lerp(by - ty, H, grow) + 'px';
+  r.zoom.style.borderRadius = lerp(((rxp - lx) / sw) * (gl.hero.userData.R - 0.03), 0, grow) + 'px';
+  r.zoom.style.opacity = p < 0.5 ? seg(p, 0.238, 0.244) * (1 - seg(p, 0.37, 0.43)) : 0;
+  if (r.zoomD) r.zoomD.style.opacity = seg(p, 0.3, 0.36);
+
+  // Floating things around the phone.
+  const fOp = 1 - seg(p, 0.28, 0.35);
+  r.floats.forEach((f) => {
+    const bob = Math.sin(time / 900 + f.i * 1.7) * 7;
+    const appear = out3(clamp((time - r.t0 - 900 - f.i * 90) / 1100));
+    const zz = f.z + dive * 1800 + (1 - appear) * -500;
+    f.el.style.transform = `translate3d(${f.x}px, ${f.y + bob - p * f.z * 0.25}px, ${zz}px) rotateY(${f.ry + Math.sin(time / 1400 + f.i) * 5}deg) scale(${k}) translate(-50%, -50%)`;
+    f.el.style.opacity = fOp * Math.max(appear, 0.001) * clamp(1 - (zz - 300) / 500);
+  });
+
+  // Our work: the ring of laptops and phones, pausing on each.
+  const appear = ease(seg(p, 0.34, 0.46));
+  const leave = ease(seg(p, 0.64, 0.72));
+  gl.ring.visible = ringOn;
+  gl.ring.position.set(0, leave * 1.8, lerp(-16, 0, appear) - leave * 16);
+  const u = seg(p, 0.44, 0.64) * (works.length - 1);
+  const stepI = Math.min(works.length - 1, Math.floor(u));
+  const spin = -(stepI + ease(clamp((u - stepI - 0.55) / 0.45))) * (Math.PI * 2 / works.length);
+  let front = 0, best = -2;
+  gl.pairs.forEach((pair, i) => {
+    const a = i * (Math.PI * 2 / works.length) + spin;
+    if (Math.cos(a) > best) { best = Math.cos(a); front = i; }
+    pair.position.set(Math.sin(a) * gl.R, Math.sin(time / 1100 + i) * 0.03, Math.cos(a) * gl.R - gl.R);
+    pair.rotation.y = a;
+  });
+  if (wide) { gl.ringCam.position.set(0.28 + tilt.x * 0.5, 1.45 - tilt.y * 0.3, 5.6); gl.ringCam.lookAt(0.28, 0.82, 0); gl.scene.fog.near = 6.4; gl.scene.fog.far = 15; }
+  else { gl.ringCam.position.set(0.28, 1.9, 12.2); gl.ringCam.lookAt(0.28, 0.86, 0); gl.scene.fog.near = 12.6; gl.scene.fog.far = 21; }
+  if (!ringOn) { gl.scene.fog.near = 100; gl.scene.fog.far = 200; }
+  r.name.innerHTML = `<small>Real demo</small>${works[front][1]} · ${works[front][2]}`;
+  r.name.style.opacity = seg(p, 0.44, 0.48) * (1 - seg(p, 0.62, 0.66));
+
+  gl.renderer.render(gl.scene, camera);
+
+  // How it works: four steps rise towards you.
+  const stepIn = seg(p, 0.67, 0.71), stepOut = ease(seg(p, 0.79, 0.84));
+  r.steps.forEach((st, i) => {
+    const t = out3(seg(p, 0.68 + i * 0.022, 0.75 + i * 0.022));
+    let sx, sy, sz, sry;
+    if (wide) { sx = (i - 1.5) * 232; sy = 30 - Math.abs(i - 1.5) * 10; sz = -Math.abs(i - 1.5) * 90; sry = -(i - 1.5) * 14; }
+    else { sx = (i % 2 - 0.5) * 158; sy = 50 + (Math.floor(i / 2) - 0.5) * 168; sz = -i * 25; sry = -(i % 2 - 0.5) * 16; }
+    st.style.transform = `translate3d(${sx}px, ${sy + (1 - t) * 120 - stepOut * 80}px, ${sz - (1 - t) * 400 + stepOut * 500}px) rotateX(${(1 - t) * 70}deg) rotateY(${sry}deg) scale(${wide ? 1 : 0.74}) translate(-50%, -50%)`;
+    st.style.opacity = t * (1 - stepOut);
+  });
+  if (p < 0.66) { r.title.textContent = 'Built for businesses like yours.'; r.title.style.opacity = seg(p, 0.4, 0.46) * (1 - seg(p, 0.62, 0.66)); }
+  else { r.title.textContent = 'Four steps. Nothing for you to prepare.'; r.title.style.opacity = stepIn * (1 - stepOut); }
+
+  // The finale: the phone rings.
+  r.waveBox.style.opacity = p > 0.6 ? seg(p, 0.9, 0.95) : 0;
+  r.waveBox.style.transform = `translateZ(-60px) scale(${wide ? 1.2 : 0.9})`;
+  r.notifs.forEach((n, i) => {
+    const t = out3(seg(p, 0.88 + i * 0.03, 0.93 + i * 0.03));
+    const nx = wide ? -215 + i * 18 : -12 + i * 6, ny = wide ? -130 + i * 80 : -128 + i * 64, nz = 140 - i * 40;
+    n.style.transform = `translate3d(${nx}px, ${ny + Math.sin(time / 800 + i) * 4}px, ${lerp(-700, nz, t)}px) rotateY(${lerp(-40, wide ? 14 : 6, t)}deg) scale(${wide ? 1 : 0.8}) translate(-50%, -50%)`;
+    n.style.opacity = t;
+  });
+
+  r.copy.style.opacity = 1 - seg(p, 0.1, 0.2);
+  r.copy.style.transform = `translateY(${-30 * seg(p, 0.1, 0.2)}px)`;
+  r.close.style.opacity = seg(p, 0.91, 0.97);
+  r.close.style.transform = `translateY(${lerp(20, 0, seg(p, 0.91, 0.97))}px)`;
+  r.hint.style.opacity = 1 - seg(p, 0, 0.04);
+  r.bar.style.width = p * 100 + '%';
+  r.chapter.textContent = p < 0.2 ? '1 · The search' : p < 0.36 ? '2 · Into the screen' : p < 0.67 ? '3 · Our work' : p < 0.82 ? '4 · How it works' : '5 · Your phone rings';
+}
+
+const views = [...document.querySelectorAll('.v-view')];
+const fit = () => views.forEach((view) => {
+  const zoom = Math.min(1, view.closest('.v-col').clientWidth / (view.dataset.mode === 'wide' ? 1120 : 375));
+  view.style.zoom = zoom;
+  view._r?.gl.renderer.setPixelRatio(Math.max(0.75, Math.min(2, devicePixelRatio) * zoom));
+  view._r?.gl.renderer.setSize(view._r.gl.W, view._r.gl.H, false);
+});
+views.forEach((view) => {
+  const stage = view.querySelector('.v-stage');
+  const wide = view.dataset.mode === 'wide';
+  const r = build(stage, wide);
+  view._r = r;
+  const tilt = { x: 0, y: 0, tx: 0, ty: 0 };
+  stage.addEventListener('pointermove', (e) => {
+    const b = stage.getBoundingClientRect();
+    tilt.tx = ((e.clientX - b.left) / b.width - 0.5) * 2;
+    tilt.ty = ((e.clientY - b.top) / b.height - 0.5) * 2;
+  });
+  stage.addEventListener('pointerleave', () => { tilt.tx = 0; tilt.ty = 0; });
+  let anim = null, from = 0, start = 0, dur = 0;
+  r.play.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (anim) { anim = null; r.play.textContent = '▶ Play'; return; }
+    const max = view.scrollHeight - view.clientHeight;
+    if (view.scrollTop >= max - 2) view.scrollTop = 0;
+    from = view.scrollTop; start = performance.now(); dur = 15000 * (1 - from / max);
+    anim = true; r.play.textContent = '❚❚ Pause';
+  });
+  const frame = (now) => {
+    const max = view.scrollHeight - view.clientHeight;
+    if (anim) {
+      const t = clamp((now - start) / dur);
+      view.scrollTop = from + (max - from) * t;
+      if (t >= 1) { anim = null; r.play.textContent = '↺ Replay'; }
+    }
+    tilt.x += (tilt.tx - tilt.x) * 0.08; tilt.y += (tilt.ty - tilt.y) * 0.08;
+    render(r, stage, wide, max ? view.scrollTop / max : 0, now, tilt);
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+});
+fit();
+addEventListener('resize', fit);
+</script>
