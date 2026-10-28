@@ -1,6 +1,6 @@
 /**
- * Index maths for the card decks on /demo/ and /free-demo/
- * (components/demo/DemoDeck.tsx) and the homepage (components/home/WorkDeck.tsx).
+ * Index maths for the card deck on /demo/ and /free-demo/
+ * (components/demo/DemoDeck.tsx).
  */
 
 export function wrapIndex(index: number, count: number): number {

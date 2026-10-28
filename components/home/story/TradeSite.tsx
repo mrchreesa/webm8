@@ -10,7 +10,7 @@ import { TradeIcon } from "./TradeIcon";
 import site from "./site.module.css";
 import styles from "./story.module.css";
 
-/** The site's main button. StoryHero taps it at the end of the site step. */
+/** The site's main button. */
 function MainButton({ label }: { label: string }) {
   return (
     <span className={site.cta}>

@@ -218,7 +218,7 @@ export const teamArms: TeamArm[] = [
 
 export type Project = {
   slug: string;
-  /** The business name, shown on the homepage deck's buttons. */
+  /** The business name. */
   name: string;
   industry: string;
   title: string;
@@ -259,9 +259,9 @@ export type PhoneShot = {
 };
 
 /**
- * Demo sites WebM8 designed for local businesses, in the order the homepage
- * deck and the work page show them. The deck opens on `workDeckStart`, so its
- * neighbours here are the cards either side of it.
+ * Demo sites WebM8 designed for local businesses, in the order the work page
+ * shows them. The homepage story shows seven of them (`ringDemos` in
+ * lib/homeStory.ts).
  */
 export const projects: Project[] = [
   {
@@ -489,9 +489,6 @@ export const projects: Project[] = [
     ],
   },
 ];
-
-/** The project the homepage deck opens on. */
-export const workDeckStart = "allen-fitness";
 
 export type Testimonial = {
   quote: string;

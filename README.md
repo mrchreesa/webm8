@@ -31,8 +31,9 @@ app/
   api/                # demo-request (/demo/) and the /movers/ campaign routes
   globals.css         # Tailwind @theme tokens and motion utilities
 components/
-  home/story/         # StoryHero and its phone screens (CSS module: story.module.css)
-  home/               # WorkDeck, EightArms, HowItWorks, Plans, Voices (+ WhatYouGet, Testimonials for /movers/)
+  home/story3d/       # HomeStory: the homepage's 3D scroll story (Three.js scene in scene.ts, devices.ts)
+  home/story/         # The drawn phone and example sites, used by the /free-demo/ sketch
+  home/               # EightArms, Plans, Voices (+ WhatYouGet, Testimonials for /movers/)
   demo/               # The /demo/ page (DemoHero, DemoDeck, DemoJourney, DemoSketch, …), plus DemoCtaButton and DemoClosing
   forms/              # ContactForm, MoverReviewForm, FormField
   layout/ ui/ movers/ analytics/
@@ -41,7 +42,7 @@ lib/
   trades.ts           # The 15 trades the homepage story can show
   demoRequest.ts      # /demo/ request validation, shared by the form and its route
   demoEmail.ts        # The two /demo/ emails; resend.ts sends them
-  storyProgress.ts    # Scroll maths for the story
+  homeStory.ts        # The homepage story's timeline and content
   seo.ts analytics.ts mailto.ts movers.ts …
 scripts/
   capture-portfolio.mjs  # Dev-only portfolio screenshots (see the file header)

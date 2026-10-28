@@ -1,7 +1,7 @@
 /*
- * The homepage story (StoryHero). Sizes inside the phone are in cqi, so the
- * whole phone scales as one piece. States are data attributes that the
- * story's clock in StoryHero sets directly, without React re-rendering.
+ * The drawn phone and example sites, now used by the /free-demo/ sketch
+ * (components/demo/DemoSketch.tsx). Sizes inside the phone are in cqi, so the
+ * whole phone scales as one piece.
  */
 
 .story { position: relative; display: flex; min-height: 100vh; min-height: 100svh; margin-top: -4rem; overflow: hidden; background: var(--color-night); color: #eef3fa; }
