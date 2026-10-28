@@ -11,8 +11,9 @@
 .story { position: relative; margin-top: -4rem; background: var(--color-night); color: #eef3fa; }
 @media (min-width: 768px) { .story { margin-top: -5rem; } }
 
-.track { position: relative; height: 900svh; }
-@media (min-width: 900px) { .track { height: 800svh; } }
+/* Ten screens of story on a laptop, eleven on a phone: each demo on the ring gets about a third of a screen. */
+.track { position: relative; height: 1100svh; }
+@media (min-width: 900px) { .track { height: 1000svh; } }
 /* Where #work and #how-it-works land: their chapters, settled. */
 .anchor { position: absolute; left: 0; top: calc(var(--at) * (100% - 100svh)); width: 1px; height: 1px; }
 

@@ -32,10 +32,26 @@ export const finaleNotifications = [
   { icon: "🛍️", title: "New order", detail: "Sculpt leggings, size M" },
 ] as const;
 
-/** The ring turns over this stretch of the story, after it has arrived. */
-export const RING_TURN = { from: 0.46, to: 0.64 } as const;
+/** The ring turns over this stretch of the story, after it has arrived: about a third of a screen's scroll per demo. */
+export const RING_TURN = { from: 0.45, to: 0.71 } as const;
 /** Where `#work` and `#how-it-works` land: their chapters, settled. */
-export const STORY_ANCHORS = { work: 0.47, steps: 0.795 } as const;
+export const STORY_ANCHORS = { work: 0.455, steps: 0.86 } as const;
+/** How long the shown story takes to catch up with the scroll, in milliseconds. */
+const FOLLOW_MS = 110;
+
+/**
+ * Where the story should be drawn this frame: it glides after the scroll
+ * position, so a mouse wheel's steps become one smooth movement. The page
+ * itself scrolls natively. A jump of more than a few screens (a link to a
+ * chapter, a restored scroll) lands at once.
+ */
+export function followScroll(shown: number, target: number, dtMs: number): number {
+  if (Math.abs(target - shown) > 0.15) return target;
+  // At most two frames' worth: after a pause in drawing, the glide starts from the beginning.
+  const dt = clamp(dtMs, 0, 34);
+  const next = shown + (target - shown) * (1 - Math.exp(-dt / FOLLOW_MS));
+  return Math.abs(target - next) < 1e-4 ? target : next;
+}
 
 export type StoryLayout = { wide: boolean; W: number; H: number; phoneH: number; anchorX: number; anchorY: number };
 
@@ -68,8 +84,15 @@ export type StoryFrame = {
   /** Radians; the demo at angle 0 faces the viewer. */
   ringSpin: number;
   ringFront: number;
+  /** The work chapter's heading and the front demo's name and link. */
+  workOn: number;
   stepIn: number[];
   stepOut: number;
+  stepsTitle: number;
+  /** The glow behind the hero phone. */
+  glow: number;
+  waves: number;
+  notifications: number[];
   /** The phone flying back for the finale. */
   back: number;
   ringing: boolean;
@@ -79,13 +102,15 @@ export type StoryFrame = {
 
 export function storyFrame(p: number, demoCount: number): StoryFrame {
   const turn = (Math.PI * 2) / demoCount;
-  // The ring rests on each demo for the first 55 % of its step, then turns to the next.
+  // The ring rests on each demo for the first 40 % of its step, then turns gently to the next.
   const u = seg(p, RING_TURN.from, RING_TURN.to) * (demoCount - 1);
   const step = Math.min(demoCount - 1, Math.floor(u));
-  const ringSpin = -(step + ease(clamp((u - step - 0.55) / 0.45))) * turn;
+  const ringSpin = -(step + ease(clamp((u - step - 0.4) / 0.6))) * turn;
   const ringFront = (((Math.round(-ringSpin / turn) % demoCount) + demoCount) % demoCount);
 
-  const chapter: StoryChapter = p < 0.2 ? "search" : p < 0.36 ? "dive" : p < 0.67 ? "work" : p < 0.82 ? "steps" : "finale";
+  const chapter: StoryChapter = p < 0.2 ? "search" : p < 0.36 ? "dive" : p < 0.74 ? "work" : p < 0.885 ? "steps" : "finale";
+  const stepOut = ease(seg(p, 0.875, 0.905));
+  const back = out3(seg(p, 0.87, 0.94));
   return {
     chapter,
     copy: 1 - seg(p, 0.1, 0.2),
@@ -94,16 +119,21 @@ export function storyFrame(p: number, demoCount: number): StoryFrame {
     grow: ease(seg(p, 0.24, 0.34)),
     zoom: p < 0.5 ? seg(p, 0.238, 0.244) * (1 - seg(p, 0.37, 0.43)) : 0,
     desktop: seg(p, 0.3, 0.36),
-    ringAppear: ease(seg(p, 0.34, 0.46)),
-    ringLeave: ease(seg(p, 0.64, 0.72)),
+    ringAppear: ease(seg(p, 0.34, 0.44)),
+    ringLeave: ease(seg(p, 0.71, 0.77)),
     ringSpin,
     ringFront,
-    stepIn: [0, 1, 2, 3].map((i) => out3(seg(p, 0.68 + i * 0.02, 0.73 + i * 0.02))),
-    stepOut: ease(seg(p, 0.8, 0.845)),
-    back: out3(seg(p, 0.8, 0.9)),
-    ringing: p > 0.93,
-    finale: seg(p, 0.91, 0.97),
-    finaleReached: p >= 0.9,
+    workOn: seg(p, 0.4, 0.45) * (1 - seg(p, 0.69, 0.73)),
+    stepIn: [0, 1, 2, 3].map((i) => out3(seg(p, 0.75 + i * 0.018, 0.795 + i * 0.018))),
+    stepOut,
+    stepsTitle: seg(p, 0.74, 0.77) * (1 - stepOut),
+    glow: (p < 0.5 ? 1 - seg(p, 0.2, 0.26) : back) * 0.9,
+    waves: p > 0.6 ? seg(p, 0.94, 0.97) : 0,
+    notifications: [0, 1, 2].map((i) => out3(seg(p, 0.925 + i * 0.02, 0.955 + i * 0.02))),
+    back,
+    ringing: p > 0.955,
+    finale: seg(p, 0.945, 0.985),
+    finaleReached: p >= 0.94,
   };
 }
 
@@ -113,7 +143,7 @@ export type PhonePose = { x: number; y: number; z: number; rx: number; ry: numbe
 export function heroPhonePose(p: number, layout: StoryLayout): PhonePose {
   const t = ease(seg(p, 0, 0.2));
   const straight = ease(seg(p, 0.2, 0.24));
-  const back = out3(seg(p, 0.8, 0.9));
+  const back = out3(seg(p, 0.87, 0.94));
   // A peek down the page, then back up to its hero before the dive.
   const scroll = Math.sin(Math.PI * seg(p, 0.03, 0.2)) * 0.14;
   if (p < 0.6) {
@@ -138,9 +168,9 @@ export function heroPhonePose(p: number, layout: StoryLayout): PhonePose {
     ry: lerp(60, -10, back),
     rz: lerp(-16, 0, back),
     scale: 1,
-    visible: p > 0.8,
+    visible: p > 0.87,
     scroll: 0,
-    lock: seg(p, 0.84, 0.88),
+    lock: seg(p, 0.9, 0.93),
   };
 }
 

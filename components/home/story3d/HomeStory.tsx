@@ -11,6 +11,7 @@ import {
   STORY_ANCHORS,
   clamp,
   finaleNotifications,
+  followScroll,
   heroPhonePose,
   lerp,
   out3,
@@ -154,6 +155,8 @@ function Story({ still }: { still: boolean }) {
     let shownFront = 0;
     let completed = false;
     let lastActive = "";
+    let shown = -1;
+    let last = 0;
     const start = performance.now();
     const tilt = { x: 0, y: 0, tx: 0, ty: 0 };
     const finePointer = window.matchMedia("(pointer: fine)").matches;
@@ -173,7 +176,11 @@ function Story({ still }: { still: boolean }) {
       raf = 0;
       if (!running) return;
       const box = track.getBoundingClientRect();
-      const p = clamp(-box.top / Math.max(1, box.height - window.innerHeight));
+      const target = clamp(-box.top / Math.max(1, box.height - window.innerHeight));
+      // The story glides after the scroll, so wheel steps become one smooth movement.
+      shown = shown < 0 ? target : followScroll(shown, target, now - last);
+      last = now;
+      const p = shown;
       const f = storyFrame(p, demos.length);
       const pose = heroPhonePose(p, layout);
       const { W, H, wide } = layout;
@@ -200,7 +207,7 @@ function Story({ still }: { still: boolean }) {
       });
       $.floor!.style.backgroundPosition = `0 ${travel * 0.35}px`;
       $.floor!.style.opacity = String(lerp(0.35, 0.75, seg(p, 0.36, 0.46) * (1 - seg(p, 0.66, 0.72))) * (1 - warp * 0.6));
-      $.glow!.style.opacity = String((p < 0.5 ? 1 - seg(p, 0.2, 0.26) : f.back) * 0.9);
+      $.glow!.style.opacity = String(f.glow);
 
       // The poster phone stands in for the 3D one until it arrives.
       $.poster!.style.transform = `rotateY(${pose.ry}deg) rotateX(${pose.rx}deg) rotateZ(${pose.rz}deg) scale(${pose.scale})`;
@@ -231,13 +238,13 @@ function Story({ still }: { still: boolean }) {
       // Chapters.
       $.copy!.style.opacity = String(f.copy);
       $.copy!.style.transform = `translateY(${-30 * (1 - f.copy)}px)`;
-      const workOn = seg(p, 0.4, 0.46) * (1 - seg(p, 0.62, 0.66));
+      const workOn = f.workOn;
       $.work!.style.opacity = String(workOn);
       if (f.ringFront !== shownFront) {
         shownFront = f.ringFront;
         setFront(f.ringFront);
       }
-      const stepsOn = seg(p, 0.67, 0.71) * (1 - f.stepOut);
+      const stepsOn = f.stepsTitle;
       $.steps!.style.opacity = String(stepsOn > 0 ? 1 : 0);
       $.stepsTitle!.style.opacity = String(stepsOn);
       steps.current.forEach((node, i) => {
@@ -249,10 +256,10 @@ function Story({ still }: { still: boolean }) {
         node.style.transform = `translate3d(${sx}px, ${sy + (1 - t) * 120 - f.stepOut * 80}px, ${sz - (1 - t) * 400 + f.stepOut * 500}px) rotateX(${(1 - t) * 70}deg) rotateY(${sry}deg) scale(${wide ? clamp(W / 1120, 1, 1.4) : Math.min(1, W / 470)}) translate(-50%, -50%)`;
         node.style.opacity = String(t * (1 - f.stepOut));
       });
-      $.waves!.style.opacity = String(p > 0.6 ? seg(p, 0.9, 0.95) : 0);
+      $.waves!.style.opacity = String(f.waves);
       notifs.current.forEach((node, i) => {
         if (!node) return;
-        const t = out3(seg(p, 0.88 + i * 0.03, 0.93 + i * 0.03));
+        const t = f.notifications[i];
         const [nx, ny] = wide ? [(-215 + i * 18) * scale, (-130 + i * 80) * scale] : [(-12 + i * 6) * scale, (-128 + i * 64) * scale];
         node.style.transform = `translate3d(${nx}px, ${ny}px, ${lerp(-700, 140 - i * 40, t)}px) rotateY(${lerp(-40, wide ? 14 : 6, t)}deg) scale(${(wide ? 1 : 0.8) * Math.min(1.25, scale)}) translate(-50%, -50%)`;
         node.style.opacity = String(t);
@@ -274,7 +281,7 @@ function Story({ still }: { still: boolean }) {
       if (p > 0.2) scene?.loadRing();
       scene?.render(f, pose, tilt, now);
       const settling = Math.abs(tilt.tx - tilt.x) > 0.002 || Math.abs(tilt.ty - tilt.y) > 0.002;
-      if (now - start < 2600 || settling || f.ringing) kick();
+      if (now - start < 2600 || settling || f.ringing || shown !== target) kick();
     };
 
     const play = () => {
