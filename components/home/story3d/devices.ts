@@ -8,6 +8,24 @@ import { PHONE } from "@/lib/homeStory";
 
 export type Materials = ReturnType<typeof materials>;
 
+// Every phone and laptop is the same shape, so each geometry is built once and shared.
+const geometries = new Map<string, THREE.BufferGeometry>();
+function shared<T extends THREE.BufferGeometry>(key: string, make: () => T): T {
+  if (!geometries.has(key)) geometries.set(key, make());
+  return geometries.get(key) as T;
+}
+/** Free the shared geometries (the scene disposes everything else). */
+export function disposeGeometries() {
+  for (const geometry of geometries.values()) geometry.dispose();
+  geometries.clear();
+}
+
+/** A material made the first time it is asked for, then reused. */
+function once<T>(make: (map: THREE.Texture) => T) {
+  let made: T | undefined;
+  return (map: THREE.Texture) => (made ??= make(map));
+}
+
 export function materials() {
   return {
     titanium: new THREE.MeshPhysicalMaterial({ color: 0x9096a0, metalness: 1, roughness: 0.26, clearcoat: 0.4, clearcoatRoughness: 0.2 }),
@@ -21,6 +39,8 @@ export function materials() {
       color: 0x000000, roughness: 0.16, metalness: 0, specularIntensity: 0.3, envMapIntensity: 0.55,
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
     }),
+    keys: once((map: THREE.Texture) => new THREE.MeshStandardMaterial({ map, roughness: 0.55, metalness: 0.15 })),
+    shadow: once((map: THREE.Texture) => new THREE.MeshBasicMaterial({ map, transparent: true, depthWrite: false, toneMapped: false })),
   };
 }
 
@@ -69,17 +89,17 @@ export function makePhone(screen: THREE.MeshBasicMaterial, m: Materials): Phone 
   const phone = new THREE.Group() as Phone;
   const { width: W, height: H, screenWidth, screenHeight, screenRadius } = PHONE;
   const depth = 0.05, bevel = 0.014, corner = 0.115, front = depth / 2 + bevel;
-  phone.add(new THREE.Mesh(roundedSlab(W, H, corner, depth, bevel), [m.gloss, m.titanium]));
-  const display = new THREE.Mesh(roundedPlane(screenWidth, screenHeight, screenRadius), screen);
+  phone.add(new THREE.Mesh(shared("phone-body", () => roundedSlab(W, H, corner, depth, bevel)), [m.gloss, m.titanium]));
+  const display = new THREE.Mesh(shared("phone-screen", () => roundedPlane(screenWidth, screenHeight, screenRadius)), screen);
   display.position.z = front + 0.0012;
   phone.add(display);
-  const island = new THREE.Mesh(roundedPlane(0.2, 0.058, 0.029), m.black);
+  const island = new THREE.Mesh(shared("phone-island", () => roundedPlane(0.2, 0.058, 0.029)), m.black);
   island.position.set(0, screenHeight / 2 - 0.065, front + 0.0022);
   phone.add(island);
-  const glass = new THREE.Mesh(roundedPlane(W - 0.024, H - 0.024, corner - 0.012), m.glass);
+  const glass = new THREE.Mesh(shared("phone-glass", () => roundedPlane(W - 0.024, H - 0.024, corner - 0.012)), m.glass);
   glass.position.z = front + 0.003;
   phone.add(glass);
-  const button = new THREE.BoxGeometry(0.016, 1, 0.028);
+  const button = shared("phone-button", () => new THREE.BoxGeometry(0.016, 1, 0.028));
   for (const [x, y, h] of [[W / 2 + 0.005, 0.27, 0.2], [-W / 2 - 0.005, 0.38, 0.08], [-W / 2 - 0.005, 0.2, 0.15], [-W / 2 - 0.005, 0.01, 0.15]]) {
     const b = new THREE.Mesh(button, m.titanium);
     b.scale.y = h;
@@ -87,10 +107,10 @@ export function makePhone(screen: THREE.MeshBasicMaterial, m: Materials): Phone 
     phone.add(b);
   }
   const bumpX = -W / 2 + 0.21, bumpY = H / 2 - 0.21;
-  const bump = new THREE.Mesh(roundedSlab(0.32, 0.32, 0.08, 0.012, 0.006), [m.gloss, m.titanium]);
+  const bump = new THREE.Mesh(shared("phone-bump", () => roundedSlab(0.32, 0.32, 0.08, 0.012, 0.006)), [m.gloss, m.titanium]);
   bump.position.set(bumpX, bumpY, -front - 0.012);
   phone.add(bump);
-  const lens = new THREE.CylinderGeometry(0.058, 0.058, 0.022, 32);
+  const lens = shared("phone-lens", () => new THREE.CylinderGeometry(0.058, 0.058, 0.022, 32));
   for (const [x, y] of [[-0.06, 0.06], [-0.06, -0.06], [0.07, 0]]) {
     const l = new THREE.Mesh(lens, m.lens);
     l.rotation.x = Math.PI / 2;
@@ -109,19 +129,19 @@ export function makeLaptop(screen: THREE.MeshBasicMaterial, m: Materials, keys: 
   const laptop = new THREE.Group();
   const { width: W, depth: D, lid: L } = LAPTOP;
   const thickness = 0.045, bevel = 0.012, top = thickness + 2 * bevel;
-  const base = new THREE.Mesh(roundedSlab(W, D, 0.09, thickness, bevel), m.aluminium);
+  const base = new THREE.Mesh(shared("laptop-base", () => roundedSlab(W, D, 0.09, thickness, bevel)), m.aluminium);
   base.rotation.x = -Math.PI / 2;
   base.position.y = thickness / 2 + bevel;
   laptop.add(base);
-  const keyboard = new THREE.Mesh(new THREE.PlaneGeometry(2.34, 0.92), new THREE.MeshStandardMaterial({ map: keys, roughness: 0.55, metalness: 0.15 }));
+  const keyboard = new THREE.Mesh(shared("laptop-keys", () => new THREE.PlaneGeometry(2.34, 0.92)), m.keys(keys));
   keyboard.rotation.x = -Math.PI / 2;
   keyboard.position.set(0, top + 0.0015, -0.36);
   laptop.add(keyboard);
-  const pad = new THREE.Mesh(roundedPlane(1.1, 0.64, 0.05), m.trackpad);
+  const pad = new THREE.Mesh(shared("laptop-pad", () => roundedPlane(1.1, 0.64, 0.05)), m.trackpad);
   pad.rotation.x = -Math.PI / 2;
   pad.position.set(0, top + 0.0015, 0.48);
   laptop.add(pad);
-  const floorShadow = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 3.4), new THREE.MeshBasicMaterial({ map: shadow, transparent: true, depthWrite: false, toneMapped: false }));
+  const floorShadow = new THREE.Mesh(shared("laptop-shadow", () => new THREE.PlaneGeometry(4.4, 3.4)), m.shadow(shadow));
   floorShadow.rotation.x = -Math.PI / 2;
   floorShadow.position.y = -0.003;
   laptop.add(floorShadow);
@@ -131,21 +151,21 @@ export function makeLaptop(screen: THREE.MeshBasicMaterial, m: Materials, keys: 
   lid.rotation.x = -0.2;
   laptop.add(lid);
   const lidDepth = 0.022, lidBevel = 0.008, front = lidDepth / 2 + lidBevel;
-  const shell = new THREE.Mesh(roundedSlab(W, L, 0.09, lidDepth, lidBevel), [m.gloss, m.aluminium]);
+  const shell = new THREE.Mesh(shared("laptop-lid", () => roundedSlab(W, L, 0.09, lidDepth, lidBevel)), [m.gloss, m.aluminium]);
   shell.position.y = L / 2;
   lid.add(shell);
-  const back = new THREE.Mesh(roundedPlane(W - 0.02, L - 0.02, 0.085), m.aluminium);
+  const back = new THREE.Mesh(shared("laptop-back", () => roundedPlane(W - 0.02, L - 0.02, 0.085)), m.aluminium);
   back.position.set(0, L / 2, -front - 0.001);
   back.rotation.y = Math.PI;
   lid.add(back);
   const sw = W - 0.16, sh = sw * LAPTOP_SCREEN_ASPECT;
-  const display = new THREE.Mesh(roundedPlane(sw, sh, 0.035), screen);
+  const display = new THREE.Mesh(shared("laptop-screen", () => roundedPlane(sw, sh, 0.035)), screen);
   display.position.set(0, L / 2 + 0.03, front + 0.0012);
   lid.add(display);
-  const notch = new THREE.Mesh(roundedPlane(0.34, 0.07, 0.025), m.black);
+  const notch = new THREE.Mesh(shared("laptop-notch", () => roundedPlane(0.34, 0.07, 0.025)), m.black);
   notch.position.set(0, L / 2 + 0.03 + sh / 2 - 0.025, front + 0.002);
   lid.add(notch);
-  const glass = new THREE.Mesh(roundedPlane(W - 0.03, L - 0.03, 0.08), m.glass);
+  const glass = new THREE.Mesh(shared("laptop-glass", () => roundedPlane(W - 0.03, L - 0.03, 0.08)), m.glass);
   glass.position.set(0, L / 2, front + 0.003);
   lid.add(glass);
   return laptop;

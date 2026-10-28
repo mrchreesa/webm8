@@ -68,6 +68,9 @@
 
 /* Things floating around the phone. */
 .float { position: absolute; left: 0; top: 0; opacity: 0; }
+/* Their gentle drift is CSS, so it costs the page nothing. */
+.bob { animation: drift 5.6s ease-in-out infinite; animation-delay: calc(var(--i) * -0.9s); }
+@keyframes drift { 0%, 100% { transform: translateY(-7px) rotateY(-5deg); } 50% { transform: translateY(7px) rotateY(5deg); } }
 .card { background: rgb(255 255 255 / 0.95); color: #0b1a30; border-radius: 14px; padding: 10px 12px; box-shadow: 0 24px 40px -18px rgb(0 0 0 / 0.8); font: 600 12px/1.3 var(--font-sans); }
 .glass { background: rgb(14 47 86 / 0.72); color: #fff; border: 1px solid rgb(255 255 255 / 0.16); backdrop-filter: blur(6px); border-radius: 14px; padding: 9px 12px; font: 600 12px/1.3 var(--font-sans); box-shadow: 0 24px 40px -18px rgb(0 0 0 / 0.8); }
 .chip { white-space: nowrap; }

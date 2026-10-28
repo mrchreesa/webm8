@@ -89,6 +89,11 @@ function webglAvailable() {
   }
 }
 
+/** Interactions that mean the visitor is here: start the 3D at once. */
+const FIRST_TOUCH = ["pointerdown", "touchstart", "keydown", "wheel", "scroll"] as const;
+/** Otherwise the 3D starts this long after the page has loaded, once the browser is idle. */
+const SCENE_DELAY_MS = 2500;
+
 /** Run `callback` when the browser is idle; returns a function that cancels it. */
 function whenIdle(callback: () => void) {
   if ("requestIdleCallback" in window) {
@@ -153,9 +158,15 @@ function Story({ still }: { still: boolean }) {
     const tilt = { x: 0, y: 0, tx: 0, ty: 0 };
     const finePointer = window.matchMedia("(pointer: fine)").matches;
 
+    // Draw only when something has changed: a scroll, a resize, the pointer, the
+    // entrance, new screenshots, or the phone ringing. Idle motion is CSS.
+    const kick = () => {
+      if (running && !raf) raf = window.requestAnimationFrame(frame);
+    };
     const resize = () => {
       layout = storyLayout(stage.clientWidth, stage.clientHeight);
       scene?.resize(layout, window.devicePixelRatio || 1);
+      kick();
     };
 
     const frame = (now: number) => {
@@ -213,8 +224,7 @@ function Story({ still }: { still: boolean }) {
         const [x, y, z, turn] = (wide ? item.laptop : item.phone).map((v, j) => (j < 3 ? v * scale : v));
         const appear = out3(clamp((now - start - 300 - i * 90) / 1100));
         const zz = z + f.dive * 1800 - (1 - appear) * 500;
-        const bob = Math.sin(now / 900 + i * 1.7) * 7;
-        node.style.transform = `translate3d(${x}px, ${y + bob - p * z * 0.25}px, ${zz}px) rotateY(${turn + Math.sin(now / 1400 + i) * 5}deg) scale(${(wide ? 0.88 : 0.62) * scale}) translate(-50%, -50%)`;
+        node.style.transform = `translate3d(${x}px, ${y - p * z * 0.25}px, ${zz}px) rotateY(${turn}deg) scale(${(wide ? 0.88 : 0.62) * scale}) translate(-50%, -50%)`;
         node.style.opacity = String(fade * appear * clamp(1 - (zz - 300) / 500));
       });
 
@@ -244,7 +254,7 @@ function Story({ still }: { still: boolean }) {
         if (!node) return;
         const t = out3(seg(p, 0.88 + i * 0.03, 0.93 + i * 0.03));
         const [nx, ny] = wide ? [(-215 + i * 18) * scale, (-130 + i * 80) * scale] : [(-12 + i * 6) * scale, (-128 + i * 64) * scale];
-        node.style.transform = `translate3d(${nx}px, ${ny + Math.sin(now / 800 + i) * 4}px, ${lerp(-700, 140 - i * 40, t)}px) rotateY(${lerp(-40, wide ? 14 : 6, t)}deg) scale(${(wide ? 1 : 0.8) * Math.min(1.25, scale)}) translate(-50%, -50%)`;
+        node.style.transform = `translate3d(${nx}px, ${ny}px, ${lerp(-700, 140 - i * 40, t)}px) rotateY(${lerp(-40, wide ? 14 : 6, t)}deg) scale(${(wide ? 1 : 0.8) * Math.min(1.25, scale)}) translate(-50%, -50%)`;
         node.style.opacity = String(t);
       });
       $.finale!.style.opacity = String(f.finale);
@@ -263,14 +273,15 @@ function Story({ still }: { still: boolean }) {
       }
       if (p > 0.2) scene?.loadRing();
       scene?.render(f, pose, tilt, now);
-      raf = window.requestAnimationFrame(frame);
+      const settling = Math.abs(tilt.tx - tilt.x) > 0.002 || Math.abs(tilt.ty - tilt.y) > 0.002;
+      if (now - start < 2600 || settling || f.ringing) kick();
     };
 
     const play = () => {
       const should = onScreen && !document.hidden && !disposed;
       if (should && !running) {
         running = true;
-        raf = window.requestAnimationFrame(frame);
+        kick();
       } else if (!should) {
         running = false;
         if (raf) window.cancelAnimationFrame(raf);
@@ -289,22 +300,41 @@ function Story({ still }: { still: boolean }) {
       if (!finePointer) return;
       tilt.tx = (event.clientX / window.innerWidth - 0.5) * 2;
       tilt.ty = (event.clientY / window.innerHeight - 0.5) * 2;
+      kick();
     };
     window.addEventListener("pointermove", pointer, { passive: true });
+    window.addEventListener("scroll", kick, { passive: true });
     play();
 
-    // Three.js arrives after the page has painted, and draws the devices once the hero's screen has loaded.
-    const cancelIdle = whenIdle(() => {
+    // Three.js arrives at the visitor's first touch, scroll or key, or once the
+    // page has loaded and settled, so it never competes with the first paint.
+    let started = false;
+    let cancelIdle = () => {};
+    const startScene = () => {
+      if (started || disposed) return;
+      started = true;
+      cancelIdle();
+      for (const type of FIRST_TOUCH) window.removeEventListener(type, startScene);
       void import("./scene").then(({ createStoryScene }) => {
         if (disposed) return;
-        scene = createStoryScene(canvas, layout);
+        scene = createStoryScene(canvas, layout, kick);
         void scene.ready.then(() => {
           if (disposed) return;
           setGlReady(true);
+          kick();
           whenIdle(() => scene?.loadRing());
         });
+      }).catch(() => {
+        // No 3D (a failed download): the poster phone and every word stay as they are.
       });
-    });
+    };
+    for (const type of FIRST_TOUCH) window.addEventListener(type, startScene, { passive: true });
+    const afterLoad = () => {
+      const timer = globalThis.setTimeout(() => (cancelIdle = whenIdle(startScene)), SCENE_DELAY_MS);
+      cancelIdle = () => globalThis.clearTimeout(timer);
+    };
+    if (document.readyState === "complete") afterLoad();
+    else window.addEventListener("load", afterLoad, { once: true });
 
     return () => {
       disposed = true;
@@ -316,6 +346,9 @@ function Story({ still }: { still: boolean }) {
       window.removeEventListener("resize", resize);
       window.removeEventListener("orientationchange", resize);
       window.removeEventListener("pointermove", pointer);
+      window.removeEventListener("scroll", kick);
+      window.removeEventListener("load", afterLoad);
+      for (const type of FIRST_TOUCH) window.removeEventListener(type, startScene);
       scene?.dispose();
     };
   }, [still]);
@@ -353,7 +386,7 @@ function Story({ still }: { still: boolean }) {
                   </span>
                 </div>
                 {floaters.map((item, i) => item.laptop[2] < 0 && (
-                  <div key={item.key} ref={(node) => { floats.current[i] = node; }} className={cn(styles.c3, styles.float)}><Floater name={item.key} /></div>
+                  <div key={item.key} ref={(node) => { floats.current[i] = node; }} className={cn(styles.c3, styles.float)}><div className={styles.bob} style={{ "--i": i } as CSSProperties}><Floater name={item.key} /></div></div>
                 ))}
               </div>
             </div>
@@ -363,7 +396,7 @@ function Story({ still }: { still: boolean }) {
             <div ref={set("frontScene")} className={styles.scene}>
               <div ref={set("frontAnchor")} className={styles.c3}>
                 {floaters.map((item, i) => item.laptop[2] >= 0 && (
-                  <div key={item.key} ref={(node) => { floats.current[i] = node; }} className={cn(styles.c3, styles.float)}><Floater name={item.key} /></div>
+                  <div key={item.key} ref={(node) => { floats.current[i] = node; }} className={cn(styles.c3, styles.float)}><div className={styles.bob} style={{ "--i": i } as CSSProperties}><Floater name={item.key} /></div></div>
                 ))}
                 {finaleNotifications.map((note, i) => (
                   <div key={note.title} ref={(node) => { notifs.current[i] = node; }} className={cn(styles.c3, styles.notif)}>
@@ -397,7 +430,7 @@ function Story({ still }: { still: boolean }) {
 
           <div ref={set("work")} className={cn(styles.chapter, styles.work)}>
             <h2 className={styles.title}>Built for businesses like yours.</h2>
-            <p className={styles.ringLabel} aria-live="polite">
+            <p className={styles.ringLabel}>
               <small>Real demo</small>
               <span>{demo.name} · {demo.label}</span>
               <a
