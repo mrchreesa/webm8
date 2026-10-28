@@ -12,7 +12,7 @@ import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/cn";
 import { cardOffset, wrapIndex } from "@/lib/demoDeck";
 import { projects } from "@/lib/site";
-import { DemoRing } from "./DemoRing";
+import { DemoRing, webglAvailable } from "./DemoRing";
 import { DemoSiteModal } from "./DemoSiteModal";
 import demo from "./demo.module.css";
 
@@ -88,6 +88,9 @@ export function DemoDeck({ active, onActiveChange, autoPlay = true }: DemoDeckPr
   const [focusWithin, setFocusWithin] = useState(false);
   /** The 3D ring has replaced the card deck's pictures (the cards keep their links). */
   const [glReady, setGlReady] = useState(false);
+  /** No 3D in this browser: the card deck is the deck. Under reduced motion CSS shows the cards. */
+  const [cardsOnly, setCardsOnly] = useState(false);
+  useEffect(() => setCardsOnly(!webglAvailable()), []);
   const regionRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const frontRef = useRef<HTMLAnchorElement>(null);
@@ -246,6 +249,7 @@ export function DemoDeck({ active, onActiveChange, autoPlay = true }: DemoDeckPr
           ref={stageRef}
           className={demo.stage}
           data-gl={glReady ? "ready" : undefined}
+          data-view={cardsOnly ? "cards" : "ring"}
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
           onPointerMove={onPointerMove}
@@ -257,7 +261,19 @@ export function DemoDeck({ active, onActiveChange, autoPlay = true }: DemoDeckPr
             Real demos we’ve designed
           </p>
 
-          {!reduced && <DemoRing active={active} slugs={ringSlugs} onReady={() => setGlReady(true)} />}
+          {!reduced && !cardsOnly && <DemoRing active={active} slugs={ringSlugs} onReady={() => setGlReady(true)} />}
+          {/* Until the ring is drawn, the front demo stands in the same pose as a flat picture, so the deck never shows a different design first. */}
+          <div className={demo.poster} aria-hidden="true">
+            <div className={demo.posterBox}>
+              <div className={demo.posterLid}>
+                <Image src={realCards[active].screenshots.desktop} alt="" width={1600} height={900} sizes="(min-width: 1024px) 560px, 86vw" priority={active === 0} draggable={false} />
+              </div>
+              <div className={demo.posterBase} />
+              <div className={demo.posterPhone}>
+                <span><Image src={realCards[active].screenshots.mobile} alt="" width={420} height={900} sizes="(min-width: 1024px) 150px, 28vw" priority={active === 0} draggable={false} /></span>
+              </div>
+            </div>
+          </div>
           {/* Once the ring is drawn, a click anywhere on the front demo opens it; the front card's link stays the keyboard's way in. */}
           <button type="button" className={demo.glHit} tabIndex={-1} aria-hidden="true" onClick={() => open(active)} />
           <p className={demo.glLabel} aria-hidden="true">

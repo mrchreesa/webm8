@@ -22,7 +22,8 @@ function whenIdle(callback: () => void) {
   return () => globalThis.clearTimeout(id);
 }
 
-function webglAvailable() {
+/** Whether this browser can draw the 3D ring at all. */
+export function webglAvailable() {
   try {
     const canvas = document.createElement("canvas");
     return Boolean(canvas.getContext("webgl2") ?? canvas.getContext("webgl"));
