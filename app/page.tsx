@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { DemoClosing } from "@/components/demo/DemoClosing";
 import { EightArms } from "@/components/home/EightArms";
-import { HowItWorks } from "@/components/home/HowItWorks";
 import { Plans } from "@/components/home/Plans";
-import { StoryHero } from "@/components/home/story/StoryHero";
+import { HomeStory } from "@/components/home/story3d/HomeStory";
 import { Voices } from "@/components/home/Voices";
-import { WorkDeck } from "@/components/home/WorkDeck";
 import {
   createPageMetadata,
   defaultDescription,
@@ -22,10 +20,8 @@ export const metadata: Metadata = createPageMetadata({
 export default function HomePage() {
   return (
     <>
-      <StoryHero />
-      <WorkDeck />
+      <HomeStory />
       <EightArms />
-      <HowItWorks />
       <Plans />
       <Voices />
       <DemoClosing />

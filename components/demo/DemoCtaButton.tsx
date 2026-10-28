@@ -5,7 +5,7 @@ import type { MouseEvent } from "react";
 import { LinkButton, type LinkButtonProps } from "@/components/ui/Button";
 import { trackEvent } from "@/lib/analytics";
 
-export type DemoCtaPlacement = "header" | "hero" | "closing";
+export type DemoCtaPlacement = "header" | "hero" | "home_finale" | "closing";
 
 type DemoCtaButtonProps = Omit<LinkButtonProps, "href"> & { placement: DemoCtaPlacement };
 
