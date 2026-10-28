@@ -150,9 +150,13 @@
 
 /* The 3D ring (DemoRing) behind the deck. Once it is drawn, the cards turn
    invisible but keep their links, labels and focus. */
-.ringCanvas { position: absolute; inset: 0; z-index: 1; display: block; width: 100%; height: 100%; opacity: 0; pointer-events: none; transition: opacity 0.6s ease; }
-/* On a laptop the ring reaches past the deck's box, so the neighbours show. */
-@media (min-width: 1024px) { .ringCanvas { inset: -4% -14%; width: 128%; height: 108%; } }
+/* The neighbours fade out at the sides rather than stopping at a hard edge,
+   and on a laptop the ring stays inside the deck's column. */
+.ringCanvas {
+  position: absolute; inset: 0; z-index: 1; display: block; width: 100%; height: 100%; opacity: 0; pointer-events: none; transition: opacity 0.6s ease;
+  mask-image: linear-gradient(to right, transparent, black 9%, black 91%, transparent);
+}
+@media (min-width: 1024px) { .ringCanvas { inset: -4% 0; height: 108%; mask-image: none; } }
 .stage[data-gl="ready"] .ringCanvas { opacity: 1; }
 .stage[data-gl="ready"] .cardFace { opacity: 0; transition: opacity 0.5s ease; }
 .glHit { position: absolute; inset: 12% 6% 16%; z-index: 35; display: none; border: 0; background: none; cursor: pointer; }

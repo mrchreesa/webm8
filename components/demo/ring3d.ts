@@ -181,7 +181,8 @@ export function createDemoRing(canvas: HTMLCanvasElement, slugs: readonly string
     if (disposed) return;
     const radius = count * (size.wide ? 0.78 : 0.66);
     // The front demo fills the frame: laptop and phone side by side, or the phone in front.
-    const [subjectW, subjectH, cx, cy] = size.wide ? [3.7, 2.2, 0.3, 0.92] : [3.1, 3.05, 0.12, 1.02];
+    // Wide enough for the phone, which stands nearer the camera than the laptop and so looks bigger.
+    const [subjectW, subjectH, cx, cy] = size.wide ? [4.05, 2.25, 0.36, 0.92] : [3.3, 3.1, 0.12, 1.02];
     const distance = cameraDistance(camera.fov, camera.aspect, subjectW, subjectH);
     ring.position.set(0, -lift * 0.5, -lift * 3);
     demos.forEach((demo, i) => {
