@@ -1,219 +1,201 @@
 /*
- * /demo/ and /free-demo/ motion and the deck. The deck's card positions are
- * set inline by DemoDeck (transform per offset from the front card); this
- * file holds what Tailwind utilities cannot: the transitions, the deal-in on
- * load, the form's trade chips and sketch, its success panel and the sticky
- * button.
+ * /demo/ and /free-demo/ motion and the wall of demos. This file holds what
+ * Tailwind utilities cannot: the wall's tilt, drift and scroll depth, the
+ * form's trade chips and sketch, its success panel and the sticky button.
  *
  * Under prefers-reduced-motion every state is reached instantly (see the end
  * of the file and globals.css).
  */
 
-/* ----- Deck ----- */
+/* ----- The wall of demos (DemoWall) ----- */
 
-/* Stacked, the stage takes the height the hero has left under the intro, and
-   the cards are phones that fill it: as tall as it allows, no wider than half
-   the screen so the fan still shows, centred when there is room to spare. A
-   short screen (Meta's in-app browser) keeps them at least --card-min-h tall
-   and lets the hero run past the fold. */
-.stage {
+/* Stacked, the wall fills what the hero leaves under the intro. Beside the
+   intro it lies behind the whole hero and fades out under the words. The
+   view clips the wall, so a tile is only hit where it can be seen. --scroll
+   (0 to 1, set by DemoWall) is how far the hero has scrolled away: it tips
+   the wall back into the page and lifts each column by its own --lift. */
+.wallScene {
+  --scroll: 0;
+  --gap: 0.85rem;
+  --rx: 16deg;
+  --ry: -14deg;
+  --rz: 6deg;
   position: relative;
-  flex: 1 1 0;
-  min-height: calc(var(--card-min-h) + 1.9rem);
-  container-type: size;
-  touch-action: pan-y;
-  user-select: none;
-  --card-ratio: 2.05;
-  --card-min-h: 16rem;
-  --card-h: clamp(var(--card-min-h), 100cqh - 1.9rem, 50vw * var(--card-ratio));
-  --card-w: calc(var(--card-h) / var(--card-ratio));
-  --card-top: calc((100cqh - 1.9rem - var(--card-h)) / 2 + 1.25rem);
+  flex: 1 1 auto;
+  min-height: 22rem;
+  margin-top: -0.5rem;
+  pointer-events: none;
 }
 
-@media (min-width: 1024px) {
-  .stage {
-    flex: none;
-    height: calc(var(--card-h) + 1.9rem);
-    min-height: 0;
-    container-type: normal;
-    --card-w: clamp(15rem, 21vw, 18.5rem);
-    --card-ratio: 1.78;
-    --card-h: calc(var(--card-w) * var(--card-ratio));
-    --card-top: 1.25rem;
+.wallView {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  perspective: 1500px;
+  mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 84%, transparent);
+}
+
+.wall {
+  position: absolute;
+  top: -6%;
+  right: -34%;
+  left: -34%;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap);
+  height: 150%;
+  transform-origin: 50% 30%;
+  transform: rotateX(calc(var(--rx) + var(--scroll) * 24deg)) rotateY(calc(var(--ry) + var(--scroll) * 12deg))
+    rotateZ(calc(var(--rz) - var(--scroll) * 4deg)) translateZ(calc(var(--scroll) * -220px));
+  animation: wall-in 1.5s var(--ease-brand) 0.1s both;
+}
+
+/* The wall flies in from below and behind, once, on load. */
+@keyframes wall-in {
+  from {
+    opacity: 0;
+    translate: 0 12% -420px;
   }
 }
 
-.card {
-  position: absolute;
-  top: var(--card-top);
-  left: 50%;
-  width: var(--card-w);
-  height: var(--card-h);
-  transition:
-    transform 640ms var(--ease-brand),
-    opacity 400ms ease,
-    filter 400ms ease;
-  will-change: transform;
+.wallColumn {
+  flex: 1.7 1 0;
+  min-width: 0;
+  translate: 0 calc(var(--scroll) * var(--lift) * -1px);
 }
 
-.cardFace {
+.wallColumnPhone {
+  flex: 0.8 1 0;
+}
+
+/* Each column holds its tiles three times over and drifts by one third, so
+   the loop never shows a seam. Pointing at a tile, or reaching one with the
+   keyboard, stops them all so it stays put (a tap leaves no hover behind). */
+.wallTrack {
+  animation: wall-up 70s linear infinite;
+}
+
+.wallTrack[data-drift="down"] {
+  animation-name: wall-down;
+}
+
+.wallScene:is([data-off], :has(.tile:focus-visible)) .wallTrack {
+  animation-play-state: paused;
+}
+
+@media (hover: hover) {
+  .wallScene:hover .wallTrack {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes wall-up {
+  to {
+    transform: translateY(calc(-100% / 3));
+  }
+}
+
+@keyframes wall-down {
+  from {
+    transform: translateY(calc(-100% / 3));
+  }
+}
+
+.tile {
   position: relative;
-  height: 100%;
+  display: block;
+  margin-bottom: var(--gap);
   overflow: hidden;
-  border-radius: calc(var(--card-w) * 0.09);
+  aspect-ratio: 16 / 9;
+  border-radius: 0.7rem;
   background: #0b1f3d;
   box-shadow:
-    0 24px 48px -18px rgb(0 0 0 / 0.75),
-    0 0 0 1px rgb(255 255 255 / 0.12);
-  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-  transition: transform 300ms ease-out, box-shadow 400ms ease;
+    0 0 0 1px rgb(255 255 255 / 0.12),
+    0 24px 50px -20px rgb(0 0 0 / 0.9);
+  pointer-events: auto;
+  transition:
+    transform 300ms var(--ease-brand),
+    box-shadow 300ms ease;
 }
 
-.label {
+.tilePhone {
+  aspect-ratio: 420 / 900;
+  border-radius: 1rem;
+}
+
+.tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.tile:hover,
+.tile:focus-visible {
+  transform: scale(1.04);
+  box-shadow:
+    0 0 0 2px var(--color-brand),
+    0 30px 60px -20px rgb(0 0 0 / 0.95);
+}
+
+/* Shown on the tile under the pointer or focus: which business, and that it opens. */
+.tileLabel {
   position: absolute;
-  right: 0.5rem;
-  bottom: 0.5rem;
-  left: 0.5rem;
-  overflow: hidden;
-  border-radius: 0.5rem;
-  background: rgb(6 20 41 / 0.72);
-  backdrop-filter: blur(6px);
-  padding: 0.3rem 0.5rem;
+  right: 0.45rem;
+  bottom: 0.45rem;
+  left: 0.45rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  border-radius: 99px;
+  background: rgb(6 20 41 / 0.88);
+  padding: 0.25rem 0.25rem 0.25rem 0.6rem;
   color: #fff;
-  font: 600 0.72rem/1.25 var(--font-sans);
-  letter-spacing: -0.01em;
+  font: 600 0.68rem/1.2 var(--font-sans);
+  opacity: 0;
+  translate: 0 6px;
+  transition:
+    opacity 250ms ease,
+    translate 250ms ease;
+}
+
+.tileLabel span {
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.label small {
-  display: block;
-  color: var(--color-brand);
-  font: 500 0.55rem/1.3 var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* On the front card: it opens the live site. Neon, because it acts. */
-.view {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+/* Neon, because it acts. */
+.tileLabel b {
   display: inline-flex;
+  flex: none;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.25rem;
   border-radius: 99px;
   background: var(--color-brand);
-  padding: 0.3rem 0.55rem;
+  padding: 0.3rem 0.5rem;
   color: var(--color-brand-ink);
-  font: 600 0.6rem/1 var(--font-mono);
+  font: 600 0.56rem/1 var(--font-mono);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.5);
-  transition: transform 200ms ease;
 }
 
-.cardFace:hover .view,
-.cardFace:focus-visible .view {
-  transform: scale(1.06);
+.tile:hover .tileLabel,
+.tile:focus-visible .tileLabel {
+  opacity: 1;
+  translate: 0 0;
 }
 
-/* Stacked, each card is drawn as a phone: a slim frame round the screen, and
-   a status bar with the island above the site. Sizes are shares of the card's
-   width, so the phone keeps its proportions at any height. */
-@media (max-width: 1023px) {
-  .cardFace {
-    --status: calc(var(--card-w) * 0.12);
-    border: calc(var(--card-w) * 0.028) solid #01050c;
-    border-radius: calc(var(--card-w) * 0.16);
-    padding-top: var(--status);
-    background: #0b1a30;
-  }
-
-  .cardFace::before {
-    content: "";
-    position: absolute;
-    top: calc(var(--status) * 0.24);
-    left: 50%;
-    z-index: 1;
-    width: 30%;
-    height: calc(var(--status) * 0.52);
-    translate: -50% 0;
-    border-radius: 99px;
-    background: #01050c;
-  }
-
-  .view {
-    top: calc(var(--status) + 0.4rem);
-  }
+.tilePhone .tileLabel span {
+  display: none;
 }
 
-/* The 3D ring (DemoRing) behind the deck. Once it is drawn, the cards turn
-   invisible but keep their links, labels and focus. */
-/* The neighbours fade out at the sides rather than stopping at a hard edge,
-   and on a laptop the ring stays inside the deck's column. */
-.ringCanvas {
-  position: absolute; inset: 0; z-index: 1; display: block; width: 100%; height: 100%; opacity: 0; pointer-events: none; transition: opacity 0.6s ease;
-  mask-image: linear-gradient(to right, transparent, black 9%, black 91%, transparent);
-}
-@media (min-width: 1024px) { .ringCanvas { inset: -4% 0; height: 108%; mask-image: none; } }
-.stage[data-gl="ready"] .ringCanvas { opacity: 1; }
-/* The cards are the deck only without 3D (and under reduced motion, below). */
-.stage[data-view="ring"] .cardFace { opacity: 0; transition: opacity 0.5s ease; }
-.glHit { position: absolute; inset: 12% 6% 16%; z-index: 35; display: none; border: 0; background: none; cursor: pointer; }
-.stage[data-view="ring"] .glHit { display: block; }
-
-/* Until the ring is drawn, a flat picture of the front demo in the ring's pose:
-   its laptop with the phone beside it (in front of it on a phone). Positions
-   are shares of a box with the ring's framing (components/demo/ring3d.ts). */
-.poster { position: absolute; inset: 0; z-index: 2; pointer-events: none; container-type: size; transition: opacity 0.6s ease; --ar: 1.065; }
-@media (min-width: 1024px) { .poster { inset: -4% 0; --ar: 1.62; } }
-.stage[data-gl="ready"] .poster { opacity: 0; }
-.stage[data-view="cards"] .poster { display: none; }
-.posterBox { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: min(100cqw, calc(100cqh * var(--ar))); aspect-ratio: var(--ar); }
-.posterLid { position: absolute; left: 11%; top: 21%; width: 71%; height: 49.5%; overflow: hidden; border-radius: 3% / 4.5%; padding: 1.3% 1.3% 1.8%; background: #050608; box-shadow: 0 0 0 1.5px #b9bec6, 0 30px 60px -30px rgb(0 0 0 / 0.9); }
-.posterLid img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 2px; }
-.posterBase { position: absolute; left: 3.5%; top: 70%; width: 87.5%; height: 18%; background: linear-gradient(180deg, #c9cdd3, #a9aeb6 55%, #858b93); clip-path: polygon(8% 0, 92% 0, 100% 90%, 99% 100%, 1% 100%, 0 90%); }
-.posterBase::after { content: ""; position: absolute; left: 17%; right: 17%; top: 8%; height: 40%; border-radius: 3px; background: #191c21; }
-.posterPhone { position: absolute; left: 51%; top: 36%; width: 29%; aspect-ratio: 0.486; border-radius: 15% / 7.3%; padding: 1.3%; background: linear-gradient(135deg, #a9aeb7, #3d4148 35%, #b3b8c0 55%, #2b2e34); box-shadow: 0 30px 50px -20px rgb(0 0 0 / 0.9); }
-.posterPhone span { display: block; height: 100%; overflow: hidden; border-radius: 13.5% / 6.6%; padding: 3%; background: #020304; }
-.posterPhone img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 11% / 5.4%; }
-@media (min-width: 1024px) {
-  .posterLid { left: 13%; top: 10%; width: 58.5%; height: 58%; }
-  .posterBase { left: 10.5%; top: 68%; width: 68%; height: 22%; }
-  .posterPhone { left: 76.5%; top: 36%; width: 17.5%; }
-}
-
-.glLabel {
-  position: absolute; left: 50%; bottom: 0.2rem; z-index: 40; translate: -50% 0;
-  display: none; align-items: center; gap: 12px; padding: 5px 5px 5px 14px; border-radius: 99px;
-  background: rgb(6 20 41 / 0.72); backdrop-filter: blur(6px); box-shadow: 0 0 0 1px rgb(255 255 255 / 0.12);
-  color: #fff; font: 600 0.8rem/1.2 var(--font-sans); white-space: nowrap;
-}
-.stage[data-view="ring"] .glLabel { display: flex; }
-.stage[data-gl="ready"]:has(.cardFace:focus-visible) .glLabel { outline: 2px solid var(--color-brand); outline-offset: 3px; }
-.glLabel small { display: block; color: var(--color-brand); font: 500 0.58rem/1.3 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
-.glLabel button {
-  display: inline-flex; align-items: center; gap: 0.3rem; border: 0; border-radius: 99px; background: var(--color-brand); padding: 0.45rem 0.7rem;
-  color: var(--color-brand-ink); font: 600 0.62rem/1 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
-}
-
-/* Depth behind the hero: a grid floor and drifting light. */
-.heroFloor {
-  position: absolute; left: -60%; right: -60%; bottom: -20%; height: 70%; pointer-events: none; opacity: 0.5;
-  transform: perspective(900px) rotateX(78deg); transform-origin: bottom;
-  background-image: linear-gradient(rgb(212 255 53 / 0.28) 1px, transparent 1px), linear-gradient(90deg, rgb(43 108 252 / 0.4) 1px, transparent 1px);
-  background-size: 52px 52px; mask-image: linear-gradient(to top, black 10%, transparent 75%);
-}
-.heroDot { position: absolute; width: 3px; height: 3px; border-radius: 99px; background: #cfe0ff; box-shadow: 0 0 6px rgb(160 200 255 / 0.9); opacity: 0.6; animation: hero-drift 9s ease-in-out infinite; }
-.heroDot.neon { background: var(--color-brand); box-shadow: 0 0 8px rgb(212 255 53 / 0.9); }
-@keyframes hero-drift { 0%, 100% { translate: 0 0; opacity: 0.25; } 50% { translate: 0 -18px; opacity: 0.8; } }
-
-.tag {
+.wallTag {
   position: absolute;
-  top: 0;
+  top: 0.4rem;
   left: 50%;
-  z-index: 40;
+  z-index: 1;
   translate: -50% 0;
   border-radius: 99px;
   background: var(--color-brand);
@@ -226,18 +208,51 @@
   box-shadow: 0 8px 20px -8px rgb(212 255 53 / 0.7);
 }
 
-/* The cards deal up into the fan once, on load. */
-.enter {
-  animation: enter 760ms var(--ease-brand) both;
-  animation-delay: calc(var(--i, 0) * 80ms + 120ms);
-}
+@media (min-width: 1024px) {
+  .wallScene {
+    --gap: 1.35rem;
+    --rx: 10deg;
+    --ry: -24deg;
+    --rz: 7deg;
+    position: absolute;
+    inset: 0;
+    min-height: 0;
+    margin: 0;
+  }
 
-@keyframes enter {
-  from {
-    opacity: 0;
-    translate: 0 40%;
+  .wallView {
+    left: 34%;
+    mask-image: linear-gradient(to right, transparent, rgb(0 0 0 / 0.4) 16%, #000 42%),
+      linear-gradient(to bottom, transparent, #000 16%, #000 76%, transparent);
+    mask-composite: intersect;
+  }
+
+  .wall {
+    top: -32%;
+    right: -26%;
+    left: 4%;
+    height: 165%;
+  }
+
+  .wallTag {
+    top: auto;
+    right: clamp(1.25rem, 7.8vw, 7rem);
+    bottom: 1.5rem;
+    left: auto;
+    translate: none;
   }
 }
+
+/* Depth behind the hero: a grid floor and drifting light. */
+.heroFloor {
+  position: absolute; left: -60%; right: -60%; bottom: -20%; height: 70%; pointer-events: none; opacity: 0.5;
+  transform: perspective(900px) rotateX(78deg); transform-origin: bottom;
+  background-image: linear-gradient(rgb(212 255 53 / 0.28) 1px, transparent 1px), linear-gradient(90deg, rgb(43 108 252 / 0.4) 1px, transparent 1px);
+  background-size: 52px 52px; mask-image: linear-gradient(to top, black 10%, transparent 75%);
+}
+.heroDot { position: absolute; width: 3px; height: 3px; border-radius: 99px; background: #cfe0ff; box-shadow: 0 0 6px rgb(160 200 255 / 0.9); opacity: 0.6; animation: hero-drift 9s ease-in-out infinite; }
+.heroDot.neon { background: var(--color-brand); box-shadow: 0 0 8px rgb(212 255 53 / 0.9); }
+@keyframes hero-drift { 0%, 100% { translate: 0 0; opacity: 0.25; } 50% { translate: 0 -18px; opacity: 0.8; } }
 
 /* ----- Live demo dialog ----- */
 
@@ -1043,15 +1058,16 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* No ring under reduced motion: the card deck, as it always was. */
-  .poster { display: none; }
-  .stage[data-view="ring"] .cardFace { opacity: 1; }
-  .stage[data-view="ring"] :is(.glLabel, .glHit) { display: none; }
-  .heroDot { animation: none; }
+  /* The wall stands still, tilted, and does not move as the page scrolls (DemoWall sets no --scroll). */
+  .heroDot,
+  .wall,
+  .wallTrack {
+    animation: none;
+  }
 
-  .card,
-  .cardFace {
-    transition: none !important;
+  .tile,
+  .tileLabel {
+    transition: none;
   }
 
   .chip {
@@ -1071,7 +1087,6 @@
     display: none;
   }
 
-  .enter,
   .draw,
   .success,
   .sticky,

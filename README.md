@@ -34,7 +34,7 @@ components/
   home/story3d/       # HomeStory: the homepage's 3D scroll story (Three.js scene in scene.ts, devices.ts)
   home/story/         # The drawn phone and example sites, used by the /free-demo/ sketch
   home/               # EightArms, Plans, Voices (+ WhatYouGet, Testimonials for /movers/)
-  demo/               # The /demo/ page (DemoHero, DemoDeck, DemoJourney, DemoSketch, …), plus DemoCtaButton and DemoClosing
+  demo/               # The /demo/ page (DemoHero, DemoWall, DemoJourney, DemoSketch, …), plus DemoCtaButton and DemoClosing
   forms/              # ContactForm, MoverReviewForm, FormField
   layout/ ui/ movers/ analytics/
 lib/

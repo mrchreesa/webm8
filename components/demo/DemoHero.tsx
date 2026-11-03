@@ -1,9 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useState } from "react";
-import { DemoDeck } from "./DemoDeck";
 import { DemoIntro } from "./DemoIntro";
+import { DemoWall } from "./DemoWall";
 import demo from "./demo.module.css";
 
 /** Stable "random" points of light, the same on the server and in the browser. */
@@ -14,15 +13,13 @@ const LIGHTS = (() => {
 })();
 
 /**
- * The hero on /free-demo/ and /demo/: the promise on the left, the real demos
- * on the right, stacked on a phone. `line` is the sentence under the headline;
- * `children` sit beneath it (on /free-demo/, the button down to the form).
- * It fills the screen; stacked, the deck takes whatever height the intro
- * leaves, so its cards are as tall as the phone allows.
+ * The hero on /free-demo/ and /demo/: the promise on the left, in front of a
+ * wall of the real demos that fills the hero (DemoWall); stacked on a phone,
+ * the wall takes whatever height the intro leaves. `line` is the sentence
+ * under the headline; `children` sit beneath it (on /free-demo/, the button
+ * down to the form).
  */
-export function DemoHero({ line, children, autoPlay = true }: { line: ReactNode; children?: ReactNode; autoPlay?: boolean }) {
-  const [deckIndex, setDeckIndex] = useState(0);
-
+export function DemoHero({ line, children }: { line: ReactNode; children?: ReactNode }) {
   return (
     <section data-analytics-section="Demo introduction"
       aria-labelledby="demo-title"
@@ -43,16 +40,15 @@ export function DemoHero({ line, children, autoPlay = true }: { line: ReactNode;
         ))}
       </div>
 
-      <div className="container-page relative flex w-full flex-1 flex-col gap-x-12 gap-y-4 pt-3 pb-6 md:gap-y-6 md:pt-10 md:pb-14 lg:grid lg:min-h-[calc(100svh-5rem)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center lg:pb-20">
-        <div>
+      {/* Beside the wall, the empty half of the grid lets the pointer through to it. */}
+      <div className="container-page relative z-10 w-full pt-3 pb-4 md:pt-10 md:pb-8 lg:pointer-events-none lg:grid lg:min-h-[calc(100svh-5rem)] lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:pb-20">
+        <div className="lg:pointer-events-auto">
           <DemoIntro>{line}</DemoIntro>
           {children}
         </div>
-
-        <div className="-mx-5 flex flex-1 flex-col overflow-hidden px-5 pt-1 lg:mx-0 lg:block lg:overflow-visible lg:px-0">
-          <DemoDeck active={deckIndex} onActiveChange={setDeckIndex} autoPlay={autoPlay} />
-        </div>
       </div>
+
+      <DemoWall />
     </section>
   );
 }
