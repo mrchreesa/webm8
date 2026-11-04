@@ -72,6 +72,8 @@ export type StoryFrame = {
   chapter: StoryChapter;
   /** The hero words. */
   copy: number;
+  /** The wall of demos behind the hero: 0 standing, 1 tipped back and gone. */
+  wall: number;
   dive: number;
   straighten: number;
   grow: number;
@@ -114,6 +116,7 @@ export function storyFrame(p: number, demoCount: number): StoryFrame {
   return {
     chapter,
     copy: 1 - seg(p, 0.1, 0.2),
+    wall: ease(seg(p, 0, 0.22)),
     dive: ease(seg(p, 0.2, 0.36)),
     straighten: ease(seg(p, 0.2, 0.24)),
     grow: ease(seg(p, 0.24, 0.34)),

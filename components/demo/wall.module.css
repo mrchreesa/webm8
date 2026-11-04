@@ -1,0 +1,186 @@
+/*
+ * The wall of real demos (DemoWallTiles): their screenshots in columns on a
+ * tilted plane, each column drifting its own way. The page around it places
+ * the view and may set --wall-inset, --wall-height, --gap and the tilt
+ * (--rx, --ry, --rz). --scroll (0 to 1) tips the wall back into the page and
+ * lifts each column by its own --lift. [data-off] on any ancestor rests the
+ * drift.
+ */
+
+.view {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  perspective: 1500px;
+}
+
+.wall {
+  position: absolute;
+  inset: var(--wall-inset, -6% -34% auto);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap, 0.85rem);
+  height: var(--wall-height, 150%);
+  transform-origin: 50% 30%;
+  transform: rotateX(calc(var(--rx, 16deg) + var(--scroll, 0) * 24deg)) rotateY(calc(var(--ry, -14deg) + var(--scroll, 0) * 12deg))
+    rotateZ(calc(var(--rz, 6deg) - var(--scroll, 0) * 4deg)) translateZ(calc(var(--scroll, 0) * -220px));
+  animation: wall-in 1.5s var(--ease-brand) 0.1s both;
+}
+
+/* The wall flies in from below and behind, once, on load. */
+@keyframes wall-in {
+  from {
+    opacity: 0;
+    translate: 0 12% -420px;
+  }
+}
+
+.column {
+  flex: 1.7 1 0;
+  min-width: 0;
+  translate: 0 calc(var(--scroll, 0) * var(--lift) * -1px);
+}
+
+.columnPhone {
+  flex: 0.8 1 0;
+}
+
+/* Each column holds its tiles three times over and drifts by one third, so
+   the loop never shows a seam. Pointing at a tile, or reaching one with the
+   keyboard, stops them all so it stays put (a tap leaves no hover behind). */
+.track {
+  animation: wall-up 70s linear infinite;
+}
+
+.track[data-drift="down"] {
+  animation-name: wall-down;
+}
+
+[data-off] .track,
+.view:has(.tile:focus-visible) .track {
+  animation-play-state: paused;
+}
+
+@media (hover: hover) {
+  .view:hover .track {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes wall-up {
+  to {
+    transform: translateY(calc(-100% / 3));
+  }
+}
+
+@keyframes wall-down {
+  from {
+    transform: translateY(calc(-100% / 3));
+  }
+}
+
+.tile {
+  position: relative;
+  display: block;
+  margin-bottom: var(--gap, 0.85rem);
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.7rem;
+  background: #0b1f3d;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.12),
+    0 24px 50px -20px rgb(0 0 0 / 0.9);
+  transition:
+    transform 300ms var(--ease-brand),
+    box-shadow 300ms ease;
+}
+
+a.tile {
+  pointer-events: auto;
+}
+
+.tilePhone {
+  aspect-ratio: 420 / 900;
+  border-radius: 1rem;
+}
+
+.tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+a.tile:hover,
+a.tile:focus-visible {
+  transform: scale(1.04);
+  box-shadow:
+    0 0 0 2px var(--color-brand),
+    0 30px 60px -20px rgb(0 0 0 / 0.95);
+}
+
+/* Shown on the tile under the pointer or focus: which business, and that it opens. */
+.tileLabel {
+  position: absolute;
+  right: 0.45rem;
+  bottom: 0.45rem;
+  left: 0.45rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  border-radius: 99px;
+  background: rgb(6 20 41 / 0.88);
+  padding: 0.25rem 0.25rem 0.25rem 0.6rem;
+  color: #fff;
+  font: 600 0.68rem/1.2 var(--font-sans);
+  opacity: 0;
+  translate: 0 6px;
+  transition:
+    opacity 250ms ease,
+    translate 250ms ease;
+}
+
+.tileLabel span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Neon, because it acts. */
+.tileLabel b {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 99px;
+  background: var(--color-brand);
+  padding: 0.3rem 0.5rem;
+  color: var(--color-brand-ink);
+  font: 600 0.56rem/1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tile:hover .tileLabel,
+.tile:focus-visible .tileLabel {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.tilePhone .tileLabel span {
+  display: none;
+}
+
+/* Under reduced motion the wall stands still, tilted, and its page sets no --scroll. */
+@media (prefers-reduced-motion: reduce) {
+  .wall,
+  .track {
+    animation: none;
+  }
+
+  .tile,
+  .tileLabel {
+    transition: none;
+  }
+}

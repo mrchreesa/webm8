@@ -83,6 +83,19 @@ test("the phone is straight and centred at the handoff", () => {
   assert.ok(rect.height > rect.width * 1.9 && rect.height < rect.width * 2.2);
 });
 
+test("the wall of demos tips away as the hero scrolls, and has gone before the screen takes over", () => {
+  assert.equal(storyFrame(0, DEMOS).wall, 0);
+  let last = 0;
+  for (let p = 0.01; p <= 0.22; p += 0.01) {
+    const wall = storyFrame(p, DEMOS).wall;
+    assert.ok(wall >= last, `the wall comes back at ${p}`);
+    last = wall;
+  }
+  assert.equal(storyFrame(0.22, DEMOS).wall, 1);
+  assert.equal(storyFrame(0.238, DEMOS).wall, 1);
+  assert.equal(storyFrame(0.995, DEMOS).wall, 1);
+});
+
 test("the hero words leave and the finale is reached on cue", () => {
   assert.equal(storyFrame(0, DEMOS).copy, 1);
   assert.equal(storyFrame(0.2, DEMOS).copy, 0);

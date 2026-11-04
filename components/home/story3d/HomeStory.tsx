@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import type { CSSProperties } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -25,6 +26,9 @@ import {
 import { processSteps, projects } from "@/lib/site";
 import type { StoryScene } from "./scene";
 import styles from "./HomeStory.module.css";
+
+/** The wall of demos behind the hero: it arrives with the 3D, so its code, styles and pictures never hold up the first paint. */
+const DemoWallTiles = dynamic(() => import("@/components/demo/DemoWallTiles").then((module) => module.DemoWallTiles), { ssr: false });
 
 /**
  * The top of the homepage: one scroll-driven story in five chapters (the
@@ -124,6 +128,8 @@ export function HomeStory() {
 
 function Story({ still }: { still: boolean }) {
   const [glReady, setGlReady] = useState(false);
+  /** The wall of demos behind the hero, mounted with the 3D. */
+  const [wallReady, setWallReady] = useState(false);
   const [front, setFront] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -174,7 +180,8 @@ function Story({ still }: { still: boolean }) {
 
     const frame = (now: number) => {
       raf = 0;
-      if (!running) return;
+      // A frame can land after a switch to the still story has removed this stage, before the cleanup below runs.
+      if (!running || !stage.isConnected) return;
       const box = track.getBoundingClientRect();
       const target = clamp(-box.top / Math.max(1, box.height - window.innerHeight));
       // The story glides after the scroll, so wheel steps become one smooth movement.
@@ -208,6 +215,10 @@ function Story({ still }: { still: boolean }) {
       $.floor!.style.backgroundPosition = `0 ${travel * 0.35}px`;
       $.floor!.style.opacity = String(lerp(0.35, 0.75, seg(p, 0.36, 0.46) * (1 - seg(p, 0.66, 0.72))) * (1 - warp * 0.6));
       $.glow!.style.opacity = String(f.glow);
+      // The wall of demos behind the hero tips back into the page and fades before the dive.
+      $.backdrop!.style.setProperty("--scroll", f.wall.toFixed(4));
+      $.backdrop!.style.opacity = String(1 - clamp((f.wall - 0.4) / 0.6));
+      $.backdrop!.toggleAttribute("data-off", f.wall >= 1);
 
       // The poster phone stands in for the 3D one until it arrives.
       $.poster!.style.transform = `rotateY(${pose.ry}deg) rotateX(${pose.rx}deg) rotateZ(${pose.rz}deg) scale(${pose.scale})`;
@@ -313,14 +324,16 @@ function Story({ still }: { still: boolean }) {
     window.addEventListener("scroll", kick, { passive: true });
     play();
 
-    // Three.js arrives at the visitor's first touch, scroll or key, or once the
-    // page has loaded and settled, so it never competes with the first paint.
+    // Three.js and the wall of demos arrive at the visitor's first touch, scroll
+    // or key, or once the page has loaded and settled, so they never compete
+    // with the first paint. The wall flies in as it mounts.
     let started = false;
     let cancelIdle = () => {};
     const startScene = () => {
       if (started || disposed) return;
       started = true;
       cancelIdle();
+      setWallReady(true);
       for (const type of FIRST_TOUCH) window.removeEventListener(type, startScene);
       void import("./scene").then(({ createStoryScene }) => {
         if (disposed) return;
@@ -375,6 +388,9 @@ function Story({ still }: { still: boolean }) {
         <span id="work" className={styles.anchor} style={anchorStyle.work} aria-hidden="true" />
         <span id="how-it-works" className={styles.anchor} style={anchorStyle.steps} aria-hidden="true" />
         <div ref={stageRef} className={styles.stage}>
+          <div ref={set("backdrop")} className={styles.backdrop}>
+            {wallReady && <DemoWallTiles className={styles.backdropView} />}
+          </div>
           <div ref={set("floor")} className={styles.floor} aria-hidden="true" />
           <div className={cn(styles.world, styles.back)} aria-hidden="true">
             <div ref={set("backScene")} className={styles.scene}>
