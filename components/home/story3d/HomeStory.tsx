@@ -24,6 +24,7 @@ import {
   type StoryLayout,
 } from "@/lib/homeStory";
 import { processSteps, projects } from "@/lib/site";
+import { heroPoster } from "./heroPoster";
 import type { StoryScene } from "./scene";
 import styles from "./HomeStory.module.css";
 
@@ -75,6 +76,23 @@ function Floater({ name }: { name: string }) {
     default:
       return <div className={styles.tile}>{{ trainer: "👟", weights: "🏋️", shirt: "👕", yoga: "🧘" }[name]}</div>;
   }
+}
+
+/** Where the pictures of the hero phone sit (heroPoster.ts), for the poster and the still story's phone. */
+const posterShares = Object.fromEntries(
+  (["wide", "narrow"] as const).flatMap((name) =>
+    (["left", "top", "w", "h"] as const).map((key) => [`--poster-${name}-${key}`, heroPoster[name][key]]),
+  ),
+) as CSSProperties;
+
+/** The 3D phone's own picture, at the top of the story, for the layout on screen. */
+function PhonePicture({ priority = false }: { priority?: boolean }) {
+  return (
+    <picture>
+      <source media="(min-width: 900px)" srcSet={heroPoster.wide.src} width={heroPoster.wide.width} height={heroPoster.wide.height} />
+      <img src={heroPoster.narrow.src} alt="" width={heroPoster.narrow.width} height={heroPoster.narrow.height} fetchPriority={priority ? "high" : undefined} />
+    </picture>
+  );
 }
 
 /** Stable "random" particles, the same on the server and in the browser. */
@@ -220,10 +238,9 @@ function Story({ still }: { still: boolean }) {
       $.backdrop!.style.opacity = String(1 - clamp((f.wall - 0.4) / 0.6));
       $.backdrop!.toggleAttribute("data-off", f.wall >= 1);
 
-      // The poster phone stands in for the 3D one until it arrives.
-      $.poster!.style.transform = `rotateY(${pose.ry}deg) rotateX(${pose.rx}deg) rotateZ(${pose.rz}deg) scale(${pose.scale})`;
+      // The 3D phone's picture stands in for it until it arrives, keeping to its place and size (not its turn).
+      $.poster!.style.transform = `translate(${pose.x - layout.anchorX}px, ${pose.y - layout.anchorY}px) scale(${pose.scale})`;
       $.poster!.style.visibility = pose.visible ? "visible" : "hidden";
-      ($.poster!.firstElementChild!.firstElementChild as HTMLElement).style.transform = `translateY(${-pose.scroll * 100}%)`;
 
       // The sharp copy of the screen takes over at the dive and grows to fill the view.
       const handoff = phoneScreenRect(heroPhonePose(0.244, layout), layout);
@@ -383,6 +400,7 @@ function Story({ still }: { still: boolean }) {
       data-still={still ? "" : undefined}
       data-gl={glReady ? "ready" : undefined}
       className={cn("surface-dark", styles.story)}
+      style={posterShares}
     >
       <div ref={trackRef} className={styles.track}>
         <span id="work" className={styles.anchor} style={anchorStyle.work} aria-hidden="true" />
@@ -402,17 +420,14 @@ function Story({ still }: { still: boolean }) {
                 <div ref={set("waves")} className={cn(styles.c3, styles.waves)}>
                   <span className={styles.wave} /><span className={styles.wave} /><span className={styles.wave} />
                 </div>
-                <div ref={set("poster")} className={styles.poster}>
-                  <span>
-                    {/* eslint-disable-next-line @next/next/no-img-element -- sized and moved by the story's own maths */}
-                    <img src={phoneShot} alt="" width={780} height={2800} fetchPriority="high" />
-                  </span>
-                </div>
                 {floaters.map((item, i) => item.laptop[2] < 0 && (
                   <div key={item.key} ref={(node) => { floats.current[i] = node; }} className={cn(styles.c3, styles.float)}><div className={styles.bob} style={{ "--i": i } as CSSProperties}><Floater name={item.key} /></div></div>
                 ))}
               </div>
             </div>
+          </div>
+          <div ref={set("poster")} className={styles.poster} aria-hidden="true">
+            <PhonePicture priority />
           </div>
           <canvas ref={canvasRef} className={styles.gl} aria-hidden="true" />
           <div className={cn(styles.world, styles.front)} aria-hidden="true">
@@ -446,8 +461,7 @@ function Story({ still }: { still: boolean }) {
               </div>
             </div>
             <div className={styles.stillPhone} aria-hidden="true">
-              {/* eslint-disable-next-line @next/next/no-img-element -- the same capture as the poster phone */}
-              <img src={phoneShot} alt="" width={780} height={2800} />
+              <PhonePicture />
             </div>
           </div>
 

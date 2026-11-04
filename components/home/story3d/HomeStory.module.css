@@ -72,17 +72,20 @@
 .wave:nth-child(3) { animation-delay: 1.2s; }
 @keyframes wave { from { scale: 0.55; opacity: 0.9; } to { scale: 2.5; opacity: 0; } }
 
-/* The phone before (or instead of) the 3D one: same place, size and turn. */
+/* The phone before (or instead of) the 3D one: the 3D phone's own picture, rendered by
+   scripts/render-hero-phone.mjs, in the same place and at the same size, so the 3D takes
+   over unseen. The --poster-* shares (heroPoster.ts, set on the story) are in phone
+   heights from the phone's anchor. The still story's phone is the same picture. */
+.story { --poster-l: var(--poster-narrow-left); --poster-t: var(--poster-narrow-top); --poster-w: var(--poster-narrow-w); --poster-h: var(--poster-narrow-h); }
+@media (min-width: 900px) { .story { --poster-l: var(--poster-wide-left); --poster-t: var(--poster-wide-top); --poster-w: var(--poster-wide-w); --poster-h: var(--poster-wide-h); } }
 .poster {
-  position: absolute; left: 0; top: 0; width: calc(var(--ph) / 2.056); height: var(--ph);
-  translate: -50% -50%; transform: translate3d(var(--ax), var(--ay), 0) rotateY(-34deg) rotateX(14deg);
-  border-radius: calc(var(--ph) * 0.0786); padding: calc(var(--ph) * 0.0205) calc(var(--ph) * 0.0205);
-  background: linear-gradient(135deg, #b8bdc6, #43474f 30%, #c4c9d1 52%, #2c2f35 78%, #8d929b);
-  box-shadow: 0 40px 80px -25px rgb(0 0 0 / 0.85), 0 0 90px -10px rgb(43 108 252 / 0.6);
+  position: absolute; z-index: 2; pointer-events: none;
+  left: calc(50% + var(--ax) + var(--ph) * var(--poster-l)); top: calc(50% + var(--ay) + var(--ph) * var(--poster-t));
+  width: calc(var(--ph) * var(--poster-w)); height: calc(var(--ph) * var(--poster-h));
+  transform-origin: calc(var(--poster-l) / var(--poster-w) * -100%) calc(var(--poster-t) / var(--poster-h) * -100%);
   transition: opacity 0.6s ease;
 }
-.poster > span { display: block; height: 100%; overflow: hidden; border-radius: calc(var(--ph) * 0.058); background: #000; }
-.poster img { display: block; width: 100%; }
+.poster img, .stillPhone img { display: block; width: 100%; height: 100%; }
 .story[data-gl="ready"] .poster { opacity: 0; }
 
 /* Things floating around the phone. */
@@ -169,8 +172,7 @@
   .finale { order: 6; padding-bottom: 7rem; }
   .copy, .finaleCopy, .title { position: static; translate: none; width: auto; padding: 0; text-align: left; }
   .title { margin: 0 auto 2.5rem; max-width: 80rem; }
-  .stillPhone { display: block; justify-self: center; width: calc(var(--ph) / 2.056); height: var(--ph); overflow: hidden; border-radius: calc(var(--ph) * 0.0786); padding: calc(var(--ph) * 0.0205); background: linear-gradient(135deg, #b8bdc6, #43474f 30%, #c4c9d1 52%, #2c2f35 78%, #8d929b); }
-  .stillPhone img { display: block; width: 100%; border-radius: calc(var(--ph) * 0.058); }
+  .stillPhone { display: block; justify-self: center; width: calc(var(--ph) * var(--poster-w)); height: calc(var(--ph) * var(--poster-h)); }
   .grid { display: grid; gap: 1.25rem; max-width: 80rem; margin: 0 auto; padding: 0; list-style: none; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
   .stepList { position: static; display: grid; gap: 1rem; max-width: 80rem; margin: 0 auto; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); perspective: none; }
   .step { position: static; width: auto; opacity: 1; transform: none !important; }
@@ -190,8 +192,7 @@
 .story[data-still] .finale { order: 6; padding-bottom: 7rem; }
 .story[data-still] :is(.copy, .finaleCopy, .title) { position: static; translate: none; width: auto; padding: 0; text-align: left; }
 .story[data-still] .title { margin: 0 auto 2.5rem; max-width: 80rem; }
-.story[data-still] .stillPhone { display: block; justify-self: center; width: calc(var(--ph) / 2.056); height: var(--ph); overflow: hidden; border-radius: calc(var(--ph) * 0.0786); padding: calc(var(--ph) * 0.0205); background: linear-gradient(135deg, #b8bdc6, #43474f 30%, #c4c9d1 52%, #2c2f35 78%, #8d929b); }
-.story[data-still] .stillPhone img { display: block; width: 100%; border-radius: calc(var(--ph) * 0.058); }
+.story[data-still] .stillPhone { display: block; justify-self: center; width: calc(var(--ph) * var(--poster-w)); height: calc(var(--ph) * var(--poster-h)); }
 .story[data-still] .grid { display: grid; gap: 1.25rem; max-width: 80rem; margin: 0 auto; padding: 0; list-style: none; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
 .story[data-still] .stepList { position: static; display: grid; gap: 1rem; max-width: 80rem; margin: 0 auto; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); perspective: none; }
 .story[data-still] .step { position: static; width: auto; opacity: 1; transform: none !important; }
