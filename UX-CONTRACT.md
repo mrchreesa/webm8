@@ -71,3 +71,11 @@ Step 1 completion follows validation, step 2 completion follows server-confirmed
 The owner requested removal of the signup footer actions (Check trial status, Manage or cancel subscription, Contact WebM8), the repeated sidebar trial-price sentence and the step-two acknowledgement checkbox on 9 November 2026. Trial and monthly pricing remain beside Start my free trial; selecting that action records acknowledgement against the owned Checkout Session before Stripe confirmation. Loading alone does not acknowledge terms. The preview continuation records only local acknowledgement. Confirmation polling remains automatic, with refresh recovery after timeout; the customer email retains its authenticated subscription-management link.
 
 Step two uses the shared `CheckoutLoading` status panel during session preparation, payment component download, Stripe initialisation and card-field readiness. Its spinner stops for reduced-motion preferences. The mounted payment fields retain their geometry but remain hidden and inert until Stripe signals readiness; failures replace the loading state with recovery instructions. Source: owner's clear-loading-spinner request, 9 November 2026.
+
+## Instant loading performance (9 November 2026)
+
+The Instant page caches only public content and deployment configuration; its static build fails if request-specific server data is added. Cookie-owned answers, checkout confirmation and subscription status remain exclusively in private, uncached APIs. New session tokens skip the impossible saved-order lookup, while valid returning-session cookies retain the existing database restoration path.
+
+`InstantDemoWall` defers the shared `DemoWall` until it approaches the viewport. Its placeholder uses the wall's own responsive showcase classes, preserving document geometry. The simulator, form, analytics and automatic step-two checkout keep their existing behavior. Source: owner's loading-time optimisation request.
+
+The initial HTML includes the empty step-one form, disabled and busy until private session recovery completes. This keeps the first-visit layout stable and prevents the temporarily absent form from pulling the gallery into the loading viewport. No private values are rendered or cached on the server; submission also checks the recovery lock.

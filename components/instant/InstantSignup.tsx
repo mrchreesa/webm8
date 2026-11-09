@@ -244,7 +244,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
 
   function advance(event: FormEvent) {
     event.preventDefault();
-    if (pending.current || billingBusy) return;
+    if (!loaded || pending.current || billingBusy || pollTrial) return;
     if (step !== "checkout" && !check(step)) return;
     if (step === "business") { analytics.form("start", 1); analytics.form("step_complete", 1); go(quote ? "quote" : "checkout"); }
     else if (step === "checkout") {
@@ -318,8 +318,8 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
           {billingMessage && <div ref={billingStatusRef} tabIndex={-1} role="status" className={styles.notice}>{billingMessage}</div>}
           {pollTrial && <p role="status" className={styles.hint}>Waiting for Stripe to confirm your trial…</p>}
           {billingOrder?.trialEnd && <p className={styles.hint}>{billingOrder.cancelAtPeriodEnd ? "Cancellation scheduled. Your subscription ends" : "Your free trial ends"} on {new Intl.DateTimeFormat("en-GB", { dateStyle: "long", timeZone: "Europe/London" }).format(new Date(billingOrder.cancelAt || billingOrder.trialEnd))}.</p>}
-          {loaded && !complete && <form ref={formRef} data-analytics-form={analyticsEnabled ? "instant_website" : undefined} data-analytics-step={stage + 1} data-analytics-steps={3} noValidate onSubmit={advance} className={styles.form}>
-            <fieldset disabled={billingBusy || pollTrial} className={`${styles.form} ${styles.formFields}`}>
+          {!complete && <form ref={formRef} data-analytics-form={analyticsEnabled ? "instant_website" : undefined} data-analytics-step={stage + 1} data-analytics-steps={3} noValidate onSubmit={advance} aria-busy={!loaded || billingBusy || pollTrial} className={styles.form}>
+            <fieldset disabled={!loaded || billingBusy || pollTrial} className={`${styles.form} ${styles.formFields}`}>
             {step === "business" && <>
               <div className={styles.fieldGrid}>
                 {field("name", "Your name", { required: true, autoComplete: "name" })}
@@ -403,7 +403,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
             <div aria-live="polite">{Object.keys(errors).length > 0 && <FormStatus tone="error">Check the highlighted answers before continuing.</FormStatus>}</div>
             <div className={styles.actions}>
               {step !== "business" && <Button data-analytics-id="Previous signup step" variant="ghost" onClick={back}><Icon name="arrow" className="rotate-180" size={16} aria-hidden />Back</Button>}
-              {!(billing && step === "checkout" && !billingOrder?.checkoutConfirmed) && <Button data-analytics-id={step === "business" ? "Continue to checkout" : step === "brief" ? "Submit website brief" : "Continue signup"} type="submit" size="lg" className={styles.continue} disabled={billingBusy || pollTrial}>
+              {!(billing && step === "checkout" && !billingOrder?.checkoutConfirmed) && <Button data-analytics-id={step === "business" ? "Continue to checkout" : step === "brief" ? "Submit website brief" : "Continue signup"} type="submit" size="lg" className={styles.continue} disabled={!loaded || billingBusy || pollTrial}>
                 {billingBusy ? "Saving…" : step === "business" ? "Continue" : step === "checkout" ? billing ? "Continue to website details" : "Preview trial & continue" : step === "quote" ? billing ? "Request a custom quote" : "Preview my quote request" : "Submit"}
                 <Icon name="arrow" size={17} aria-hidden />
               </Button>}

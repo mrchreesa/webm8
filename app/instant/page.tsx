@@ -4,7 +4,10 @@ import { InstantSignup } from "@/components/instant/InstantSignup";
 import { InstantExamples } from "@/components/instant/InstantExamples";
 import { createPageMetadata } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
+// Only public, deployment-scoped content belongs in this cached page.
+// Cookie-owned signup/billing state is restored by the private session API.
+// Fail the build if request-specific data is ever added here.
+export const dynamic = "error";
 const instantSite = process.env.INSTANT_WEBSITES_SITE === "1";
 const pageMetadata = createPageMetadata({ title: process.env.INSTANT_BILLING_ENABLED === "1" ? "Instant Websites — start your free trial" : "Instant Websites — signup preview", description: "A business website, built and looked after by WebM8. 10 days free, then £39/month.", path: "/instant/" });
 export const metadata: Metadata = {
