@@ -12,15 +12,16 @@ import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
 import { DemoCtaButton } from "@/components/demo/DemoCtaButton";
 
-export function Header() {
+export function Header({ instantSite = false }: { instantSite?: boolean }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const isMoversPage = pathname?.startsWith("/movers") ?? false;
+  const isInstantPage = instantSite || pathname === "/instant/" || pathname === "/instant";
   // Meta leads land on /thank-you/ and /demo/ having already sent their
   // details, so the header there is the logo alone: no nav, and no CTA back
   // into a form.
-  const isLeadPage = ["/thank-you", "/demo"].some((path) => pathname?.startsWith(path));
+  const isLeadPage = isInstantPage || ["/thank-you", "/demo"].some((path) => pathname?.startsWith(path));
   const isFreeDemoPage = pathname?.startsWith("/free-demo") ?? false;
   const navItems = isMoversPage
     ? [
@@ -74,9 +75,9 @@ export function Header() {
   // The homepage is navy from top to bottom, so its header stays dark.
   // /movers/, /thank-you/, /demo/ and /free-demo/ have navy heroes, so their
   // headers are dark until the page scrolls.
-  const isHome = pathname === "/";
+  const isHome = !instantSite && pathname === "/";
   const staysDark = isHome;
-  const overDarkHero = staysDark || ((isMoversPage || isLeadPage || isFreeDemoPage) && !scrolled);
+  const overDarkHero = staysDark || (!isInstantPage && (isMoversPage || isLeadPage || isFreeDemoPage) && !scrolled);
 
   return (
     <header data-analytics-section="Header"

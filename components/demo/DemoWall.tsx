@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import type { MouseEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { trackEvent } from "@/lib/analytics";
+import { cn } from "@/lib/cn";
 import { heroScrollProgress } from "@/lib/demoWall";
 import type { Project } from "@/lib/site";
 import { DemoSiteModal } from "./DemoSiteModal";
@@ -17,7 +18,7 @@ import demo from "./demo.module.css";
  * different speeds. Beside the intro it lies behind the whole hero; stacked,
  * it fills the space under the intro. A tile opens its live site in the dialog.
  */
-export function DemoWall() {
+export function DemoWall({ variant = "hero", projectSlugs }: { variant?: "hero" | "showcase"; projectSlugs?: readonly string[] }) {
   const pathname = usePathname();
   const sceneRef = useRef<HTMLDivElement>(null);
   const [opened, setOpened] = useState<Project | null>(null);
@@ -67,8 +68,8 @@ export function DemoWall() {
 
   return (
     <>
-      <div ref={sceneRef} className={demo.wallScene} data-analytics-section="Demo examples">
-        <DemoWallTiles className={demo.wallView} onOpen={open} />
+      <div ref={sceneRef} className={cn(demo.wallScene, variant === "showcase" && demo.wallShowcase)} data-analytics-section="Demo examples">
+        <DemoWallTiles className={demo.wallView} onOpen={open} projectSlugs={projectSlugs} />
         <p className={demo.wallTag} aria-hidden="true">
           Real demos we’ve designed
         </p>

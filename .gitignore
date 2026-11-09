@@ -10,6 +10,8 @@ CLAUDE.md
 
 # Next.js
 .next/
+.next-billing-build/
+.next-billing-dev/
 out/
 .vercel/
 

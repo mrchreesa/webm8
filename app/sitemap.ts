@@ -4,6 +4,7 @@ import { absoluteUrl, indexableRoutes } from "@/lib/seo";
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  if (process.env.INSTANT_WEBSITES_SITE === "1") return [];
   return indexableRoutes.map((route) => ({
     url: absoluteUrl(route.path),
     // Omit lastmod until we track actual editorial changes for each page.

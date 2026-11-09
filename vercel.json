@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "schedules": {
+    "instant-signup-email-retry": {
+      "schedule": "*/15 * * * *",
+      "jitter": 15,
+      "path": "/api/instant/email-retry/",
+      "requestMethod": "POST"
+    }
+  }
+}

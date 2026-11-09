@@ -19,7 +19,7 @@ function browser(pathname = "/free-demo/", privacy = {}, readyState = "loading")
     head: { appendChild: (script: typeof scripts[number]) => scripts.push(script) },
     createElement: () => ({ src: "", async: false }),
   } });
-  const run = () => vm.runInContext(metaPixelScript("test-pixel"), context);
+  const run = (pixelId = "test-pixel") => vm.runInContext(metaPixelScript(pixelId), context);
   return { window, scripts, listeners, idle, run };
 }
 
@@ -54,6 +54,19 @@ test("Meta campaign page keeps immediate pixel loading", () => {
   b.run();
   assert.equal(b.scripts.length, 1);
   assert.equal(b.idle.length, 0);
+});
+
+test("Instant Websites loads its pixel once with only a PageView", () => {
+  for (const path of ["/", "/instant/"]) {
+    const b = browser(path);
+    b.run("1342464841221904");
+    b.run("1342464841221904");
+    assert.equal(b.scripts.length, 1);
+    assert.equal(b.idle.length, 0);
+    assert.deepEqual(Array.from(b.window.fbq!.queue, args => Array.from(args)), [
+      ["init", "1342464841221904"], ["track", "PageView"],
+    ]);
+  }
 });
 
 test("privacy signals prevent the pixel and event queue", () => {

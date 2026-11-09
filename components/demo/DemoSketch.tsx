@@ -1,12 +1,11 @@
 "use client";
 
-import type { AnimationEvent } from "react";
-import { useState } from "react";
-import { StatusBar } from "@/components/home/story/StatusBar";
-import { SketchSite } from "@/components/home/story/TradeSite";
+import type { AnimationEvent, CSSProperties, PointerEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
-import { initialOf, parseTrade, trades, type TradeKey } from "@/lib/trades";
-import styles from "./demo.module.css";
+import { parseTrade } from "@/lib/trades";
+import { SketchBlueprint, SketchTemplate, sketchLooks, sketchRequest, type SketchId } from "./SketchTemplates";
+import styles from "./sketch.module.css";
 
 const tidy = (value: string) => value.replace(/\s+/g, " ").trim();
 
@@ -21,85 +20,103 @@ function domainOf(name: string) {
   return `${slug || "yourbusiness"}.com`;
 }
 
-/** The empty page the phone shows until a type of business is chosen. */
-function Wireframe({ name }: { name: string }) {
-  return (
-    <div className={styles.wire}>
-      <StatusBar time="9:41" />
-      <div className={styles.wireNav}>
-        <i className={styles.wireMark}>{name ? initialOf(name) : null}</i>
-        {name ? <b>{name}</b> : <span className={styles.wireBar} style={{ width: "34cqi" }} />}
-      </div>
-      <div className={styles.wireBody}>
-        <span className={styles.wirePicture} />
-        <span className={styles.wireBar} style={{ width: "80cqi", height: "7cqi" }} />
-        <span className={styles.wireBar} style={{ width: "56cqi", height: "7cqi" }} />
-        <span className={styles.wireBar} style={{ width: "84cqi" }} />
-        <span className={styles.wireBar} style={{ width: "64cqi" }} />
-        <span className={styles.wireButton} />
-      </div>
-    </div>
-  );
-}
+/** The build is called in three steps, then done. */
+const READY = 3;
+const STEP_MS = 550;
 
-type DemoSketchProps = { trade: string; business: string; className?: string };
+type DemoSketchProps = {
+  trade: string;
+  business: string;
+  /** The town or area the visitor serves, for a template that shows it. */
+  area?: string;
+  /** A template that is not a trade's own, shown once a trade is chosen. */
+  template?: SketchId;
+  className?: string;
+  caption?: string;
+};
 
 /**
- * Beside the /free-demo/ form, and between its two parts on a phone: a phone
- * that sketches the visitor's homepage from their answers. Choosing a type of
- * business draws that trade's example site (components/home/story) over the
- * last one; the business name goes on it as it is typed. The phone
- * is hidden from screen readers; the caption says it is a sketch, not the demo.
+ * Beside the /free-demo/ and /instant/ forms: a phone that builds a first
+ * idea of the visitor's homepage from their answers. Choosing a type of
+ * business builds that trade's template (SketchTemplates.tsx) over the last
+ * one, lights the stage in its colour and brings out two cards behind the
+ * phone; the business name goes on it as it is typed. The phone leans towards
+ * a mouse. It is hidden from screen readers; the caption says it is a sketch.
  */
-export function DemoSketch({ trade, business, className }: DemoSketchProps) {
+export function DemoSketch({ trade, business, area = "", template, className, caption: captionOverride }: DemoSketchProps) {
   const key = parseTrade(trade);
+  const id: SketchId | null = key ? (template ?? key) : null;
   const name = tidy(business);
+  const rig = useRef<HTMLDivElement>(null);
 
-  // The last trade stays underneath until the new one has drawn over it.
-  const [layers, setLayers] = useState<{ top: TradeKey | null; under: TradeKey | null }>({ top: key, under: null });
-  if (layers.top !== key) setLayers({ top: key, under: layers.top });
+  // The last template stays underneath until the new one has faded in over it.
+  const [layers, setLayers] = useState<{ top: SketchId | null; under: SketchId | null }>({ top: id, under: null });
+  if (layers.top !== id) setLayers({ top: id, under: layers.top });
 
-  function onDrawn(event: AnimationEvent<HTMLDivElement>) {
+  function onBuilt(event: AnimationEvent<HTMLDivElement>) {
     if (event.target === event.currentTarget) setLayers((current) => ({ ...current, under: null }));
   }
 
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    if (!id) return;
+    setStep(0);
+    const timers = [1, 2, READY].map((next) => window.setTimeout(() => setStep(next), next * STEP_MS));
+    return () => timers.forEach(window.clearTimeout);
+  }, [id]);
+
+  function lean(event: PointerEvent<HTMLDivElement>) {
+    if (event.pointerType !== "mouse" || !rig.current) return;
+    const box = event.currentTarget.getBoundingClientRect();
+    rig.current.style.setProperty("--ry", `${((event.clientX - box.left) / box.width - 0.5) * 20}deg`);
+    rig.current.style.setProperty("--rx", `${(0.5 - (event.clientY - box.top) / box.height) * 10}deg`);
+  }
+
+  function settle() {
+    rig.current?.style.removeProperty("--ry");
+    rig.current?.style.removeProperty("--rx");
+  }
+
   const siteName = name || "Your business";
-  const caption = key
+  const caption = id
     ? `A first sketch for ${name || "your business"}. Your real demo is designed after our call.`
     : "Choose your type of business to see a first sketch of your homepage.";
+  const steps = ["Choosing a layout", "Setting your colours", `Adding ${name || "your name"}`, "First idea ready"];
 
   return (
-    <div className={cn(styles.sketch, className)}>
-      <p className={styles.caption}>{caption}</p>
+    <div
+      className={cn(styles.sketch, className)}
+      data-state={!id ? "idle" : step < READY ? "building" : "ready"}
+      style={id ? ({ "--glow": sketchLooks[id].glow } as CSSProperties) : undefined}
+      onPointerMove={lean}
+      onPointerLeave={settle}
+    >
+      <p className={styles.caption}>{captionOverride ?? caption}</p>
       <span className={styles.address} aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="5" y="11" width="14" height="10" rx="2" />
-          <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-        </svg>
+        <i className={styles.dot} />
         <span>{domainOf(name)}</span>
       </span>
-      <div className={styles.phone} aria-hidden="true">
-        <div className={styles.screen}>
-          <span className={styles.island} />
-          {layers.under ? (
-            <SketchSite key={layers.under} trade={trades[layers.under]} name={siteName} className={styles.sketchSite} />
-          ) : (
-            <Wireframe name={name} />
-          )}
-          {key ? (
-            <>
-              <SketchSite
-                key={key}
-                trade={trades[key]}
-                name={siteName}
-                className={cn(styles.sketchSite, styles.draw)}
-                onAnimationEnd={onDrawn}
-              />
-              <i key={`scan-${key}`} className={styles.scan} />
-            </>
-          ) : null}
+      <div ref={rig} className={styles.rig} aria-hidden="true">
+        {id ? (
+          <>
+            <div className={cn(styles.card, styles.cardA)}><i />{sketchRequest(id)}</div>
+            <div className={cn(styles.card, styles.cardB)}><i>★★★★★</i>New review</div>
+          </>
+        ) : null}
+        <div className={styles.phone}>
+          <div className={styles.screen}>
+            <span className={styles.island} />
+            {layers.under ? <SketchTemplate key={layers.under} id={layers.under} name={siteName} area={area} /> : <SketchBlueprint name={name} />}
+            {id ? <SketchTemplate key={id} id={id} name={siteName} area={area} onAnimationEnd={onBuilt} /> : null}
+          </div>
         </div>
       </div>
+      {id ? (
+        <div className={styles.ticker} aria-hidden="true">
+          <i />
+          <span>{steps[step]}</span>
+        </div>
+      ) : null}
     </div>
   );
 }

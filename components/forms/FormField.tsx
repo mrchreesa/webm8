@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ChangeEventHandler, ReactNode } from "react";
 import { useId } from "react";
 import { cn } from "@/lib/cn";
 
@@ -19,6 +19,7 @@ const labelVariants: Record<LabelVariant, string> = {
 };
 
 type FieldProps = {
+  "data-analytics-field"?: string;
   label: string;
   name: string;
   type?: "text" | "email" | "url" | "tel";
@@ -26,6 +27,9 @@ type FieldProps = {
   required?: boolean;
   wide?: boolean;
   defaultValue?: string;
+  value?: string;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+  maxLength?: number;
   autoComplete?: string;
   /** Validation message. Shown below the field and linked with aria-describedby. */
   error?: string;
@@ -38,6 +42,7 @@ type FieldProps = {
 };
 
 export function TextField({
+  "data-analytics-field": analyticsField,
   label,
   name,
   type = "text",
@@ -45,6 +50,9 @@ export function TextField({
   required,
   wide,
   defaultValue,
+  value,
+  onChange,
+  maxLength,
   autoComplete,
   error,
   hint,
@@ -71,12 +79,16 @@ export function TextField({
         )}
       </label>
       <input
+        data-analytics-field={analyticsField}
         id={id}
         type={type}
         name={name}
         required={required}
         placeholder={placeholder}
         defaultValue={defaultValue}
+        value={value}
+        onChange={onChange}
+        maxLength={maxLength}
         autoComplete={autoComplete}
         inputMode={inputMode}
         disabled={disabled}
@@ -97,6 +109,7 @@ export function TextField({
 }
 
 export function TextAreaField({
+  "data-analytics-field": analyticsField,
   label,
   name,
   placeholder,
@@ -105,7 +118,11 @@ export function TextAreaField({
   error,
   hint,
   labelVariant = "default",
+  value,
+  onChange,
+  maxLength,
 }: {
+  "data-analytics-field"?: string;
   label: string;
   name: string;
   placeholder?: string;
@@ -114,6 +131,9 @@ export function TextAreaField({
   error?: string;
   hint?: string;
   labelVariant?: LabelVariant;
+  value?: string;
+  onChange?: ChangeEventHandler<HTMLTextAreaElement>;
+  maxLength?: number;
 }) {
   const id = useId();
   const messageId = `${id}-message`;
@@ -130,11 +150,15 @@ export function TextAreaField({
         )}
       </label>
       <textarea
+        data-analytics-field={analyticsField}
         id={id}
         name={name}
         rows={rows}
         required={required}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        maxLength={maxLength}
         aria-invalid={error ? true : undefined}
         aria-describedby={message ? messageId : undefined}
         className={cn(

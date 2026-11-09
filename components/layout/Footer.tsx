@@ -4,7 +4,7 @@ import Link from "next/link";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { brand, intakeEmail } from "@/lib/site";
 
-export function Footer() {
+export function Footer({ agencyUrl = "" }: { agencyUrl?: string }) {
   const year = new Date().getFullYear();
 
   return (
@@ -28,6 +28,7 @@ export function Footer() {
 
           <FooterCol
             title="Site"
+            baseUrl={agencyUrl}
             links={[
               { label: "Home", href: "/" },
               { label: "Websites for Movers", href: "/movers/" },
@@ -37,6 +38,7 @@ export function Footer() {
           />
           <FooterCol
             title="Company"
+            baseUrl={agencyUrl}
             links={[
               { label: "About", href: "/about" },
               { label: "Contact", href: "/contact" },
@@ -78,9 +80,11 @@ export function Footer() {
 function FooterCol({
   title,
   links,
+  baseUrl = "",
 }: {
   title: string;
   links: { label: string; href: string }[];
+  baseUrl?: string;
 }) {
   return (
     <div>
@@ -91,7 +95,7 @@ function FooterCol({
         {links.map((l) => (
           <li key={l.href}>
             <Link data-analytics-id={analyticsName(l.label)}
-              href={l.href}
+              href={`${baseUrl}${l.href}`}
               className="text-muted transition-colors hover:text-link"
             >
               {l.label}

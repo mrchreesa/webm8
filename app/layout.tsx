@@ -14,6 +14,8 @@ import {
   socialDescription,
 } from "@/lib/seo";
 
+const instantSite = process.env.INSTANT_WEBSITES_SITE === "1";
+
 const geistSans = Geist({
   subsets: ["latin"],
   display: "swap",
@@ -33,7 +35,7 @@ const funnelDisplay = Funnel_Display({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(instantSite ? "https://instant.webm8agency.com" : siteUrl),
   title: {
     default: defaultTitle,
     template: "%s | WebM8",
@@ -91,11 +93,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${funnelDisplay.variable}`}
     >
       <body className="flex min-h-screen flex-col antialiased">
-        <StructuredData />
-        <WebsiteAnalytics />
-        <Header />
+        {!instantSite && <StructuredData />}
+        <WebsiteAnalytics paths={instantSite ? "/,/instant" : undefined} />
+        <Header instantSite={instantSite} />
         <main className="flex-1">{children}</main>
-        <Footer />
+        <Footer agencyUrl={instantSite ? siteUrl : ""} />
       </body>
     </html>
   );

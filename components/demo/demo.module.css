@@ -73,6 +73,29 @@
   }
 }
 
+/* A standalone wall after a form, without the hero's text overlay. */
+.wallScene.wallShowcase {
+  --gap: 1.2rem;
+  --rx: 8deg;
+  --ry: -12deg;
+  --rz: 5deg;
+  --wall-inset: -10% -10% auto;
+  --wall-height: 150%;
+  position: relative;
+  inset: auto;
+  height: clamp(30rem, 52vw, 47rem);
+  min-height: 0;
+  margin: 1rem 0 0;
+}
+.wallScene.wallShowcase .wallView {
+  left: 0;
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 86%, transparent);
+}
+.wallShowcase .wallTag { top: auto; bottom: 1rem; right: auto; left: 50%; translate: -50% 0; }
+@media (max-width: 639px) {
+  .wallScene.wallShowcase { --wall-inset: -4% -58% auto; height: 30rem; }
+}
+
 /* Depth behind the hero: a grid floor and drifting light. */
 .heroFloor {
   position: absolute; left: -60%; right: -60%; bottom: -20%; height: 70%; pointer-events: none; opacity: 0.5;
@@ -202,225 +225,6 @@
     width: 1rem;
     height: 1rem;
   }
-}
-
-/* The sketch: a navy stage with a phone rising from its bottom edge. On a
-   phone it sits above the form; from lg it stays in view beside it. */
-.sketch {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 23rem;
-  overflow: hidden;
-  border-radius: 1.4rem;
-  background:
-    radial-gradient(70% 55% at 50% 105%, rgb(43 108 252 / 0.55), transparent 72%),
-    radial-gradient(70% 45% at 0% 0%, rgb(27 74 128 / 0.65), transparent 70%),
-    var(--color-night);
-  padding: 1.4rem 1.25rem 0;
-  color: #fff;
-  --phone-w: 15rem;
-}
-
-@media (min-width: 1024px) {
-  .sketch {
-    position: sticky;
-    top: 6rem;
-    align-self: start;
-    height: clamp(34rem, calc(100svh - 7.5rem), 42rem);
-    padding: 2rem 2rem 0;
-    --phone-w: 19.5rem;
-  }
-}
-
-.caption {
-  max-width: 36ch;
-  min-height: 2.9em;
-  color: var(--color-muted-invert);
-  font-size: 0.9rem;
-  line-height: 1.45;
-  text-align: center;
-  text-wrap: balance;
-}
-
-.address {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  max-width: 100%;
-  margin-top: 1rem;
-  padding: 0.45rem 0.9rem 0.45rem 0.75rem;
-  border-radius: 99px;
-  background: rgb(255 255 255 / 0.07);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12);
-  font: 500 0.8rem/1.1 var(--font-sans);
-}
-
-.address svg {
-  flex: none;
-  width: 0.8rem;
-  height: 0.8rem;
-  color: var(--color-brand);
-}
-
-.address span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* The same handset as the homepage story's. */
-.phone {
-  flex: none;
-  width: var(--phone-w);
-  aspect-ratio: 9 / 19.4;
-  margin-top: 1.1rem;
-  padding: calc(var(--phone-w) * 0.034);
-  border-radius: 15% / 7%;
-  background: linear-gradient(145deg, #23324a, #0b1220 40%, #131d30);
-  box-shadow:
-    inset 0 0 0 1.5px rgb(255 255 255 / 0.14),
-    0 0 0 1px #02060d,
-    0 -24px 80px -24px rgb(43 108 252 / 0.6);
-}
-
-.screen {
-  position: relative;
-  height: 100%;
-  overflow: hidden;
-  border-radius: 12.4% / 5.8%;
-  background: #f3f5f8;
-  color: #1d2330;
-  container-type: inline-size;
-}
-
-.island {
-  position: absolute;
-  top: 2.2%;
-  left: 50%;
-  z-index: 20;
-  width: 31%;
-  height: 3.5%;
-  border-radius: 99px;
-  background: #000;
-  transform: translateX(-50%);
-}
-
-.sketchSite {
-  position: absolute;
-  inset: 0;
-}
-
-/* A newly chosen trade is drawn down the screen, behind a neon line. */
-.draw {
-  animation: draw 1s var(--ease-brand) both;
-}
-
-@keyframes draw {
-  from {
-    clip-path: inset(0 0 100% 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-.scan {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 10;
-  height: 2px;
-  background: var(--color-brand);
-  box-shadow: 0 0 14px 3px rgb(212 255 53 / 0.65);
-  pointer-events: none;
-  animation: scan 1s var(--ease-brand) both;
-}
-
-@keyframes scan {
-  0% {
-    top: 0;
-    opacity: 1;
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    top: 100%;
-    opacity: 0;
-  }
-}
-
-/* Until a trade is chosen: a page in outline, with the name once typed. */
-.wire {
-  position: absolute;
-  inset: 0;
-  background: #f3f5f8;
-}
-
-.wireNav {
-  display: flex;
-  align-items: center;
-  gap: 2.4cqi;
-  padding: 1.6cqi 6cqi 3.2cqi;
-  font-size: 4.4cqi;
-}
-
-.wireNav b {
-  overflow: hidden;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.wireMark {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 8.4cqi;
-  height: 8.4cqi;
-  border-radius: 2.4cqi;
-  background: #dde3ec;
-  color: var(--color-ink);
-  font: 800 4.4cqi var(--font-sans);
-  font-style: normal;
-}
-
-.wireBody {
-  display: grid;
-  justify-items: start;
-  gap: 2.6cqi;
-  padding: 0 4cqi;
-}
-
-.wirePicture {
-  width: 100%;
-  height: 56cqi;
-  margin-bottom: 2.4cqi;
-  border-radius: 5cqi;
-  background: repeating-linear-gradient(-45deg, #e4e9f0 0 3cqi, #ecf0f5 3cqi 6cqi);
-}
-
-.wireBar {
-  display: block;
-  height: 3.4cqi;
-  margin-left: 2cqi;
-  border-radius: 99px;
-  background: #dde3ec;
-}
-
-.wireNav .wireBar {
-  margin-left: 0;
-}
-
-.wireButton {
-  width: calc(100% - 4cqi);
-  height: 12cqi;
-  margin: 2.4cqi 2cqi 0;
-  border-radius: 3cqi;
-  background: #d2dae5;
 }
 
 /* The success panel slides in where the form was. */

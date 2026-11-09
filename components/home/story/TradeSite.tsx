@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { AnimationEventHandler, CSSProperties } from "react";
 import { cn } from "@/lib/cn";
 import { projects } from "@/lib/site";
-import { drawnSiteOf, initialOf, isPortfolioSite, ratingOf, type DrawnSite, type Trade } from "@/lib/trades";
+import { initialOf, isPortfolioSite, ratingOf, type DrawnSite, type Trade } from "@/lib/trades";
 import { CheckIcon, ChevronRightIcon, PhoneIcon } from "./icons";
 import { lookStyle, looks, type SiteLook } from "./looks";
 import { StatusBar } from "./StatusBar";
@@ -186,9 +186,4 @@ function PortfolioTradeSite({ trade, slug }: { trade: Trade; slug: string }) {
 export function TradeSite({ trade }: { trade: Trade }) {
   if (isPortfolioSite(trade.site)) return <PortfolioTradeSite trade={trade} slug={trade.site.project} />;
   return <DrawnTradeSite trade={trade} copy={trade.site} look={looks[trade.key]} className={styles.slot} />;
-}
-
-/** The trade's drawn site with the visitor's business on it: the sketch beside the /free-demo/ form. */
-export function SketchSite({ trade, ...props }: { trade: Trade } & Pick<DrawnTradeSiteProps, "name" | "className" | "onAnimationEnd">) {
-  return <DrawnTradeSite trade={trade} copy={drawnSiteOf(trade)} look={looks[trade.key]} {...props} />;
 }

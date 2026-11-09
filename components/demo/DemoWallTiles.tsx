@@ -39,6 +39,8 @@ type DemoWallTilesProps = {
   className?: string;
   /** Makes each tile a link to its live site, handed here when clicked. Without it the wall is only a picture. */
   onOpen?: (event: MouseEvent<HTMLAnchorElement>, slug: string) => void;
+  /** Optional selection for offers with a narrower scope than the full portfolio. */
+  projectSlugs?: readonly string[];
 };
 
 /**
@@ -46,7 +48,7 @@ type DemoWallTilesProps = {
  * and /demo/ a way into each live site (DemoWall), and behind the homepage
  * hero a backdrop (HomeStory).
  */
-export function DemoWallTiles({ className, onOpen }: DemoWallTilesProps) {
+export function DemoWallTiles({ className, onOpen, projectSlugs }: DemoWallTilesProps) {
   return (
     <div className={cn(wall.view, className)} aria-hidden={onOpen ? undefined : true}>
       <div role={onOpen ? "region" : undefined} aria-label={onOpen ? "Real demo websites" : undefined} className={wall.wall}>
@@ -55,6 +57,7 @@ export function DemoWallTiles({ className, onOpen }: DemoWallTilesProps) {
             <div className={wall.track} data-drift={column.drift} style={{ animationDuration: `${column.seconds}s` }}>
               {Array.from({ length: COPIES }, (_, copy) =>
                 column.slugs.map((slug, row) => {
+                  if (projectSlugs && !projectSlugs.includes(slug)) return null;
                   const project = wallProjects.get(slug);
                   if (!project) return null;
                   const desktop = column.shot === "desktop";

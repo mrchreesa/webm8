@@ -4,6 +4,9 @@ import { absoluteUrl } from "@/lib/seo";
 export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {
+  if (process.env.INSTANT_WEBSITES_SITE === "1") {
+    return { rules: { userAgent: "*", disallow: "/" } };
+  }
   return {
     rules: {
       userAgent: "*",

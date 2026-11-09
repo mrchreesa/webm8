@@ -28,7 +28,11 @@ const trackerUrl =
  * the Meta Pixel. A browser that sends Do Not Track or Global
  * Privacy Control gets none of them.
  */
-export function WebsiteAnalytics() {
+export function WebsiteAnalytics({
+  paths = "/,/demo,/free-demo,/pricing,/contact,/work,/about,/movers,/thank-you",
+}: {
+  paths?: string;
+}) {
   useEffect(() => {
     // Capture arrival on every entry page so the eventual CRM enquiry keeps its source.
     rememberAttribution();
@@ -48,11 +52,10 @@ export function WebsiteAnalytics() {
       script.async = true;
       script.dataset.webm8Native = "true";
       script.dataset.site = siteId;
-      script.dataset.paths =
-        "/,/demo,/free-demo,/pricing,/contact,/work,/about,/movers,/thank-you";
+      script.dataset.paths = paths;
       document.head.appendChild(script);
     }
     return () => window.removeEventListener("webm8:ready", ready);
-  }, []);
+  }, [paths]);
   return <MetaPixel />;
 }
