@@ -19,7 +19,7 @@ import styles from "./instant.module.css";
 const InstantPayment = dynamic(() => import("./InstantPayment").then(module => module.InstantPayment), { loading: () => <CheckoutLoading /> });
 
 const stageCopy: Record<Step, { title: string; intro: string }> = {
-  business: { title: "Let's get your website started", intro: "A few basics first. Payment and website details come next." },
+  business: { title: "Your new website. Ready in one working day.", intro: "Tell us about your business. We’ll design, build and look after your website—with unlimited revisions until you’re happy." },
   checkout: { title: "Secure free trial", intro: `Start your ${INSTANT_TRIAL_DAYS}-day free trial. £${INSTANT_PRICE}/month after your trial ends.` },
   brief: { title: "Tell us about your business.", intro: "Add your services, links and preferences. A few lines are enough to get started." },
   complete: { title: "You're all set!", intro: "Your website will be ready within one working day." },
@@ -312,6 +312,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
           {complete && !quote && <div className={styles.successMark}><span><Icon name="check" size={26} aria-hidden /></span>{billing ? "Website brief received" : "Success screen preview"}</div>}
           <h2 className={styles.title} ref={titleRef} tabIndex={-1}>{stageCopy[step].title}</h2>
           <p className={styles.intro}>{stageCopy[step].intro}</p>
+          {step === "business" && <p className={styles.offerLine}>{INSTANT_TRIAL_DAYS} days free · Then £{INSTANT_PRICE}/month · No setup fee · Cancel anytime</p>}
           <div aria-live="polite" className={styles.saveStatus}>
             {!loaded ? billing ? "Checking your saved progress…" : "Opening your preview…" : !storageAvailable ? "This browser can’t save your draft. Keep this page open until you submit." : null}
           </div>

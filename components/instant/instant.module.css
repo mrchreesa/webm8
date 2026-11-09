@@ -27,6 +27,7 @@
 .progress li[data-active="true"] > span { background: var(--color-ink); color: var(--color-bg); border-color: var(--color-ink); }
 .title { font-size: clamp(1.6rem, 2.5vw, 2rem); line-height: 1.1; letter-spacing: -.03em; font-weight: 700; max-width: 28ch; scroll-margin-top: 100px; outline: none; }
 .intro { margin-top: .9rem; color: var(--color-muted); font-size: .92rem; line-height: 1.7; }
+.offerLine { margin-top: 1rem; color: var(--color-ink); font-size: .85rem; font-weight: 600; line-height: 1.7; text-wrap: balance; }
 .saveStatus { min-height: 1.5rem; margin: .7rem 0 1.3rem; color: var(--color-muted); font-size: .7rem; line-height: 1.6; }
 .form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.4rem; }
 .form > * { grid-column: 1 / -1; }
