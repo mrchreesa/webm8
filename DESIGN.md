@@ -70,6 +70,8 @@ Existing controls use rounded-xl, contact card rounded-3xl, buttons rounded-full
 
 ## Components
 
+The browser favicon reuses the blue octopus in a blink → tentacle wave → gentle bob rotation, with ten-second rests. `public/animated-favicon.mjs` owns the canvas frames and lifecycle; the shared root layout loads it after page load and idle time for both agency and Instant sites. It restores the original static icons between motions, in hidden tabs, and under reduced motion or data saving. The existing search and Apple touch icons remain the static brand assets. Source: owner request, 10 November 2026.
+
 `components/forms/FormField.tsx` owns labelled inputs, textareas, native selects and form status. Native plan selection deliberately uses platform popup geometry and keyboard behavior. `components/ui/Button.tsx` owns actions. Textarea has five visible rows on contact, fixed resize behavior and natural overflow for longer messages.
 
 Every field has an associated label and inline error. Focus uses the existing navy ring. Disabled controls remain visible; a busy button has explicit text. The contact status uses one polite live region. Success appears only after the CRM confirms the save. Motion uses existing transitions and reduced-motion rules; it does not delay form feedback. Keep the initial demo image visible at first paint and high priority.
@@ -84,3 +86,7 @@ Instant Websites billing keeps the payment form inside the existing second step.
 - Don't use decorative motion, new palette values or overlays for basic validation.
 
 The live Instant Websites checkout places the payment form first, above the order and contact summary. Card is the first expanded payment option. Reuse the existing Stripe appearance adapter and shared controls; no token changes are needed. Source: owner request, 9 November 2026.
+
+## Instant regional pricing (10 November 2026)
+
+Owner request: UK stays £39/month and US visitors receive $79/month, with American English throughout the Instant journey. `lib/instantPricing.ts` owns both fixed offers. Vercel country-based middleware selects static UK/US pages before caching, while the private session API restores the saved order market. New orders bind the detected market and Stripe Price ID before Checkout creation; retries and returning customers keep that offer. Other countries and unknown locations retain GBP. The shared market context drives all visible prices, checkout verification and confirmation email amounts. Existing 10-day trial and tax settings are unchanged.

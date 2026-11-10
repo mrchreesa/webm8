@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Funnel_Display, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
@@ -89,10 +90,11 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="en"
+      lang={instantSite ? "en-US" : "en"}
       className={`${geistSans.variable} ${geistMono.variable} ${funnelDisplay.variable}`}
     >
       <body className="flex min-h-screen flex-col antialiased">
+        <Script src="/animated-favicon.mjs" type="module" strategy="lazyOnload" />
         {!instantSite && <StructuredData />}
         <WebsiteAnalytics paths={instantSite ? "/,/instant" : undefined} />
         <Header instantSite={instantSite} />
