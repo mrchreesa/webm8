@@ -1,8 +1,8 @@
-// Small, code-drawn motions of the existing mascot. No GIF decoder or worker.
+// Cached canvas frames: octopus → three spins → M8 → three spins → octopus.
 const SIZE = 64;
 const SOURCE = 192;
 const PAUSE_MS = 10000;
-const FRAME_MS = 125;
+const FRAME_MS = 80;
 
 function canvas() {
   const element = document.createElement("canvas");
@@ -12,82 +12,74 @@ function canvas() {
   return { element, context };
 }
 
-function armPath(context) {
-  context.moveTo(136, 111);
-  context.bezierCurveTo(146, 106, 145, 84, 157, 79);
-  context.bezierCurveTo(176, 69, 188, 88, 177, 104);
-  context.bezierCurveTo(168, 121, 149, 126, 135, 119);
-  context.closePath();
-}
-
-/** Exported so the local visual review can use the exact production frames. */
+/** Exported so the local visual review uses the exact production frames. */
 export function createFaviconFrames(image) {
   const { element, context } = canvas();
-  function frame(draw) {
-    context.setTransform(1, 0, 0, 1, 0, 0);
-    context.clearRect(0, 0, SIZE, SIZE);
-    context.save();
-    context.scale(SIZE / SOURCE, SIZE / SOURCE);
-    draw(context);
-    context.restore();
-    return element.toDataURL("image/png");
+  // Match the existing header badge; read the canonical theme just once.
+  const theme = getComputedStyle(document.documentElement);
+  const brand = theme.getPropertyValue("--color-brand").trim() || "#d4ff35";
+  const ink = theme.getPropertyValue("--color-ink-deep").trim() || "#071a33";
+
+  function drawM8(ctx) {
+    ctx.fillStyle = brand;
+    ctx.beginPath();
+    ctx.roundRect(8, 8, 176, 176, 34);
+    ctx.fill();
+    // Vector lettering stays crisp at tab size and needs no font download.
+    ctx.fillStyle = ink;
+    ctx.beginPath();
+    ctx.moveTo(29, 130);
+    ctx.lineTo(29, 62);
+    ctx.lineTo(46, 62);
+    ctx.lineTo(64, 94);
+    ctx.lineTo(82, 62);
+    ctx.lineTo(99, 62);
+    ctx.lineTo(99, 130);
+    ctx.lineTo(82, 130);
+    ctx.lineTo(82, 94);
+    ctx.lineTo(69, 116);
+    ctx.lineTo(59, 116);
+    ctx.lineTo(46, 94);
+    ctx.lineTo(46, 130);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.roundRect(108, 59, 55, 73, 21);
+    ctx.roundRect(123, 73, 25, 15, 7);
+    ctx.roundRect(123, 101, 25, 17, 7);
+    ctx.fill("evenodd");
   }
-  const drawMascot = (ctx) => ctx.drawImage(image, 0, 0, SOURCE, SOURCE);
-  const blink = [0, .55, 1, 1, .4, 0].map(closed => frame(ctx => {
-    drawMascot(ctx);
-    if (!closed) return;
-    // Same blue eyelids as the site's MascotEyes, in favicon coordinates.
-    for (const x of [73, 119]) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.ellipse(x, 78, 14, 17, 0, 0, Math.PI * 2);
-      ctx.clip();
-      const lid = ctx.createLinearGradient(0, 61, 0, 95);
-      lid.addColorStop(0, "#2463f6");
-      lid.addColorStop(1, "#3b7cfb");
-      ctx.fillStyle = lid;
-      ctx.fillRect(x - 15, 60, 30, 36 * closed);
-      if (closed === 1) {
-        ctx.strokeStyle = "#102b80";
-        ctx.lineWidth = 2.5;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(x - 9, 79);
-        ctx.quadraticCurveTo(x, 84, x + 9, 79);
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-  }));
-  const wave = Array.from({ length: 13 }, (_, index) => frame(ctx => {
-    const t = index / 12;
-    if (index === 0 || index === 12) { drawMascot(ctx); return; }
-    // Keep the body still and pivot only the outer right tentacle at its root.
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(0, 0, SOURCE, SOURCE);
-    armPath(ctx);
-    ctx.clip("evenodd");
-    drawMascot(ctx);
-    ctx.restore();
-    ctx.save();
-    ctx.translate(138, 116);
-    ctx.rotate(Math.sin(t * Math.PI * 4) * Math.sin(t * Math.PI) * .3);
-    ctx.translate(-138, -116);
-    ctx.beginPath();
-    armPath(ctx);
-    ctx.clip();
-    drawMascot(ctx);
-    ctx.restore();
-  }));
-  const bob = Array.from({ length: 13 }, (_, index) => frame(ctx => {
-    const t = index / 12;
-    ctx.translate(96, 96 - Math.sin(t * Math.PI) * 9);
-    ctx.rotate(Math.sin(t * Math.PI * 2) * .055);
-    ctx.translate(-96, -96);
-    drawMascot(ctx);
-  }));
-  return [{ name: "blink", frames: blink }, { name: "wave", frames: wave }, { name: "bob", frames: bob }];
+  const drawMascot = ctx => ctx.drawImage(image, 0, 0, SOURCE, SOURCE);
+  const smooth = t => t * t * (3 - 2 * t);
+
+  function spin(from, to, direction) {
+    return Array.from({ length: 37 }, (_, index) => {
+      const t = index / 36;
+      const eased = smooth(t);
+      const blend = smooth(Math.min(1, Math.max(0, (eased - .4) / .2)));
+      // Pull in during the fast turns so the square badge never clips.
+      const scale = 1 - .32 * Math.sin(t * Math.PI);
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, SIZE, SIZE);
+      context.save();
+      context.scale(SIZE / SOURCE, SIZE / SOURCE);
+      context.translate(SOURCE / 2, SOURCE / 2);
+      context.rotate(direction * eased * Math.PI * 6);
+      context.scale(scale, scale);
+      context.translate(-SOURCE / 2, -SOURCE / 2);
+      context.globalAlpha = 1 - blend;
+      from(context);
+      context.globalAlpha = blend;
+      to(context);
+      context.restore();
+      return element.toDataURL("image/png");
+    });
+  }
+
+  return [
+    { name: "spin-to-m8", frames: spin(drawMascot, drawM8, 1), holdMs: 3500 },
+    { name: "spin-to-octopus", frames: spin(drawM8, drawMascot, -1), holdMs: PAUSE_MS, restoreAfter: true },
+  ];
 }
 
 export function startAnimatedFavicon() {
@@ -146,9 +138,10 @@ export function startAnimatedFavicon() {
     }
     const current = animations[animation];
     if (frame === current.frames.length) {
-      stop();
+      frame = 0;
+      if (current.restoreAfter) restore();
       animation = (animation + 1) % animations.length;
-      schedule(PAUSE_MS);
+      schedule(current.holdMs);
       return;
     }
     // Update all tab-icon candidates so high-DPI tabs do not choose a static
@@ -165,7 +158,7 @@ export function startAnimatedFavicon() {
     frame += 1;
     schedule(FRAME_MS);
   }
-  function resume() { stop(); schedule(2500); }
+  function resume() { stop(); animation = 0; schedule(2500); }
   function pagehide() { away = true; stop(); }
   function pageshow() { away = false; resume(); }
   document.addEventListener("visibilitychange", resume);
