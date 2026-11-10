@@ -7,14 +7,14 @@ import { emptyAnswers, type Answers } from "./instantWebsite.ts";
 import type { InstantCrmBilling } from "./instantCrmIntake.ts";
 import { createInstantCheckout, recordInstantCheckoutConsent, submitInstantBrief } from "./instantCheckout.ts";
 import { processInstantEvent } from "./instantWebhook.ts";
-import { billingConfig, billingPool, getOrder, publicOrder, tokenHash } from "./instantBillingServer.ts";
+import { billingConfig, billingPool, getOrder, orderMarket, publicOrder, tokenHash } from "./instantBillingServer.ts";
 import { deliverInstantEmails, queueInstantEmails } from "./instantEmailOutbox.ts";
 import type { sendEmail } from "./resend.ts";
 
 test("real Postgres: checkout retries, webhook ordering, private ownership, cancellation and risk", { skip: !process.env.INSTANT_TEST_DATABASE_URL }, async t => {
   const testDatabase = new URL(process.env.INSTANT_TEST_DATABASE_URL!);
   assert.equal(testDatabase.hostname, "127.0.0.1"); assert.equal(testDatabase.port, "55439"); assert.equal(testDatabase.username, "instant_test");
-  Object.assign(process.env, { INSTANT_BILLING_ENABLED: "1", INSTANT_STRIPE_MODE: "test", STRIPE_RESTRICTED_KEY: "rk_test_fixture_only", NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: "pk_test_fixture_only", STRIPE_WEBHOOK_SECRET: "whsec_fixture_only", STRIPE_INSTANT_PRICE_ID: "price_fixture", STRIPE_INSTANT_PORTAL_CONFIG: "bpc_fixture", STRIPE_INSTANT_PORTAL_URL: "https://billing.stripe.com/p/login/test_fixture", INSTANT_DATABASE_URL: process.env.INSTANT_TEST_DATABASE_URL!, INSTANT_WEBSITES_ORIGIN: "http://127.0.0.1:3057", CRM_WEBSITE_INTAKE_URL: "https://crm.example.com/api/intake", WEBSITE_INTAKE_SECRET: "fixture-only-not-a-real-secret-value" });
+  Object.assign(process.env, { INSTANT_BILLING_ENABLED: "1", INSTANT_STRIPE_MODE: "test", STRIPE_RESTRICTED_KEY: "rk_test_fixture_only", NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: "pk_test_fixture_only", STRIPE_WEBHOOK_SECRET: "whsec_fixture_only", STRIPE_INSTANT_PRICE_ID: "price_fixture", STRIPE_INSTANT_US_PRICE_ID: "price_us_fixture", STRIPE_INSTANT_PORTAL_CONFIG: "bpc_fixture", STRIPE_INSTANT_PORTAL_URL: "https://billing.stripe.com/p/login/test_fixture", INSTANT_DATABASE_URL: process.env.INSTANT_TEST_DATABASE_URL!, INSTANT_WEBSITES_ORIGIN: "http://127.0.0.1:3057", CRM_WEBSITE_INTAKE_URL: "https://crm.example.com/api/intake", WEBSITE_INTAKE_SECRET: "fixture-only-not-a-real-secret-value" });
   const db = billingPool();
   await db.query(await readFile(new URL("../migrations/001_instant_billing.sql", import.meta.url), "utf8"));
   await db.query(await readFile(new URL("../migrations/002_instant_brief_recovery.sql", import.meta.url), "utf8"));
@@ -27,7 +27,7 @@ test("real Postgres: checkout retries, webhook ordering, private ownership, canc
   let creationCalls = 0; let loseResponse = true;
   let subscription = { id: "sub_fixture", customer: "cus_fixture", status: "trialing", trial_end: Math.floor(Date.now()/1000) + 864000, cancel_at: null, cancel_at_period_end: false, items: { data: [{ price: { id: "price_fixture" } }] } } as unknown as Stripe.Subscription;
   const client = {
-    prices: { retrieve: async () => ({ active: true, livemode: false, currency: "gbp", unit_amount: 3900, billing_scheme: "per_unit", recurring: { interval: "month", interval_count: 1, usage_type: "licensed" } }) },
+    prices: { retrieve: async (id: string) => ({ active: true, livemode: false, currency: id === "price_us_fixture" ? "usd" : "gbp", unit_amount: id === "price_us_fixture" ? 7900 : 3900, billing_scheme: "per_unit", recurring: { interval: "month", interval_count: 1, usage_type: "licensed" } }) },
     checkout: { sessions: {
       create: async (params: Stripe.Checkout.SessionCreateParams, options: { idempotencyKey: string }) => {
         if (idempotency.has(options.idempotencyKey)) return idempotency.get(options.idempotencyKey)!;
@@ -49,9 +49,10 @@ test("real Postgres: checkout retries, webhook ordering, private ownership, canc
   try {
     await t.test("lost response keeps durable identity; concurrent retries create one session", async () => {
       const preparation = { ...answers, checkoutAcknowledged: false };
-      await assert.rejects(createInstantCheckout(token, preparation, client));
+      await assert.rejects(createInstantCheckout(token, { ...preparation, market: "US", priceId: "price_us_fixture", amount: 1, _billing: { market: "US", priceId: "price_us_fixture" } }, client));
+      assert.equal(orderMarket((await getOrder(token))!), "GB");
       assert.ok(await getOrder(token));
-      const result = await Promise.all([createInstantCheckout(token, preparation, client), createInstantCheckout(token, preparation, client)]);
+      const result = await Promise.all([createInstantCheckout(token, preparation, client), createInstantCheckout(token, preparation, client, "US")]);
       assert.equal(creationCalls, 1); assert.ok(result.every(r => "clientSecret" in r));
       assert.equal(await getOrder(randomBytes(32).toString("hex")), null);
     });
@@ -115,7 +116,7 @@ test("real Postgres: checkout retries, webhook ordering, private ownership, canc
       assert.equal(pendingOrder.crm_id, null);
       assert.equal((await db.query("SELECT count(*)::int count FROM instant_websites.email_outbox WHERE order_id=$1", [order.id])).rows[0].count, 0);
       assert.equal(pendingOrder.checkout_confirmed, true);
-      assert.deepEqual(pendingOrder.answers, longBrief);
+      assert.deepEqual(publicOrder(pendingOrder).answers, longBrief);
       assert.deepEqual(pendingOrder.brief_submission?.answers, longBrief);
       assert.equal(publicOrder(pendingOrder).briefPending, true);
       const changedRetry = await submitInstantBrief(token, { ...longBrief, notes: "Edited after the lost receipt" }, fakeCrm, client);
@@ -130,7 +131,7 @@ test("real Postgres: checkout retries, webhook ordering, private ownership, canc
       assert.ok(results.every(r => "order" in r && r.order.submitted));
       const submittedOrder = (await getOrder(token))!;
       assert.equal(submittedOrder.crm_id, "80e9e316-d650-4bb9-a6f6-69718f9b57ee");
-      assert.deepEqual(submittedOrder.answers, longBrief);
+      assert.deepEqual(publicOrder(submittedOrder).answers, longBrief);
       assert.equal(publicOrder(submittedOrder).briefPending, false);
       const messages = (await db.query("SELECT kind,payload FROM instant_websites.email_outbox WHERE order_id=$1", [order.id])).rows;
       assert.equal(messages.length, 2);
@@ -182,6 +183,39 @@ test("real Postgres: checkout retries, webhook ordering, private ownership, canc
         assert.equal((await db.query("SELECT order_id FROM instant_websites.stripe_events WHERE id=$1", [`evt_risk_${i}`])).rows[0].order_id, order.id);
       }
       assert.equal((await getOrder(token))?.needs_review, true);
+    });
+    await t.test("US offer stays pinned through travel, retries and webhook confirmation", async () => {
+      const usToken = randomBytes(32).toString("hex");
+      try {
+        const result = await createInstantCheckout(usToken, answers, client, "US");
+        assert.ok("clientSecret" in result);
+        const usOrder = (await getOrder(usToken))!;
+        assert.equal(orderMarket(usOrder), "US");
+        assert.equal(usOrder.answers._billing?.priceId, "price_us_fixture");
+        const retried = await createInstantCheckout(usToken, answers, client, "GB");
+        assert.equal("order" in retried && retried.order.market, "US");
+        const usSession = sessions.get(usOrder.checkout_session_id!)!;
+        usSession.status = "complete"; usSession.payment_status = "no_payment_required";
+        usSession.customer = "cus_us_fixture"; usSession.subscription = "sub_us_fixture";
+        const previous = subscription;
+        subscription = { ...subscription, id: "sub_us_fixture", customer: "cus_us_fixture", status: "trialing", cancel_at_period_end: false, items: { data: [{ price: { id: "price_us_fixture" } }] } } as unknown as Stripe.Subscription;
+        await processInstantEvent(event("checkout.session.completed", "evt_us_checkout", { id: usSession.id }), client);
+        const confirmed = (await getOrder(usToken))!;
+        assert.equal(confirmed.checkout_confirmed, true);
+        assert.equal(confirmed.subscription_status, "trialing");
+        assert.equal(publicOrder(confirmed).market, "US");
+        let receivedBilling: InstantCrmBilling | undefined;
+        const brief = await submitInstantBrief(usToken, answers, async (_answers, billing) => { receivedBilling = billing; return { id: "80e9e316-d650-4bb9-a6f6-69718f9b57ef", duplicate: false }; }, client);
+        assert.ok("order" in brief && brief.order.submitted);
+        assert.equal(receivedBilling?.market, "US");
+        const emails = await db.query("SELECT payload FROM instant_websites.email_outbox WHERE order_id=$1", [usOrder.id]);
+        assert.equal(emails.rowCount, 2);
+        for (const { payload } of emails.rows) { assert.match(payload.text, /\$79/); assert.doesNotMatch(payload.text, /£39/); }
+        subscription = previous;
+      } finally {
+        await db.query("DELETE FROM instant_websites.stripe_events WHERE order_id IN (SELECT id FROM instant_websites.orders WHERE access_hash=$1)", [tokenHash(usToken)]);
+        await db.query("DELETE FROM instant_websites.orders WHERE access_hash=$1", [tokenHash(usToken)]);
+      }
     });
     await t.test("wrong environment and tampered signatures cannot process", async () => {
       await assert.rejects(processInstantEvent({ ...event("invoice.paid", "evt_wrong", { id: "in_fixture" }), livemode: true }, client), /mode/);

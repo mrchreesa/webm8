@@ -1,14 +1,10 @@
+"use client";
+
+import { useInstantMarket } from "./InstantMarket";
 import type { CSSProperties } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
 import styles from "./instant.module.css";
-
-const steps = [
-  { title: "Your details", text: "Your name, business and town." },
-  { title: "Free trial", text: "Add a card. £0 due today." },
-  { title: "Website details", text: "Services, contacts and photos." },
-  { title: "Your website", text: "Sent on WhatsApp within one working day." },
-];
 
 /**
  * Under the hero: the four steps from the form to a finished website, on one
@@ -17,10 +13,19 @@ const steps = [
  * line reaches it. On phones only the step names show, to keep it short.
  */
 export function InstantDay() {
+  const { offer } = useInstantMarket();
+const steps = [
+  { title: "Your details", text: "Your name, business and location." },
+  { title: "Free trial", text: `Add a card. ${offer.zero} due today.` },
+  { title: "Website details", text: "Services, contacts and photos." },
+  { title: "Your website", text: "Sent on WhatsApp within one business day." },
+];
+
+
   return (
     <section className={styles.day} aria-labelledby="instant-day-title">
       <div className={styles.dayInner}>
-        <h2 id="instant-day-title">From your details to a finished website in one working day.</h2>
+        <h2 id="instant-day-title">From your details to a finished website in one business day.</h2>
         <Reveal as="ol" variant="fade" className={styles.daySteps}>
           {steps.map((step, index) => (
             <li key={step.title} style={{ "--i": index } as CSSProperties}>

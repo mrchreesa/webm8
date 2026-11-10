@@ -1,7 +1,9 @@
+import type { InstantMarket } from "./instantPricing.ts";
 import type { Answers } from "./instantWebsite.ts";
 import { createHmac } from "node:crypto";
 
 export type InstantCrmBilling = {
+  market?: InstantMarket;
   orderId: string;
   customerId: string;
   subscriptionId: string;
@@ -20,7 +22,7 @@ export function instantCrmSubmission(a: Answers, billing: InstantCrmBilling) {
     sourceUrl: "https://instant.webm8agency.com/",
     name: a.name, business: a.businessName, email: a.email, phone: a.deliveryPhone,
     area: a.area, link: a.hasWebsite === "yes" ? a.website || null : null,
-    billing: { customerId: billing.customerId, subscriptionId: billing.subscriptionId, status: billing.status, trialEnd: billing.trialEnd, livemode: billing.livemode },
+    billing: { market: billing.market ?? "GB", customerId: billing.customerId, subscriptionId: billing.subscriptionId, status: billing.status, trialEnd: billing.trialEnd, livemode: billing.livemode },
     brief: {
       industry: a.industry, hasWebsite: a.hasWebsite, links: a.links.filter(Boolean), services: a.services, contacts: a.contacts,
       publicPhone: a.contacts.includes("phone") ? a.phone : "",

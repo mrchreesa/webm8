@@ -11,29 +11,31 @@ import { CheckoutLoading } from "./CheckoutLoading";
 import { useInstantAnalytics } from "./useInstantAnalytics";
 import { canSubmitBrief, type BillingStatus } from "@/lib/instantBilling";
 import {
-  DRAFT_KEY, INSTANT_PRICE, INSTANT_TRIAL_DAYS, contactMethods, emptyAnswers, features, industries, scopes,
+  DRAFT_KEY, INSTANT_TRIAL_DAYS, contactMethods, emptyAnswers, features, industries, scopes,
   needsQuote, trialEndDate, readDraft, suggestedContacts, validateAttachment, validateStep,
   type Answers, type ContactMethod, type Errors, type Industry, type Step,
 } from "@/lib/instantWebsite";
+import { useInstantMarket } from "./InstantMarket";
 import styles from "./instant.module.css";
 const InstantPayment = dynamic(() => import("./InstantPayment").then(module => module.InstantPayment), { loading: () => <CheckoutLoading /> });
 
 const stageCopy: Record<Step, { title: string; intro: string }> = {
   business: { title: "Your details", intro: "" },
-  checkout: { title: "Secure free trial", intro: `Start your ${INSTANT_TRIAL_DAYS}-day free trial. £${INSTANT_PRICE}/month after your trial ends.` },
+  checkout: { title: "Secure free trial", intro: "" },
   brief: { title: "Tell us about your business.", intro: "Add your services, links and preferences. A few lines are enough to get started." },
-  complete: { title: "You're all set!", intro: "Your website will be ready within one working day." },
+  complete: { title: "You're all set!", intro: "Your website will be ready within one business day." },
   quote: { title: "A little more than a landing page.", intro: "We can put together a custom quote for the features you need." },
   "quote-complete": { title: "Your quote brief is ready.", intro: "Your requirements are together in one place." },
 };
 const stages = ["Your details", "Payment", "Website details"];
 const serviceLabels: Record<string, { label: string; placeholder: string }> = {
-  trades: { label: "What jobs do you most want enquiries for?", placeholder: "For example: boiler repairs, annual servicing and new installations." },
-  food: { label: "What food or drinks should we highlight?", placeholder: "For example: wood-fired pizza, weekend brunch and speciality coffee." },
+  trades: { label: "What jobs do you most want inquiries for?", placeholder: "For example: boiler repairs, annual servicing and new installations." },
+  food: { label: "What food or drinks should we highlight?", placeholder: "For example: wood-fired pizza, weekend brunch and specialty coffee." },
   beauty: { label: "Which treatments should we feature?", placeholder: "For example: facials, massage and brow treatments." },
 };
 
 export function InstantSignup({ billing = false, publishableKey = "", testMode = false }: { billing?: boolean; publishableKey?: string; testMode?: boolean }) {
+  const { market, offer, setMarket } = useInstantMarket();
   const [answers, setAnswers] = useState<Answers>(emptyAnswers);
   const [step, setStep] = useState<Step>("business");
   const [loaded, setLoaded] = useState(false);
@@ -98,6 +100,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
       if (disposed) return;
       const order = data.order as BillingStatus | null;
       setBillingOrder(order);
+      if (data.market) setMarket(data.market);
       if (order) {
         const restoredAnswers = order.checkoutConfirmed && !order.submitted && !order.briefPending && savedOrderId === order.id && draft ? draft.answers : order.answers;
         setAnswers(order.checkoutConfirmed ? { ...restoredAnswers, enquiryEmail: restoredAnswers.enquiryEmail || restoredAnswers.email, contacts: restoredAnswers.contacts.length ? restoredAnswers.contacts : suggestedContacts(restoredAnswers) } : restoredAnswers);
@@ -108,7 +111,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
     }).catch(error => { if (!disposed) setBillingMessage(error instanceof Error && error.name !== "AbortError" ? error.message : "We couldn’t check your trial. Check your connection and try again."); })
       .finally(() => { window.clearTimeout(timeout); if (!disposed) setLoaded(true); });
     return () => { disposed = true; controller.abort(); window.clearTimeout(timeout); };
-  }, [billing, draftKey]);
+  }, [billing, draftKey, setMarket]);
 
   useEffect(() => {
     if (!loaded) return;
@@ -131,6 +134,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
         const order = data.order as BillingStatus | null;
         if (controller.signal.aborted) return;
         setBillingOrder(order);
+      if (data.market) setMarket(data.market);
         if (order?.checkoutConfirmed) {
           setPollTrial(false); setClientSecret(""); setCheckoutPreviewed(true);
           if (canSubmitBrief(order)) {
@@ -147,7 +151,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
     };
     void poll();
     return () => { controller.abort(); clearTimeout(timer); };
-  }, [billing, pollTrial, analytics]);
+  }, [billing, pollTrial, analytics, setMarket]);
 
   useEffect(() => {
     if (complete || (!files.length && storageAvailable)) return;
@@ -203,6 +207,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
         if (kind === "checkout") setCheckoutLoadFailed(true);
         if (kind === "brief" && result.restoreBrief && result.order) {
           setBillingOrder(result.order);
+          setMarket(result.order.market);
           setAnswers(result.order.answers);
         }
         setErrors(result.errors || {}); setBillingMessage(result.errors?.form || "Please check your answers and try again.");
@@ -211,6 +216,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
       }
       if (result.order) {
         setBillingOrder(result.order);
+          setMarket(result.order.market);
         if (kind === "brief") {
           setAnswers(result.order.answers);
           if (result.order.submitted) analytics.form("success", 3);
@@ -223,7 +229,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
       }
     } catch { analytics.form("submission_error", kind === "checkout" ? 2 : 3, "network"); if (kind === "checkout") setCheckoutLoadFailed(true); setBillingMessage("We couldn’t confirm that just now. Check your connection and try again; your answers are still here."); }
     finally { pending.current = false; setBillingBusy(false); }
-  }, [answers, go, publishableKey, analytics]);
+  }, [answers, go, publishableKey, analytics, setMarket]);
 
   useEffect(() => {
     if (!billing || !loaded || step !== "checkout" || quote || clientSecret || billingOrder?.checkoutConfirmed || pollTrial || checkoutLoadRequested.current) return;
@@ -290,7 +296,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
   }
   const serviceCopy = serviceLabels[answers.industry] || { label: "What are your main services?", placeholder: "List up to three services, or tell us briefly what you do." };
   const needsEmail = answers.contacts.includes("email") || answers.contacts.includes("request") || (answers.contacts.includes("booking") && answers.bookingLater);
-  const firstCharge = today ? new Intl.DateTimeFormat("en-GB", { dateStyle: "long", timeZone: "Europe/London" }).format(new Date(`${trialEndDate(today)}T12:00:00Z`)) : `${INSTANT_TRIAL_DAYS} days after checkout`;
+  const firstCharge = today ? new Intl.DateTimeFormat("en-US", { dateStyle: "long", ...(market === "GB" ? { timeZone: "Europe/London" } : {}) }).format(new Date(`${trialEndDate(today)}T12:00:00Z`)) : `${INSTANT_TRIAL_DAYS} days after checkout`;
 
 
   return (
@@ -298,7 +304,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
       <div className={styles.pageHeading}>
         <h1 id="instant-title">The best website for your business. Guaranteed.</h1>
         <div className={styles.ticket}>
-          <p><b>£{INSTANT_PRICE}</b>a month</p>
+          <p><b>{offer.price}</b>a month</p>
           <ul>{[`${INSTANT_TRIAL_DAYS} days free`, "No setup fee", "Cancel anytime"].map((item) => <li key={item}><Icon name="check" size={14} aria-hidden />{item}</li>)}</ul>
         </div>
       </div>
@@ -316,10 +322,10 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
           {testMode && <p className={styles.notice}>Test checkout — no real payments are taken.</p>}
           {complete && !quote && <div className={styles.successMark}><span><Icon name="check" size={26} aria-hidden /></span>{billing ? "Website brief received" : "Success screen preview"}</div>}
           <h2 className={step === "business" ? "sr-only" : styles.title} ref={titleRef} tabIndex={-1}>{stageCopy[step].title}</h2>
-          {step !== "business" && <p className={styles.intro}>{stageCopy[step].intro}</p>}
+          {step !== "business" && <p className={styles.intro}>{step === "checkout" ? `Start your ${INSTANT_TRIAL_DAYS}-day free trial. ${offer.price}/month after your trial ends.` : stageCopy[step].intro}</p>}
           {billingMessage && <div ref={billingStatusRef} tabIndex={-1} role="status" className={styles.notice}>{billingMessage}</div>}
           {pollTrial && <p role="status" className={styles.hint}>Waiting for Stripe to confirm your trial…</p>}
-          {billingOrder?.trialEnd && <p className={styles.hint}>{billingOrder.cancelAtPeriodEnd ? "Cancellation scheduled. Your subscription ends" : "Your free trial ends"} on {new Intl.DateTimeFormat("en-GB", { dateStyle: "long", timeZone: "Europe/London" }).format(new Date(billingOrder.cancelAt || billingOrder.trialEnd))}.</p>}
+          {billingOrder?.trialEnd && <p className={styles.hint}>{billingOrder.cancelAtPeriodEnd ? "Cancellation scheduled. Your subscription ends" : "Your free trial ends"} on {new Intl.DateTimeFormat("en-US", { dateStyle: "long", ...(market === "GB" ? { timeZone: "Europe/London" } : {}) }).format(new Date(billingOrder.cancelAt || billingOrder.trialEnd))}.</p>}
           {!complete && <form ref={formRef} data-analytics-form={analyticsEnabled ? "instant_website" : undefined} data-analytics-step={stage + 1} data-analytics-steps={3} noValidate onSubmit={advance} aria-busy={!loaded || billingBusy || pollTrial} className={styles.form}>
             <fieldset disabled={!loaded || billingBusy || pollTrial} className={`${styles.form} ${styles.formFields}`}>
             {step === "business" && <>
@@ -327,10 +333,10 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
                 {field("name", "Your name", { required: true, autoComplete: "name" })}
                 {field("email", "Your email address", { required: true, type: "email", autoComplete: "email" })}
               </div>
-              {field("deliveryPhone", "Phone number (WhatsApp)", { required: true, type: "tel", autoComplete: "tel", placeholder: "For example: +44 7700 900123", hint: "We’ll send your website and discuss edits here on WhatsApp. It won’t be added to your website automatically." })}
+              {field("deliveryPhone", "Phone number (WhatsApp)", { required: true, type: "tel", autoComplete: "tel", placeholder: market === "US" ? "For example: +1 202 555 0123" : "For example: +44 7700 900123", hint: "We’ll send your website and discuss edits here on WhatsApp. It won’t be added to your website automatically." })}
               <div className={styles.fieldGrid}>
                 {field("businessName", "Business name", { required: true, autoComplete: "organization", placeholder: "Your business name" })}
-                {field("area", "Town or service area", { required: true, placeholder: "Town, postcode or area" })}
+                {field("area", market === "US" ? "City or service area" : "Town or service area", { required: true, placeholder: market === "US" ? "City, ZIP code or area" : "Town, postcode or area" })}
               </div>
               <ChoiceGroup analyticsField="industry" name="industry" label="Type of business" presentation="chips" options={industries} values={answers.industry ? [answers.industry] : []} onChange={(v) => update("industry", v[0] as Industry)} error={errors.industry} />
               {quote && <p className={styles.notice} role="status">Those features need a custom quote. Continue to share your requirements. There’s no payment on this route.</p>}
@@ -341,9 +347,9 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
                 {checkoutLoadFailed ? <Button size="lg" className={styles.continue} disabled={billingBusy} onClick={() => void billingAction("checkout")} data-analytics-id="Retry checkout">Retry payment form<Icon name="arrow" size={17} aria-hidden /></Button> : <CheckoutLoading />}
               </div>}
               <div className={styles.orderSummary}>
-                <div><span>Instant Websites</span><strong>£{INSTANT_PRICE}<small>/month</small></strong></div>
+                <div><span>Instant Websites</span><strong>{offer.price}<small>/month</small></strong></div>
                 <p>Hosting &amp; maintenance</p>
-                <dl><div><dt>Due today</dt><dd>£0</dd></div><div><dt>Free trial</dt><dd>{INSTANT_TRIAL_DAYS} days</dd></div><div><dt>Setup fee</dt><dd>£0</dd></div><div><dt>{billing ? "After your trial" : "Example first charge"}</dt><dd>{billing ? `£${INSTANT_PRICE}/month` : `£${INSTANT_PRICE} on ${firstCharge}`}</dd></div></dl>
+                <dl><div><dt>Due today</dt><dd>{offer.zero}</dd></div><div><dt>Free trial</dt><dd>{INSTANT_TRIAL_DAYS} days</dd></div><div><dt>Setup fee</dt><dd>{offer.zero}</dd></div><div><dt>{billing ? "After your trial" : "Example first charge"}</dt><dd>{billing ? `${offer.price}/month` : `${offer.price} on ${firstCharge}`}</dd></div></dl>
               </div>
               <div className={styles.contactSummary}><div><strong>{answers.businessName}</strong><p>{answers.name} · {answers.email}</p><p>WhatsApp: {answers.deliveryPhone}</p></div><button type="button" className={styles.textButton} onClick={() => go("business")} data-analytics-id="Edit account details">Edit details</button></div>
               <div className={styles.guarantee}><Icon name="shield" size={22} aria-hidden /><p><strong>{INSTANT_TRIAL_DAYS} days free.</strong> Your trial starts when you complete checkout. Cancel anytime with no cancellation fee.</p></div>
@@ -362,10 +368,10 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
                 {!answers.bookingLater && field("bookingUrl", "Your existing booking link", { required: true, type: "url", placeholder: "https://…" })}
                 {answers.bookingLater && <p className={styles.hint}>We’ll use a booking-request form until you provide the link. You’ll confirm appointments yourself.</p>}
               </>}
-              {needsEmail && field("enquiryEmail", "Where should enquiries go?", { required: true, type: "email", hint: "Check this address. Your billing email may be different from your business email." })}
+              {needsEmail && field("enquiryEmail", "Where should inquiries go?", { required: true, type: "email", hint: "Check this address. Your billing email may be different from your business email." })}
               {answers.contacts.includes("request") && <p className={styles.hint}>Booking requests are sent to you to confirm. They don’t reserve a live appointment slot.</p>}
               <ChoiceGroup analyticsField="existing_website" name="hasWebsite" label="Do you already have a website?" compact options={[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }]} values={answers.hasWebsite ? [answers.hasWebsite] : []} onChange={(v) => update("hasWebsite", v[0] as "yes" | "no")} error={errors.hasWebsite} />
-              {answers.hasWebsite === "yes" && field("website", "Existing website (optional)", { type: "url", placeholder: "yourbusiness.co.uk", hint: "You can add this later if you don’t have the link handy." })}
+              {answers.hasWebsite === "yes" && field("website", "Existing website (optional)", { type: "url", placeholder: "yourbusiness.com", hint: "You can add this later if you don’t have the link handy." })}
               <div className={styles.group}>
                 {answers.links.map((link, index) => <div className={styles.linkRow} key={index}>
                   <TextField data-analytics-field={`business_link_${index + 1}`} name={`link-${index}`} label={index === 0 ? "Google Business or social page (optional)" : "Another business link (optional)"} type="url" value={link} onChange={(event) => update("links", answers.links.map((old, i) => i === index ? event.target.value : old))} placeholder="Paste a Google, Instagram or Facebook link" labelVariant="contact" maxLength={1000} error={errors[`link-${index}`]} />
@@ -374,7 +380,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
                 {answers.links.length < 4 && <button type="button" className={styles.textButton} onClick={() => update("links", [...answers.links, ""])} data-analytics-id="Add business link">+ Add another link</button>}
                 <p className={styles.hint}>No website or social pages? That’s fine. We can work from your answers.</p>
               </div>
-              {textarea("difference", "What makes your business stand out? (optional)", { placeholder: "For example: family-run, evening appointments or a particular speciality.", hint: "Leave this blank if you’d like help choosing what to highlight." })}
+              {textarea("difference", "What makes your business stand out? (optional)", { placeholder: "For example: family-run, evening appointments or a particular specialty.", hint: "Leave this blank if you’d like help choosing what to highlight." })}
               <details className={styles.optionalDetails}>
                 <summary data-analytics-id="Open optional details">Branding, photos & extra details <span>(optional)</span></summary>
                 <div className={styles.form}>
@@ -386,7 +392,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
                 <ul className={styles.fileList} aria-live="polite">{files.map((file, index) => <li key={`${file.name}-${file.size}-${file.lastModified}`}><span>{file.name}<small>{(file.size / (1024 * 1024)).toFixed(1)} MB · selected locally</small></span><button type="button" className={styles.textButton} onClick={() => setFiles(files.filter((_, i) => i !== index))} aria-label={`Remove ${file.name}`}>Remove</button></li>)}</ul>
                 {fileErrors.length > 0 && <div role="alert" className="text-sm text-error">{fileErrors.map((error, i) => <p key={i}>{error}</p>)}</div>}
               </div>}
-              {field("colours", "Any colours you want us to use? (optional)", { placeholder: "Choose for me", hint: "Leave this blank and we’ll choose a suitable starting palette." })}
+              {field("colours", "Any colors you want us to use? (optional)", { placeholder: "Choose for me", hint: "Leave this blank and we’ll choose a suitable starting palette." })}
               {(answers.industry === "food" || answers.industry === "beauty") && <>
                 {field("address", "Public business address (optional)", { autoComplete: "street-address", hint: "Only add an address you want customers to see." })}
                 {field("hours", "Opening hours (optional)", { placeholder: "For example: Tuesday–Saturday, 9am–6pm" })}

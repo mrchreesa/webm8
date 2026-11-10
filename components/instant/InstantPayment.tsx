@@ -6,13 +6,15 @@ import { CheckoutElementsProvider, PaymentElement, useCheckoutElements } from "@
 import { Button } from "@/components/ui/Button";
 import { FormStatus } from "@/components/forms/FormField";
 import { CheckoutLoading } from "./CheckoutLoading";
+import { useInstantMarket } from "./InstantMarket";
+import { INSTANT_TRIAL_DAYS } from "@/lib/instantWebsite";
 import styles from "./instant.module.css";
 import type { createInstantAnalytics } from "@/lib/instantAnalytics";
 
 type PaymentActions = { analytics: ReturnType<typeof createInstantAnalytics>; onBeforeConfirm: () => Promise<void>; onConfirmed: () => void; onBusy: (busy: boolean) => void };
 
 export function InstantPayment({ clientSecret, publishableKey, ...actions }: PaymentActions & { clientSecret: string; publishableKey: string }) {
-  const stripe = useMemo(() => loadStripe(publishableKey), [publishableKey]);
+  const stripe = useMemo(() => loadStripe(publishableKey, { locale: "en" }), [publishableKey]);
   // Appearance values mirror DESIGN.md and the canonical runtime tokens.
   const options = useMemo(() => ({ clientSecret, elementsOptions: { appearance: {
     theme: "stripe" as const,
@@ -23,13 +25,14 @@ export function InstantPayment({ clientSecret, publishableKey, ...actions }: Pay
 }
 
 function PaymentFields({ analytics, onBeforeConfirm, onConfirmed, onBusy }: PaymentActions) {
+  const { offer } = useInstantMarket();
   const state = useCheckoutElements();
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
   const locked = useRef(false);
-  const priceMatches = state.type === "success" && state.checkout.currency.toLowerCase() === "gbp" && state.checkout.total.total.minorUnitsAmount === 0 && state.checkout.recurring?.dueNext.total.minorUnitsAmount === 3900 && state.checkout.recurring?.trial?.trialPeriodDays === 10;
+  const priceMatches = state.type === "success" && state.checkout.currency.toLowerCase() === offer.currency && state.checkout.total.total.minorUnitsAmount === 0 && state.checkout.recurring?.dueNext.total.minorUnitsAmount === offer.minorUnits && state.checkout.recurring?.trial?.trialPeriodDays === INSTANT_TRIAL_DAYS;
   useEffect(() => {
     if (state.type === "error" || (state.type === "success" && !priceMatches)) analytics.form("submission_error", 2, "checkout");
   }, [state.type, priceMatches, analytics]);
@@ -47,7 +50,7 @@ function PaymentFields({ analytics, onBeforeConfirm, onConfirmed, onBusy }: Paym
   }
   if (state.type === "loading") return <CheckoutLoading />;
   if (state.type === "error" || loadFailed) return <FormStatus tone="error">The secure payment form could not load. Reload this page to try again. Your saved details will be kept.</FormStatus>;
-  if (!priceMatches) return <FormStatus tone="error">The payment details don’t match the £0 trial and £39 monthly plan. Please contact WebM8 before continuing.</FormStatus>;
+  if (!priceMatches) return <FormStatus tone="error">The payment details don’t match the {offer.zero} trial and {offer.price} monthly plan. Please contact WebM8 before continuing.</FormStatus>;
   return <div className={styles.paymentFields} aria-busy={busy}>
     <div className={styles.paymentElement} data-analytics-ignore>
       {!ready && <div className={styles.checkoutLoadingOverlay}><CheckoutLoading /></div>}
@@ -55,7 +58,7 @@ function PaymentFields({ analytics, onBeforeConfirm, onConfirmed, onBusy }: Paym
         <PaymentElement options={{ layout: { type: "accordion", defaultCollapsed: false }, paymentMethodOrder: ["card"], readOnly: busy }} onReady={() => { if (!ready) analytics.action("checkout_ready"); setReady(true); }} onLoadError={() => { analytics.form("submission_error", 2, "checkout"); setLoadFailed(true); }} />
       </div>
     </div>
-    <p className={styles.hint}>Secure payment details are handled by Stripe. £0 today, then £39/month after your 10-day trial.</p>
+    <p className={styles.hint}>Secure payment details are handled by Stripe. {offer.zero} today, then {offer.price}/month after your {INSTANT_TRIAL_DAYS}-day trial.</p>
     <div aria-live="polite">{message && <FormStatus tone="error">{message}</FormStatus>}</div>
     <Button data-analytics-id="Start free trial" size="lg" className={styles.continue} disabled={busy || !ready} onClick={confirm}>{busy ? "Securing your trial…" : "Start my free trial"}</Button>
   </div>;

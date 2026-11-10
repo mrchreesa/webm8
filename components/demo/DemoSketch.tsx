@@ -25,6 +25,7 @@ const READY = 3;
 const STEP_MS = 550;
 
 type DemoSketchProps = {
+  locale?: "en-US";
   trade: string;
   business: string;
   /** The town or area the visitor serves, for a template that shows it. */
@@ -43,7 +44,7 @@ type DemoSketchProps = {
  * phone; the business name goes on it as it is typed. The phone leans towards
  * a mouse. It is hidden from screen readers; the caption says it is a sketch.
  */
-export function DemoSketch({ trade, business, area = "", template, className, caption: captionOverride }: DemoSketchProps) {
+export function DemoSketch({ trade, business, area = "", template, className, caption: captionOverride, locale }: DemoSketchProps) {
   const key = parseTrade(trade);
   const id: SketchId | null = key ? (template ?? key) : null;
   const name = tidy(business);
@@ -81,7 +82,7 @@ export function DemoSketch({ trade, business, area = "", template, className, ca
   const caption = id
     ? `A first sketch for ${name || "your business"}. Your real demo is designed after our call.`
     : "Choose your type of business to see a first sketch of your homepage.";
-  const steps = ["Choosing a layout", "Setting your colours", `Adding ${name || "your name"}`, "First idea ready"];
+  const steps = ["Choosing a layout", locale === "en-US" ? "Setting your colors" : "Setting your colours", `Adding ${name || "your name"}`, "First idea ready"];
 
   return (
     <div
@@ -99,7 +100,7 @@ export function DemoSketch({ trade, business, area = "", template, className, ca
       <div ref={rig} className={styles.rig} aria-hidden="true">
         {id ? (
           <>
-            <div className={cn(styles.card, styles.cardA)}><i />{sketchRequest(id)}</div>
+            <div className={cn(styles.card, styles.cardA)}><i />{locale === "en-US" ? sketchRequest(id).replace("enquiry", "inquiry") : sketchRequest(id)}</div>
             <div className={cn(styles.card, styles.cardB)}><i>★★★★★</i>New review</div>
           </>
         ) : null}

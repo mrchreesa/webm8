@@ -1,3 +1,4 @@
+import { type InstantMarket } from "./instantPricing.ts";
 import Stripe from "stripe";
 import { createHash } from "node:crypto";
 import { Pool, type PoolClient } from "pg";
@@ -7,7 +8,7 @@ import type { InstantCrmBilling } from "./instantCrmIntake.ts";
 
 export const SESSION_COOKIE = "webm8-instant-session";
 export type Order = {
-  id: string; access_hash: string; answers: Answers; checkout_attempt: number;
+  id: string; access_hash: string; answers: Answers & { _billing?: { market: InstantMarket; priceId: string } }; checkout_attempt: number;
   checkout_session_id: string | null; checkout_confirmed: boolean; customer_id: string | null;
   subscription_id: string | null; subscription_status: string | null; trial_end: Date | null;
   cancel_at: Date | null; cancel_at_period_end: boolean; needs_review: boolean;
@@ -22,7 +23,7 @@ export class BillingError extends Error {
 export function billingConfig() {
   const env = process.env;
   if (env.INSTANT_BILLING_ENABLED !== "1") throw new BillingError("Checkout is not available yet. Please try again later.", 503);
-  const required = ["STRIPE_RESTRICTED_KEY", "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY", "STRIPE_INSTANT_PRICE_ID", "STRIPE_WEBHOOK_SECRET", "STRIPE_INSTANT_PORTAL_CONFIG", "STRIPE_INSTANT_PORTAL_URL", "INSTANT_DATABASE_URL", "INSTANT_WEBSITES_ORIGIN", "CRM_WEBSITE_INTAKE_URL", "WEBSITE_INTAKE_SECRET"];
+  const required = ["STRIPE_RESTRICTED_KEY", "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY", "STRIPE_INSTANT_PRICE_ID", "STRIPE_INSTANT_US_PRICE_ID", "STRIPE_WEBHOOK_SECRET", "STRIPE_INSTANT_PORTAL_CONFIG", "STRIPE_INSTANT_PORTAL_URL", "INSTANT_DATABASE_URL", "INSTANT_WEBSITES_ORIGIN", "CRM_WEBSITE_INTAKE_URL", "WEBSITE_INTAKE_SECRET"];
   if (required.some(key => !env[key])) throw new BillingError("Checkout is not available yet. Please contact WebM8.", 503);
   const origin = new URL(env.INSTANT_WEBSITES_ORIGIN!);
   const local = origin.hostname === "localhost" || origin.hostname === "127.0.0.1";
@@ -34,7 +35,7 @@ export function billingConfig() {
   if (!env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.startsWith(`pk_${live ? "live" : "test"}_`)) throw new Error("Stripe publishable key mode does not match the billing environment.");
   const portal = new URL(env.STRIPE_INSTANT_PORTAL_URL!);
   if (portal.protocol !== "https:" || portal.hostname !== "billing.stripe.com" || portal.username || portal.password) throw new Error("Invalid Stripe portal URL.");
-  return { origin: origin.origin, live, priceId: env.STRIPE_INSTANT_PRICE_ID!, portalUrl: portal.href, portalConfig: env.STRIPE_INSTANT_PORTAL_CONFIG!, webhookSecret: env.STRIPE_WEBHOOK_SECRET!, key: env.STRIPE_RESTRICTED_KEY!, database: env.INSTANT_DATABASE_URL! };
+  return { origin: origin.origin, live, priceId: env.STRIPE_INSTANT_PRICE_ID!, usPriceId: env.STRIPE_INSTANT_US_PRICE_ID!, portalUrl: portal.href, portalConfig: env.STRIPE_INSTANT_PORTAL_CONFIG!, webhookSecret: env.STRIPE_WEBHOOK_SECRET!, key: env.STRIPE_RESTRICTED_KEY!, database: env.INSTANT_DATABASE_URL! };
 }
 
 export function billingAvailable() { try { billingConfig(); return true; } catch { return false; } }
@@ -58,8 +59,14 @@ export async function getOrder(token: string | undefined, db: Pick<PoolClient, "
   if (!token || !/^[a-f0-9]{64}$/.test(token)) return null;
   return (await db.query<Order>("SELECT * FROM instant_websites.orders WHERE access_hash=$1", [tokenHash(token)])).rows[0] || null;
 }
+/** Reserved billing data is written only by the server and kept out of browser answers. */
+export function orderMarket(order: Order): InstantMarket { return order.answers._billing?.market ?? "GB"; }
+export function orderAnswers(order: Order, answers: Answers): Order["answers"] {
+  return order.answers._billing ? { ...answers, _billing: order.answers._billing } : answers;
+}
 export function publicOrder(order: Order): BillingStatus {
-  return { id: order.id, answers: order.answers, checkoutConfirmed: order.checkout_confirmed, submitted: !!order.submitted_at, briefPending: !!order.brief_submission && !order.submitted_at, subscriptionStatus: order.subscription_status, trialEnd: order.trial_end?.toISOString() || null, cancelAt: order.cancel_at?.toISOString() || null, cancelAtPeriodEnd: order.cancel_at_period_end, needsReview: order.needs_review };
+  const { _billing, ...answers } = order.answers;
+  return { id: order.id, market: _billing?.market ?? "GB", answers, checkoutConfirmed: order.checkout_confirmed, submitted: !!order.submitted_at, briefPending: !!order.brief_submission && !order.submitted_at, subscriptionStatus: order.subscription_status, trialEnd: order.trial_end?.toISOString() || null, cancelAt: order.cancel_at?.toISOString() || null, cancelAtPeriodEnd: order.cancel_at_period_end, needsReview: order.needs_review };
 }
 export function assertOrigin(request: Request) {
   if (request.headers.get("origin") !== billingConfig().origin) throw new BillingError("Reload this page before trying again.", 403);

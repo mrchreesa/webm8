@@ -19,9 +19,9 @@ test("both confirmations copy the requested team addresses without duplicating t
 test("customer confirmation states delivery, revision promise and actual trial date without implying a charge", () => {
   const email = instantConfirmationEmail(details);
   assert.equal(email.to, details.answers.email); assert.equal(email.replyTo, "info@webm8agency.com");
-  for (const expected of ["one business day", "WhatsApp", "+447700900123", "Unlimited revisions", "100% satisfied", "£39", "19 November 2026", details.portalUrl]) assert.ok(email.text.includes(expected), expected);
+  for (const expected of ["one business day", "WhatsApp", "+447700900123", "Unlimited revisions", "100% satisfied", "£39", "November 19, 2026", details.portalUrl]) assert.ok(email.text.includes(expected), expected);
   assert.ok(!email.text.includes("payment received")); assert.ok(!email.text.includes("cus_example"));
-  assert.match(email.html, /html lang="en"/);
+  assert.match(email.html, /html lang="en-US"/);
   assert.match(instantConfirmationEmail({ ...details, billing: { ...details.billing, status: "active" } }).text, /original 10-day free trial/);
 });
 
@@ -50,4 +50,16 @@ test("retry access fails closed and email configuration rejects malformed destin
   assert.equal(instantEmailSettings(config)?.notificationEmail, "info@webm8agency.com");
   assert.throws(() => instantEmailSettings({ ...config, INSTANT_NOTIFICATION_EMAIL: "person@example.com\nBcc: bad" }));
   assert.throws(() => instantEmailSettings({ ...config, VERCEL_ENV: "preview" }));
+});
+
+
+test("US customer and team emails preserve the dollar offer, including active subscriptions", () => {
+  for (const status of ["trialing", "active"] as const) {
+    const us = { ...details, billing: { ...details.billing, status, market: "US" as const } };
+    for (const email of [instantConfirmationEmail(us), instantNotificationEmail(us)]) {
+      assert.match(email.text, /\$79/);
+      assert.doesNotMatch(email.text, /£/);
+      assert.match(email.html, /lang="en-US"/);
+    }
+  }
 });

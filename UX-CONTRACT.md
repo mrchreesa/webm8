@@ -79,3 +79,7 @@ The Instant page caches only public content and deployment configuration; its st
 `InstantDemoWall` defers the shared `DemoWall` until it approaches the viewport. Its placeholder uses the wall's own responsive showcase classes, preserving document geometry. The simulator, form, analytics and automatic step-two checkout keep their existing behavior. Source: owner's loading-time optimisation request.
 
 The initial HTML includes the empty step-one form, disabled and busy until private session recovery completes. This keeps the first-visit layout stable and prevents the temporarily absent form from pulling the gallery into the loading viewport. No private values are rendered or cached on the server; submission also checks the recovery lock.
+
+## Instant regional pricing (10 November 2026)
+
+Owner request: UK stays £39/month and US visitors receive $79/month, with American English throughout the Instant journey. `lib/instantPricing.ts` owns both fixed offers. Vercel country-based middleware selects static UK/US pages before caching, while the private session API restores the saved order market. New orders bind the detected market and Stripe Price ID before Checkout creation; retries and returning customers keep that offer. Other countries and unknown locations retain GBP. The shared market context drives all visible prices, checkout verification and confirmation email amounts. Existing 10-day trial and tax settings are unchanged.

@@ -12,6 +12,7 @@ export function InstantSummary({ answers }: { answers: Answers }) {
   return (
     <aside className={styles.summary} aria-label="Your website preview">
       <DemoSketch
+        locale="en-US"
         trade={answers.industry ? sketchTrades[answers.industry] : ""}
         business={answers.businessName}
         area={answers.area}

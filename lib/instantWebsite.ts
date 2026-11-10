@@ -1,5 +1,5 @@
 /** Product rules for the review-only Instant Websites journey. No payment state. */
-export const INSTANT_PRICE = 39;
+
 export const INSTANT_TRIAL_DAYS = 10;
 export const DRAFT_KEY = "webm8:instant-preview:v1";
 export const DRAFT_TTL_MS = 24 * 60 * 60 * 1000;
@@ -14,7 +14,7 @@ export const industries = [
 
 export const features = [
   { value: "information", label: "Show services, prices or a menu", hint: "Give customers the essentials." },
-  { value: "enquiries", label: "Get calls, messages & enquiries", hint: "Make it easy to get in touch." },
+  { value: "enquiries", label: "Get calls, messages & inquiries", hint: "Make it easy to get in touch." },
   { value: "requests", label: "Receive booking requests", hint: "Customers request a time. You confirm it." },
   { value: "booking", label: "Link to my booking service", hint: "Connect a service you already use." },
   { value: "commerce", label: "Sell products, take orders or payments", hint: "Needs a custom quote." },
@@ -22,7 +22,7 @@ export const features = [
 ] as const;
 
 export const scopes = [
-  { value: "standard", label: "A one-page business website", hint: "Information, enquiries and bookings. £39/month." },
+  { value: "standard", label: "A one-page business website", hint: "Information, inquiries and bookings." },
   { value: "commerce", label: "Online sales, orders or payments", hint: "We’ll prepare a custom quote." },
   { value: "custom", label: "Multiple pages or custom features", hint: "We’ll prepare a custom quote." },
 ] as const;
@@ -30,7 +30,7 @@ export const scopes = [
 export const contactMethods = [
   { value: "phone", label: "Phone" },
   { value: "whatsapp", label: "WhatsApp" },
-  { value: "email", label: "Enquiry form" },
+  { value: "email", label: "Inquiry form" },
   { value: "request", label: "Booking request" },
   { value: "booking", label: "Existing booking link" },
 ] as const;
@@ -101,15 +101,15 @@ export function validateStep(step: Step, a: Answers): Errors {
   const required = (field: keyof Answers, message: string) => { if (!String(a[field]).trim()) errors[field] = message; };
   if (step === "business") {
     required("name", "Enter your name.");
-    if (!isEmail(a.email)) errors.email = "Enter an email address, such as you@example.co.uk.";
-    if (!isPhone(a.deliveryPhone)) errors.deliveryPhone = "Enter a valid phone number for WhatsApp, including the country code if outside the UK.";
+    if (!isEmail(a.email)) errors.email = "Enter an email address, such as you@example.com.";
+    if (!isPhone(a.deliveryPhone)) errors.deliveryPhone = "Enter a valid phone number for WhatsApp, including your country code.";
     required("businessName", "Enter your business name.");
-    required("area", "Enter a town, postcode or the area you serve.");
+    required("area", "Enter your city or the area you serve.");
     if (!industries.some((i) => i.value === a.industry)) errors.industry = "Choose the closest business type. Something else is fine too.";
   }
   if (step === "brief") {
     if (!a.hasWebsite) errors.hasWebsite = "Choose whether you already have a website.";
-    if (a.hasWebsite === "yes" && a.website && !safeUrl(a.website)) errors.website = "Enter a website address, such as example.co.uk, or leave it blank.";
+    if (a.hasWebsite === "yes" && a.website && !safeUrl(a.website)) errors.website = "Enter a website address, such as example.com, or leave it blank.";
     a.links.forEach((link, i) => { if (link && !safeUrl(link)) errors[`link-${i}`] = "Enter a full website or profile link, or leave it blank."; });
   }
   if (step === "checkout" || step === "quote") {
@@ -122,7 +122,7 @@ export function validateStep(step: Step, a: Answers): Errors {
     if (!a.contacts.length) errors.contacts = "Choose at least one way customers can contact you.";
     if (a.contacts.includes("phone") && !isPhone(a.phone)) errors.phone = "Enter a business phone number, including its area code.";
     if (a.contacts.includes("whatsapp") && !isPhone(a.samePhone && a.contacts.includes("phone") ? a.phone : a.whatsapp)) errors.whatsapp = "Enter the number customers can use on WhatsApp.";
-    if ((a.contacts.includes("email") || a.contacts.includes("request") || (a.contacts.includes("booking") && a.bookingLater)) && !isEmail(a.enquiryEmail)) errors.enquiryEmail = "Confirm the email address that should receive enquiries.";
+    if ((a.contacts.includes("email") || a.contacts.includes("request") || (a.contacts.includes("booking") && a.bookingLater)) && !isEmail(a.enquiryEmail)) errors.enquiryEmail = "Confirm the email address that should receive inquiries.";
     if (a.contacts.includes("booking") && !a.bookingLater && !safeUrl(a.bookingUrl)) errors.bookingUrl = "Add your booking link, or choose to add it later.";
   }
   if (step === "brief" && a.industry === "food" && a.menuUrl && !safeUrl(a.menuUrl)) errors.menuUrl = "Enter a link to your menu, or leave it blank.";

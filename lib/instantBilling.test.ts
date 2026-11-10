@@ -35,3 +35,15 @@ test("a browser checkout flag never authorises a brief without confirmed, curren
   assert.equal(canSubmitBrief({ checkoutConfirmed: true, subscriptionStatus: "active", needsReview: true }), false);
   for (const name of ["checkout.session.async_payment_succeeded", "invoice.payment_failed", "customer.subscription.deleted", "charge.refunded", "charge.dispute.created", "radar.early_fraud_warning.created"]) assert.ok((BILLING_EVENTS as readonly string[]).includes(name));
 });
+
+
+test("US billing accepts only the exact $79 USD monthly price", () => {
+  const price = { active: true, livemode: true, currency: "usd", unit_amount: 7900, billing_scheme: "per_unit", recurring: { interval: "month", interval_count: 1, usage_type: "licensed" }, transform_quantity: null } as Stripe.Price;
+  assert.doesNotThrow(() => assertPrice(price, true, "US"));
+  for (const patch of [{ currency: "gbp" }, { unit_amount: 3900 }, { livemode: false }, { recurring: { ...price.recurring!, interval_count: 2 } }]) assert.throws(() => assertPrice({ ...price, ...patch }, true, "US"));
+  assert.throws(() => assertPrice(price, true, "GB"));
+  const params = checkoutParameters({ id: "us-order", answers: testAnswers() }, { priceId: "price_us", origin: "https://instant.example.com", portalUrl: "https://billing.stripe.com/p/login/test" });
+  assert.deepEqual(params.line_items, [{ price: "price_us", quantity: 1 }]);
+  assert.equal(params.adaptive_pricing?.enabled, false);
+  assert.equal(params.locale, "en");
+});

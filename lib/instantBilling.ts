@@ -1,3 +1,4 @@
+import { instantOffer, type InstantMarket } from "./instantPricing.ts";
 import type Stripe from "stripe";
 import { emptyAnswers, needsQuote, validateStep, type Answers, type Errors } from "./instantWebsite.ts";
 
@@ -11,7 +12,7 @@ export const BILLING_EVENTS = [
 ] as const;
 export const BILLING_INTEGRATION = "webm8-instant-qxmvbtrn";
 export type BillingStatus = {
-  id: string; answers: Answers; checkoutConfirmed: boolean; submitted: boolean;
+  id: string; market: InstantMarket; answers: Answers; checkoutConfirmed: boolean; submitted: boolean;
   briefPending: boolean;
   subscriptionStatus: string | null; trialEnd: string | null; cancelAt: string | null;
   cancelAtPeriodEnd: boolean; needsReview: boolean;
@@ -59,11 +60,14 @@ export function checkoutParameters(order: { id: string; answers: Answers }, conf
     subscription_data: { trial_period_days: 10, billing_mode: { type: "flexible" }, trial_settings: { end_behavior: { missing_payment_method: "cancel" } } },
     return_url: `${config.origin}/?checkout=return`,
     automatic_tax: { enabled: false },
+    adaptive_pricing: { enabled: false },
+    locale: "en",
   };
 }
 
-export function assertPrice(price: Stripe.Price, live: boolean) {
-  if (!price.active || price.livemode !== live || price.currency !== "gbp" || price.unit_amount !== 3900 || price.billing_scheme !== "per_unit" || price.recurring?.interval !== "month" || price.recurring.interval_count !== 1 || price.recurring.usage_type !== "licensed" || price.transform_quantity) throw new Error("The configured Stripe price does not match the £39 monthly offer.");
+export function assertPrice(price: Stripe.Price, live: boolean, market: InstantMarket = "GB") {
+  const offer = instantOffer(market);
+  if (!price.active || price.livemode !== live || price.currency !== offer.currency || price.unit_amount !== offer.minorUnits || price.billing_scheme !== "per_unit" || price.recurring?.interval !== "month" || price.recurring.interval_count !== 1 || price.recurring.usage_type !== "licensed" || price.transform_quantity) throw new Error(`The configured Stripe price does not match the ${offer.price} monthly offer.`);
 }
 
 export function canSubmitBrief(status: Pick<BillingStatus, "checkoutConfirmed" | "subscriptionStatus" | "needsReview">) {

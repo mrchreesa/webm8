@@ -1,6 +1,6 @@
 import type Stripe from "stripe";
 import { BILLING_EVENTS, invoiceSubscription, stripeId } from "./instantBilling.ts";
-import { billingConfig, stripeClient, transaction, type Order } from "./instantBillingServer.ts";
+import { billingConfig, orderMarket, stripeClient, transaction, type Order } from "./instantBillingServer.ts";
 
 const iso = (seconds: number | null | undefined) => seconds ? new Date(seconds * 1000) : null;
 /** Resolve current Stripe objects, never assume webhook delivery order. */
@@ -59,8 +59,12 @@ export async function processInstantEvent(event: Stripe.Event, client: Stripe = 
       // Retrieve inside the row lock, so an older event cannot overwrite a
       // newer cancellation/payment state after another worker commits.
       const subscription = await client.subscriptions.retrieve(id);
-      if (!subscription.items.data.some(item => item.price.id === config.priceId)) continue;
-      if (!order) throw new Error("Subscription linkage not ready; retry this event");
+      if (!order) {
+        if (subscription.items.data.some(item => [config.priceId, config.usPriceId].includes(item.price.id))) throw new Error("Subscription linkage not ready; retry this event");
+        continue;
+      }
+      const expectedPrice = order.answers._billing?.priceId || (orderMarket(order) === "US" ? config.usPriceId : config.priceId);
+      if (!subscription.items.data.some(item => item.price.id === expectedPrice)) throw new Error("Subscription price does not match the saved regional offer");
       if (stripeId(subscription.customer) !== order.customer_id) throw new Error("Subscription ownership mismatch");
       orderId = order.id;
       await db.query("UPDATE instant_websites.orders SET subscription_status=$2,trial_end=$3,cancel_at=$4,cancel_at_period_end=$5,needs_review=needs_review OR $6,updated_at=now() WHERE id=$1", [order.id, subscription.status, iso(subscription.trial_end), iso(subscription.cancel_at), subscription.cancel_at_period_end, risk]);
