@@ -22,7 +22,7 @@ const groups = [
       "Home, services, about and contact content",
       "Enquiry forms and click-to-call buttons",
       "Basic Google setup for page titles and business information",
-      "Domain registration, hosting and support",
+      "Domain setup assistance, hosting and support",
       "Small monthly content changes",
     ],
   },

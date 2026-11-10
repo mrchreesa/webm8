@@ -13,7 +13,7 @@ const questions = [
   { question: "What if I want changes?", answer: "Reply on WhatsApp with your edits. Revisions are unlimited until you’re 100% satisfied, and small content changes each month are included after that." },
   { question: "How will customers contact me?", answer: "Through enquiry forms and click-to-call buttons. You can also take booking requests on the site, or link to a booking service you already use." },
   { question: "Will it work on phones and show up on Google?", answer: "Yes. Every layout is designed for phones, and we set up your page titles and business information for Google and for AI search such as ChatGPT and Gemini. No one can promise a ranking position." },
-  { question: "Do I need my own domain?", answer: "No. Domain registration is included. If you already have a domain or a website, tell us in your website details." },
+  { question: "Do I need my own domain?", answer: "Yes, you’ll need your own domain. If you don’t have one, we can help you choose and set it up. If you already have a domain, add it to your website details." },
   { question: "What if I need to sell online or take payments?", answer: "Online shops, payments and customer logins need more than this plan. Tell us in the form and we’ll send a custom quote. You won’t be asked for payment on that route." },
   { question: "How do I cancel?", answer: "Use the manage-subscription link in your confirmation email, or email info@webm8agency.com. You can cancel anytime and there is no cancellation fee." },
   { question: "Is my card safe?", answer: "Yes. Card details are entered in a secure Stripe form and processed by Stripe. They never pass through WebM8." },
