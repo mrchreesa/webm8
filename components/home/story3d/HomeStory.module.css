@@ -12,8 +12,8 @@
 @media (min-width: 768px) { .story { margin-top: -5rem; } }
 
 /* Ten screens of story on a laptop, eleven on a phone: each demo on the ring gets about a third of a screen. */
-.track { position: relative; height: 1100svh; }
-@media (min-width: 900px) { .track { height: 1000svh; } }
+.track { position: relative; height: 750svh; }
+@media (min-width: 900px) { .track { height: 700svh; } }
 /* Where #work and #how-it-works land: their chapters, settled. */
 .anchor { position: absolute; left: 0; top: calc(var(--at) * (100% - 100svh)); width: 1px; height: 1px; }
 
@@ -87,6 +87,8 @@
 }
 .poster img, .stillPhone img { display: block; width: 100%; height: 100%; }
 .story[data-gl="ready"] .poster { opacity: 0; }
+/* Once the 3D is drawing, its own dust and rings replace the page's. */
+.story[data-gl="ready"] :is(.dot, .waves) { display: none; }
 
 /* Things floating around the phone. */
 .float { position: absolute; left: 0; top: 0; opacity: 0; }
@@ -144,6 +146,12 @@
 .ringLabel small { color: var(--color-brand); font: 500 11px/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
 .ringLink { color: var(--color-link-invert); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
 .grid { display: none; }
+/* The front demo, flat, where the ring will be: only if a fast scroll gets here before the 3D does. */
+.ringStandIn { position: absolute; left: 50%; top: 50%; width: min(86vw, 760px); translate: -50% -46%; }
+@media (min-width: 900px) { .ringStandIn { width: min(52vw, 760px); } }
+/* Out of the story, to what the site includes. */
+.skip { position: absolute; right: 1.25rem; bottom: 1.25rem; z-index: 6; padding: 0.5rem 0.9rem; border-radius: 99px; background: rgb(255 255 255 / 0.08); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14); backdrop-filter: blur(8px); color: var(--color-muted-invert); font: 500 0.78rem/1.2 var(--font-sans); transition: color 0.2s, background 0.2s; }
+.skip:hover { background: rgb(255 255 255 / 0.14); color: #fff; }
 
 .stepList { position: absolute; left: 50%; top: 50%; margin: 0; padding: 0; list-style: none; perspective: 900px; transform-style: preserve-3d; }
 .step { position: absolute; left: 0; top: 0; width: 210px; opacity: 0; padding: 16px; border-radius: 18px; background: linear-gradient(165deg, rgb(27 74 128 / 0.95), rgb(6 20 41 / 0.95)); border: 1px solid rgb(255 255 255 / 0.16); box-shadow: 0 30px 50px -24px rgb(0 0 0 / 0.9), 0 0 40px -16px rgb(43 108 252 / 0.7); }
@@ -161,7 +169,7 @@
   .story { background: radial-gradient(70% 40% at 80% 0%, rgb(27 74 128 / 0.8), transparent 65%), radial-gradient(50% 30% at 10% 30%, rgb(43 108 252 / 0.22), transparent 70%), var(--color-night); }
   .track { display: flex; flex-direction: column; height: auto; }
   .stage { display: contents; }
-  .backdrop, .floor, .world, .gl, .zoom, .ringLabel { display: none; }
+  .backdrop, .floor, .world, .gl, .zoom, .ringLabel, .ringStandIn, .skip { display: none; }
   .anchor { position: relative; top: auto; scroll-margin-top: 5rem; }
   .anchor:nth-of-type(1) { order: 2; }
   .anchor:nth-of-type(2) { order: 4; }
@@ -181,7 +189,7 @@
 .story[data-still] { background: radial-gradient(70% 40% at 80% 0%, rgb(27 74 128 / 0.8), transparent 65%), radial-gradient(50% 30% at 10% 30%, rgb(43 108 252 / 0.22), transparent 70%), var(--color-night); }
 .story[data-still] .track { display: flex; flex-direction: column; height: auto; }
 .story[data-still] .stage { display: contents; }
-.story[data-still] :is(.backdrop, .floor, .world, .gl, .zoom, .ringLabel) { display: none; }
+.story[data-still] :is(.backdrop, .floor, .world, .gl, .zoom, .ringLabel, .ringStandIn, .skip) { display: none; }
 .story[data-still] .anchor { position: relative; top: auto; scroll-margin-top: 5rem; }
 .story[data-still] .anchor:nth-of-type(1) { order: 2; }
 .story[data-still] .anchor:nth-of-type(2) { order: 4; }

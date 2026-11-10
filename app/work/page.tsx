@@ -3,6 +3,7 @@ import { analyticsName } from "@/lib/analyticsNames";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
 import { BrowserMockup } from "@/components/ui/BrowserMockup";
+import { WorkDevices } from "@/components/work/WorkDevices";
 import { DemoClosing } from "@/components/demo/DemoClosing";
 import { Icon } from "@/components/ui/Icon";
 import { LinkButton } from "@/components/ui/Button";
@@ -81,14 +82,16 @@ export default function WorkPage() {
                       aria-hidden
                       className="animate-drift-slow absolute -inset-6 rounded-[32px] bg-gradient-to-br from-electric/20 to-accent/20 blur-2xl"
                     />
-                    <BrowserMockup
-                      palette={project.palette}
-                      title={project.title}
-                      industry={project.industry}
-                      siteUrl={project.siteUrl}
-                      screenshots={project.screenshots}
-                      className="relative"
-                    />
+                    <WorkDevices desktop={project.screenshots.desktop} mobile={project.screenshots.mobile}>
+                      <BrowserMockup
+                        palette={project.palette}
+                        title={project.title}
+                        industry={project.industry}
+                        siteUrl={project.siteUrl}
+                        screenshots={project.screenshots}
+                        className="relative"
+                      />
+                    </WorkDevices>
                   </div>
                 </article>
               </Reveal>
