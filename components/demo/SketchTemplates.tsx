@@ -39,9 +39,9 @@ export const sketchLooks: Record<SketchId, Look> = {
 
 /** "Local services" speaks for no one trade, so it has copy of its own. */
 const localCopy: DrawnSite = {
-  headline: "Friendly, reliable and just round the corner.",
+  headline: "Friendly, reliable and just around the corner.",
   badge: "Same-week visits",
-  sub: "Free quotes, fair prices and people who turn up on time.",
+  sub: "Free quotes, fair prices and people who show up on time.",
   cta: "Get a free quote",
   phone: "",
   services: ["Our services", "Prices", "Reviews"],

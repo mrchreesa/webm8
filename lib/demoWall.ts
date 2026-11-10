@@ -11,7 +11,7 @@ export const wallDemos: { slug: string; label: string }[] = [
   { slug: "aesthetic-nacre", label: "Aesthetic clinic" },
   { slug: "dps-gasworks", label: "Heating, Bedford" },
   { slug: "waffles-bubbles", label: "Desserts, Orpington" },
-  { slug: "removals", label: "Removals" },
+  { slug: "removals", label: "Moving" },
   { slug: "boniface-salon", label: "Hair salon, Kent" },
   { slug: "allen-fitness", label: "Activewear" },
   { slug: "ideal-baby", label: "Baby store, Miami" },

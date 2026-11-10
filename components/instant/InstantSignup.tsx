@@ -336,7 +336,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
               {field("deliveryPhone", "Phone number (WhatsApp)", { required: true, type: "tel", autoComplete: "tel", placeholder: market === "US" ? "For example: +1 202 555 0123" : "For example: +44 7700 900123", hint: "We’ll send your website and discuss edits here on WhatsApp. It won’t be added to your website automatically." })}
               <div className={styles.fieldGrid}>
                 {field("businessName", "Business name", { required: true, autoComplete: "organization", placeholder: "Your business name" })}
-                {field("area", market === "US" ? "City or service area" : "Town or service area", { required: true, placeholder: market === "US" ? "City, ZIP code or area" : "Town, postcode or area" })}
+                {field("area", market === "US" ? "City or service area" : "Town or service area", { required: true, placeholder: market === "US" ? "City, ZIP code or area" : "Town, postal code or area" })}
               </div>
               <ChoiceGroup analyticsField="industry" name="industry" label="Type of business" presentation="chips" options={industries} values={answers.industry ? [answers.industry] : []} onChange={(v) => update("industry", v[0] as Industry)} error={errors.industry} />
               {quote && <p className={styles.notice} role="status">Those features need a custom quote. Continue to share your requirements. There’s no payment on this route.</p>}
