@@ -70,7 +70,7 @@ Existing controls use rounded-xl, contact card rounded-3xl, buttons rounded-full
 
 ## Components
 
-The browser favicon reuses the blue octopus in a blink → tentacle wave → gentle bob rotation, with ten-second rests. `public/animated-favicon.mjs` owns the canvas frames and lifecycle; the shared root layout loads it after page load and idle time for both agency and Instant sites. It restores the original static icons between motions, in hidden tabs, and under reduced motion or data saving. The existing search and Apple touch icons remain the static brand assets. Source: owner request, 10 November 2026.
+The browser favicon makes three clockwise spins from the blue octopus into the header's neon-green M8 badge, holds M8 for 3.5 seconds, then makes three counterclockwise spins back. It rests on the octopus for ten seconds before repeating. `public/animated-favicon.mjs` owns the cached canvas frames and lifecycle; the shared root layout loads it after page load and idle time for both agency and Instant sites. The badge reads the canonical `--color-brand` and `--color-ink-deep` CSS tokens and uses vector lettering with no font request. Hidden tabs, reduced motion and data saving use the original static octopus. Search and Apple touch icons stay static. Source: owner request, 10 November 2026.
 
 `components/forms/FormField.tsx` owns labelled inputs, textareas, native selects and form status. Native plan selection deliberately uses platform popup geometry and keyboard behavior. `components/ui/Button.tsx` owns actions. Textarea has five visible rows on contact, fixed resize behavior and natural overflow for longer messages.
 
