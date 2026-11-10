@@ -296,7 +296,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
   return (
     <section id="instant-signup" className={styles.page} data-analytics-section={billing ? "Instant website signup" : "Instant website preview"} aria-labelledby="instant-title">
       <div className={styles.pageHeading}>
-        <h1 id="instant-title">Your new website. Ready in one working day.</h1>
+        <h1 id="instant-title">The best website for your business. Guaranteed.</h1>
         <div className={styles.ticket}>
           <p><b>£{INSTANT_PRICE}</b>a month</p>
           <ul>{[`${INSTANT_TRIAL_DAYS} days free`, "No setup fee", "Cancel anytime"].map((item) => <li key={item}><Icon name="check" size={14} aria-hidden />{item}</li>)}</ul>
