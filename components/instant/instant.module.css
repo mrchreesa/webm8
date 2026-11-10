@@ -1,16 +1,32 @@
-.page { padding: 1rem 2rem 4.5rem; background: var(--color-bg-alt); scroll-margin-top: 5rem; }
-.pageHeading { max-width: 1216px; margin: 0 auto 2rem; display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; }
-.pageHeading h1 { font-size: clamp(2.3rem, 4.4vw, 3.6rem); font-weight: 700; letter-spacing: -.04em; line-height: 1; }
-.layout { max-width: 1216px; margin: auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 25rem); gap: 1rem; align-items: start; padding: .75rem; border: 1px solid var(--color-border); border-radius: 2rem; background: var(--color-surface); box-shadow: var(--shadow-card); }
-.formColumn { min-width: 0; padding: 1.75rem 1.75rem 1.25rem; }
+/* The hero runs up under the sticky header (4rem, 5rem from md), which is
+   see-through until the page scrolls. --air is the room a taller desktop
+   screen has to spare, shared out so the first step still fits one screen. */
+.page { --air: 0px; position: relative; isolation: isolate; overflow: clip; margin-top: -4rem; padding: calc(4.5rem + var(--air)) 2rem 3rem; background: linear-gradient(var(--color-night), #0a2146); color: #fff; scroll-margin-top: 5rem; }
+/* The hero's own light: a cool corner, and warmth behind the phone. */
+.page::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(45% 55% at 85% 60%, rgb(43 108 252 / .28), transparent 70%), radial-gradient(55% 45% at 0% 0%, rgb(27 74 128 / .7), transparent 70%); }
+.pageHeading { max-width: 1216px; margin: 0 auto calc(.75rem + var(--air)); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 2rem; }
+.pageHeading h1 { font-size: clamp(1.65rem, 2.3vw, 1.95rem); font-weight: 700; letter-spacing: -.035em; line-height: 1.1; text-wrap: balance; }
+/* The price as a ticket: one low strip, torn at the dashed line. */
+.ticket { position: relative; flex: none; display: flex; align-items: center; background: var(--color-brand); color: var(--color-brand-ink); border-radius: .9rem; rotate: -1deg; }
+.ticket > p { padding: .4rem 1.1rem; font-size: .85rem; font-weight: 600; white-space: nowrap; }
+.ticket > p b { margin-right: .3rem; font: 700 1.7rem/1 var(--font-display); letter-spacing: -.04em; }
+.ticket ul { position: relative; display: flex; flex-wrap: wrap; gap: .1rem 1rem; padding: .4rem 1.1rem; border-left: 2px dashed rgb(7 26 51 / .35); font-size: .8rem; font-weight: 600; }
+.ticket ul::before, .ticket ul::after { content: ""; position: absolute; left: -1px; width: .9rem; height: .9rem; border-radius: 50%; background: var(--ticket-ground, var(--color-night)); translate: -50% 0; }
+.ticket ul::before { top: -.45rem; }
+.ticket ul::after { bottom: -.45rem; }
+.ticket li { display: flex; align-items: center; gap: .3rem; white-space: nowrap; }
+.layout { max-width: 1216px; margin: auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 25rem); gap: 2rem; align-items: start; }
+.formColumn { position: relative; z-index: 1; min-width: 0; padding: calc(1.1rem + var(--air)) 1.75rem; border-radius: 1.75rem; background: var(--color-surface); color: var(--color-ink); box-shadow: 0 30px 80px -30px rgb(0 0 0 / .6); }
 .summary { min-width: 0; position: sticky; top: 6rem; }
-.summary .signupSketch { position: relative; top: auto; height: 33rem; padding: 1.75rem var(--pad) 0; --pad: 1.5rem; --phone-w: 16rem; }
-.planDetails { padding: 1.5rem 1.25rem; }
-.planDetails h3 { font: 600 1.3rem/1.2 var(--font-display); }
-.included { display: grid; gap: .7rem; margin-top: 1rem; font-size: .8rem; line-height: 1.5; }
-.included li { display: flex; align-items: flex-start; gap: .6rem; }
-.included svg { flex-shrink: 0; color: var(--color-link); margin-top: .1rem; }
-.summaryFoot { border-top: 1px solid var(--color-border); padding-top: 1rem; margin-top: 1.2rem; font-size: .75rem; line-height: 1.6; color: var(--color-muted); }
+/* The phone stands on the hero's own ground and fades into it. */
+.summary .signupSketch::before { inset: 0; background: radial-gradient(36% 30% at 50% 60%, rgb(var(--glow) / .5), transparent 100%); }
+.summary .signupSketch::after { mask-image: radial-gradient(45% 100% at 50% 0, #000, transparent 100%); }
+.summary .signupSketch { position: relative; top: auto; height: min(37rem, calc(100svh - 11.5rem - var(--air) * 2)); min-height: 24rem; padding: .25rem var(--pad) 0; border-radius: 0; background: none; mask-image: linear-gradient(#000 82%, transparent); --pad: 1.5rem; --phone-w: 16rem; --ticker-bottom: 4.5rem; }
+.plan { max-width: 1216px; margin: 1.5rem auto 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.75rem; color: var(--color-muted-invert); font-size: .85rem; line-height: 1.5; }
+.plan h2 { color: #fff; font: 600 1rem/1.3 var(--font-display); }
+.plan ul { display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; }
+.plan li { display: flex; align-items: center; gap: .45rem; }
+.plan svg { flex-shrink: 0; color: var(--color-brand); }
 .eyebrow { font: 500 .72rem var(--font-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--color-muted-invert); }
 .examples { padding: 4.5rem 0 1.5rem; background: var(--color-night); color: white; overflow: clip; }
 .examplesHeading { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: end; }
@@ -19,7 +35,7 @@
 .examplesHeading > div:last-child > p { color: var(--color-muted-invert); font-size: 1rem; line-height: 1.7; }
 .examplesLink { display: inline-flex; align-items: center; gap: .7rem; color: var(--color-brand); font-size: .85rem; font-weight: 600; margin-top: 1rem; padding-block: .5rem; text-decoration: underline; text-underline-offset: .25em; }
 .examplesLink:hover { color: var(--color-bg); }
-.flowTop { margin-bottom: 1.7rem; }
+.flowTop { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem 1rem; margin-bottom: .8rem; }
 .progress { display: flex; gap: 1.25rem; flex-wrap: wrap; }
 .progress li { display: flex; gap: .5rem; align-items: center; font-size: .7rem; color: var(--color-muted); }
 .progress li > span { width: 1.4rem; height: 1.4rem; border-radius: 50%; border: 1px solid var(--color-border); display: grid; place-items: center; font-size: .65rem; }
@@ -27,9 +43,8 @@
 .progress li[data-active="true"] > span { background: var(--color-ink); color: var(--color-bg); border-color: var(--color-ink); }
 .title { font-size: clamp(1.6rem, 2.5vw, 2rem); line-height: 1.1; letter-spacing: -.03em; font-weight: 700; max-width: 28ch; scroll-margin-top: 100px; outline: none; }
 .intro { margin-top: .9rem; color: var(--color-muted); font-size: .92rem; line-height: 1.7; }
-.offerLine { margin-top: 1rem; color: var(--color-ink); font-size: .85rem; font-weight: 600; line-height: 1.7; text-wrap: balance; }
-.saveStatus { min-height: 1.5rem; margin: .7rem 0 1.3rem; color: var(--color-muted); font-size: .7rem; line-height: 1.6; }
-.form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.4rem; }
+.saveStatus { color: var(--color-muted); font-size: .7rem; line-height: 1.6; }
+.form { display: grid; grid-template-columns: minmax(0, 1fr); gap: calc(.9rem + var(--air) / 2); }
 .form > * { grid-column: 1 / -1; }
 .fieldGrid { display: grid; gap: 1.7rem; }
 .fieldGrid > div { min-width: 0; }
@@ -102,32 +117,111 @@
 .review > div { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--color-border); font-size: .8rem; line-height: 1.7; }
 .review dt { color: var(--color-muted); }
 .review dd { overflow-wrap: anywhere; white-space: pre-line; }
+@media (min-width: 768px) {
+  .page { margin-top: -5rem; padding-top: calc(5.5rem + var(--air)); }
+}
+@media (min-width: 1024px) {
+  .page { --air: clamp(0px, calc((100svh - 715px) * .15), 1.25rem); }
+  .pageHeading { flex-wrap: nowrap; }
+  .formColumn { padding-inline: 2.25rem; }
+}
 @media (max-width: 1023px) {
   .layout { grid-template-columns: 1fr; }
-  .summary { position: static; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }
-  .summary .signupSketch { height: 21rem; --phone-w: 15rem; }
+  .summary { position: static; }
+  .summary .signupSketch { height: 28rem; min-height: 0; --phone-w: 15rem; --ticker-bottom: 5.5rem; }
   .formColumn { padding: 1.5rem; }
-  .pageHeading h1 { font-size: 2.5rem; }
 }
 @media (max-width: 639px) {
-  .page { padding: .75rem 1rem 2.5rem; }
+  .page { padding: 4.75rem 1rem 2.5rem; }
   .previewBar { font-size: .65rem; margin-bottom: 1.25rem; }
-  .pageHeading { flex-direction: column; align-items: start; gap: 1rem; margin-bottom: 1.4rem; }
-  .pageHeading h1 { font-size: 2.25rem; }
-  .layout { border-radius: 1.5rem; padding: .5rem; gap: 1rem; }
-  .formColumn { padding: 1.1rem .65rem .75rem; }
+  .pageHeading { margin-bottom: 1.1rem; }
+  .ticket { flex: 1 1 100%; min-width: 0; rotate: none; }
+  .ticket > p { padding-inline: .8rem; }
+  .ticket ul { flex: 1; min-width: 0; gap: 0 .8rem; padding-inline: .8rem; font-size: .72rem; }
+  .layout { gap: 1rem; }
+  .formColumn { padding: 1.1rem 1rem; border-radius: 1.4rem; }
+  .fieldGrid { gap: .9rem; }
   .title { font-size: 1.65rem; }
-  .flowTop { margin-bottom: 1.4rem; }
   .progress { gap: .7rem; }
   .progress li { font-size: .62rem; gap: .3rem; }
   .progress li > span { width: 1.2rem; height: 1.2rem; }
-  .summary { grid-template-columns: 1fr; }
-  .summary .signupSketch { height: 22rem; }
-  .planDetails { padding: 1rem .75rem; }
   .actions > button { flex: 1; }
   .review > div { grid-template-columns: 1fr; gap: .2rem; }
   .orderSummary { padding: 1rem; }
   .examples { padding-top: 3rem; }
   .examplesHeading { grid-template-columns: 1fr; gap: 1.3rem; }
   .examplesHeading > div:last-child { justify-self: start; }
+}
+
+/* One working day: four steps on one low track, under the hero. */
+.day { padding: 2.75rem 2rem; background: var(--color-bg); color: var(--color-ink); }
+.dayInner { max-width: 1216px; margin: auto; display: grid; gap: 1.75rem; }
+.day h2 { font-size: clamp(1.4rem, 2.2vw, 1.8rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.12; text-wrap: balance; }
+.daySteps { --node: 2.25rem; position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+/* The track runs from the first node's centre to the last one's. */
+.daySteps::before, .daySteps::after { content: ""; position: absolute; top: calc(var(--node) / 2 - 1.5px); left: calc(var(--node) / 2); width: 75%; height: 3px; border-radius: 3px; background: var(--color-border); }
+.daySteps::after { background: linear-gradient(90deg, var(--color-ink) 70%, var(--color-brand)); transform: scaleX(0); transform-origin: left; transition: transform 1.6s cubic-bezier(.6, 0, .3, 1) .2s; }
+.daySteps[data-state="in"]::after { transform: scaleX(1); }
+.daySteps li { position: relative; z-index: 1; padding-right: 1rem; }
+.node { display: grid; place-items: center; width: var(--node); height: var(--node); border: 1.5px solid var(--color-border); border-radius: 50%; background: var(--color-bg); color: var(--color-muted); font: 700 .85rem var(--font-display); transition: background .3s, color .3s, border-color .3s, box-shadow .4s, scale .4s var(--ease-brand); transition-delay: calc(.2s + var(--i) * .53s); }
+.daySteps[data-state="in"] .node { border-color: var(--color-ink); background: var(--color-ink); color: #fff; }
+.daySteps[data-state="in"] li:nth-child(4) .node { background: var(--color-brand); color: var(--color-brand-ink); box-shadow: 0 0 0 6px rgb(212 255 53 / .45); scale: 1.12; }
+.daySteps h3 { margin-top: .8rem; font: 700 1rem/1.2 var(--font-display); letter-spacing: -.01em; }
+/* The last step is the point of the other three: its name is marked in lime. */
+.daySteps li:nth-child(4) h3 { width: fit-content; background: linear-gradient(var(--color-brand), var(--color-brand)) left / 0% 100% no-repeat; box-decoration-break: clone; transition: background-size .5s var(--ease-brand) 1.9s; padding: .1rem .35rem; margin-left: -.35rem; border-radius: .35rem; }
+.daySteps[data-state="in"] li:nth-child(4) h3 { background-size: 100% 100%; }
+.daySteps p { max-width: 24ch; margin-top: .25rem; color: var(--color-muted); font-size: .82rem; line-height: 1.45; }
+/* A lime spark rides the head of the line, then lands on the last node. */
+.daySteps .spark { position: absolute; z-index: 2; top: calc(var(--node) / 2); left: calc(var(--node) / 2); width: .7rem; height: .7rem; margin: -.35rem; padding: 0; border: 2px solid var(--color-ink); border-radius: 50%; background: var(--color-brand); opacity: 0; }
+.daySteps[data-state="in"] .spark { animation: spark 1.6s cubic-bezier(.6, 0, .3, 1) .2s both; }
+@keyframes spark { 0% { left: calc(var(--node) / 2); opacity: 1; } 90% { opacity: 1; } 100% { left: calc(75% + var(--node) / 2); opacity: 0; } }
+@media (min-width: 1024px) {
+  .dayInner { grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); gap: 4rem; align-items: center; }
+}
+@media (max-width: 767px) {
+  .day { padding: 2rem 1rem; }
+  .dayInner { gap: 1.25rem; }
+  .daySteps { --node: 1.9rem; }
+  .daySteps li { padding-right: .4rem; }
+  .daySteps h3 { margin-top: .6rem; font-size: .76rem; }
+  .daySteps p { display: none; }
+}
+
+/* What the plan covers: the price on the left, three short lists beside it. */
+.included { padding: 3.5rem 2rem; background: var(--color-surface); color: var(--color-ink); }
+.includedInner { max-width: 1216px; margin: auto; display: grid; gap: 2.25rem; }
+.includedIntro { --ticket-ground: var(--color-surface); display: grid; justify-items: start; gap: 1rem; align-content: start; }
+.includedIntro h2 { font-size: clamp(1.6rem, 2.4vw, 2.1rem); font-weight: 700; letter-spacing: -.035em; line-height: 1.08; text-wrap: balance; }
+.includedIntro .ticket { margin-block: .25rem; }
+.includedGroups { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); align-items: start; }
+.includedGroups > div { padding: 1.25rem 1.25rem 1.35rem; border: 1px solid var(--color-border); border-radius: 1.25rem; }
+.includedGroups h3 { font: 700 1.05rem/1.2 var(--font-display); letter-spacing: -.01em; }
+.includedGroups ul { display: grid; gap: .6rem; margin-top: .9rem; font-size: .86rem; line-height: 1.4; }
+.includedGroups li { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: start; }
+.includedGroups svg { box-sizing: content-box; margin-top: .05rem; padding: .2rem; border-radius: 50%; background: var(--color-brand); color: var(--color-brand-ink); }
+/* The last list is the one that looks ahead, so it takes the navy. */
+.includedGroups > div:last-child { border-color: var(--color-ink); background: var(--color-ink); color: #fff; }
+@media (min-width: 1024px) {
+  .includedInner { grid-template-columns: minmax(0, 21rem) minmax(0, 1fr); gap: 3.5rem; }
+}
+
+/* Questions: two columns of disclosures, short until one is opened. */
+.faq { padding: 3.5rem 2rem 4.5rem; background: var(--color-bg); color: var(--color-ink); }
+.faqInner { max-width: 1216px; margin: auto; }
+.faq h2 { font-size: clamp(1.6rem, 2.4vw, 2.1rem); font-weight: 700; letter-spacing: -.035em; line-height: 1.08; }
+.faqList { margin-top: 1.5rem; border-top: 1px solid var(--color-border); }
+.faqList details { break-inside: avoid; border-bottom: 1px solid var(--color-border); }
+.faqList summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .95rem 0; cursor: pointer; list-style: none; font-size: .98rem; font-weight: 600; line-height: 1.35; }
+.faqList summary::-webkit-details-marker { display: none; }
+.faqList summary span { flex: none; display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: rgb(14 47 86 / .06); font-size: 1.05rem; font-weight: 400; line-height: 1; transition: rotate .2s, background .2s; }
+.faqList details[open] summary span { rotate: 45deg; background: var(--color-brand); }
+.faqList p { max-width: 60ch; padding-bottom: 1.1rem; color: var(--color-muted); font-size: .9rem; line-height: 1.6; }
+@media (min-width: 900px) {
+  .faqList { columns: 2; column-gap: 3.5rem; border-top: 0; }
+  .faqList details:nth-child(1), .faqList details:nth-child(7) { border-top: 1px solid var(--color-border); }
+}
+@media (max-width: 639px) {
+  .included { padding: 2.5rem 1rem; }
+  .faq { padding: 2.5rem 1rem 3rem; }
+  .includedGroups ul { gap: .5rem; }
 }

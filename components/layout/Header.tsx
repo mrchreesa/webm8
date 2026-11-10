@@ -73,11 +73,11 @@ export function Header({ instantSite = false }: { instantSite?: boolean }) {
     href === "/" ? pathname === "/" : pathname?.startsWith(href) ?? false;
 
   // The homepage is navy from top to bottom, so its header stays dark.
-  // /movers/, /thank-you/, /demo/ and /free-demo/ have navy heroes, so their
+  // /movers/, /thank-you/, /demo/, /free-demo/ and /instant/ have navy heroes, so their
   // headers are dark until the page scrolls.
   const isHome = !instantSite && pathname === "/";
   const staysDark = isHome;
-  const overDarkHero = staysDark || (!isInstantPage && (isMoversPage || isLeadPage || isFreeDemoPage) && !scrolled);
+  const overDarkHero = staysDark || ((isMoversPage || isLeadPage || isFreeDemoPage) && !scrolled);
 
   return (
     <header data-analytics-section="Header"

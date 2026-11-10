@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { InstantSignup } from "@/components/instant/InstantSignup";
+import { InstantDay } from "@/components/instant/InstantDay";
 import { InstantExamples } from "@/components/instant/InstantExamples";
+import { InstantFaq } from "@/components/instant/InstantFaq";
+import { InstantIncluded } from "@/components/instant/InstantIncluded";
 import { createPageMetadata } from "@/lib/seo";
 
 // Only public, deployment-scoped content belongs in this cached page.
@@ -23,5 +26,5 @@ export default function InstantPage() {
   // A prototype must not become a live offer through an unrelated deployment.
   if (process.env.NODE_ENV === "production" && process.env.INSTANT_WEBSITES_PREVIEW !== "1") notFound();
   const billing = process.env.INSTANT_BILLING_ENABLED === "1";
-  return <><InstantSignup billing={billing} publishableKey={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""} testMode={billing && process.env.INSTANT_STRIPE_MODE === "test"} /><InstantExamples /></>;
+  return <><InstantSignup billing={billing} publishableKey={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""} testMode={billing && process.env.INSTANT_STRIPE_MODE === "test"} /><InstantDay /><InstantExamples /><InstantIncluded /><InstantFaq /></>;
 }

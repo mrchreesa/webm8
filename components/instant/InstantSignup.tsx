@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { ChoiceGroup } from "@/components/forms/ChoiceGroup";
 import { FormStatus, TextAreaField, TextField } from "@/components/forms/FormField";
-import { InstantSummary } from "./InstantSummary";
+import { InstantPlan, InstantSummary } from "./InstantSummary";
 import { CheckoutLoading } from "./CheckoutLoading";
 import { useInstantAnalytics } from "./useInstantAnalytics";
 import { canSubmitBrief, type BillingStatus } from "@/lib/instantBilling";
@@ -19,7 +19,7 @@ import styles from "./instant.module.css";
 const InstantPayment = dynamic(() => import("./InstantPayment").then(module => module.InstantPayment), { loading: () => <CheckoutLoading /> });
 
 const stageCopy: Record<Step, { title: string; intro: string }> = {
-  business: { title: "Your new website. Ready in one working day.", intro: "Tell us about your business. We’ll design, build and look after your website—with unlimited revisions until you’re happy." },
+  business: { title: "Your details", intro: "" },
   checkout: { title: "Secure free trial", intro: `Start your ${INSTANT_TRIAL_DAYS}-day free trial. £${INSTANT_PRICE}/month after your trial ends.` },
   brief: { title: "Tell us about your business.", intro: "Add your services, links and preferences. A few lines are enough to get started." },
   complete: { title: "You're all set!", intro: "Your website will be ready within one working day." },
@@ -296,7 +296,11 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
   return (
     <section id="instant-signup" className={styles.page} data-analytics-section={billing ? "Instant website signup" : "Instant website preview"} aria-labelledby="instant-title">
       <div className={styles.pageHeading}>
-        <h1 id="instant-title">Let’s get you online.</h1>
+        <h1 id="instant-title">Your new website. Ready in one working day.</h1>
+        <div className={styles.ticket}>
+          <p><b>£{INSTANT_PRICE}</b>a month</p>
+          <ul>{[`${INSTANT_TRIAL_DAYS} days free`, "No setup fee", "Cancel anytime"].map((item) => <li key={item}><Icon name="check" size={14} aria-hidden />{item}</li>)}</ul>
+        </div>
       </div>
       <div className={styles.layout}>
         <div className={styles.formColumn}>
@@ -307,15 +311,12 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
                 return <li key={label} aria-current={!complete && index === current ? "step" : undefined} data-active={index <= current}><span>{complete || index < current ? <Icon name="check" size={12} aria-hidden /> : index + 1}</span>{label}</li>;
               })}
             </ol>
+            <div aria-live="polite" className={styles.saveStatus}>{!loaded ? billing ? "Checking your saved progress…" : "Opening your preview…" : !storageAvailable ? "This browser can’t save your draft. Keep this page open until you submit." : null}</div>
           </div>
           {testMode && <p className={styles.notice}>Test checkout — no real payments are taken.</p>}
           {complete && !quote && <div className={styles.successMark}><span><Icon name="check" size={26} aria-hidden /></span>{billing ? "Website brief received" : "Success screen preview"}</div>}
-          <h2 className={styles.title} ref={titleRef} tabIndex={-1}>{stageCopy[step].title}</h2>
-          <p className={styles.intro}>{stageCopy[step].intro}</p>
-          {step === "business" && <p className={styles.offerLine}>{INSTANT_TRIAL_DAYS} days free · Then £{INSTANT_PRICE}/month · No setup fee · Cancel anytime</p>}
-          <div aria-live="polite" className={styles.saveStatus}>
-            {!loaded ? billing ? "Checking your saved progress…" : "Opening your preview…" : !storageAvailable ? "This browser can’t save your draft. Keep this page open until you submit." : null}
-          </div>
+          <h2 className={step === "business" ? "sr-only" : styles.title} ref={titleRef} tabIndex={-1}>{stageCopy[step].title}</h2>
+          {step !== "business" && <p className={styles.intro}>{stageCopy[step].intro}</p>}
           {billingMessage && <div ref={billingStatusRef} tabIndex={-1} role="status" className={styles.notice}>{billingMessage}</div>}
           {pollTrial && <p role="status" className={styles.hint}>Waiting for Stripe to confirm your trial…</p>}
           {billingOrder?.trialEnd && <p className={styles.hint}>{billingOrder.cancelAtPeriodEnd ? "Cancellation scheduled. Your subscription ends" : "Your free trial ends"} on {new Intl.DateTimeFormat("en-GB", { dateStyle: "long", timeZone: "Europe/London" }).format(new Date(billingOrder.cancelAt || billingOrder.trialEnd))}.</p>}
@@ -326,10 +327,10 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
                 {field("name", "Your name", { required: true, autoComplete: "name" })}
                 {field("email", "Your email address", { required: true, type: "email", autoComplete: "email" })}
               </div>
-              {field("deliveryPhone", "Phone number (WhatsApp)", { required: true, type: "tel", autoComplete: "tel", placeholder: "For example: +44 7700 900123", hint: "We’ll send your website here and discuss any edits on WhatsApp. This number won’t be added to your website automatically." })}
+              {field("deliveryPhone", "Phone number (WhatsApp)", { required: true, type: "tel", autoComplete: "tel", placeholder: "For example: +44 7700 900123", hint: "We’ll send your website and discuss edits here on WhatsApp. It won’t be added to your website automatically." })}
               <div className={styles.fieldGrid}>
                 {field("businessName", "Business name", { required: true, autoComplete: "organization", placeholder: "Your business name" })}
-                {field("area", "Town or service area", { required: true, placeholder: "For example: Bromley", hint: "A town, postcode or the area you serve." })}
+                {field("area", "Town or service area", { required: true, placeholder: "Town, postcode or area" })}
               </div>
               <ChoiceGroup analyticsField="industry" name="industry" label="Type of business" presentation="chips" options={industries} values={answers.industry ? [answers.industry] : []} onChange={(v) => update("industry", v[0] as Industry)} error={errors.industry} />
               {quote && <p className={styles.notice} role="status">Those features need a custom quote. Continue to share your requirements. There’s no payment on this route.</p>}
@@ -440,8 +441,9 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
           </div>}
 
         </div>
-        <InstantSummary answers={answers} quote={quote} />
+        <InstantSummary answers={answers} />
       </div>
+      <InstantPlan quote={quote} />
     </section>
   );
 }
