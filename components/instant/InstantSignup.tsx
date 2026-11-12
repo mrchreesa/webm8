@@ -430,7 +430,6 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
               </div>
             </div>
             </fieldset>
-            {billing && saveDrafts && <a className={styles.draftPrivacyLink} href="/instant-privacy/" target="_blank" rel="noopener noreferrer">How your form answers are saved</a>}
           </form>}
           {loaded && complete && <div className={styles.completion}>
             {!quote && <div className={styles.deliveryNotice}>
