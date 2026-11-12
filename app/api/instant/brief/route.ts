@@ -1,16 +1,15 @@
 import { requestVisitorCountry } from "@/lib/instantCountry";
-import { cookies } from "next/headers";
+import { verifiedInstantSession } from "@/lib/verifiedInstantSession";
 import { after } from "next/server";
 import { deliverInstantEmails } from "@/lib/instantEmailOutbox";
 import { submitInstantBrief } from "@/lib/instantCheckout";
-import { apiError, assertOrigin, BillingError, requestJson, SESSION_COOKIE } from "@/lib/instantBillingServer";
+import { apiError, assertOrigin, requestJson } from "@/lib/instantBillingServer";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 export async function POST(request: Request) {
   try {
     assertOrigin(request);
-    const token = (await cookies()).get(SESSION_COOKIE)?.value;
-    if (!token || !/^[a-f0-9]{64}$/.test(token)) throw new BillingError("Your session has expired. Please contact WebM8 to recover your brief.", 401);
+    const token = await verifiedInstantSession();
     const result = await submitInstantBrief(token, await requestJson(request), undefined, undefined, requestVisitorCountry(request.headers));
     if (!("errors" in result) && result.order?.submitted) {
       after(async () => {

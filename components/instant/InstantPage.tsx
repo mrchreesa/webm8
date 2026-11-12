@@ -29,5 +29,5 @@ export function InstantContent({ market }: { market: InstantMarket }) {
   // A prototype must not become a live offer through an unrelated deployment.
   if (process.env.NODE_ENV === "production" && process.env.INSTANT_WEBSITES_PREVIEW !== "1") notFound();
   const billing = process.env.INSTANT_BILLING_ENABLED === "1";
-  return <InstantMarketProvider initialMarket={market}><div lang="en-US"><InstantSignup billing={billing} saveDrafts={process.env.INSTANT_DRAFTS_ENABLED === "1"} publishableKey={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""} testMode={billing && process.env.INSTANT_STRIPE_MODE === "test"} /><InstantDay /><InstantExamples /><InstantFaq /></div></InstantMarketProvider>;
+  return <InstantMarketProvider initialMarket={market}><div lang="en-US"><InstantSignup turnstileSiteKey={process.env.TURNSTILE_SITE_KEY || ""} billing={billing} saveDrafts={process.env.INSTANT_DRAFTS_ENABLED === "1"} publishableKey={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""} testMode={billing && process.env.INSTANT_STRIPE_MODE === "test"} /><InstantDay /><InstantExamples /><InstantFaq /></div></InstantMarketProvider>;
 }

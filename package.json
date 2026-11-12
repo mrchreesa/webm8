@@ -12,6 +12,7 @@
     "test": "node --test \"lib/**/*.test.ts\""
   },
   "dependencies": {
+    "@marsidev/react-turnstile": "1.6.3",
     "@stripe/react-stripe-js": "^7.0.1",
     "@stripe/stripe-js": "^10.2.1",
     "next": "^15.5.29",

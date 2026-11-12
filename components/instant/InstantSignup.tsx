@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui/Icon";
 import { ChoiceGroup } from "@/components/forms/ChoiceGroup";
 import { FormStatus, TextAreaField, TextField } from "@/components/forms/FormField";
 import { InstantPlan, InstantSummary } from "./InstantSummary";
+import { InstantVerification } from "./InstantVerification";
 import { CheckoutLoading } from "./CheckoutLoading";
 import { InstantIncluded, InstantWorth } from "./InstantIncluded";
 import { InstantPriceFaq } from "./InstantFaq";
@@ -37,7 +38,7 @@ const serviceLabels: Record<string, { label: string; placeholder: string }> = {
   beauty: { label: "Which treatments should we feature?", placeholder: "For example: facials, massage and brow treatments." },
 };
 
-export function InstantSignup({ billing = false, publishableKey = "", testMode = false, saveDrafts = false }: { billing?: boolean; publishableKey?: string; testMode?: boolean; saveDrafts?: boolean }) {
+export function InstantSignup({ billing = false, publishableKey = "", testMode = false, saveDrafts = false, turnstileSiteKey = "" }: { turnstileSiteKey?: string; billing?: boolean; publishableKey?: string; testMode?: boolean; saveDrafts?: boolean }) {
   const { market, offer, setMarket } = useInstantMarket();
   const [answers, setAnswers] = useState<Answers>(emptyAnswers);
   const [step, setStep] = useState<Step>("business");
@@ -67,7 +68,15 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
   const stage = step === "business" ? 0 : step === "checkout" ? 1 : 2;
   const analyticsEnabled = billing && !testMode && !quote;
   const analytics = useInstantAnalytics(analyticsEnabled, step, loaded);
-  const draft = useInstantDraft(billing && saveDrafts, loaded, answers, step);
+  const [verifiedUntil, setVerifiedUntil] = useState(0);
+  const verified = !billing || verifiedUntil > Date.now();
+  const resetVerification = useCallback(() => setVerifiedUntil(0), []);
+  useEffect(() => {
+    if (!verifiedUntil) return;
+    const timer = window.setTimeout(resetVerification, Math.max(0, verifiedUntil - Date.now()));
+    return () => window.clearTimeout(timer);
+  }, [verifiedUntil, resetVerification]);
+  const draft = useInstantDraft(billing && saveDrafts, loaded && verified, answers, step, resetVerification);
   useEffect(() => {
     if (!loaded || !billingOrder || !canSubmitBrief(billingOrder) || trialObserved.current) return;
     trialObserved.current = true;
@@ -198,7 +207,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
   }
 
   const billingAction = useCallback(async (kind: "checkout" | "brief") => {
-    if (pending.current) return;
+    if (!verified || pending.current) return;
     if (kind === "checkout" && !publishableKey) { setCheckoutLoadFailed(true); setBillingMessage("Secure checkout is not available yet. Please contact WebM8."); return; }
     if (kind === "checkout") setCheckoutLoadFailed(false);
     if (kind === "brief") analytics.form("submit", 3);
@@ -208,6 +217,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
       const response = await fetch(`/api/instant/${kind}/`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(answers), signal: AbortSignal.any([controller.signal, AbortSignal.timeout(25000)]) });
       const result = await response.json();
       if (!response.ok || !result.ok) {
+        if (response.status === 428) resetVerification();
         analytics.form("submission_error", kind === "checkout" ? 2 : 3, response.status === 400 ? "invalid" : "server");
         if (kind === "checkout") setCheckoutLoadFailed(true);
         if (kind === "brief" && result.restoreBrief && result.order) {
@@ -234,13 +244,13 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
       }
     } catch { analytics.form("submission_error", kind === "checkout" ? 2 : 3, "network"); if (kind === "checkout") setCheckoutLoadFailed(true); setBillingMessage("We couldn’t confirm that just now. Check your connection and try again; your answers are still here."); }
     finally { pending.current = false; setBillingBusy(false); }
-  }, [answers, go, publishableKey, analytics, setMarket]);
+  }, [answers, go, publishableKey, analytics, setMarket, verified, resetVerification]);
 
   useEffect(() => {
-    if (!billing || !loaded || step !== "checkout" || quote || clientSecret || billingOrder?.checkoutConfirmed || pollTrial || checkoutLoadRequested.current) return;
+    if (!billing || !loaded || !verified || step !== "checkout" || quote || clientSecret || billingOrder?.checkoutConfirmed || pollTrial || checkoutLoadRequested.current) return;
     checkoutLoadRequested.current = true;
     void billingAction("checkout");
-  }, [billing, loaded, step, quote, clientSecret, billingOrder?.checkoutConfirmed, pollTrial, billingAction]);
+  }, [billing, loaded, verified, step, quote, clientSecret, billingOrder?.checkoutConfirmed, pollTrial, billingAction]);
 
   async function recordConsent() {
     const response = await fetch("/api/instant/consent/", {
@@ -249,13 +259,14 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
       signal: AbortSignal.timeout(15000),
     });
     const result = await response.json();
+    if (response.status === 428) resetVerification();
     if (!response.ok || !result.ok) throw new Error(result.errors?.form || "We couldn’t save your confirmation. Please try again.");
     setAnswers(a => ({ ...a, checkoutAcknowledged: true }));
   }
 
   function advance(event: FormEvent) {
     event.preventDefault();
-    if (!loaded || pending.current || billingBusy || pollTrial) return;
+    if (!loaded || !verified || pending.current || billingBusy || pollTrial) return;
     if (step !== "checkout" && !check(step)) return;
     if (step === "business") { analytics.form("start", 1); analytics.form("step_complete", 1); go(quote ? "quote" : "checkout"); }
     else if (step === "checkout") {
@@ -330,6 +341,9 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
           {billingMessage && <div ref={billingStatusRef} tabIndex={-1} role="status" className={styles.notice}>{billingMessage}</div>}
           {pollTrial && <p role="status" className={styles.hint}>Waiting for Stripe to confirm your trial…</p>}
           {billingOrder?.trialEnd && <p className={styles.hint}>{billingOrder.cancelAtPeriodEnd ? "Cancellation scheduled. Your subscription ends" : "Your free trial ends"} on {new Intl.DateTimeFormat("en-US", { dateStyle: "long", ...(market === "GB" ? { timeZone: "Europe/London" } : {}) }).format(new Date(billingOrder.cancelAt || billingOrder.trialEnd))}.</p>}
+          {billing && loaded && !complete && !verified && (turnstileSiteKey
+            ? <InstantVerification siteKey={turnstileSiteKey} onVerified={seconds => setVerifiedUntil(Date.now() + (seconds - 10) * 1000)} />
+            : <p className={styles.notice} role="status">Signup verification is unavailable. Please try again later.</p>)}
           {!complete && <form ref={formRef} data-analytics-form={analyticsEnabled ? "instant_website" : undefined} data-analytics-step={stage + 1} data-analytics-steps={3} noValidate onSubmit={advance} onBlur={draft.onBlur} onCompositionStart={draft.onCompositionStart} onCompositionEnd={draft.onCompositionEnd} aria-busy={!loaded || billingBusy || pollTrial} className={styles.form}>
             <fieldset disabled={!loaded || billingBusy || pollTrial} className={`${styles.form} ${styles.formFields}`}>
             {step === "business" && <>
@@ -344,9 +358,9 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
             </>}
             {step === "checkout" && <>
               <InstantWorth />
-              {billing && clientSecret && <InstantPayment clientSecret={clientSecret} publishableKey={publishableKey} onBeforeConfirm={recordConsent} analytics={analytics} onConfirmed={() => { setClientSecret(""); setPollTrial(true); }} onBusy={setBillingBusy} />}
+              {billing && clientSecret && <InstantPayment clientSecret={clientSecret} publishableKey={publishableKey} verified={verified} onBeforeConfirm={recordConsent} analytics={analytics} onConfirmed={() => { setClientSecret(""); setPollTrial(true); }} onBusy={setBillingBusy} />}
               {billing && !clientSecret && !billingOrder?.checkoutConfirmed && !pollTrial && <div className={styles.group}>
-                {checkoutLoadFailed ? <Button size="lg" className={styles.continue} disabled={billingBusy} onClick={() => void billingAction("checkout")} data-analytics-id="Retry checkout">Retry payment form<Icon name="arrow" size={17} aria-hidden /></Button> : <CheckoutLoading />}
+                {checkoutLoadFailed ? <Button size="lg" className={styles.continue} disabled={billingBusy || !verified} onClick={() => void billingAction("checkout")} data-analytics-id="Retry checkout">Retry payment form<Icon name="arrow" size={17} aria-hidden /></Button> : <CheckoutLoading />}
               </div>}
               <div className={styles.orderSummary}>
                 <div><span>Instant Websites</span><strong>{offer.price}<small>/month</small></strong></div>
@@ -414,7 +428,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
             <div aria-live="polite">{Object.keys(errors).length > 0 && <FormStatus tone="error">Check the highlighted answers before continuing.</FormStatus>}</div>
             <div className={styles.actions}>
               {step !== "business" && <Button data-analytics-id="Previous signup step" variant="ghost" onClick={back}><Icon name="arrow" className="rotate-180" size={16} aria-hidden />Back</Button>}
-              {!(billing && step === "checkout" && !billingOrder?.checkoutConfirmed) && <Button data-analytics-id={step === "business" ? "Continue to checkout" : step === "brief" ? "Submit website brief" : "Continue signup"} type="submit" size="lg" className={styles.continue} disabled={!loaded || billingBusy || pollTrial}>
+              {!(billing && step === "checkout" && !billingOrder?.checkoutConfirmed) && <Button data-analytics-id={step === "business" ? "Continue to checkout" : step === "brief" ? "Submit website brief" : "Continue signup"} type="submit" size="lg" className={styles.continue} disabled={!loaded || !verified || billingBusy || pollTrial}>
                 {billingBusy ? "Saving…" : step === "business" ? "Continue" : step === "checkout" ? billing ? "Continue to website details" : "Preview trial & continue" : step === "quote" ? billing ? "Request a custom quote" : "Preview my quote request" : "Submit"}
                 <Icon name="arrow" size={17} aria-hidden />
               </Button>}
