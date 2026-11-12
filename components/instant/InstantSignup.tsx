@@ -338,9 +338,6 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
           {billingMessage && <div ref={billingStatusRef} tabIndex={-1} role="status" className={styles.notice}>{billingMessage}</div>}
           {pollTrial && <p role="status" className={styles.hint}>Waiting for Stripe to confirm your trial…</p>}
           {billingOrder?.trialEnd && <p className={styles.hint}>{billingOrder.cancelAtPeriodEnd ? "Cancellation scheduled. Your subscription ends" : "Your free trial ends"} on {new Intl.DateTimeFormat("en-US", { dateStyle: "long", ...(market === "GB" ? { timeZone: "Europe/London" } : {}) }).format(new Date(billingOrder.cancelAt || billingOrder.trialEnd))}.</p>}
-          {billing && loaded && !complete && !verified && (turnstileSiteKey
-            ? <InstantVerification siteKey={turnstileSiteKey} onVerified={seconds => setVerifiedUntil(Date.now() + (seconds - 10) * 1000)} />
-            : <p className={styles.notice} role="status">Signup verification is unavailable. Please try again later.</p>)}
           {!complete && <form ref={formRef} data-analytics-form={analyticsEnabled ? "instant_website" : undefined} data-analytics-step={stage + 1} data-analytics-steps={3} noValidate onSubmit={advance} onBlur={draft.onBlur} onCompositionStart={draft.onCompositionStart} onCompositionEnd={draft.onCompositionEnd} aria-busy={!loaded || billingBusy || pollTrial} className={styles.form}>
             <fieldset disabled={!loaded || billingBusy || pollTrial} className={`${styles.form} ${styles.formFields}`}>
             {step === "business" && <>
@@ -420,10 +417,17 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
             <div aria-live="polite">{Object.keys(errors).length > 0 && <FormStatus tone="error">Check the highlighted answers before continuing.</FormStatus>}</div>
             <div className={styles.actions}>
               {step !== "business" && <Button data-analytics-id="Previous signup step" variant="ghost" onClick={back}><Icon name="arrow" className="rotate-180" size={16} aria-hidden />Back</Button>}
-              {!(billing && step === "checkout" && !billingOrder?.checkoutConfirmed) && <Button data-analytics-id={step === "business" ? "Continue to checkout" : step === "brief" ? "Submit website brief" : "Continue signup"} type="submit" size="lg" className={styles.continue} disabled={!loaded || !verified || billingBusy || pollTrial}>
-                {billingBusy ? "Saving…" : step === "business" ? "Continue" : step === "checkout" ? billing ? "Continue to website details" : "Preview trial & continue" : step === "quote" ? billing ? "Request a custom quote" : "Preview my quote request" : "Submit"}
-                <Icon name="arrow" size={17} aria-hidden />
-              </Button>}
+              <div className={styles.nextAction}>
+                {billing && loaded && !verified && <div className={styles.verification}>
+                  {turnstileSiteKey
+                    ? <InstantVerification siteKey={turnstileSiteKey} onVerified={seconds => setVerifiedUntil(Date.now() + (seconds - 10) * 1000)} />
+                    : <p className={styles.notice} role="status">Signup verification is unavailable. Please try again later.</p>}
+                </div>}
+                {!(billing && step === "checkout" && !billingOrder?.checkoutConfirmed) && <Button data-analytics-id={step === "business" ? "Continue to checkout" : step === "brief" ? "Submit website brief" : "Continue signup"} type="submit" size="lg" className={styles.continue} disabled={!loaded || !verified || billingBusy || pollTrial}>
+                  {billingBusy ? "Saving…" : step === "business" ? "Continue" : step === "checkout" ? billing ? "Continue to website details" : "Preview trial & continue" : step === "quote" ? billing ? "Request a custom quote" : "Preview my quote request" : "Submit"}
+                  <Icon name="arrow" size={17} aria-hidden />
+                </Button>}
+              </div>
             </div>
             </fieldset>
             {billing && saveDrafts && <a className={styles.draftPrivacyLink} href="/instant-privacy/" target="_blank" rel="noopener noreferrer">How your form answers are saved</a>}

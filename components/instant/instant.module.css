@@ -72,6 +72,10 @@
 .notice p + p, .notice strong + p { margin-top: .5rem; }
 .notice ul { margin-top: .4rem; list-style: disc; padding-left: 1rem; }
 .actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .7rem; }
+/* Keep the challenge and its submit button together when Back wraps. */
+.nextAction { display: flex; align-items: center; justify-content: flex-end; gap: .7rem; max-width: 100%; min-width: 0; margin-left: auto; }
+.nextAction:empty { display: none; }
+.verification { min-width: 150px; max-width: 18rem; }
 .continue { margin-left: auto; }
 .guarantee { display: flex; gap: .8rem; font-size: .8rem; line-height: 1.7; }
 .guarantee svg { flex-shrink: 0; margin-top: .2rem; }
@@ -142,6 +146,11 @@
   .examples { padding-top: 3rem; }
   .examplesHeading { grid-template-columns: 1fr; gap: 1.3rem; }
   .examplesHeading > div:last-child { justify-self: start; }
+}
+
+@media (max-width: 380px) {
+  .verification + .continue { padding-inline: .6rem; }
+  .verification + .continue svg { display: none; }
 }
 
 /* One working day: four steps on one low track, under the hero. */

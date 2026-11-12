@@ -50,7 +50,7 @@ export function InstantVerification({ siteKey, onVerified }: { siteKey: string; 
     </div> : <>
       <span className={styles.hint} role="status">Checking your browser…</span>
       <Turnstile key={attempt} siteKey={siteKey}
-        options={{ action: "instant_signup", appearance: "interaction-only", theme: "light", retry: "never", responseField: false }}
+        options={{ action: "instant_signup", appearance: "interaction-only", size: "compact", theme: "light", retry: "never", responseField: false }}
         onWidgetLoad={() => { widgetReady.current = true; }}
         onSuccess={verify}
         onError={() => setError("Your browser couldn’t complete verification.")}
