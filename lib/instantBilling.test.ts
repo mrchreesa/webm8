@@ -8,6 +8,7 @@ export const testAnswers = () => ({ ...emptyAnswers(), name: "Test Owner", email
 test("server validation rejects custom work, missing consent, unknown choices and oversized fields", () => {
   for (const patch of [{ scope: "commerce" }, { checkoutAcknowledged: false }, { contacts: ["unknown"] }, { businessName: "x".repeat(201) }, { links: [42] }, { hasWebsite: "invalid" }]) assert.equal(validateInstantSubmission({ ...testAnswers(), ...patch }, "brief").ok, false);
   assert.equal(validateInstantSubmission(testAnswers(), "brief").ok, true);
+  assert.equal(validateInstantSubmission({ ...testAnswers(), services: "" }, "brief").ok, true);
   assert.equal(validateInstantSubmission({ ...testAnswers(), services: "", contacts: [] }, "checkout").ok, true);
   assert.equal(validateInstantSubmission({ ...testAnswers(), checkoutAcknowledged: false }, "checkout").ok, true);
   assert.equal(validateInstantSubmission({ ...testAnswers(), services: "", contacts: [] }, "brief").ok, false);

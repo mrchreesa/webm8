@@ -15,7 +15,7 @@ export function InstantDay() {
 const steps = [
   { title: "Your details", text: "Your contact and business details." },
   { title: "Free trial", text: "Add a card. Nothing due today." },
-  { title: "Website details", text: "Services, contacts and photos." },
+  { title: "Website details", text: "Contact options and business links." },
   { title: "Your website", text: "Sent on WhatsApp within one business day." },
 ];
 

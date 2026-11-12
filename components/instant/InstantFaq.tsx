@@ -33,7 +33,7 @@ export function InstantFaq() {
 const questions = [
   { question: "How does the free trial work?", answer: `Your ${INSTANT_TRIAL_DAYS}-day free trial starts when you complete checkout. You add a card, but nothing is due today. You’ll see the monthly price and everything it covers before you add your card.` },
   { question: "How quickly will I see my website?", answer: "Within one business day of submitting your website details. We send it to you by email and on WhatsApp." },
-  { question: "What do you need from me?", answer: "Your contact details, business name and type of business to start. Then a few details about your services and how customers should contact you. A logo, photos and links help, but send what you have." },
+  { question: "What do you need from me?", answer: "Your contact details, business name and type of business to start. Then tell us how customers should contact you. A logo, photos and links help, but send what you have." },
   { question: "What if I want changes?", answer: "Reply on WhatsApp with your edits. Revisions are unlimited until you’re 100% satisfied, and small content changes each month are included after that." },
   { question: "How will customers contact me?", answer: "Through inquiry forms and click-to-call buttons. You can also take booking requests on the site, or link to a booking service you already use." },
   { question: "Will it work on phones and show up on Google?", answer: "Yes. Every layout is designed for phones, and we set up your page titles and business information for Google and for AI search such as ChatGPT and Gemini. No one can promise a ranking position." },

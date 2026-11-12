@@ -117,7 +117,6 @@ export function validateStep(step: Step, a: Answers): Errors {
     if (step === "quote" && a.phone && !isPhone(a.phone)) errors.phone = "Enter a valid phone number, or leave it blank.";
   }
   if (step === "brief") {
-    required("services", "Add at least one service, product or a short description.");
     if (!a.contacts.length) errors.contacts = "Choose at least one way customers can contact you.";
     if (a.contacts.includes("phone") && !isPhone(a.phone)) errors.phone = "Enter a business phone number, including its area code.";
     if (a.contacts.includes("whatsapp") && !isPhone(a.samePhone && a.contacts.includes("phone") ? a.phone : a.whatsapp)) errors.whatsapp = "Enter the number customers can use on WhatsApp.";

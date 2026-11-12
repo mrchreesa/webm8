@@ -26,17 +26,12 @@ const InstantPayment = dynamic(() => import("./InstantPayment").then(module => m
 const stageCopy: Record<Step, { title: string; intro: string }> = {
   business: { title: "Your details", intro: "" },
   checkout: { title: "Secure free trial", intro: "" },
-  brief: { title: "Tell us about your business.", intro: "Add your services, links and preferences. A few lines are enough to get started." },
+  brief: { title: "Tell us about your business.", intro: "Choose how customers can reach you and add any links you’d like us to use." },
   complete: { title: "You're all set!", intro: "Your website will be ready within one business day." },
   quote: { title: "A little more than a landing page.", intro: "We can put together a custom quote for the features you need." },
   "quote-complete": { title: "Your quote brief is ready.", intro: "Your requirements are together in one place." },
 };
 const stages = ["Your details", "Trial", "Website details"];
-const serviceLabels: Record<string, { label: string; placeholder: string }> = {
-  trades: { label: "What jobs do you most want inquiries for?", placeholder: "For example: boiler repairs, annual servicing and new installations." },
-  food: { label: "What food or drinks should we highlight?", placeholder: "For example: wood-fired pizza, weekend brunch and specialty coffee." },
-  beauty: { label: "Which treatments should we feature?", placeholder: "For example: facials, massage and brow treatments." },
-};
 
 export function InstantSignup({ billing = false, publishableKey = "", testMode = false, saveDrafts = false, turnstileSiteKey = "" }: { turnstileSiteKey?: string; billing?: boolean; publishableKey?: string; testMode?: boolean; saveDrafts?: boolean }) {
   const { market, offer, setMarket } = useInstantMarket();
@@ -305,10 +300,9 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
   function field(name: keyof Answers, label: string, options: { required?: boolean; type?: "text" | "email" | "tel" | "url"; hint?: string; placeholder?: string; autoComplete?: string } = {}) {
     return <TextField data-analytics-field={name.replace(/[A-Z]/g, c => `_${c.toLowerCase()}`)} key={name} name={name} label={label} value={String(answers[name])} onChange={(event) => update(name, event.target.value as never)} error={errors[name]} labelVariant="contact" maxLength={options.type === "url" ? 1000 : 200} {...options} />;
   }
-  function textarea(name: "services" | "difference" | "notes" | "quoteDetails", label: string, options: { required?: boolean; placeholder?: string; hint?: string } = {}) {
+  function textarea(name: "difference" | "notes" | "quoteDetails", label: string, options: { required?: boolean; placeholder?: string; hint?: string } = {}) {
     return <TextAreaField data-analytics-field={name.replace(/[A-Z]/g, c => `_${c.toLowerCase()}`)} key={name} name={name} label={label} value={answers[name]} onChange={(event) => update(name, event.target.value)} error={errors[name]} labelVariant="contact" maxLength={2000} rows={4} {...options} />;
   }
-  const serviceCopy = serviceLabels[answers.industry] || { label: "What are your main services?", placeholder: "List up to three services, or tell us briefly what you do." };
   const needsEmail = answers.contacts.includes("email") || answers.contacts.includes("request") || (answers.contacts.includes("booking") && answers.bookingLater);
 
 
@@ -362,7 +356,6 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
               {!billing && <p className={styles.notice}>Checkout preview only. Don’t enter card details. Live checkout and delivery notifications aren’t connected yet.</p>}
             </>}
             {step === "brief" && <>
-              {textarea("services", serviceCopy.label, { required: true, placeholder: serviceCopy.placeholder })}
               <ChoiceGroup analyticsField="customer_contact_methods" name="contacts" label="How should customers contact you?" hint="Choose the ways customers should reach you." compact multiple options={contactMethods} values={answers.contacts} onChange={(v) => update("contacts", v as ContactMethod[])} error={errors.contacts} />
               {answers.contacts.includes("phone") && field("phone", "Public business phone number", { required: true, type: "tel", autoComplete: "tel" })}
               {answers.contacts.includes("whatsapp") && <>
@@ -450,7 +443,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
               <div><dt>Account contact</dt><dd>{answers.name}<br />{answers.email}<br />{answers.deliveryPhone}</dd></div>
               {answers.features.length > 0 && <div><dt>Website requirements</dt><dd>{features.filter((f) => answers.features.includes(f.value)).map((f) => f.label).join(" · ")}</dd></div>}
               {quote ? <div><dt>Extra details</dt><dd>{answers.quoteDetails || "Online sales, ordering or payments"}</dd></div> : <>
-                <div><dt>Main services</dt><dd>{answers.services}</dd></div>
+                {answers.services && <div><dt>Main services</dt><dd>{answers.services}</dd></div>}
                 <div><dt>Customer contact</dt><dd>{contactMethods.filter((c) => answers.contacts.includes(c.value)).map((c) => c.label).join(" · ")}{needsEmail && <><br />{answers.enquiryEmail}</>}{answers.contacts.includes("phone") && <><br />{answers.phone}</>}{answers.contacts.includes("booking") && answers.bookingLater && <><br />Booking-request form until your link is ready</>}</dd></div>
                 <div><dt>Design direction</dt><dd>{answers.colours || "WebM8 to choose a starting palette"}</dd></div>
                 <div><dt>Files</dt><dd>{files.length ? `${files.length} selected locally; not uploaded` : "No files selected — these can be added later"}</dd></div>

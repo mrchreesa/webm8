@@ -35,7 +35,7 @@ test("payment asks only for acknowledgement; website requirements are collected 
   const answers = brief({ features: [], hasWebsite: "", services: "", contacts: [], checkoutAcknowledged: false });
   assert.deepEqual(validateStep("checkout", answers), { checkoutAcknowledged: "Confirm you understand the free trial and monthly price after it ends." });
   assert.deepEqual(validateStep("checkout", { ...answers, checkoutAcknowledged: true }), {});
-  assert.deepEqual(Object.keys(validateStep("brief", answers)), ["hasWebsite", "services", "contacts"]);
+  assert.deepEqual(Object.keys(validateStep("brief", answers)), ["hasWebsite", "contacts"]);
   assert.deepEqual(validateStep("brief", brief({ features: [] })), {});
 });
 
@@ -92,7 +92,8 @@ test("restoration cannot skip essential fields or checkout acknowledgement", () 
   assert.equal(restore(brief(), true)?.step, "complete");
   assert.equal(restore(brief({ features: [] }), true)?.step, "complete");
   assert.equal(restore(brief(), false)?.step, "checkout");
-  assert.equal(restore(brief({ services: "" }), true)?.step, "brief");
+  assert.equal(restore(brief({ services: "" }), true)?.step, "complete");
+  assert.equal(restore(brief({ contacts: [] }), true)?.step, "brief");
   assert.equal(restore(brief({ businessName: "" }), true)?.step, "business");
   assert.equal(restore(brief({ name: "", email: "invalid" }), true)?.step, "business");
   assert.equal(restore(brief({ deliveryPhone: "" }), true)?.step, "business");
