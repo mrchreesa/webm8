@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { primaryNav, brand } from "@/lib/site";
 import { LinkButton } from "@/components/ui/Button";
-import { BrandLogo } from "@/components/ui/BrandLogo";
+import { MascotEyes } from "@/components/ui/MascotEyes";
 import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
 import { DemoCtaButton } from "@/components/demo/DemoCtaButton";
@@ -114,9 +114,10 @@ export function Header({ instantSite = false }: { instantSite?: boolean }) {
               overDarkHero ? "bg-ink" : "bg-transparent",
             )}
           >
-            <BrandLogo
-              size={60}
-              className="h-[3.25rem] w-[3.25rem] md:h-[3.75rem] md:w-[3.75rem]"
+            <MascotEyes
+              sizes="60px"
+              priority
+              className="h-[3.25rem] w-[3.25rem] shrink-0 md:h-[3.75rem] md:w-[3.75rem]"
             />
           </span>
           <span
