@@ -54,7 +54,13 @@ export function InstantWorth() {
   return (
     <div className={styles.worth} data-analytics-section="Instant value">
       <p className={styles.worthEyebrow}><Icon name="spark" size={14} aria-hidden />Why it’s worth it</p>
-      <p className={styles.worthPrice}><b>{offer.price}</b><span>a month, after {INSTANT_TRIAL_DAYS} days free<small>{offer.zero} due today · No setup fee · Cancel anytime</small></span></p>
+      <p className={styles.worthPrice}><b>{offer.zero}</b><span>to pay today<small>You have {INSTANT_TRIAL_DAYS} days to review everything before your subscription starts.</small></span></p>
+      <ol className={styles.worthTimeline}>
+        <li><strong>Today</strong><span>Pay {offer.zero}. Add a card to start your free trial.</span></li>
+        <li><strong>Days 1 to {INSTANT_TRIAL_DAYS}</strong><span>See your website, ask for changes and decide if it’s right for you.</span></li>
+        <li><strong>After day {INSTANT_TRIAL_DAYS}</strong><span>Your subscription starts at {offer.price} a month. Cancel before then and you pay nothing.</span></li>
+      </ol>
+      <p className={styles.worthSaving}><Icon name="revenue" size={18} aria-hidden /><span><strong>You save a lot compared with other agencies.</strong> They charge a large fee upfront to build a website, then high monthly payments. We charge nothing upfront, and one low monthly price.</span></p>
       <ul>
         {instantEdges.map((edge) => (
           <li key={edge.title}><Icon name={edge.icon} size={18} aria-hidden /><div><strong>{edge.title}</strong><p>{edge.text}</p></div></li>

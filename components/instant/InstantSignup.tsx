@@ -326,7 +326,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
           {testMode && <p className={styles.notice}>Test checkout — no real payments are taken.</p>}
           {complete && !quote && <div className={styles.successMark}><span><Icon name="check" size={26} aria-hidden /></span>{billing ? "Website brief received" : "Success screen preview"}</div>}
           <h2 className={step === "business" ? "sr-only" : styles.title} ref={titleRef} tabIndex={-1}>{stageCopy[step].title}</h2>
-          {step !== "business" && <p className={styles.intro}>{step === "checkout" ? `Start your ${INSTANT_TRIAL_DAYS}-day free trial. Here’s what your plan costs, and why it’s worth it.` : stageCopy[step].intro}</p>}
+          {step !== "business" && <p className={styles.intro}>{step === "checkout" ? `You pay ${offer.zero} today. Your subscription only starts after ${INSTANT_TRIAL_DAYS} days, once you’ve had time to review everything.` : stageCopy[step].intro}</p>}
           {billingMessage && <div ref={billingStatusRef} tabIndex={-1} role="status" className={styles.notice}>{billingMessage}</div>}
           {pollTrial && <p role="status" className={styles.hint}>Waiting for Stripe to confirm your trial…</p>}
           {billingOrder?.trialEnd && <p className={styles.hint}>{billingOrder.cancelAtPeriodEnd ? "Cancellation scheduled. Your subscription ends" : "Your free trial ends"} on {new Intl.DateTimeFormat("en-US", { dateStyle: "long", ...(market === "GB" ? { timeZone: "Europe/London" } : {}) }).format(new Date(billingOrder.cancelAt || billingOrder.trialEnd))}.</p>}
@@ -351,10 +351,10 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
               <div className={styles.orderSummary}>
                 <div><span>Instant Websites</span><strong>{offer.price}<small>/month</small></strong></div>
                 <p>Hosting &amp; maintenance</p>
-                <dl><div><dt>Due today</dt><dd>{offer.zero}</dd></div><div><dt>Free trial</dt><dd>{INSTANT_TRIAL_DAYS} days</dd></div><div><dt>Setup fee</dt><dd>{offer.zero}</dd></div><div><dt>{billing ? "After your trial" : "Example first charge"}</dt><dd>{billing ? `${offer.price}/month` : `${offer.price} on ${firstCharge}`}</dd></div></dl>
+                <dl><div><dt>Due today</dt><dd>{offer.zero}</dd></div><div><dt>Free trial</dt><dd>{INSTANT_TRIAL_DAYS} days</dd></div><div><dt>Setup fee</dt><dd>{offer.zero}</dd></div><div><dt>{billing ? `After your ${INSTANT_TRIAL_DAYS}-day trial` : "Example first charge"}</dt><dd>{billing ? `${offer.price}/month` : `${offer.price} on ${firstCharge}`}</dd></div></dl>
               </div>
               <div className={styles.contactSummary}><div><strong>{answers.businessName}</strong><p>{answers.name} · {answers.email}</p><p>WhatsApp: {answers.deliveryPhone}</p></div><button type="button" className={styles.textButton} onClick={() => go("business")} data-analytics-id="Edit account details">Edit details</button></div>
-              <div className={styles.guarantee}><Icon name="shield" size={22} aria-hidden /><p><strong>{INSTANT_TRIAL_DAYS} days free, then a 30-day money-back guarantee.</strong> Your trial starts when you complete checkout. If you’re not happy in your first 30 paid days, we refund that month. Cancel anytime with no cancellation fee.</p></div>
+              <div className={styles.guarantee}><Icon name="shield" size={22} aria-hidden /><p><strong>{offer.zero} today, {INSTANT_TRIAL_DAYS} days to decide, then a 30-day money-back guarantee.</strong> Your trial starts when you complete checkout and nothing is charged during it. If you’re not happy in your first 30 paid days, we refund that month. Cancel anytime with no cancellation fee.</p></div>
               <InstantPriceFaq />
               {!billing && <p className={styles.notice}>Checkout preview only. Don’t enter card details. Live checkout and delivery notifications aren’t connected yet.</p>}
             </>}
