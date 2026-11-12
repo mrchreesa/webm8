@@ -31,6 +31,8 @@ export type StoryScene = {
   resize(layout: StoryLayout, dpr: number): void;
   /** Start building the ring and loading its screenshots. Safe to call more than once. */
   loadRing(): void;
+  /** Whether the ring of demos is built and ready to draw. */
+  ringBuilt(): boolean;
   render(frame: StoryFrame, pose: PhonePose, tilt: { x: number; y: number }, time: number): void;
   dispose(): void;
 };
@@ -39,6 +41,86 @@ const SCREEN_ASPECT = PHONE.screenHeight / PHONE.screenWidth;
 const HERO_FOV = 24;
 const HERO_DISTANCE = 8;
 const D2R = Math.PI / 180;
+
+/** A soft round glow, for light that spills round the phone. */
+function glowTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = 256;
+  const g = canvas.getContext("2d")!;
+  const fill = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+  fill.addColorStop(0, "rgb(255 255 255 / 0.9)");
+  fill.addColorStop(0.45, "rgb(255 255 255 / 0.28)");
+  fill.addColorStop(1, "rgb(255 255 255 / 0)");
+  g.fillStyle = fill;
+  g.fillRect(0, 0, 256, 256);
+  return new THREE.CanvasTexture(canvas);
+}
+
+/** One soft band of light, to sweep across the phone's glass. */
+function sweepTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 8;
+  const g = canvas.getContext("2d")!;
+  const fill = g.createLinearGradient(0, 0, 256, 0);
+  fill.addColorStop(0.36, "rgb(255 255 255 / 0)");
+  fill.addColorStop(0.5, "rgb(255 255 255 / 1)");
+  fill.addColorStop(0.64, "rgb(255 255 255 / 0)");
+  g.fillStyle = fill;
+  g.fillRect(0, 0, 256, 8);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.center.set(0.5, 0.5);
+  texture.rotation = 0.55;
+  return texture;
+}
+
+const DUST_DEPTH = 46;
+const BLUE = new THREE.Color(0x2b6cfc);
+const LIME = new THREE.Color(0xd4ff35);
+
+/** Dust in real depth: it drifts towards the camera as the story moves, and every seventh mote is lime. */
+function makeDust(count: number) {
+  const positions = new Float32Array(count * 3);
+  const seeds = new Float32Array(count);
+  for (let i = 0; i < count; i++) {
+    positions[i * 3] = (Math.random() * 2 - 1) * 15;
+    positions[i * 3 + 1] = (Math.random() * 2 - 1) * 9;
+    positions[i * 3 + 2] = Math.random() * DUST_DEPTH;
+    seeds[i] = Math.random();
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 1));
+  const material = new THREE.ShaderMaterial({
+    uniforms: { uTravel: { value: 0 }, uSize: { value: 1 }, uRush: { value: 0 } },
+    vertexShader: `
+      attribute float aSeed;
+      uniform float uTravel, uSize, uRush;
+      varying float vSeed, vFade;
+      void main() {
+        vec3 p = position;
+        p.z = mod(p.z + uTravel * (0.6 + aSeed * 0.8), ${DUST_DEPTH.toFixed(1)}) - 40.0;
+        vec4 mv = modelViewMatrix * vec4(p, 1.0);
+        gl_Position = projectionMatrix * mv;
+        gl_PointSize = min(uSize * (0.5 + aSeed) * (1.0 + uRush * 1.5) * (70.0 / -mv.z), 16.0 * uSize);
+        vSeed = aSeed;
+        vFade = smoothstep(-40.0, -28.0, p.z) * (1.0 - smoothstep(1.0, 6.0, p.z));
+      }`,
+    fragmentShader: `
+      varying float vSeed, vFade;
+      void main() {
+        float glow = smoothstep(0.5, 0.0, length(gl_PointCoord - 0.5));
+        vec3 colour = mix(vec3(0.72, 0.84, 1.0), vec3(0.83, 1.0, 0.21), step(0.857, vSeed));
+        gl_FragColor = vec4(colour, glow * vFade * 0.65);
+      }`,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+  const dust = new THREE.Points(geometry, material);
+  dust.frustumCulled = false;
+  return dust;
+}
 
 const idle = () =>
   new Promise<void>((resolve) => {
@@ -50,11 +132,14 @@ const idle = () =>
 export function createStoryScene(canvas: HTMLCanvasElement, initial: StoryLayout, onUpdate: () => void): StoryScene {
   let layout = initial;
   let disposed = false;
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   const anisotropy = renderer.capabilities.getMaxAnisotropy();
+  // Screenshots are decoded off the main thread where the browser can, so a
+  // scroll never waits on one. Older browsers decode them the usual way.
+  const bitmaps = typeof createImageBitmap === "function" ? new THREE.ImageBitmapLoader().setOptions({ imageOrientation: "flipY" }) : null;
   const loader = new THREE.TextureLoader();
 
   const scene = new THREE.Scene();
@@ -74,11 +159,23 @@ export function createStoryScene(canvas: HTMLCanvasElement, initial: StoryLayout
   const shadow = shadowTexture();
 
   function screenshot(url: string, aspect: number, onLoad?: () => void) {
-    const texture = loader.load(url, (loaded) => {
+    const arrived = (loaded: THREE.Texture) => {
+      if (disposed) return;
       coverFromTop(loaded, aspect);
       onLoad?.();
       onUpdate();
-    });
+    };
+    let texture: THREE.Texture;
+    if (bitmaps) {
+      const filled = (texture = new THREE.Texture());
+      bitmaps.load(url, (bitmap) => {
+        filled.image = bitmap;
+        filled.needsUpdate = true;
+        arrived(filled);
+      });
+    } else {
+      texture = loader.load(url, arrived);
+    }
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.anisotropy = anisotropy;
     return texture;
@@ -95,6 +192,27 @@ export function createStoryScene(canvas: HTMLCanvasElement, initial: StoryLayout
   lock.position.z = hero.userData.front + 0.0018;
   hero.add(lock);
   scene.add(hero);
+
+  // Light round the phone: the screen's glow spilling behind it, one band of
+  // light that crosses the glass as the story starts, and rings that spread
+  // from it when it rings.
+  const additive = { transparent: true, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending } as const;
+  const spillMaterial = new THREE.MeshBasicMaterial({ ...additive, map: glowTexture(), color: BLUE.clone(), opacity: 0 });
+  const spill = new THREE.Mesh(new THREE.PlaneGeometry(PHONE.width * 3.2, PHONE.height * 1.9), spillMaterial);
+  spill.position.z = -0.08;
+  const sweepMaterial = new THREE.MeshBasicMaterial({ ...additive, map: sweepTexture(), opacity: 0 });
+  const sweep = new THREE.Mesh(roundedPlane(PHONE.screenWidth, PHONE.screenHeight, PHONE.screenRadius), sweepMaterial);
+  sweep.position.z = hero.userData.front + 0.003;
+  const rings = [0, 1, 2].map(() => {
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.984, 1, 128), new THREE.MeshBasicMaterial({ ...additive, color: LIME, opacity: 0, side: THREE.DoubleSide }));
+    ring.position.z = -0.04;
+    ring.visible = false;
+    return ring;
+  });
+  hero.add(spill, sweep, ...rings);
+
+  const dust = makeDust(initial.wide ? 900 : 260);
+  scene.add(dust);
   const heroCamera = new THREE.PerspectiveCamera(HERO_FOV, 1, 0.1, 100);
   heroCamera.position.set(0, 0, HERO_DISTANCE);
 
@@ -171,8 +289,10 @@ export function createStoryScene(canvas: HTMLCanvasElement, initial: StoryLayout
 
   function resize(next: StoryLayout, dpr: number) {
     layout = next;
-    renderer.setPixelRatio(Math.min(2, dpr));
+    // Phones draw at up to 1.5x: the difference is hard to see and it nearly halves the pixels.
+    renderer.setPixelRatio(Math.min(layout.wide ? 2 : 1.5, dpr));
     renderer.setSize(layout.W, layout.H, false);
+    dust.material.uniforms.uSize.value = renderer.getPixelRatio();
     heroCamera.aspect = ringCamera.aspect = layout.W / layout.H;
     ringCamera.fov = layout.wide ? 30 : 36;
     heroCamera.updateProjectionMatrix();
@@ -202,6 +322,26 @@ export function createStoryScene(canvas: HTMLCanvasElement, initial: StoryLayout
     hero.rotation.set(-(pose.rx - tilt.y * 4) * D2R, (pose.ry + tilt.x * 6) * D2R, -pose.rz * D2R + shake);
     if (heroTexture.userData.top !== undefined) heroTexture.offset.y = heroTexture.userData.top - pose.scroll;
     lockMaterial.opacity = pose.lock;
+
+    // The band of light crosses the glass once as the story begins, and follows the pointer a little before that.
+    sweepMaterial.map!.offset.x = lerp(0.85, -0.85, frame.wall) - tilt.x * 0.12;
+    sweepMaterial.opacity = 0.1 + Math.sin(Math.PI * frame.wall) * 0.3;
+    // The screen's light spills blue behind the phone, and turns lime when it rings.
+    const pulse = frame.ringing ? 0.5 + Math.sin(time / 150) * 0.5 : 0;
+    spillMaterial.color.copy(BLUE).lerp(LIME, frame.waves);
+    spillMaterial.opacity = 0.38 + frame.waves * (0.25 + pulse * 0.2);
+    rings.forEach((ring, i) => {
+      const t = (time / 1500 + i / rings.length) % 1;
+      ring.visible = frame.waves > 0.01;
+      ring.scale.setScalar(PHONE.height * (0.56 + t * 1.5));
+      ring.material.opacity = frame.waves * (1 - t) * 0.7;
+    });
+    // The camera pushes in on the ringing phone.
+    hero.scale.multiplyScalar(1 + frame.waves * 0.06);
+
+    // Dust drifts past as the story moves, and rushes by during the dive.
+    dust.material.uniforms.uTravel.value = frame.wall * 6 + frame.dive * 40 + frame.ringSpin * 2.2 + frame.ringLeave * 10 + frame.finale * 5;
+    dust.material.uniforms.uRush.value = frame.dive * (1 - frame.ringAppear);
 
     // The ring, resting on each demo in turn.
     ring.visible = ringOn;
@@ -237,10 +377,12 @@ export function createStoryScene(canvas: HTMLCanvasElement, initial: StoryLayout
       }
     });
     for (const geometry of geometries) geometry.dispose();
+    dust.geometry.dispose();
+    dust.material.dispose();
     disposeGeometries();
     environment?.dispose();
     renderer.dispose();
   }
 
-  return { ready, resize, loadRing, render, dispose };
+  return { ready, resize, loadRing, ringBuilt: () => ringReady, render, dispose };
 }

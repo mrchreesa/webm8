@@ -346,6 +346,36 @@
   animation-delay: calc(var(--i, 0) * 90ms + 150ms);
 }
 
+/* With a mouse and room to show it, the page is assembled in depth: each part
+   swings up from in front of the screen and lies flat, while the phone turns
+   away to show the build and back again when it is done. Phones keep the
+   simpler rise. Templates that animate a part themselves still win, below. */
+@media (min-width: 1024px) and (pointer: fine) {
+  .site > *,
+  .rise {
+    transform-origin: 50% 100%;
+    animation-name: assemble;
+    animation-duration: 0.9s;
+    animation-delay: calc(var(--i, 0) * 110ms + 150ms);
+  }
+
+  .sketch[data-state="building"] .rig {
+    transform: rotateX(9deg) rotateY(-24deg) scale(0.96);
+  }
+}
+
+@keyframes assemble {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: perspective(90cqi) translate3d(0, 14cqi, 42cqi) rotateX(-68deg) rotateY(calc((var(--i, 0) - 2) * 7deg));
+  }
+  55% {
+    opacity: 1;
+    filter: none;
+  }
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;

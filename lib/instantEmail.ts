@@ -37,10 +37,11 @@ export function instantNotificationEmail(d: InstantEmailDetails): EmailMessage {
   const a = d.answers;
   const offer = instantOffer(d.billing.market);
   const brief = instantCrmSubmission(a, d.billing).brief;
+  const serviceArea: [string, string][] = a.area ? [["Town / service area", a.area]] : [];
   const groups: Array<[string, Array<[string, string]>]> = [
     ["Build brief", [
       ["Business", a.businessName], ["Business type", industries.find(i => i.value === a.industry)?.label || a.industry],
-      ["Town / service area", a.area], ["Website to build", "One-page business website; no ecommerce or website payment system"],
+      ...serviceArea, ["Website to build", "One-page business website; no ecommerce or website payment system"],
       ["Services / treatments / food to feature", a.services],
       ["Customer contact options", a.contacts.map(c => contactMethods.find(m => m.value === c)?.label || c).join(", ")],
       ["Existing website", a.hasWebsite === "yes" ? a.website || "Yes — link not provided" : "No"],

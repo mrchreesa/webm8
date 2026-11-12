@@ -8,7 +8,10 @@ import { ChoiceGroup } from "@/components/forms/ChoiceGroup";
 import { FormStatus, TextAreaField, TextField } from "@/components/forms/FormField";
 import { InstantPlan, InstantSummary } from "./InstantSummary";
 import { CheckoutLoading } from "./CheckoutLoading";
+import { InstantIncluded, InstantWorth } from "./InstantIncluded";
+import { InstantPriceFaq } from "./InstantFaq";
 import { useInstantAnalytics } from "./useInstantAnalytics";
+import { useInstantDraft } from "./useInstantDraft";
 import { canSubmitBrief, type BillingStatus } from "@/lib/instantBilling";
 import {
   DRAFT_KEY, INSTANT_TRIAL_DAYS, contactMethods, emptyAnswers, features, industries, scopes,
@@ -27,14 +30,14 @@ const stageCopy: Record<Step, { title: string; intro: string }> = {
   quote: { title: "A little more than a landing page.", intro: "We can put together a custom quote for the features you need." },
   "quote-complete": { title: "Your quote brief is ready.", intro: "Your requirements are together in one place." },
 };
-const stages = ["Your details", "Payment", "Website details"];
+const stages = ["Your details", "Trial", "Website details"];
 const serviceLabels: Record<string, { label: string; placeholder: string }> = {
   trades: { label: "What jobs do you most want inquiries for?", placeholder: "For example: boiler repairs, annual servicing and new installations." },
   food: { label: "What food or drinks should we highlight?", placeholder: "For example: wood-fired pizza, weekend brunch and specialty coffee." },
   beauty: { label: "Which treatments should we feature?", placeholder: "For example: facials, massage and brow treatments." },
 };
 
-export function InstantSignup({ billing = false, publishableKey = "", testMode = false }: { billing?: boolean; publishableKey?: string; testMode?: boolean }) {
+export function InstantSignup({ billing = false, publishableKey = "", testMode = false, saveDrafts = false }: { billing?: boolean; publishableKey?: string; testMode?: boolean; saveDrafts?: boolean }) {
   const { market, offer, setMarket } = useInstantMarket();
   const [answers, setAnswers] = useState<Answers>(emptyAnswers);
   const [step, setStep] = useState<Step>("business");
@@ -64,6 +67,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
   const stage = step === "business" ? 0 : step === "checkout" ? 1 : 2;
   const analyticsEnabled = billing && !testMode && !quote;
   const analytics = useInstantAnalytics(analyticsEnabled, step, loaded);
+  const draft = useInstantDraft(billing && saveDrafts, loaded, answers, step);
   useEffect(() => {
     if (!loaded || !billingOrder || !canSubmitBrief(billingOrder) || trialObserved.current) return;
     trialObserved.current = true;
@@ -162,6 +166,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
 
   function update<K extends keyof Answers>(key: K, value: Answers[K]) {
     if (billingBusy) return;
+    draft.markChanged();
     const next = { ...answers, [key]: value };
     setAnswers(next);
     if (Object.keys(errors).length) setErrors(validateStep(step, next));
@@ -303,8 +308,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
     <section id="instant-signup" className={styles.page} data-analytics-section={billing ? "Instant website signup" : "Instant website preview"} aria-labelledby="instant-title">
       <div className={styles.pageHeading}>
         <h1 id="instant-title">The best website for your business. Guaranteed.</h1>
-        <div className={styles.ticket}>
-          <p><b>{offer.price}</b>a month</p>
+        <div className={`${styles.ticket} ${styles.ticketPlain}`}>
           <ul>{[`${INSTANT_TRIAL_DAYS} days free`, "No setup fee", "Cancel anytime"].map((item) => <li key={item}><Icon name="check" size={14} aria-hidden />{item}</li>)}</ul>
         </div>
       </div>
@@ -322,11 +326,11 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
           {testMode && <p className={styles.notice}>Test checkout — no real payments are taken.</p>}
           {complete && !quote && <div className={styles.successMark}><span><Icon name="check" size={26} aria-hidden /></span>{billing ? "Website brief received" : "Success screen preview"}</div>}
           <h2 className={step === "business" ? "sr-only" : styles.title} ref={titleRef} tabIndex={-1}>{stageCopy[step].title}</h2>
-          {step !== "business" && <p className={styles.intro}>{step === "checkout" ? `Start your ${INSTANT_TRIAL_DAYS}-day free trial. ${offer.price}/month after your trial ends.` : stageCopy[step].intro}</p>}
+          {step !== "business" && <p className={styles.intro}>{step === "checkout" ? `Start your ${INSTANT_TRIAL_DAYS}-day free trial. Here’s what your plan costs, and why it’s worth it.` : stageCopy[step].intro}</p>}
           {billingMessage && <div ref={billingStatusRef} tabIndex={-1} role="status" className={styles.notice}>{billingMessage}</div>}
           {pollTrial && <p role="status" className={styles.hint}>Waiting for Stripe to confirm your trial…</p>}
           {billingOrder?.trialEnd && <p className={styles.hint}>{billingOrder.cancelAtPeriodEnd ? "Cancellation scheduled. Your subscription ends" : "Your free trial ends"} on {new Intl.DateTimeFormat("en-US", { dateStyle: "long", ...(market === "GB" ? { timeZone: "Europe/London" } : {}) }).format(new Date(billingOrder.cancelAt || billingOrder.trialEnd))}.</p>}
-          {!complete && <form ref={formRef} data-analytics-form={analyticsEnabled ? "instant_website" : undefined} data-analytics-step={stage + 1} data-analytics-steps={3} noValidate onSubmit={advance} aria-busy={!loaded || billingBusy || pollTrial} className={styles.form}>
+          {!complete && <form ref={formRef} data-analytics-form={analyticsEnabled ? "instant_website" : undefined} data-analytics-step={stage + 1} data-analytics-steps={3} noValidate onSubmit={advance} onBlur={draft.onBlur} onCompositionStart={draft.onCompositionStart} onCompositionEnd={draft.onCompositionEnd} aria-busy={!loaded || billingBusy || pollTrial} className={styles.form}>
             <fieldset disabled={!loaded || billingBusy || pollTrial} className={`${styles.form} ${styles.formFields}`}>
             {step === "business" && <>
               <div className={styles.fieldGrid}>
@@ -334,14 +338,12 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
                 {field("email", "Your email address", { required: true, type: "email", autoComplete: "email" })}
               </div>
               {field("deliveryPhone", "Phone number (WhatsApp)", { required: true, type: "tel", autoComplete: "tel", placeholder: market === "US" ? "For example: +1 202 555 0123" : "For example: +44 7700 900123", hint: "We’ll send your website and discuss edits here on WhatsApp. It won’t be added to your website automatically." })}
-              <div className={styles.fieldGrid}>
-                {field("businessName", "Business name", { required: true, autoComplete: "organization", placeholder: "Your business name" })}
-                {field("area", market === "US" ? "City or service area" : "Town or service area", { required: true, placeholder: market === "US" ? "City, ZIP code or area" : "Town, postal code or area" })}
-              </div>
+              {field("businessName", "Business name", { required: true, autoComplete: "organization", placeholder: "Your business name" })}
               <ChoiceGroup analyticsField="industry" name="industry" label="Type of business" presentation="chips" options={industries} values={answers.industry ? [answers.industry] : []} onChange={(v) => update("industry", v[0] as Industry)} error={errors.industry} />
               {quote && <p className={styles.notice} role="status">Those features need a custom quote. Continue to share your requirements. There’s no payment on this route.</p>}
             </>}
             {step === "checkout" && <>
+              <InstantWorth />
               {billing && clientSecret && <InstantPayment clientSecret={clientSecret} publishableKey={publishableKey} onBeforeConfirm={recordConsent} analytics={analytics} onConfirmed={() => { setClientSecret(""); setPollTrial(true); }} onBusy={setBillingBusy} />}
               {billing && !clientSecret && !billingOrder?.checkoutConfirmed && !pollTrial && <div className={styles.group}>
                 {checkoutLoadFailed ? <Button size="lg" className={styles.continue} disabled={billingBusy} onClick={() => void billingAction("checkout")} data-analytics-id="Retry checkout">Retry payment form<Icon name="arrow" size={17} aria-hidden /></Button> : <CheckoutLoading />}
@@ -352,7 +354,8 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
                 <dl><div><dt>Due today</dt><dd>{offer.zero}</dd></div><div><dt>Free trial</dt><dd>{INSTANT_TRIAL_DAYS} days</dd></div><div><dt>Setup fee</dt><dd>{offer.zero}</dd></div><div><dt>{billing ? "After your trial" : "Example first charge"}</dt><dd>{billing ? `${offer.price}/month` : `${offer.price} on ${firstCharge}`}</dd></div></dl>
               </div>
               <div className={styles.contactSummary}><div><strong>{answers.businessName}</strong><p>{answers.name} · {answers.email}</p><p>WhatsApp: {answers.deliveryPhone}</p></div><button type="button" className={styles.textButton} onClick={() => go("business")} data-analytics-id="Edit account details">Edit details</button></div>
-              <div className={styles.guarantee}><Icon name="shield" size={22} aria-hidden /><p><strong>{INSTANT_TRIAL_DAYS} days free.</strong> Your trial starts when you complete checkout. Cancel anytime with no cancellation fee.</p></div>
+              <div className={styles.guarantee}><Icon name="shield" size={22} aria-hidden /><p><strong>{INSTANT_TRIAL_DAYS} days free, then a 30-day money-back guarantee.</strong> Your trial starts when you complete checkout. If you’re not happy in your first 30 paid days, we refund that month. Cancel anytime with no cancellation fee.</p></div>
+              <InstantPriceFaq />
               {!billing && <p className={styles.notice}>Checkout preview only. Don’t enter card details. Live checkout and delivery notifications aren’t connected yet.</p>}
             </>}
             {step === "brief" && <>
@@ -417,6 +420,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
               </Button>}
             </div>
             </fieldset>
+            {billing && saveDrafts && <a className={styles.draftPrivacyLink} href="/instant-privacy/" target="_blank" rel="noopener noreferrer">How your form answers are saved</a>}
           </form>}
           {loaded && complete && <div className={styles.completion}>
             {!quote && <div className={styles.deliveryNotice}>
@@ -433,7 +437,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
             <summary data-analytics-id="Open optional details">Review your details</summary>
             <dl className={styles.review}>
               <div><dt>Business</dt><dd>{answers.businessName}</dd></div>
-              {!quote && <div><dt>Service area</dt><dd>{answers.area}</dd></div>}
+              {!quote && answers.area && <div><dt>Service area</dt><dd>{answers.area}</dd></div>}
               <div><dt>Account contact</dt><dd>{answers.name}<br />{answers.email}<br />{answers.deliveryPhone}</dd></div>
               {answers.features.length > 0 && <div><dt>Website requirements</dt><dd>{features.filter((f) => answers.features.includes(f.value)).map((f) => f.label).join(" · ")}</dd></div>}
               {quote ? <div><dt>Extra details</dt><dd>{answers.quoteDetails || "Online sales, ordering or payments"}</dd></div> : <>
@@ -447,7 +451,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
           </div>}
 
         </div>
-        <InstantSummary answers={answers} />
+        {step === "checkout" && !quote ? <InstantIncluded /> : <InstantSummary answers={answers} />}
       </div>
       <InstantPlan quote={quote} />
     </section>

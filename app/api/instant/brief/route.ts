@@ -1,3 +1,4 @@
+import { requestVisitorCountry } from "@/lib/instantCountry";
 import { cookies } from "next/headers";
 import { after } from "next/server";
 import { deliverInstantEmails } from "@/lib/instantEmailOutbox";
@@ -10,7 +11,7 @@ export async function POST(request: Request) {
     assertOrigin(request);
     const token = (await cookies()).get(SESSION_COOKIE)?.value;
     if (!token || !/^[a-f0-9]{64}$/.test(token)) throw new BillingError("Your session has expired. Please contact WebM8 to recover your brief.", 401);
-    const result = await submitInstantBrief(token, await requestJson(request));
+    const result = await submitInstantBrief(token, await requestJson(request), undefined, undefined, requestVisitorCountry(request.headers));
     if (!("errors" in result) && result.order?.submitted) {
       after(async () => {
         try { await deliverInstantEmails(result.order.id); }

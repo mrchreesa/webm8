@@ -130,6 +130,8 @@ function whenIdle(callback: () => void) {
 
 export function HomeStory() {
   const [still, setStill] = useState(false);
+  /** The browser took the 3D away (a backgrounded phone tab, a driver reset): the still story takes over. */
+  const [lost, setLost] = useState(false);
 
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -141,14 +143,20 @@ export function HomeStory() {
   }, []);
 
   // A change of mode remounts the story, so no inline styles from the other mode survive.
-  return <Story key={still ? "still" : "motion"} still={still} />;
+  const flat = still || lost;
+  return <Story key={flat ? "still" : "motion"} still={flat} onLost={() => setLost(true)} />;
 }
 
-function Story({ still }: { still: boolean }) {
+function Story({ still, onLost }: { still: boolean; onLost: () => void }) {
   const [glReady, setGlReady] = useState(false);
   /** The wall of demos behind the hero, mounted with the 3D. */
   const [wallReady, setWallReady] = useState(false);
   const [front, setFront] = useState(0);
+  /** The ring of demos is drawn in 3D; until then a flat picture of the front demo can stand in. */
+  const [ringReady, setRingReady] = useState(false);
+  const [ringStandIn, setRingStandIn] = useState(false);
+  const lostRef = useRef(onLost);
+  lostRef.current = onLost;
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -177,6 +185,8 @@ function Story({ still }: { still: boolean }) {
     let onScreen = true;
     let raf = 0;
     let shownFront = 0;
+    let ringUp = false;
+    let standInUp = false;
     let completed = false;
     let lastActive = "";
     let shown = -1;
@@ -237,6 +247,8 @@ function Story({ still }: { still: boolean }) {
       $.backdrop!.style.setProperty("--scroll", f.wall.toFixed(4));
       $.backdrop!.style.opacity = String(1 - clamp((f.wall - 0.4) / 0.6));
       $.backdrop!.toggleAttribute("data-off", f.wall >= 1);
+      // On a laptop the wall also falls out of focus as the phone comes forward.
+      $.backdrop!.style.filter = wide && f.wall > 0.02 && f.wall < 1 ? `blur(${(f.wall * 7).toFixed(1)}px)` : "";
 
       // The 3D phone's picture stands in for it until it arrives, keeping to its place and size (not its turn).
       $.poster!.style.transform = `translate(${pose.x - layout.anchorX}px, ${pose.y - layout.anchorY}px) scale(${pose.scale})`;
@@ -308,6 +320,14 @@ function Story({ still }: { still: boolean }) {
       }
       if (p > 0.2) scene?.loadRing();
       scene?.render(f, pose, tilt, now);
+      // A fast scroll can reach our work before the ring is built: show the front demo flat until it is.
+      if (!ringUp && scene?.ringBuilt()) {
+        ringUp = true;
+        setRingReady(true);
+      } else if (!ringUp && !standInUp && p > 0.3) {
+        standInUp = true;
+        setRingStandIn(true);
+      }
       const settling = Math.abs(tilt.tx - tilt.x) > 0.002 || Math.abs(tilt.ty - tilt.y) > 0.002;
       if (now - start < 2600 || settling || f.ringing || shown !== target) kick();
     };
@@ -339,6 +359,11 @@ function Story({ still }: { still: boolean }) {
     };
     window.addEventListener("pointermove", pointer, { passive: true });
     window.addEventListener("scroll", kick, { passive: true });
+    const contextLost = (event: Event) => {
+      event.preventDefault();
+      lostRef.current();
+    };
+    canvas.addEventListener("webglcontextlost", contextLost);
     play();
 
     // Three.js and the wall of demos arrive at the visitor's first touch, scroll
@@ -384,6 +409,7 @@ function Story({ still }: { still: boolean }) {
       window.removeEventListener("orientationchange", resize);
       window.removeEventListener("pointermove", pointer);
       window.removeEventListener("scroll", kick);
+      canvas.removeEventListener("webglcontextlost", contextLost);
       window.removeEventListener("load", afterLoad);
       for (const type of FIRST_TOUCH) window.removeEventListener(type, startScene);
       scene?.dispose();
@@ -467,6 +493,14 @@ function Story({ still }: { still: boolean }) {
 
           <div ref={set("work")} className={cn(styles.chapter, styles.work)}>
             <h2 className={styles.title}>Built for businesses like yours.</h2>
+            {ringStandIn && !ringReady && (
+              <div className={styles.ringStandIn} aria-hidden="true">
+                <div className={styles.demoDevices}>
+                  <div className={styles.demoLaptop}><Image src={demo.desktop} alt="" width={1600} height={900} sizes="(min-width: 900px) 52vw, 86vw" /></div>
+                  <div className={styles.demoPhone}><Image src={demo.mobile} alt="" width={420} height={900} sizes="(min-width: 900px) 13vw, 21vw" /></div>
+                </div>
+              </div>
+            )}
             <p className={styles.ringLabel}>
               <small>Real demo</small>
               <span>{demo.name} · {demo.label}</span>
@@ -514,6 +548,8 @@ function Story({ still }: { still: boolean }) {
               ))}
             </ol>
           </div>
+
+          <a className={styles.skip} href="#included" data-analytics-id="Skip the story">Skip the tour</a>
 
           <div ref={set("finale")} className={cn(styles.chapter, styles.finale)}>
             <div className={styles.finaleCopy}>

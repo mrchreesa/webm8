@@ -14,6 +14,7 @@ declare global {
         action: "start" | "step_view" | "step_complete" | "submit" | "success" | "checkout" | "booking_confirmed" | "validation_error" | "submission_error",
         options?: { step?: number; steps?: number; code?: string },
       ): boolean;
+      getContext?(): { siteId: string; visitorId: string; sessionId: string } | null;
       refresh(): void;
     };
   }

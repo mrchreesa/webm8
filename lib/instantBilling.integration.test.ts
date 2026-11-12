@@ -20,7 +20,7 @@ test("real Postgres: checkout retries, webhook ordering, private ownership, canc
   await db.query(await readFile(new URL("../migrations/002_instant_brief_recovery.sql", import.meta.url), "utf8"));
   await db.query(await readFile(new URL("../migrations/003_instant_email_outbox.sql", import.meta.url), "utf8"));
   process.env.INSTANT_EMAILS_ENABLED = "1";
-  const answers = { ...emptyAnswers(), name: "Test Owner", email: "owner@example.com", deliveryPhone: "+44 7700 900123", businessName: "Example Plumbing", industry: "trades" as const, area: "Bromley", checkoutAcknowledged: true, services: "Boiler repair", hasWebsite: "no" as const, contacts: ["email" as const], enquiryEmail: "owner@example.com" };
+  const answers = { ...emptyAnswers(), name: "Test Owner", email: "owner@example.com", deliveryPhone: "+44 7700 900123", businessName: "Example Plumbing", industry: "trades" as const, checkoutAcknowledged: true, services: "Boiler repair", hasWebsite: "no" as const, contacts: ["email" as const], enquiryEmail: "owner@example.com" };
   const token = randomBytes(32).toString("hex");
   const sessions = new Map<string, Stripe.Checkout.Session>();
   const idempotency = new Map<string, Stripe.Checkout.Session>();
@@ -104,13 +104,15 @@ test("real Postgres: checkout retries, webhook ordering, private ownership, canc
         assert.equal(billing.subscriptionId, subscription.id);
         assert.equal(billing.trialEnd, new Date(subscription.trial_end! * 1000).toISOString());
         assert.equal(billing.livemode, false);
+        assert.equal(billing.visitorCountry, "US");
+        assert.equal(billing.market, "GB");
         const duplicate = crmRecords.has(billing.orderId);
         if (!duplicate) crmRecords.set(billing.orderId, structuredClone(brief));
         // The CRM committed, but the website never received its first response.
         if (crmCalls === 1) throw new Error("Simulated lost CRM receipt");
         return { id: "80e9e316-d650-4bb9-a6f6-69718f9b57ee", duplicate };
       };
-      await assert.rejects(submitInstantBrief(token, longBrief, fakeCrm, client), /lost CRM receipt/);
+      await assert.rejects(submitInstantBrief(token, longBrief, fakeCrm, client, "US"), /lost CRM receipt/);
       const pendingOrder = (await getOrder(token))!;
       assert.equal(pendingOrder.submitted_at, null);
       assert.equal(pendingOrder.crm_id, null);
@@ -124,7 +126,7 @@ test("real Postgres: checkout retries, webhook ordering, private ownership, canc
       assert.ok("order" in changedRetry && changedRetry.order);
       assert.deepEqual(changedRetry.order.answers, longBrief);
       assert.equal(crmCalls, 1);
-      const results = await Promise.all([submitInstantBrief(token, longBrief, fakeCrm, client), submitInstantBrief(token, longBrief, fakeCrm, client)]);
+      const results = await Promise.all([submitInstantBrief(token, longBrief, fakeCrm, client, "GB"), submitInstantBrief(token, longBrief, fakeCrm, client)]);
       assert.equal(crmCalls, 2);
       assert.equal(crmRecords.size, 1);
       assert.deepEqual(crmRecords.get(order.id), longBrief);

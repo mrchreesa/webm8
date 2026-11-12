@@ -5,7 +5,7 @@ import { emptyAnswers } from "./instantWebsite.ts";
 import { instantCrmSubmission, saveInstantToCrm, type InstantCrmBilling } from "./instantCrmIntake.ts";
 
 const answers = { ...emptyAnswers(), name: "Test Owner", businessName: "Example Plumbing", email: "owner@example.com", deliveryPhone: "+44 7700 900123", area: "London", industry: "trades" as const, hasWebsite: "no" as const, contacts: ["email" as const], enquiryEmail: "enquiries@example.com", services: "S".repeat(2000), difference: "D".repeat(2000), notes: "N".repeat(2000) };
-const billing: InstantCrmBilling = { orderId: "ec0e035d-8b60-45d6-8a48-33b582db45db", customerId: "cus_fixture", subscriptionId: "sub_fixture", status: "trialing", trialEnd: "2026-11-19T12:00:00.000Z", livemode: false };
+const billing: InstantCrmBilling = { visitorCountry: "US", orderId: "ec0e035d-8b60-45d6-8a48-33b582db45db", customerId: "cus_fixture", subscriptionId: "sub_fixture", status: "trialing", trialEnd: "2026-11-19T12:00:00.000Z", livemode: false };
 const options = { url: "https://crm.example.com/api/webhooks/website", secret: "fixture-secret-not-real-".repeat(3) };
 
 test("Instant CRM delivery signs a complete long brief and retains the stable receipt on retry", async () => {
@@ -15,6 +15,8 @@ test("Instant CRM delivery signs a complete long brief and retains the stable re
     assert.equal(new Headers(init?.headers).get("x-webm8-signature-256"), "sha256=" + createHmac("sha256", options.secret).update(body).digest("hex"));
     const data = JSON.parse(body);
     assert.equal(data.formType, "instant");
+    assert.equal(data.estimatedCountry, "US");
+    assert.equal(data.billing.market, "GB");
     assert.equal(data.submissionKey, billing.orderId);
     assert.equal(data.brief.services, answers.services);
     assert.equal(data.brief.difference, answers.difference);

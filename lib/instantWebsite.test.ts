@@ -16,9 +16,9 @@ test("commerce and custom features always route to a quote, even alongside inclu
 });
 
 test("new businesses can qualify without a website or social profiles", () => {
-  assert.deepEqual(validateStep("business", brief({ hasWebsite: "", features: [], services: "", contacts: [], links: [""] })), {});
+  assert.deepEqual(validateStep("business", brief({ area: "", hasWebsite: "", features: [], services: "", contacts: [], links: [""] })), {});
   const errors = validateStep("business", emptyAnswers());
-  assert.deepEqual(Object.keys(errors), ["name", "email", "deliveryPhone", "businessName", "area", "industry"]);
+  assert.deepEqual(Object.keys(errors), ["name", "email", "deliveryPhone", "businessName", "industry"]);
   assert.equal(emptyAnswers().scope, "standard");
   assert.deepEqual(validateStep("business", brief({ scope: "", features: [] })), {});
 });

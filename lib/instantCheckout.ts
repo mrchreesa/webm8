@@ -64,7 +64,7 @@ export async function recordInstantCheckoutConsent(token: string, input: unknown
   });
 }
 
-export async function submitInstantBrief(token: string, input: unknown, saveToCrm = saveInstantToCrm, client: Stripe = stripeClient()) {
+export async function submitInstantBrief(token: string, input: unknown, saveToCrm = saveInstantToCrm, client: Stripe = stripeClient(), visitorCountry: string | null = null) {
   const checked = validateInstantSubmission(input, "brief");
   if (!checked.ok) return { errors: checked.errors };
   const hash = tokenHash(token);
@@ -87,7 +87,7 @@ export async function submitInstantBrief(token: string, input: unknown, saveToCr
     if (!subscription.trial_end) throw new BillingError("We couldn’t verify your trial dates. Please contact WebM8.", 409);
     const billing: InstantCrmBilling = {
       orderId: order.id, customerId: order.customer_id!, subscriptionId: order.subscription_id!,
-      market: orderMarket(order),
+      market: orderMarket(order), visitorCountry,
       status: subscription.status === "trialing" ? "trialing" : "active", trialEnd: new Date(subscription.trial_end * 1000).toISOString(), livemode: billingConfig().live,
     };
     await db.query("UPDATE instant_websites.orders SET answers=$2,brief_submission=$3,updated_at=now() WHERE id=$1", [order.id, orderAnswers(order, checked.answers), { answers: checked.answers, billing }]);

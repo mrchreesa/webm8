@@ -90,3 +90,5 @@ The live Instant Websites checkout places the payment form first, above the orde
 ## Instant regional pricing (10 November 2026)
 
 Owner request: UK stays £39/month and US visitors receive $79/month, with American English throughout the Instant journey. `lib/instantPricing.ts` owns both fixed offers. Vercel country-based middleware selects static UK/US pages before caching, while the private session API restores the saved order market. New orders bind the detected market and Stripe Price ID before Checkout creation; retries and returning customers keep that offer. Other countries and unknown locations retain GBP. The shared market context drives all visible prices, checkout verification and confirmation email amounts. Existing 10-day trial and tax settings are unchanged.
+
+Saved progress uses the existing muted form text, native checkbox and visible inline status before the first field. Privacy details remain reachable at every unfinished step. No new visual tokens or overlays. Source: owner request, 10 November 2026.

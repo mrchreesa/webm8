@@ -1,6 +1,5 @@
 "use client";
 
-import { useInstantMarket } from "./InstantMarket";
 import type { CSSProperties } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
@@ -13,10 +12,9 @@ import styles from "./instant.module.css";
  * line reaches it. On phones only the step names show, to keep it short.
  */
 export function InstantDay() {
-  const { offer } = useInstantMarket();
 const steps = [
-  { title: "Your details", text: "Your name, business and location." },
-  { title: "Free trial", text: `Add a card. ${offer.zero} due today.` },
+  { title: "Your details", text: "Your contact and business details." },
+  { title: "Free trial", text: "Add a card. Nothing due today." },
   { title: "Website details", text: "Services, contacts and photos." },
   { title: "Your website", text: "Sent on WhatsApp within one business day." },
 ];

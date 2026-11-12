@@ -104,7 +104,6 @@ export function validateStep(step: Step, a: Answers): Errors {
     if (!isEmail(a.email)) errors.email = "Enter an email address, such as you@example.com.";
     if (!isPhone(a.deliveryPhone)) errors.deliveryPhone = "Enter a valid phone number for WhatsApp, including your country code.";
     required("businessName", "Enter your business name.");
-    required("area", "Enter your city or the area you serve.");
     if (!industries.some((i) => i.value === a.industry)) errors.industry = "Choose the closest business type. Something else is fine too.";
   }
   if (step === "brief") {

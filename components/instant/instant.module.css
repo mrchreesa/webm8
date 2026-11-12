@@ -14,6 +14,8 @@
 .ticket ul::before, .ticket ul::after { content: ""; position: absolute; left: -1px; width: .9rem; height: .9rem; border-radius: 50%; background: var(--ticket-ground, var(--color-night)); translate: -50% 0; }
 .ticket ul::before { top: -.45rem; }
 .ticket ul::after { bottom: -.45rem; }
+.ticketPlain ul { border-left: 0; }
+.ticketPlain ul::before, .ticketPlain ul::after { content: none; }
 .ticket li { display: flex; align-items: center; gap: .3rem; white-space: nowrap; }
 .layout { max-width: 1216px; margin: auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 25rem); gap: 2rem; align-items: start; }
 .formColumn { position: relative; z-index: 1; min-width: 0; padding: calc(1.1rem + var(--air)) 1.75rem; border-radius: 1.75rem; background: var(--color-surface); color: var(--color-ink); box-shadow: 0 30px 80px -30px rgb(0 0 0 / .6); }
@@ -187,23 +189,55 @@
   .daySteps p { display: none; }
 }
 
-/* What the plan covers: the price on the left, three short lists beside it. */
-.included { padding: 3.5rem 2rem; background: var(--color-surface); color: var(--color-ink); }
-.includedInner { max-width: 1216px; margin: auto; display: grid; gap: 2.25rem; }
-.includedIntro { --ticket-ground: var(--color-surface); display: grid; justify-items: start; gap: 1rem; align-content: start; }
-.includedIntro h2 { font-size: clamp(1.6rem, 2.4vw, 2.1rem); font-weight: 700; letter-spacing: -.035em; line-height: 1.08; text-wrap: balance; }
-.includedIntro .ticket { margin-block: .25rem; }
-.includedGroups { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); align-items: start; }
-.includedGroups > div { padding: 1.25rem 1.25rem 1.35rem; border: 1px solid var(--color-border); border-radius: 1.25rem; }
-.includedGroups h3 { font: 700 1.05rem/1.2 var(--font-display); letter-spacing: -.01em; }
-.includedGroups ul { display: grid; gap: .6rem; margin-top: .9rem; font-size: .86rem; line-height: 1.4; }
+/* Step two, beside the card form: the plan on a white card, in place of the phone. */
+.included { min-width: 0; display: grid; gap: 1.25rem; padding: 1.5rem; border-radius: 1.75rem; background: var(--color-surface); color: var(--color-ink); box-shadow: 0 30px 80px -30px rgb(0 0 0 / .6); }
+.includedIntro { --ticket-ground: var(--color-surface); display: grid; justify-items: start; gap: .9rem; }
+.includedIntro h2 { font-size: clamp(1.35rem, 1.9vw, 1.6rem); font-weight: 700; letter-spacing: -.035em; line-height: 1.1; text-wrap: balance; }
+.includedIntro .ticket { max-width: 100%; }
+.includedIntro .ticket ul { flex-direction: column; gap: .05rem; }
+.includedGroups { display: grid; gap: .75rem; }
+.includedGroups > div { padding: 1.1rem 1.15rem 1.2rem; border: 1px solid var(--color-border); border-radius: 1.25rem; }
+.includedGroups h3 { font: 700 1rem/1.2 var(--font-display); letter-spacing: -.01em; }
+.includedGroups ul { display: grid; gap: .55rem; margin-top: .8rem; font-size: .84rem; line-height: 1.4; }
 .includedGroups li { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: start; }
 .includedGroups svg { box-sizing: content-box; margin-top: .05rem; padding: .2rem; border-radius: 50%; background: var(--color-brand); color: var(--color-brand-ink); }
 /* The last list is the one that looks ahead, so it takes the navy. */
 .includedGroups > div:last-child { border-color: var(--color-ink); background: var(--color-ink); color: #fff; }
-@media (min-width: 1024px) {
-  .includedInner { grid-template-columns: minmax(0, 21rem) minmax(0, 1fr); gap: 3.5rem; }
-}
+.developer { display: grid; gap: .55rem; padding: 1.15rem 1.2rem 1.25rem; border-radius: 1.25rem; background: linear-gradient(150deg, var(--color-brand-hover), var(--color-brand)); color: var(--color-brand-ink); box-shadow: 0 18px 34px -22px rgb(212 255 53 / .9); }
+.developer h3 { font: 700 1.05rem/1.2 var(--font-display); letter-spacing: -.01em; text-wrap: balance; }
+.developer > p { font-size: .84rem; line-height: 1.55; }
+.developer > a, .developer .developerChat { display: inline-flex; align-items: center; gap: .5rem; width: fit-content; margin-top: .2rem; padding: .5rem .85rem; border-radius: 999px; background: var(--color-brand-ink); color: #fff; font-size: .82rem; font-weight: 600; line-height: 1.2; }
+.developer > a:hover { background: var(--color-ink); }
+.developer svg { flex-shrink: 0; color: var(--color-brand); }
+
+/* Step two, above the card form: the price and the three reasons it is worth it. */
+.worth { position: relative; isolation: isolate; overflow: hidden; display: grid; gap: 1rem; padding: 1.4rem 1.4rem 1.5rem; border-radius: 1.5rem; background: linear-gradient(160deg, var(--color-night), #0a2146 55%, var(--color-ink)); color: #fff; box-shadow: 0 24px 50px -28px rgb(6 20 41 / .75), inset 0 1px 0 rgb(255 255 255 / .08); }
+.worth::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(60% 70% at 100% 0%, rgb(43 108 252 / .42), transparent 70%), radial-gradient(45% 55% at 0% 100%, rgb(212 255 53 / .13), transparent 70%); }
+.worth::after { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, var(--color-brand), rgb(212 255 53 / 0)); }
+.worthEyebrow { display: inline-flex; align-items: center; gap: .4rem; width: fit-content; padding: .3rem .7rem; border-radius: 999px; background: rgb(212 255 53 / .12); color: var(--color-brand); font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.worthPrice { display: flex; align-items: center; gap: .9rem; }
+.worthPrice b { font: 700 clamp(2.8rem, 5vw, 3.5rem)/.95 var(--font-display); letter-spacing: -.05em; color: var(--color-brand); text-shadow: 0 0 34px rgb(212 255 53 / .35); }
+.worthPrice span { display: grid; gap: .2rem; font-size: 1rem; font-weight: 600; line-height: 1.25; }
+.worthPrice small { font-size: .76rem; font-weight: 400; color: var(--color-muted-invert); }
+.worth ul { display: grid; gap: .6rem; }
+.worth li { display: grid; grid-template-columns: auto 1fr; gap: .85rem; align-items: start; padding: .85rem .9rem; border: 1px solid rgb(255 255 255 / .1); border-radius: 1rem; background: rgb(255 255 255 / .05); animation: worthIn .5s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i, 0) * 90ms + 80ms); transition: border-color .2s, background .2s, translate .2s; }
+.worth li:nth-child(2) { --i: 1; }
+.worth li:nth-child(3) { --i: 2; }
+.worth li:hover { border-color: rgb(212 255 53 / .45); background: rgb(255 255 255 / .08); translate: 0 -2px; }
+.worth li svg { box-sizing: content-box; padding: .5rem; border-radius: .8rem; background: var(--color-brand); color: var(--color-brand-ink); box-shadow: 0 8px 18px -8px rgb(212 255 53 / .7); }
+.worth strong { display: block; font: 700 1rem/1.25 var(--font-display); letter-spacing: -.01em; }
+.worth li p { margin-top: .25rem; font-size: .82rem; line-height: 1.55; color: #c9d8ea; }
+@keyframes worthIn { from { opacity: 0; translate: 0 10px; } }
+@media (prefers-reduced-motion: reduce) { .worth li { animation: none; transition: none; } .worth li:hover { translate: none; } }
+
+/* Step two, under the order summary: the money questions. */
+.priceFaq { border-top: 1px solid var(--color-border); }
+.priceFaq details { border-bottom: 1px solid var(--color-border); }
+.priceFaq summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .8rem 0; cursor: pointer; list-style: none; font-size: .88rem; font-weight: 600; line-height: 1.35; }
+.priceFaq summary::-webkit-details-marker { display: none; }
+.priceFaq summary span { flex: none; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: rgb(14 47 86 / .06); font-weight: 400; line-height: 1; transition: rotate .2s, background .2s; }
+.priceFaq details[open] summary span { rotate: 45deg; background: var(--color-brand); }
+.priceFaq p { padding-bottom: 1rem; color: var(--color-muted); font-size: .82rem; line-height: 1.6; }
 
 /* Questions: two columns of disclosures, short until one is opened. */
 .faq { padding: 3.5rem 2rem 4.5rem; background: var(--color-bg); color: var(--color-ink); }
@@ -218,10 +252,11 @@
 .faqList p { max-width: 60ch; padding-bottom: 1.1rem; color: var(--color-muted); font-size: .9rem; line-height: 1.6; }
 @media (min-width: 900px) {
   .faqList { columns: 2; column-gap: 3.5rem; border-top: 0; }
-  .faqList details:nth-child(1), .faqList details:nth-child(7) { border-top: 1px solid var(--color-border); }
+  .faqList details:nth-child(1), .faqList details:nth-child(6) { border-top: 1px solid var(--color-border); }
 }
 @media (max-width: 639px) {
-  .included { padding: 2.5rem 1rem; }
+  .included { padding: 1.25rem; }
+  .worth { padding: 1.15rem; }
   .faq { padding: 2.5rem 1rem 3rem; }
-  .includedGroups ul { gap: .5rem; }
 }
+.draftPrivacyLink { width: fit-content; color: var(--color-muted, #5b6b80); font-size: 0.8125rem; text-decoration: underline; }

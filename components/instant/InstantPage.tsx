@@ -4,9 +4,8 @@ import { InstantSignup } from "@/components/instant/InstantSignup";
 import { InstantDay } from "@/components/instant/InstantDay";
 import { InstantExamples } from "@/components/instant/InstantExamples";
 import { InstantFaq } from "@/components/instant/InstantFaq";
-import { InstantIncluded } from "@/components/instant/InstantIncluded";
 import { InstantMarketProvider } from "@/components/instant/InstantMarket";
-import { instantOffer, type InstantMarket } from "@/lib/instantPricing";
+import type { InstantMarket } from "@/lib/instantPricing";
 import { createPageMetadata } from "@/lib/seo";
 
 // Only public, deployment-scoped content belongs in this cached page.
@@ -14,8 +13,8 @@ import { createPageMetadata } from "@/lib/seo";
 // Fail the build if request-specific data is ever added here.
 
 const instantSite = process.env.INSTANT_WEBSITES_SITE === "1";
-export function instantMetadata(market: InstantMarket): Metadata {
-  const pageMetadata = createPageMetadata({ title: process.env.INSTANT_BILLING_ENABLED === "1" ? "Instant Websites — start your free trial" : "Instant Websites — signup preview", description: `A business website, built and managed by WebM8. 10 days free, then ${instantOffer(market).price}/month.`, path: "/instant/" });
+export function instantMetadata(): Metadata {
+  const pageMetadata = createPageMetadata({ title: process.env.INSTANT_BILLING_ENABLED === "1" ? "Instant Websites — start your free trial" : "Instant Websites — signup preview", description: "A business website, built and managed by WebM8. 10 days free, no setup fee, cancel anytime.", path: "/instant/" });
   return {
   ...pageMetadata,
   ...(instantSite ? {
@@ -30,5 +29,5 @@ export function InstantContent({ market }: { market: InstantMarket }) {
   // A prototype must not become a live offer through an unrelated deployment.
   if (process.env.NODE_ENV === "production" && process.env.INSTANT_WEBSITES_PREVIEW !== "1") notFound();
   const billing = process.env.INSTANT_BILLING_ENABLED === "1";
-  return <InstantMarketProvider initialMarket={market}><div lang="en-US"><InstantSignup billing={billing} publishableKey={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""} testMode={billing && process.env.INSTANT_STRIPE_MODE === "test"} /><InstantDay /><InstantExamples /><InstantIncluded /><InstantFaq /></div></InstantMarketProvider>;
+  return <InstantMarketProvider initialMarket={market}><div lang="en-US"><InstantSignup billing={billing} saveDrafts={process.env.INSTANT_DRAFTS_ENABLED === "1"} publishableKey={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""} testMode={billing && process.env.INSTANT_STRIPE_MODE === "test"} /><InstantDay /><InstantExamples /><InstantFaq /></div></InstantMarketProvider>;
 }

@@ -150,6 +150,8 @@ export function makeLaptop(screen: THREE.MeshBasicMaterial, m: Materials, keys: 
   lid.position.set(0, top - 0.006, -D / 2 + 0.05);
   lid.rotation.x = -0.2;
   laptop.add(lid);
+  // The hinge, for anything that opens or closes the laptop (the Work page).
+  laptop.userData.lid = lid;
   const lidDepth = 0.022, lidBevel = 0.008, front = lidDepth / 2 + lidBevel;
   const shell = new THREE.Mesh(shared("laptop-lid", () => roundedSlab(W, L, 0.09, lidDepth, lidBevel)), [m.gloss, m.aluminium]);
   shell.position.y = L / 2;

@@ -2,7 +2,8 @@
 
 import { useInstantMarket } from "./InstantMarket";
 import { Icon } from "@/components/ui/Icon";
-import { LinkButton } from "@/components/ui/Button";
+import { brand } from "@/lib/site";
+import { whatsappHref } from "@/lib/leadAttribution";
 import { INSTANT_TRIAL_DAYS } from "@/lib/instantWebsite";
 import styles from "./instant.module.css";
 
@@ -14,6 +15,7 @@ const groups = [
       "Contact inquiry forms, booking requests or a link to an existing booking service",
       "Hosting, SSL and ongoing maintenance",
       "Unlimited revisions until you’re 100% satisfied",
+      "A developer with 10+ years of experience allocated to your project",
       "SEO: Google search optimization",
       "GEO: AI search for ChatGPT, Gemini, Meta AI and others",
     ],
@@ -39,29 +41,57 @@ const groups = [
   },
 ];
 
-/** After the demo wall: everything the plan covers, in three short lists beside the price. */
-export function InstantIncluded() {
+/** The three reasons the plan is worth its price, shown above the card form on step two. */
+export const instantEdges = [
+  { icon: "trust", title: "The best website in your local market", text: "We study your competitors’ websites first, then design yours to beat them. Revisions are unlimited until you’re 100% satisfied." },
+  { icon: "leads", title: "More inquiries, including from AI search", text: "Built to be found on Google and recommended by ChatGPT, Gemini and Meta AI. Our clients receive inquiries from AI search because of how we optimize their websites." },
+  { icon: "support", title: "A real developer, not a bot", text: "One of our developers with 10+ years of experience is allocated to your project, so you always know who to ask." },
+] as const;
+
+/** Step two, above the card form: the price and why it is worth it. */
+export function InstantWorth() {
   const { offer } = useInstantMarket();
   return (
-    <section className={styles.included} data-analytics-section="Instant plan" aria-labelledby="instant-included-title">
-      <div className={styles.includedInner}>
-        <div className={styles.includedIntro}>
-          <h2 id="instant-included-title">Everything a small business website needs, for one monthly price.</h2>
-          <div className={styles.ticket}>
-            <p><b>{offer.price}</b>a month</p>
-            <ul>{[`${INSTANT_TRIAL_DAYS} days free`, "No setup fee", "Cancel anytime"].map((item) => <li key={item}><Icon name="check" size={14} aria-hidden />{item}</li>)}</ul>
-          </div>
-          <LinkButton data-analytics-id="Start with your details - plan" href="#instant-signup" size="md">Start with your details</LinkButton>
-        </div>
-        <div className={styles.includedGroups}>
-          {groups.map((group) => (
-            <div key={group.title}>
-              <h3>{group.title}</h3>
-              <ul>{group.items.map((item) => <li key={item}><Icon name="check" size={12} aria-hidden />{item}</li>)}</ul>
-            </div>
-          ))}
+    <div className={styles.worth} data-analytics-section="Instant value">
+      <p className={styles.worthEyebrow}><Icon name="spark" size={14} aria-hidden />Why it’s worth it</p>
+      <p className={styles.worthPrice}><b>{offer.price}</b><span>a month, after {INSTANT_TRIAL_DAYS} days free<small>{offer.zero} due today · No setup fee · Cancel anytime</small></span></p>
+      <ul>
+        {instantEdges.map((edge) => (
+          <li key={edge.title}><Icon name={edge.icon} size={18} aria-hidden /><div><strong>{edge.title}</strong><p>{edge.text}</p></div></li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** Step two, beside the card form (below it on phones): everything the plan covers. */
+export function InstantIncluded() {
+  const { offer } = useInstantMarket();
+  const whatsapp = whatsappHref(brand.whatsapp, "Hi WebM8, I have a question about Instant Websites.");
+  return (
+    <aside className={styles.included} data-analytics-section="Instant plan" aria-labelledby="instant-included-title">
+      <div className={styles.includedIntro}>
+        <h2 id="instant-included-title">Everything a small business website needs, for one monthly price.</h2>
+        <div className={styles.ticket}>
+          <p><b>{offer.price}</b>a month</p>
+          <ul>{[`${INSTANT_TRIAL_DAYS} days free`, "No setup fee", "Cancel anytime"].map((item) => <li key={item}><Icon name="check" size={14} aria-hidden />{item}</li>)}</ul>
         </div>
       </div>
-    </section>
+      <div className={styles.developer}>
+        <h3>Your own developer, not an automated bot.</h3>
+        <p>One of our developers with 10+ years of experience is allocated to your project. You’ll know exactly who to approach with questions, clarifications and changes, instead of dealing with automated replies.</p>
+        {whatsapp
+          ? <a href={whatsapp} target="_blank" rel="noopener noreferrer" data-analytics-id="Message us on WhatsApp - plan"><Icon name="whatsapp" size={18} aria-hidden />Message us instantly on WhatsApp</a>
+          : <p className={styles.developerChat}><Icon name="whatsapp" size={18} aria-hidden />Message us instantly on WhatsApp</p>}
+      </div>
+      <div className={styles.includedGroups}>
+        {groups.map((group) => (
+          <div key={group.title}>
+            <h3>{group.title}</h3>
+            <ul>{group.items.map((item) => <li key={item}><Icon name="check" size={12} aria-hidden />{item}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </aside>
   );
 }
