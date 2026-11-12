@@ -16,7 +16,7 @@ import { useInstantDraft } from "./useInstantDraft";
 import { canSubmitBrief, type BillingStatus } from "@/lib/instantBilling";
 import {
   DRAFT_KEY, INSTANT_TRIAL_DAYS, contactMethods, emptyAnswers, features, industries, scopes,
-  needsQuote, trialEndDate, readDraft, suggestedContacts, validateAttachment, validateStep,
+  needsQuote, readDraft, suggestedContacts, validateAttachment, validateStep,
   type Answers, type ContactMethod, type Errors, type Industry, type Step,
 } from "@/lib/instantWebsite";
 import { useInstantMarket } from "./InstantMarket";
@@ -48,7 +48,6 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
   const [storageAvailable, setStorageAvailable] = useState(true);
   const [files, setFiles] = useState<File[]>([]);
   const [fileErrors, setFileErrors] = useState<string[]>([]);
-  const [today, setToday] = useState("");
   const [billingOrder, setBillingOrder] = useState<BillingStatus | null>(null);
   const [clientSecret, setClientSecret] = useState("");
   const [billingBusy, setBillingBusy] = useState(false);
@@ -101,7 +100,6 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
         setAnswers(draft.answers); setStep(billing ? "business" : draft.step); setCheckoutPreviewed(!billing && draft.checkoutPreviewed);
       } else if (raw) sessionStorage.removeItem(draftKey);
     } catch { setStorageAvailable(false); }
-    setToday(new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/London", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()));
     if (!billing) { setLoaded(true); return; }
     const controller = new AbortController();
     requestController.current = controller;
@@ -312,7 +310,6 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
   }
   const serviceCopy = serviceLabels[answers.industry] || { label: "What are your main services?", placeholder: "List up to three services, or tell us briefly what you do." };
   const needsEmail = answers.contacts.includes("email") || answers.contacts.includes("request") || (answers.contacts.includes("booking") && answers.bookingLater);
-  const firstCharge = today ? new Intl.DateTimeFormat("en-US", { dateStyle: "long", ...(market === "GB" ? { timeZone: "Europe/London" } : {}) }).format(new Date(`${trialEndDate(today)}T12:00:00Z`)) : `${INSTANT_TRIAL_DAYS} days after checkout`;
 
 
   return (
@@ -362,11 +359,6 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
               {billing && !clientSecret && !billingOrder?.checkoutConfirmed && !pollTrial && <div className={styles.group}>
                 {checkoutLoadFailed ? <Button size="lg" className={styles.continue} disabled={billingBusy || !verified} onClick={() => void billingAction("checkout")} data-analytics-id="Retry checkout">Retry payment form<Icon name="arrow" size={17} aria-hidden /></Button> : <CheckoutLoading />}
               </div>}
-              <div className={styles.orderSummary}>
-                <div><span>Instant Websites</span><strong>{offer.price}<small>/month</small></strong></div>
-                <p>Hosting &amp; maintenance</p>
-                <dl><div><dt>Due today</dt><dd>{offer.zero}</dd></div><div><dt>Free trial</dt><dd>{INSTANT_TRIAL_DAYS} days</dd></div><div><dt>Setup fee</dt><dd>{offer.zero}</dd></div><div><dt>{billing ? `After your ${INSTANT_TRIAL_DAYS}-day trial` : "Example first charge"}</dt><dd>{billing ? `${offer.price}/month` : `${offer.price} on ${firstCharge}`}</dd></div></dl>
-              </div>
               <div className={styles.contactSummary}><div><strong>{answers.businessName}</strong><p>{answers.name} · {answers.email}</p><p>WhatsApp: {answers.deliveryPhone}</p></div><button type="button" className={styles.textButton} onClick={() => go("business")} data-analytics-id="Edit account details">Edit details</button></div>
               <div className={styles.guarantee}><Icon name="shield" size={22} aria-hidden /><p><strong>{offer.zero} today, {INSTANT_TRIAL_DAYS} days to decide, then a 30-day money-back guarantee.</strong> Your trial starts when you complete checkout and nothing is charged during it. If you’re not happy in your first 30 paid days, we refund that month. Cancel anytime with no cancellation fee.</p></div>
               <InstantPriceFaq />

@@ -73,16 +73,6 @@
 .notice ul { margin-top: .4rem; list-style: disc; padding-left: 1rem; }
 .actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .7rem; }
 .continue { margin-left: auto; }
-.orderSummary { border: 1px solid var(--color-border); border-radius: 1rem; background: var(--color-surface); padding: 1.5rem; }
-.orderSummary > div { display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
-.orderSummary > div > span { font-size: .95rem; font-weight: 600; }
-.orderSummary strong { font: 600 1.85rem var(--font-display); }
-.orderSummary small { font: .75rem var(--font-sans); color: var(--color-muted); }
-.orderSummary > p { font-size: .75rem; line-height: 1.6; color: var(--color-muted); margin-top: .3rem; }
-.orderSummary dl { margin-top: 1.1rem; padding-top: 1.1rem; border-top: 1px solid var(--color-border); display: grid; gap: .7rem; font-size: .75rem; }
-.orderSummary dl > div { display: flex; justify-content: space-between; gap: 1rem; }
-.orderSummary dt { color: var(--color-muted); }
-.orderSummary dd { font-weight: 500; text-align: right; }
 .guarantee { display: flex; gap: .8rem; font-size: .8rem; line-height: 1.7; }
 .guarantee svg { flex-shrink: 0; margin-top: .2rem; }
 .guarantee strong { display: block; }
@@ -149,7 +139,6 @@
   .progress li > span { width: 1.2rem; height: 1.2rem; }
   .actions > button { flex: 1; }
   .review > div { grid-template-columns: 1fr; gap: .2rem; }
-  .orderSummary { padding: 1rem; }
   .examples { padding-top: 3rem; }
   .examplesHeading { grid-template-columns: 1fr; gap: 1.3rem; }
   .examplesHeading > div:last-child { justify-self: start; }
@@ -239,7 +228,7 @@
 @keyframes worthIn { from { opacity: 0; translate: 0 10px; } }
 @media (prefers-reduced-motion: reduce) { .worth ul li { animation: none; transition: none; } .worth ul li:hover { translate: none; } }
 
-/* Step two, under the order summary: the money questions. */
+/* Pricing questions on the trial step. */
 .priceFaq { border-top: 1px solid var(--color-border); }
 .priceFaq details { border-bottom: 1px solid var(--color-border); }
 .priceFaq summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .8rem 0; cursor: pointer; list-style: none; font-size: .88rem; font-weight: 600; line-height: 1.35; }
