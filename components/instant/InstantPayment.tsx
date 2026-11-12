@@ -11,7 +11,7 @@ import { INSTANT_TRIAL_DAYS } from "@/lib/instantWebsite";
 import styles from "./instant.module.css";
 import type { createInstantAnalytics } from "@/lib/instantAnalytics";
 
-type PaymentActions = { analytics: ReturnType<typeof createInstantAnalytics>; onBeforeConfirm: () => Promise<void>; onConfirmed: () => void; onBusy: (busy: boolean) => void };
+type PaymentActions = { verified: boolean; analytics: ReturnType<typeof createInstantAnalytics>; onBeforeConfirm: () => Promise<void>; onConfirmed: () => void; onBusy: (busy: boolean) => void };
 
 export function InstantPayment({ clientSecret, publishableKey, ...actions }: PaymentActions & { clientSecret: string; publishableKey: string }) {
   const stripe = useMemo(() => loadStripe(publishableKey, { locale: "en" }), [publishableKey]);
@@ -24,7 +24,7 @@ export function InstantPayment({ clientSecret, publishableKey, ...actions }: Pay
   return <CheckoutElementsProvider stripe={stripe} options={options}><PaymentFields {...actions} /></CheckoutElementsProvider>;
 }
 
-function PaymentFields({ analytics, onBeforeConfirm, onConfirmed, onBusy }: PaymentActions) {
+function PaymentFields({ verified, analytics, onBeforeConfirm, onConfirmed, onBusy }: PaymentActions) {
   const { offer } = useInstantMarket();
   const state = useCheckoutElements();
   const [message, setMessage] = useState("");
@@ -37,7 +37,7 @@ function PaymentFields({ analytics, onBeforeConfirm, onConfirmed, onBusy }: Paym
     if (state.type === "error" || (state.type === "success" && !priceMatches)) analytics.form("submission_error", 2, "checkout");
   }, [state.type, priceMatches, analytics]);
   async function confirm() {
-    if (state.type !== "success" || !priceMatches || locked.current) return;
+    if (!verified || state.type !== "success" || !priceMatches || locked.current) return;
     locked.current = true; setBusy(true); onBusy(true); setMessage("");
     analytics.action("trial_confirmation_attempted");
     try {
@@ -60,6 +60,6 @@ function PaymentFields({ analytics, onBeforeConfirm, onConfirmed, onBusy }: Paym
     </div>
     <p className={styles.hint}>Secure payment details are handled by Stripe. {offer.zero} today, then {offer.price}/month after your {INSTANT_TRIAL_DAYS}-day trial.</p>
     <div aria-live="polite">{message && <FormStatus tone="error">{message}</FormStatus>}</div>
-    <Button data-analytics-id="Start free trial" size="lg" className={styles.continue} disabled={busy || !ready} onClick={confirm}>{busy ? "Securing your trial…" : "Start my free trial"}</Button>
+    <Button data-analytics-id="Start free trial" size="lg" className={styles.continue} disabled={busy || !ready || !verified} onClick={confirm}>{busy ? "Securing your trial…" : "Start my free trial"}</Button>
   </div>;
 }

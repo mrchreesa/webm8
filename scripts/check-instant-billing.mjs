@@ -1,9 +1,12 @@
 import { billingConfig, billingPool, stripeClient } from "../lib/instantBillingServer.ts";
 import { assertPrice } from "../lib/instantBilling.ts";
 
+import { turnstileKeys } from "../lib/instantTurnstile.ts";
+
 let db;
 try {
   const config = billingConfig();
+  turnstileKeys();
   const stripe = stripeClient();
   assertPrice(await stripe.prices.retrieve(config.priceId), config.live);
   assertPrice(await stripe.prices.retrieve(config.usPriceId), config.live, "US");

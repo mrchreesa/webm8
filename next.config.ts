@@ -5,10 +5,10 @@ const instantSite = process.env.INSTANT_WEBSITES_SITE === "1";
 const demoOrigins = [...new Set(projects.flatMap(project => project.siteUrl ? [new URL(project.siteUrl).origin] : []))].join(" ");
 const billingCsp = [
   "default-src 'self'", "base-uri 'self'", "object-src 'none'", "frame-ancestors 'self'",
-  `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === "development" ? "'unsafe-eval'" : ""} https://*.stripe.com https://maps.googleapis.com https://connect.facebook.net https://webm8-platform.vercel.app`,
+  `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === "development" ? "'unsafe-eval'" : ""} https://*.stripe.com https://challenges.cloudflare.com https://maps.googleapis.com https://connect.facebook.net https://webm8-platform.vercel.app`,
   "style-src 'self' 'unsafe-inline'", "font-src 'self' data:",
   "img-src 'self' data: blob: https:",
-  `frame-src 'self' https://*.stripe.com https://link.com https://*.link.com ${demoOrigins}`,
+  `frame-src 'self' https://challenges.cloudflare.com https://*.stripe.com https://link.com https://*.link.com ${demoOrigins}`,
   `connect-src 'self' https://*.stripe.com https://link.com https://*.link.com https://maps.googleapis.com https://webm8-platform.vercel.app https://www.facebook.com https://connect.facebook.net ${process.env.NODE_ENV === "development" ? "ws://127.0.0.1:* ws://localhost:*" : ""}`,
   "form-action 'self' https://*.stripe.com", "worker-src 'self' blob:",
 ].join("; ");

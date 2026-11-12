@@ -12,7 +12,7 @@ type Snapshot = {
   visitKey: string | null;
 };
 
-export function useInstantDraft(available: boolean, loaded: boolean, answers: Answers, step: Step) {
+export function useInstantDraft(available: boolean, loaded: boolean, answers: Answers, step: Step, onVerificationRequired: () => void) {
   const touched = useRef(false);
   const composing = useRef(false);
   const latest = useRef<Snapshot | null>(null);
@@ -37,6 +37,7 @@ export function useInstantDraft(available: boolean, loaded: boolean, answers: An
         keepalive: leaving,
         signal: leaving ? undefined : AbortSignal.timeout(10000),
       });
+      if (response.status === 428) onVerificationRequired();
       const receipt = await response.json();
       if (response.ok && receipt.ok && receipt.saved) {
         acknowledged.current = Math.max(acknowledged.current, snapshot.revision);
@@ -44,7 +45,7 @@ export function useInstantDraft(available: boolean, loaded: boolean, answers: An
       }
     } catch { /* The latest edit can retry on the next save or when the browser reconnects. */ }
     return false;
-  }, []);
+  }, [onVerificationRequired]);
 
   useEffect(() => {
     if (!available || !loaded || !touched.current || legacyOptOut.current) return;
