@@ -11,7 +11,7 @@ test("server validation rejects custom work, missing consent, unknown choices an
   assert.equal(validateInstantSubmission({ ...testAnswers(), services: "" }, "brief").ok, true);
   assert.equal(validateInstantSubmission({ ...testAnswers(), services: "", contacts: [] }, "checkout").ok, true);
   assert.equal(validateInstantSubmission({ ...testAnswers(), checkoutAcknowledged: false }, "checkout").ok, true);
-  assert.equal(validateInstantSubmission({ ...testAnswers(), services: "", contacts: [] }, "brief").ok, false);
+  assert.equal(validateInstantSubmission({ ...emptyAnswers(), name: "Test Owner", email: "owner@example.com", deliveryPhone: "+44 7700 900123", businessName: "Example Plumbing", industry: "trades", checkoutAcknowledged: true }, "brief").ok, true);
 });
 test("checkout fixes price and trial on server and uses custom Stripe Elements with no tax surcharge", () => {
   const params = checkoutParameters({ id: "order-test", answers: testAnswers() }, { priceId: "price_expected", origin: "https://instant.example.com", portalUrl: "https://billing.stripe.com/p/login/test" });

@@ -16,7 +16,7 @@ import { useInstantDraft } from "./useInstantDraft";
 import { canSubmitBrief, type BillingStatus } from "@/lib/instantBilling";
 import {
   DRAFT_KEY, INSTANT_TRIAL_DAYS, contactMethods, emptyAnswers, features, industries, scopes,
-  needsQuote, readDraft, suggestedContacts, validateAttachment, validateStep,
+  needsQuote, readDraft, validateAttachment, validateStep,
   type Answers, type ContactMethod, type Errors, type Industry, type Step,
 } from "@/lib/instantWebsite";
 import { useInstantMarket } from "./InstantMarket";
@@ -109,7 +109,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
       if (data.market) setMarket(data.market);
       if (order) {
         const restoredAnswers = order.checkoutConfirmed && !order.submitted && !order.briefPending && savedOrderId === order.id && draft ? draft.answers : order.answers;
-        setAnswers(order.checkoutConfirmed ? { ...restoredAnswers, enquiryEmail: restoredAnswers.enquiryEmail || restoredAnswers.email, contacts: restoredAnswers.contacts.length ? restoredAnswers.contacts : suggestedContacts(restoredAnswers) } : restoredAnswers);
+        setAnswers(restoredAnswers);
         setCheckoutPreviewed(order.checkoutConfirmed);
         setStep(order.submitted ? "complete" : canSubmitBrief(order) ? "brief" : "checkout");
         if (data.checkoutPending) setPollTrial(true);
@@ -145,7 +145,6 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
           setPollTrial(false); setClientSecret(""); setCheckoutPreviewed(true);
           if (canSubmitBrief(order)) {
             setBillingMessage("");
-            setAnswers(a => ({ ...a, enquiryEmail: a.enquiryEmail || a.email, contacts: a.contacts.length ? a.contacts : suggestedContacts(a) }));
             setStep(order.submitted ? "complete" : "brief");
             requestAnimationFrame(() => titleRef.current?.focus());
           } else setBillingMessage("Your subscription needs attention. Please email info@webm8agency.com for help.");
@@ -270,7 +269,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
         void billingAction("checkout"); return;
       }
       setCheckoutPreviewed(true);
-      setAnswers((a) => ({ ...a, checkoutAcknowledged: true, enquiryEmail: a.enquiryEmail || a.email, contacts: a.contacts.length ? a.contacts : suggestedContacts(a) }));
+      setAnswers((a) => ({ ...a, checkoutAcknowledged: true }));
       go("brief");
     } else if (step === "brief") { analytics.form("step_complete", 3); if (billing) void billingAction("brief"); else go(checkoutPreviewed ? "complete" : "checkout"); }
     else if (step === "quote") { if (billing) setBillingMessage("Please contact WebM8 for your custom quote. This route does not start a subscription."); else go("quote-complete"); }
@@ -357,31 +356,31 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
             </>}
             {step === "brief" && <>
               <ChoiceGroup analyticsField="customer_contact_methods" name="contacts" label="How should customers contact you?" hint="Choose the ways customers should reach you." compact multiple options={contactMethods} values={answers.contacts} onChange={(v) => update("contacts", v as ContactMethod[])} error={errors.contacts} />
-              {answers.contacts.includes("phone") && field("phone", "Public business phone number", { required: true, type: "tel", autoComplete: "tel" })}
+              {answers.contacts.includes("phone") && field("phone", "Public business phone number", { type: "tel", autoComplete: "tel" })}
               {answers.contacts.includes("whatsapp") && <>
                 {answers.contacts.includes("phone") && <label data-analytics-id="Reuse public phone" className={styles.acknowledgement}><input data-analytics-field="same_public_phone" type="checkbox" checked={answers.samePhone} onChange={(event) => update("samePhone", event.target.checked)} />Use the same number for WhatsApp</label>}
-                {(!answers.samePhone || !answers.contacts.includes("phone")) && field("whatsapp", "WhatsApp number", { required: true, type: "tel" })}
+                {(!answers.samePhone || !answers.contacts.includes("phone")) && field("whatsapp", "WhatsApp number", { type: "tel" })}
               </>}
               {answers.contacts.includes("booking") && <>
                 <label data-analytics-id="Provide booking link later" className={styles.acknowledgement}><input data-analytics-field="booking_link_later" type="checkbox" checked={answers.bookingLater} onChange={(event) => update("bookingLater", event.target.checked)} />I’ll add my booking link later</label>
-                {!answers.bookingLater && field("bookingUrl", "Your existing booking link", { required: true, type: "url", placeholder: "https://…" })}
+                {!answers.bookingLater && field("bookingUrl", "Your existing booking link", { type: "url", placeholder: "https://…" })}
                 {answers.bookingLater && <p className={styles.hint}>We’ll use a booking-request form until you provide the link. You’ll confirm appointments yourself.</p>}
               </>}
-              {needsEmail && field("enquiryEmail", "Where should inquiries go?", { required: true, type: "email", hint: "Check this address. Your billing email may be different from your business email." })}
+              {needsEmail && field("enquiryEmail", "Where should inquiries go?", { type: "email", hint: "Check this address. Your billing email may be different from your business email." })}
               {answers.contacts.includes("request") && <p className={styles.hint}>Booking requests are sent to you to confirm. They don’t reserve a live appointment slot.</p>}
               <ChoiceGroup analyticsField="existing_website" name="hasWebsite" label="Do you already have a website?" compact options={[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }]} values={answers.hasWebsite ? [answers.hasWebsite] : []} onChange={(v) => update("hasWebsite", v[0] as "yes" | "no")} error={errors.hasWebsite} />
-              {answers.hasWebsite === "yes" && field("website", "Existing website (optional)", { type: "url", placeholder: "yourbusiness.com", hint: "You can add this later if you don’t have the link handy." })}
+              {answers.hasWebsite === "yes" && field("website", "Existing website", { type: "url", placeholder: "yourbusiness.com", hint: "You can add this later if you don’t have the link handy." })}
               <div className={styles.group}>
                 {answers.links.map((link, index) => <div className={styles.linkRow} key={index}>
-                  <TextField data-analytics-field={`business_link_${index + 1}`} name={`link-${index}`} label={index === 0 ? "Google Business or social page (optional)" : "Another business link (optional)"} type="url" value={link} onChange={(event) => update("links", answers.links.map((old, i) => i === index ? event.target.value : old))} placeholder="Paste a Google, Instagram or Facebook link" labelVariant="contact" maxLength={1000} error={errors[`link-${index}`]} />
+                  <TextField data-analytics-field={`business_link_${index + 1}`} name={`link-${index}`} label={index === 0 ? "Google Business or social page" : "Another business link"} type="url" value={link} onChange={(event) => update("links", answers.links.map((old, i) => i === index ? event.target.value : old))} placeholder="Paste a Google, Instagram or Facebook link" labelVariant="contact" maxLength={1000} error={errors[`link-${index}`]} />
                   {index > 0 && <Button variant="ghost" onClick={() => update("links", answers.links.filter((_, i) => i !== index))} data-analytics-id="Remove business link" aria-label={`Remove business link ${index + 1}`}><Icon name="close" size={16} aria-hidden /></Button>}
                 </div>)}
                 {answers.links.length < 4 && <button type="button" className={styles.textButton} onClick={() => update("links", [...answers.links, ""])} data-analytics-id="Add business link">+ Add another link</button>}
                 <p className={styles.hint}>No website or social pages? That’s fine. We can work from your answers.</p>
               </div>
-              {textarea("difference", "What makes your business stand out? (optional)", { placeholder: "For example: family-run, evening appointments or a particular specialty.", hint: "Leave this blank if you’d like help choosing what to highlight." })}
+              {textarea("difference", "What makes your business stand out?", { placeholder: "For example: family-run, evening appointments or a particular specialty.", hint: "Leave this blank if you’d like help choosing what to highlight." })}
               <details className={styles.optionalDetails}>
-                <summary data-analytics-id="Open optional details">Branding, photos & extra details <span>(optional)</span></summary>
+                <summary data-analytics-id="Open optional details">Branding, photos & extra details</summary>
                 <div className={styles.form}>
               {billing ? <p className={styles.hint}>You can send your logo, photos or menu when we contact you about your website.</p> : <div className={styles.upload}>
                 <label htmlFor="instant-assets" className="text-sm font-semibold">Have a logo, photos or a menu?</label>
@@ -391,13 +390,13 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
                 <ul className={styles.fileList} aria-live="polite">{files.map((file, index) => <li key={`${file.name}-${file.size}-${file.lastModified}`}><span>{file.name}<small>{(file.size / (1024 * 1024)).toFixed(1)} MB · selected locally</small></span><button type="button" className={styles.textButton} onClick={() => setFiles(files.filter((_, i) => i !== index))} aria-label={`Remove ${file.name}`}>Remove</button></li>)}</ul>
                 {fileErrors.length > 0 && <div role="alert" className="text-sm text-error">{fileErrors.map((error, i) => <p key={i}>{error}</p>)}</div>}
               </div>}
-              {field("colours", "Any colors you want us to use? (optional)", { placeholder: "Choose for me", hint: "Leave this blank and we’ll choose a suitable starting palette." })}
+              {field("colours", "Any colors you want us to use?", { placeholder: "Choose for me", hint: "Leave this blank and we’ll choose a suitable starting palette." })}
               {(answers.industry === "food" || answers.industry === "beauty") && <>
-                {field("address", "Public business address (optional)", { autoComplete: "street-address", hint: "Only add an address you want customers to see." })}
-                {field("hours", "Opening hours (optional)", { placeholder: "For example: Tuesday–Saturday, 9am–6pm" })}
+                {field("address", "Public business address", { autoComplete: "street-address", hint: "Only add an address you want customers to see." })}
+                {field("hours", "Opening hours", { placeholder: "For example: Tuesday–Saturday, 9am–6pm" })}
               </>}
-              {answers.industry === "food" && field("menuUrl", "Link to your menu (optional)", { type: "url", hint: billing ? "You can send us a PDF when we contact you about your website." : "You can also select a PDF above." })}
-              {textarea("notes", "Anything else we should know? (optional)", { placeholder: "A particular style you like, a key message, or anything we should avoid." })}
+              {answers.industry === "food" && field("menuUrl", "Link to your menu", { type: "url", hint: billing ? "You can send us a PDF when we contact you about your website." : "You can also select a PDF above." })}
+              {textarea("notes", "Anything else we should know?", { placeholder: "A particular style you like, a key message, or anything we should avoid." })}
                 </div>
               </details>
             </>}
@@ -444,7 +443,7 @@ export function InstantSignup({ billing = false, publishableKey = "", testMode =
               {answers.features.length > 0 && <div><dt>Website requirements</dt><dd>{features.filter((f) => answers.features.includes(f.value)).map((f) => f.label).join(" · ")}</dd></div>}
               {quote ? <div><dt>Extra details</dt><dd>{answers.quoteDetails || "Online sales, ordering or payments"}</dd></div> : <>
                 {answers.services && <div><dt>Main services</dt><dd>{answers.services}</dd></div>}
-                <div><dt>Customer contact</dt><dd>{contactMethods.filter((c) => answers.contacts.includes(c.value)).map((c) => c.label).join(" · ")}{needsEmail && <><br />{answers.enquiryEmail}</>}{answers.contacts.includes("phone") && <><br />{answers.phone}</>}{answers.contacts.includes("booking") && answers.bookingLater && <><br />Booking-request form until your link is ready</>}</dd></div>
+                {answers.contacts.length > 0 && <div><dt>Customer contact</dt><dd>{contactMethods.filter((c) => answers.contacts.includes(c.value)).map((c) => c.label).join(" · ")}{needsEmail && <><br />{answers.enquiryEmail}</>}{answers.contacts.includes("phone") && <><br />{answers.phone}</>}{answers.contacts.includes("booking") && answers.bookingLater && <><br />Booking-request form until your link is ready</>}</dd></div>}
                 <div><dt>Design direction</dt><dd>{answers.colours || "WebM8 to choose a starting palette"}</dd></div>
                 <div><dt>Files</dt><dd>{files.length ? `${files.length} selected locally; not uploaded` : "No files selected — these can be added later"}</dd></div>
               </>}

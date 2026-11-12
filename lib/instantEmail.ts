@@ -44,7 +44,7 @@ export function instantNotificationEmail(d: InstantEmailDetails): EmailMessage {
       ...serviceArea, ["Website to build", "One-page business website; no ecommerce or website payment system"],
       ["Services / treatments / food to feature", a.services],
       ["Customer contact options", a.contacts.map(c => contactMethods.find(m => m.value === c)?.label || c).join(", ")],
-      ["Existing website", a.hasWebsite === "yes" ? a.website || "Yes — link not provided" : "No"],
+      ["Existing website", a.hasWebsite === "yes" ? a.website || "Yes — link not provided" : a.hasWebsite === "no" ? "No" : ""],
       ["Social, Google Business and reference links", brief.links.join("\n")],
       ["What makes the business stand out", a.difference], ["Colors / branding", a.colours],
       ["Business address", a.address], ["Opening hours", a.hours], ["Menu link", brief.menuUrl], ["Additional notes", a.notes],

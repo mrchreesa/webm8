@@ -107,9 +107,8 @@ export function validateStep(step: Step, a: Answers): Errors {
     if (!industries.some((i) => i.value === a.industry)) errors.industry = "Choose the closest business type. Something else is fine too.";
   }
   if (step === "brief") {
-    if (!a.hasWebsite) errors.hasWebsite = "Choose whether you already have a website.";
-    if (a.hasWebsite === "yes" && a.website && !safeUrl(a.website)) errors.website = "Enter a website address, such as example.com, or leave it blank.";
-    a.links.forEach((link, i) => { if (link && !safeUrl(link)) errors[`link-${i}`] = "Enter a full website or profile link, or leave it blank."; });
+    if (a.hasWebsite === "yes" && a.website.trim() && !safeUrl(a.website)) errors.website = "Enter a website address, such as example.com, or leave it blank.";
+    a.links.forEach((link, i) => { if (link.trim() && !safeUrl(link)) errors[`link-${i}`] = "Enter a full website or profile link, or leave it blank."; });
   }
   if (step === "checkout" || step === "quote") {
     if (step === "checkout" && !a.checkoutAcknowledged) errors.checkoutAcknowledged = "Confirm you understand the free trial and monthly price after it ends.";
@@ -117,22 +116,13 @@ export function validateStep(step: Step, a: Answers): Errors {
     if (step === "quote" && a.phone && !isPhone(a.phone)) errors.phone = "Enter a valid phone number, or leave it blank.";
   }
   if (step === "brief") {
-    if (!a.contacts.length) errors.contacts = "Choose at least one way customers can contact you.";
-    if (a.contacts.includes("phone") && !isPhone(a.phone)) errors.phone = "Enter a business phone number, including its area code.";
-    if (a.contacts.includes("whatsapp") && !isPhone(a.samePhone && a.contacts.includes("phone") ? a.phone : a.whatsapp)) errors.whatsapp = "Enter the number customers can use on WhatsApp.";
-    if ((a.contacts.includes("email") || a.contacts.includes("request") || (a.contacts.includes("booking") && a.bookingLater)) && !isEmail(a.enquiryEmail)) errors.enquiryEmail = "Confirm the email address that should receive inquiries.";
-    if (a.contacts.includes("booking") && !a.bookingLater && !safeUrl(a.bookingUrl)) errors.bookingUrl = "Add your booking link, or choose to add it later.";
+    if (a.contacts.includes("phone") && a.phone.trim() && !isPhone(a.phone)) errors.phone = "Enter a business phone number, including its area code.";
+    if (a.contacts.includes("whatsapp") && !(a.samePhone && a.contacts.includes("phone")) && a.whatsapp.trim() && !isPhone(a.whatsapp)) errors.whatsapp = "Enter a valid WhatsApp number.";
+    if ((a.contacts.includes("email") || a.contacts.includes("request") || (a.contacts.includes("booking") && a.bookingLater)) && a.enquiryEmail.trim() && !isEmail(a.enquiryEmail)) errors.enquiryEmail = "Confirm the email address that should receive inquiries.";
+    if (a.contacts.includes("booking") && !a.bookingLater && a.bookingUrl.trim() && !safeUrl(a.bookingUrl)) errors.bookingUrl = "Enter a valid booking link.";
   }
-  if (step === "brief" && a.industry === "food" && a.menuUrl && !safeUrl(a.menuUrl)) errors.menuUrl = "Enter a link to your menu, or leave it blank.";
+  if (step === "brief" && a.industry === "food" && a.menuUrl.trim() && !safeUrl(a.menuUrl)) errors.menuUrl = "Enter a link to your menu, or leave it blank.";
   return errors;
-}
-
-export function suggestedContacts(a: Answers): ContactMethod[] {
-  const result: ContactMethod[] = [];
-  if (a.features.includes("enquiries")) result.push("email");
-  if (a.features.includes("requests")) result.push("request");
-  if (a.features.includes("booking")) result.push("booking");
-  return result.length ? result : ["email"];
 }
 
 /** Illustrative date only; production trial timing must come from confirmed checkout. */

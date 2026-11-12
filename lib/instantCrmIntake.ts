@@ -28,8 +28,7 @@ export function instantCrmSubmission(a: Answers, billing: InstantCrmBilling) {
     billing: { market: billing.market ?? "GB", customerId: billing.customerId, subscriptionId: billing.subscriptionId, status: billing.status, trialEnd: billing.trialEnd, livemode: billing.livemode },
     brief: {
       industry: a.industry, hasWebsite: a.hasWebsite, links: a.links.filter(Boolean), contacts: a.contacts,
-      // The CRM still requires text here. Older briefs may contain the customer's answer.
-      services: a.services || "Not provided",
+      services: a.services,
       publicPhone: a.contacts.includes("phone") ? a.phone : "",
       publicWhatsapp: a.contacts.includes("whatsapp") ? a.samePhone && a.contacts.includes("phone") ? a.phone : a.whatsapp : "",
       enquiryEmail: a.contacts.some(c => ["email", "request"].includes(c)) || (a.contacts.includes("booking") && a.bookingLater) ? a.enquiryEmail : "",

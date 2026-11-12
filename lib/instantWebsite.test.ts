@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { DRAFT_TTL_MS, emptyAnswers, needsQuote, trialEndDate, readDraft, safeUrl, suggestedContacts, validateAttachment, validateStep, type Answers } from "./instantWebsite.ts";
+import { DRAFT_TTL_MS, emptyAnswers, needsQuote, trialEndDate, readDraft, safeUrl, validateAttachment, validateStep, type Answers } from "./instantWebsite.ts";
 
 function brief(overrides: Partial<Answers> = {}): Answers {
   return { ...emptyAnswers(), scope: "standard", industry: "trades", features: ["enquiries"], businessName: "Example Plumbing", area: "Bromley", hasWebsite: "no", name: "Test Owner", email: "owner@example.com", deliveryPhone: "+44 7700 900123", checkoutAcknowledged: true, services: "Boiler repairs", contacts: ["email"], enquiryEmail: "business@example.com", ...overrides };
@@ -35,7 +35,7 @@ test("payment asks only for acknowledgement; website requirements are collected 
   const answers = brief({ features: [], hasWebsite: "", services: "", contacts: [], checkoutAcknowledged: false });
   assert.deepEqual(validateStep("checkout", answers), { checkoutAcknowledged: "Confirm you understand the free trial and monthly price after it ends." });
   assert.deepEqual(validateStep("checkout", { ...answers, checkoutAcknowledged: true }), {});
-  assert.deepEqual(Object.keys(validateStep("brief", answers)), ["hasWebsite", "contacts"]);
+  assert.deepEqual(validateStep("brief", answers), {});
   assert.deepEqual(validateStep("brief", brief({ features: [] })), {});
 });
 
@@ -49,26 +49,24 @@ test("hidden website URL does not block a customer who switches to no existing w
   assert.ok(validateStep("brief", brief({ website: "bad url", hasWebsite: "yes" })).website);
 });
 
-test("booking link can be deferred only with a valid email for the request fallback", () => {
-  assert.ok(validateStep("brief", brief({ contacts: ["booking"] })).bookingUrl);
+test("booking details may be skipped; supplied links and emails must be valid", () => {
+  assert.deepEqual(validateStep("brief", brief({ contacts: ["booking"] })), {});
+  assert.ok(validateStep("brief", brief({ contacts: ["booking"], bookingUrl: "invalid" })).bookingUrl);
   assert.deepEqual(validateStep("brief", brief({ contacts: ["booking"], bookingLater: true })), {});
-  assert.ok(validateStep("brief", brief({ contacts: ["booking"], bookingLater: true, enquiryEmail: "" })).enquiryEmail);
+  assert.deepEqual(validateStep("brief", brief({ contacts: ["booking"], bookingLater: true, enquiryEmail: "" })), {});
+  assert.ok(validateStep("brief", brief({ contacts: ["booking"], bookingLater: true, enquiryEmail: "invalid" })).enquiryEmail);
   assert.deepEqual(validateStep("brief", brief({ contacts: ["booking"], bookingUrl: "book.example.com", enquiryEmail: "" })), {});
 });
 
 test("WhatsApp can reuse a valid selected phone, but cannot reuse a hidden phone", () => {
   assert.deepEqual(validateStep("brief", brief({ contacts: ["phone", "whatsapp"], phone: "+44 20 7946 0000", samePhone: true })), {});
-  assert.ok(validateStep("brief", brief({ contacts: ["whatsapp"], phone: "+44 20 7946 0000", samePhone: true })).whatsapp);
+  assert.deepEqual(validateStep("brief", brief({ contacts: ["phone", "whatsapp"], phone: "", whatsapp: "" })), {});
+  assert.ok(validateStep("brief", brief({ contacts: ["whatsapp"], phone: "+44 20 7946 0000", samePhone: true, whatsapp: "invalid" })).whatsapp);
 });
 
 test("custom quote asks for feature details; ecommerce quote does not require them", () => {
   assert.ok(validateStep("quote", brief({ scope: "custom", features: [] })).quoteDetails);
   assert.deepEqual(validateStep("quote", brief({ features: ["commerce"] })), {});
-});
-
-test("suggested contact channels follow the chosen requirements", () => {
-  assert.deepEqual(suggestedContacts(brief({ features: ["requests", "booking"] })), ["request", "booking"]);
-  assert.deepEqual(suggestedContacts(brief({ features: ["information"] })), ["email"]);
 });
 
 test("the illustrative free-trial end is ten days after checkout across calendar boundaries", () => {
@@ -93,13 +91,13 @@ test("restoration cannot skip essential fields or checkout acknowledgement", () 
   assert.equal(restore(brief({ features: [] }), true)?.step, "complete");
   assert.equal(restore(brief(), false)?.step, "checkout");
   assert.equal(restore(brief({ services: "" }), true)?.step, "complete");
-  assert.equal(restore(brief({ contacts: [] }), true)?.step, "brief");
+  assert.equal(restore(brief({ contacts: [] }), true)?.step, "complete");
   assert.equal(restore(brief({ businessName: "" }), true)?.step, "business");
   assert.equal(restore(brief({ name: "", email: "invalid" }), true)?.step, "business");
   assert.equal(restore(brief({ deliveryPhone: "" }), true)?.step, "business");
   assert.equal(restore(brief({ scope: "" }), true)?.step, "complete");
   assert.equal(restore(brief({ scope: "" }), true)?.answers.scope, "standard");
-  assert.equal(restore(brief({ features: [], hasWebsite: "" }), true)?.step, "brief");
+  assert.equal(restore(brief({ features: [], hasWebsite: "" }), true)?.step, "complete");
   assert.equal(restore(brief({ features: ["commerce"] }), true)?.step, "quote");
 });
 

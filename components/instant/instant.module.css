@@ -57,7 +57,6 @@
 .optionalDetails { border-block: 1px solid var(--color-border); padding: 1rem 0; }
 .optionalDetails > summary { cursor: pointer; font-size: .85rem; font-weight: 600; padding: .4rem 0; }
 .optionalDetails > summary:hover { color: var(--color-link); }
-.optionalDetails > summary span { color: var(--color-muted); font-weight: 400; }
 .optionalDetails > .form { padding-top: 1.3rem; }
 @media (min-width: 640px) { .fieldGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; } }
 .group { display: grid; gap: .8rem; }
