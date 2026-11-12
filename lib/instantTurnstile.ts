@@ -4,7 +4,7 @@ import { BillingError } from "./instantBillingServer.ts";
 export const VERIFICATION_COOKIE = "webm8-instant-verified";
 export const VERIFICATION_SECONDS = 15 * 60;
 
-export function turnstileKeys(env: NodeJS.ProcessEnv = process.env) {
+export function turnstileKeys(env: Record<string, string | undefined> = process.env) {
   const siteKey = env.TURNSTILE_SITE_KEY;
   const secret = env.TURNSTILE_SECRET_KEY;
   // Public testing credentials must never authorize a live customer session.
