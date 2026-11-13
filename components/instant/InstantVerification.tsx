@@ -6,6 +6,7 @@ import styles from "./instant.module.css";
 
 export function InstantVerification({ siteKey, onVerified }: { siteKey: string; onVerified: (seconds: number) => void }) {
   const [error, setError] = useState("");
+  const [interactive, setInteractive] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const active = useRef<AbortController | null>(null);
   const widgetReady = useRef(false);
@@ -40,6 +41,7 @@ export function InstantVerification({ siteKey, onVerified }: { siteKey: string; 
   function retry() {
     if (!window.turnstile) document.getElementById(DEFAULT_SCRIPT_ID)?.remove();
     widgetReady.current = false;
+    setInteractive(false);
     setError("");
     setAttempt(n => n + 1);
   }
@@ -47,17 +49,19 @@ export function InstantVerification({ siteKey, onVerified }: { siteKey: string; 
   return <div data-analytics-ignore>
     {error ? <div className={styles.notice} role="status">
       {error} <button type="button" className={styles.textButton} onClick={retry}>Retry verification</button>
-    </div> : <>
-      <span className={styles.hint} role="status">Checking your browser…</span>
-      <Turnstile key={attempt} siteKey={siteKey}
-        options={{ action: "instant_signup", appearance: "interaction-only", size: "compact", theme: "light", retry: "never", responseField: false }}
+    </div> : <div className={styles.verificationCheck}>
+      {!interactive && <span className={styles.hint} role="status">Checking your browser…</span>}
+      <Turnstile key={attempt} siteKey={siteKey} className={styles.verificationWidget}
+        options={{ action: "instant_signup", appearance: "interaction-only", size: "normal", theme: "light", retry: "never", responseField: false }}
         onWidgetLoad={() => { widgetReady.current = true; }}
+        onBeforeInteractive={() => setInteractive(true)}
+        onAfterInteractive={() => setInteractive(false)}
         onSuccess={verify}
         onError={() => setError("Your browser couldn’t complete verification.")}
         onTimeout={() => setError("Verification timed out.")}
         onUnsupported={() => setError("Please open the form in a supported browser to continue.")}
         scriptOptions={{ onError: () => setError("Verification couldn’t load. Check your connection and try again.") }}
       />
-    </>}
+    </div>}
   </div>;
 }

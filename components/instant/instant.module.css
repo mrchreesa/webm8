@@ -72,9 +72,14 @@
 .notice ul { margin-top: .4rem; list-style: disc; padding-left: 1rem; }
 .actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .7rem; }
 /* Keep the challenge and its submit button together when Back wraps. */
-.nextAction { display: flex; align-items: center; justify-content: flex-end; gap: .7rem; max-width: 100%; min-width: 0; margin-left: auto; }
+.nextAction { --challenge-scale: .8; --challenge-height: calc(65px * var(--challenge-scale)); display: flex; align-items: center; justify-content: flex-end; gap: .7rem; max-width: 100%; min-width: 0; margin-left: auto; }
 .nextAction:empty { display: none; }
-.verification { min-width: 150px; max-width: 18rem; }
+.verification { flex: 0 0 auto; width: calc(300px * var(--challenge-scale)); }
+.verificationCheck { display: grid; place-items: center; min-height: var(--challenge-height); }
+.verificationCheck > * { grid-area: 1 / 1; }
+/* Scale the complete 300 × 65 widget, including its checkbox and footer links. */
+.verificationWidget { zoom: var(--challenge-scale); line-height: 0; }
+.verification + .continue { min-height: var(--challenge-height); }
 .continue { margin-left: auto; }
 .guarantee { display: flex; gap: .8rem; font-size: .8rem; line-height: 1.7; }
 .guarantee svg { flex-shrink: 0; margin-top: .2rem; }
@@ -147,9 +152,19 @@
   .examplesHeading > div:last-child { justify-self: start; }
 }
 
-@media (max-width: 380px) {
-  .verification + .continue { padding-inline: .6rem; }
+@media (max-width: 460px) {
+  .nextAction { gap: .4rem; }
+  .verification + .continue { padding: .25rem .6rem; font-size: .875rem; }
   .verification + .continue svg { display: none; }
+}
+@media (max-width: 390px) {
+  .nextAction { --challenge-scale: .74; }
+  .actions:has(.verification) { margin-inline: -.4rem; }
+}
+@media (max-width: 355px) {
+  .actions:has(.verification) { margin-inline: -.85rem; }
+  .nextAction { --challenge-scale: .7; }
+  .verification + .continue { padding-inline: .3rem; }
 }
 
 /* One working day: four steps on one low track, under the hero. */
